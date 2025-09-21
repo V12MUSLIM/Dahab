@@ -35,12 +35,12 @@ import {
   DrawerTrigger,
 } from "@/components/ui/drawer";
 import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
+import Logo from "@/icons/Logo";
 import { cn } from "@/lib/utils";
 import { ThemeToggle } from "@/components/theme-toggle";
 
@@ -103,18 +103,7 @@ export default function DahabTourismNavbar() {
     <div className="w-full border-b bg-background/95 backdrop-blur-sm sticky top-0 z-50 shadow-sm border-border">
       <div className=" flex h-14 items-center justify-between px-4">
         {/* Logo */}
-        <div className="flex items-center space-x-3">
-          <div className="relative">
-            <Waves className="h-8 w-8 text-yellow-600" />
-            <div className="absolute -top-1 -right-1 w-3 h-3 bg-orange-400 rounded-full"></div>
-          </div>
-          <div className="flex flex-col">
-            <span className="font-bold text-xl text-foreground">Dahab</span>
-            <span className="text-xs text-yellow-600 dark:text-yellow-400 font-medium">
-              Red Sea Paradise
-            </span>
-          </div>
-        </div>
+        <Logo />
 
         {/* Desktop Navigation */}
         <div className="hidden lg:flex items-center space-x-8">
@@ -299,80 +288,63 @@ export default function DahabTourismNavbar() {
                 <div className="flex-1 overflow-y-auto">
                   <div className="p-4 space-y-2">
                     {/* Destinations Dropdown */}
-                    <DropdownMenu>
-                      <DropdownMenuTrigger asChild>
-                        <Button
-                          variant="ghost"
-                          className="w-full justify-start h-12 text-gray-700 hover:text-yellow-600 hover:bg-yellow-50"
-                        >
-                          <MapPin className="mr-3 h-5 w-5" />
-                          Destinations
-                          <ChevronDown className="ml-auto h-4 w-4" />
-                        </Button>
-                      </DropdownMenuTrigger>
-                      <DropdownMenuContent className="w-80 ml-4" align="start">
-                        {destinations.map((destination) => {
-                          const Icon = destination.icon;
-                          return (
-                            <DropdownMenuItem
-                              key={destination.name}
-                              className="p-3 cursor-pointer"
-                              onClick={handleNavItemClick}
-                            >
-                              <div className="flex items-start gap-3">
-                                <Icon className="h-5 w-5 text-yellow-600 mt-0.5" />
-                                <div className="space-y-1">
-                                  <div className="text-sm font-medium text-gray-700 dark:text-gray-200 transition-colors duration-200 group-hover:text-yellow-600 dark:group-hover:text-yellow-400">
-                                    {destination.name}
-                                  </div>
-                                  <p className="text-xs text-gray-600 leading-tight">
-                                    {destination.description}
-                                  </p>
-                                </div>
-                              </div>
-                            </DropdownMenuItem>
-                          );
-                        })}
-                      </DropdownMenuContent>
-                    </DropdownMenu>
+                    <Accordion type="single" collapsible className="w-full">
+                      {/* Destinations */}
+                      <AccordionItem value="destinations">
+                        <AccordionTrigger className="flex items-center justify-between text-gray-700 hover:text-yellow-600 [&>svg:last-child]:hidden">
+                          <div className="flex items-center gap-3">
+                            <MapPin className="h-5 w-5 text-yellow-600" />
+                            <span>Destinations</span>
+                          </div>
+                          <ChevronDown className="ml-auto h-4 w-4 transition-transform duration-200 group-data-[state=open]:rotate-180" />
+                        </AccordionTrigger>
+                        <AccordionContent>
+                          <div className="space-y-2 pl-6">
+                            {destinations.map((destination) => {
+                              const Icon = destination.icon;
+                              return (
+                                <button
+                                  key={destination.name}
+                                  onClick={handleNavItemClick}
+                                  className="flex w-full items-center gap-3 p-2 text-sm rounded-lg hover:bg-yellow-50 text-gray-700 dark:text-gray-200 hover:text-yellow-600 dark:hover:text-yellow-400"
+                                >
+                                  <Icon className="h-5 w-5 text-yellow-600" />
+                                  <span>{destination.name}</span>
+                                </button>
+                              );
+                            })}
+                          </div>
+                        </AccordionContent>
+                      </AccordionItem>
 
-                    {/* Experiences Dropdown */}
-                    <DropdownMenu>
-                      <DropdownMenuTrigger asChild>
-                        <Button
-                          variant="ghost"
-                          className="w-full justify-start h-12 text-gray-700 hover:text-yellow-600 hover:bg-yellow-50"
-                        >
-                          <Camera className="mr-3 h-5 w-5" />
-                          Experiences
-                          <ChevronDown className="ml-auto h-4 w-4" />
-                        </Button>
-                      </DropdownMenuTrigger>
-                      <DropdownMenuContent className="w-80 ml-4" align="start">
-                        {experiences.map((experience) => {
-                          const Icon = experience.icon;
-                          return (
-                            <DropdownMenuItem
-                              key={experience.name}
-                              className="p-3 cursor-pointer"
-                              onClick={handleNavItemClick}
-                            >
-                              <div className="flex items-start gap-3">
-                                <Icon className="h-5 w-5 text-yellow-600 mt-0.5" />
-                                <div className="space-y-1">
-                                  <div className="text-sm font-medium text-gray-700 dark:text-gray-200 transition-colors duration-200 group-hover:text-yellow-600 dark:group-hover:text-yellow-400">
-                                    {experience.name}
-                                  </div>
-                                  <p className="text-xs text-gray-600 leading-tight">
-                                    {experience.description}
-                                  </p>
-                                </div>
-                              </div>
-                            </DropdownMenuItem>
-                          );
-                        })}
-                      </DropdownMenuContent>
-                    </DropdownMenu>
+                      {/* Experiences */}
+                      <AccordionItem value="experiences">
+                        <AccordionTrigger className="flex items-center justify-between text-gray-700 hover:text-yellow-600 [&>svg:last-child]:hidden">
+                          <div className="flex items-center gap-3">
+                            <Camera className="h-5 w-5 text-yellow-600" />
+                            <span>Experiences</span>
+                          </div>
+                          <ChevronDown className="ml-auto h-4 w-4 transition-transform duration-200 group-data-[state=open]:rotate-180" />
+                        </AccordionTrigger>
+                        <AccordionContent>
+                          <div className="space-y-2 pl-6">
+                            {experiences.map((experience) => {
+                              const Icon = experience.icon;
+                              return (
+                                <button
+                                  key={experience.name}
+                                  onClick={handleNavItemClick}
+                                  className="flex w-full items-center gap-3 p-2 text-sm rounded-lg hover:bg-yellow-50 text-gray-700 dark:text-gray-200 hover:text-yellow-600 dark:hover:text-yellow-400"
+                                >
+                                  <Icon className="h-5 w-5 text-yellow-600" />
+                                  <span>{experience.name}</span>
+                                </button>
+                              );
+                            })}
+                          </div>
+                        </AccordionContent>
+                      </AccordionItem>
+                    </Accordion>
 
                     {/* Other Navigation Items */}
                     <Button
