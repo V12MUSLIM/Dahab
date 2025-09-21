@@ -6,6 +6,13 @@ import {
 } from "../components/ui/shadcn-io/marquee/index";
 // eslint-disable-next-line no-unused-vars
 import { motion } from "framer-motion";
+import { 
+  ImageCard, 
+  ActivityCard, 
+  StatsCard, 
+  TestimonialCard 
+} from "../components/card";
+import { Waves, Camera, Mountain, Users, Star, MapPin, Heart } from "lucide-react";
 
 export default function Home() {
   // Enhanced animation variants
@@ -252,7 +259,222 @@ export default function Home() {
             </MarqueeItem>
           </MarqueeContent>
         </Marquee>
-      </motion.div>
-    </div>
+
+        {/* Featured Destinations Section */}
+        <motion.div
+          className="max-w-7xl mx-auto px-4 py-16"
+          initial={{ opacity: 0, y: 40 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8, delay: 0.2 }}
+          viewport={{ once: true }}
+        >
+          <div className="text-center mb-12">
+            <h2 className="text-4xl md:text-5xl font-bold text-foreground mb-4">
+              Popular Destinations
+            </h2>
+            <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
+              Explore the most breathtaking locations that make Dahab a world-renowned destination
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-16">
+            <ImageCard
+              title="Blue Hole Diving"
+              subtitle="World Famous Dive Site"
+              description="Experience the world's most famous diving spot with crystal clear waters, incredible marine life, and depths that challenge even experienced divers."
+              image="https://www.propertyfinder.eg/blog/wp-content/uploads/2019/10/blue-hole-dahab-800x600.jpg"
+              badge="Must Visit"
+              rating="4.9"
+              location="Dahab Coast"
+              price="$85"
+              buttonText="Book Dive"
+            />
+            
+            <ImageCard
+              title="Mount Sinai Trek"
+              subtitle="Sacred Mountain"
+              description="Climb the legendary Mount Sinai and witness one of the world's most spectacular sunrises from this historically significant peak."
+              image="/image2.jpeg"
+              badge="Spiritual Journey"
+              rating="4.8"
+              location="Sinai Peninsula"
+              price="$45"
+              buttonText="Join Trek"
+            />
+            
+            <ImageCard
+              title="Colored Canyon"
+              subtitle="Natural Wonder"
+              description="Journey through stunning rock formations with vibrant colors created by millions of years of geological processes."
+              image="https://www.arabtravelers.com/wp-content/uploads/2023/05/Tourism-in-dahab-10.jpg"
+              badge="Adventure"
+              rating="4.7"
+              location="Nuweiba Road"
+              price="$55"
+              buttonText="Explore Now"
+            />
+          </div>
+        </motion.div>
+
+        {/* Activities Section */}
+        <motion.div
+          className="bg-muted/30 py-16"
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
+          transition={{ duration: 0.8 }}
+          viewport={{ once: true }}
+        >
+          <div className="max-w-7xl mx-auto px-4">
+            <div className="text-center mb-12">
+              <h2 className="text-4xl md:text-5xl font-bold text-foreground mb-4">
+                Adventures Await
+              </h2>
+              <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
+                From underwater exploration to desert adventures, discover the activities that make Dahab special
+              </p>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
+              <ActivityCard
+                title="Scuba Diving"
+                description="Explore the underwater paradise of the Red Sea with professional guides"
+                icon={Waves}
+                duration="Half Day"
+                groupSize="8 people"
+                difficulty="All Levels"
+                price="$75"
+              />
+              
+              <ActivityCard
+                title="Desert Safari"
+                description="Experience authentic Bedouin culture on a magical desert journey"
+                icon={Camera}
+                duration="Full Day"
+                groupSize="12 people"
+                difficulty="Easy"
+                price="$60"
+              />
+              
+              <ActivityCard
+                title="Rock Climbing"
+                description="Challenge yourself on the stunning limestone cliffs of South Sinai"
+                icon={Mountain}
+                duration="4 hours"
+                groupSize="6 people"
+                difficulty="Intermediate"
+                price="$65"
+              />
+              
+              <ActivityCard
+                title="Windsurfing"
+                description="Perfect winds and conditions make Dahab a windsurfing paradise"
+                icon={Waves}
+                duration="3 hours"
+                groupSize="4 people"
+                difficulty="Beginner+"
+                price="$50"
+              />
+            </div>
+          </div>
+        </motion.div>
+
+        {/* Stats Section */}
+        <motion.div
+          className="py-16"
+          initial={{ opacity: 0, y: 40 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8 }}
+          viewport={{ once: true }}
+        >
+          <div className="max-w-7xl mx-auto px-4">
+            <div className="text-center mb-12">
+              <h2 className="text-4xl md:text-5xl font-bold text-foreground mb-4">
+                Why Choose Dahab?
+              </h2>
+              <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
+                Numbers that speak to our commitment to excellence
+              </p>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-16">
+              <StatsCard
+                title="Happy Travelers"
+                value="50K+"
+                icon={Heart}
+                trend="+15% this year"
+                description="Satisfied visitors from around the world"
+              />
+              
+              <StatsCard
+                title="Dive Sites"
+                value="25+"
+                icon={Waves}
+                description="World-class diving locations accessible from Dahab"
+              />
+              
+              <StatsCard
+                title="Years Experience"
+                value="20+"
+                icon={Star}
+                description="Decades of expertise in Red Sea tourism"
+              />
+              
+              <StatsCard
+                title="Tour Guides"
+                value="50+"
+                icon={Users}
+                description="Professional and certified local experts"
+              />
+            </div>
+          </div>
+        </motion.div>
+
+        {/* Testimonials Section */}
+        <motion.div
+          className="bg-muted/30 py-16"
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
+          transition={{ duration: 0.8 }}
+          viewport={{ once: true }}
+        >
+          <div className="max-w-7xl mx-auto px-4">
+            <div className="text-center mb-12">
+              <h2 className="text-4xl md:text-5xl font-bold text-foreground mb-4">
+                What Our Guests Say
+              </h2>
+              <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
+                Real experiences from travelers who discovered the magic of Dahab
+              </p>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+              <TestimonialCard
+                name="Sarah Johnson"
+                location="London, UK"
+                rating={5}
+                comment="The Blue Hole diving experience was absolutely incredible! Crystal clear waters, amazing marine life, and professional guides made this unforgettable."
+                avatar="https://images.unsplash.com/photo-1494790108755-2616b612b639?w=150&h=150&fit=crop&crop=face"
+              />
+              
+              <TestimonialCard
+                name="Marco Rodriguez"
+                location="Barcelona, Spain"
+                rating={5}
+                comment="Perfect blend of adventure and relaxation. The desert safari was magical, and the Bedouin hospitality was genuinely heartwarming."
+                avatar="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&h=150&fit=crop&crop=face"
+              />
+              
+              <TestimonialCard
+                name="Emma Thompson"
+                location="Sydney, Australia"
+                rating={5}
+                comment="Dahab exceeded all expectations! The Mount Sinai sunrise trek was spiritual, and the town has such a peaceful, authentic vibe."
+                avatar="https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=150&h=150&fit=crop&crop=face"
+              />
+            </div>
+          </div>
+        </motion.div>
+         </motion.div>
+      </div>
   );
 }
