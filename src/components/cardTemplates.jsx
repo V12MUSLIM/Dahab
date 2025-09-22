@@ -1,42 +1,51 @@
 import * as React from "react";
 // eslint-disable-next-line no-unused-vars
 import { motion } from "framer-motion";
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Star, MapPin, Calendar, Users } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 // Enhanced Card wrapper with animations
-const DahabCard = React.forwardRef(({ 
-  className, 
-  children, 
-  hover = true, 
-  ...props 
-}, ref) => (
-  <motion.div
-    initial={{ opacity: 0, y: 20 }}
-    animate={{ opacity: 1, y: 0 }}
-    transition={{ duration: 0.4, ease: "easeOut" }}
-    whileHover={hover ? { 
-      y: -8, 
-      transition: { duration: 0.2 } 
-    } : {}}
-    className={cn("group", className)}
-  >
-    <Card
-      ref={ref}
-      className={cn(
-        "overflow-hidden border-border bg-card transition-all duration-300",
-        hover && "hover:shadow-xl hover:shadow-yellow-500/10 hover:border-yellow-200 dark:hover:border-yellow-800/50",
-        className
-      )}
-      {...props}
+const DahabCard = React.forwardRef(
+  ({ className, children, hover = true, ...props }, ref) => (
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.4, ease: "easeOut" }}
+      whileHover={
+        hover
+          ? {
+              y: -8,
+              transition: { duration: 0.2 },
+            }
+          : {}
+      }
+      className={cn("group", className)}
     >
-      {children}
-    </Card>
-  </motion.div>
-));
+      <Card
+        ref={ref}
+        className={cn(
+          "overflow-hidden border-border bg-card transition-all duration-300",
+          hover &&
+            "hover:shadow-xl hover:shadow-yellow-500/10 hover:border-yellow-200 dark:hover:border-yellow-800/50",
+          className
+        )}
+        {...props}
+      >
+        {children}
+      </Card>
+    </motion.div>
+  )
+);
 DahabCard.displayName = "DahabCard";
 
 // Card with Image
@@ -53,85 +62,100 @@ const ImageCard = ({
   onButtonClick,
   className 
 }) => (
-  <DahabCard className={className}>
-    <div className="relative overflow-hidden">
-      <motion.img
-        src={image}
-        alt={title}
-        className="w-full h-48 object-cover transition-transform duration-500"
-        whileHover={{ scale: 1.05 }}
-      />
-      <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-      
-      {badge && (
-        <div className="absolute top-4 left-4">
-          <Badge className="bg-yellow-600 hover:bg-yellow-700 text-white border-0">
-            {badge}
-          </Badge>
-        </div>
+  <motion.div
+    initial={{ opacity: 0, y: 20 }}
+    animate={{ opacity: 1, y: 0 }}
+    transition={{ duration: 0.4, ease: "easeOut" }}
+    whileHover={{
+      y: -8,
+      transition: { duration: 0.2 },
+    }}
+    className={cn("group", className)}
+  >
+    <Card
+      className={cn(
+        "overflow-hidden border-border bg-card transition-all duration-300 p-0",
+        "hover:shadow-xl hover:shadow-yellow-500/10 hover:border-yellow-200 dark:hover:border-yellow-800/50"
       )}
-      
-      {rating && (
-        <div className="absolute top-4 right-4 flex items-center gap-1 bg-white/90 dark:bg-gray-900/90 backdrop-blur-sm rounded-full px-2 py-1">
-          <Star className="h-3 w-3 fill-yellow-400 text-yellow-400" />
-          <span className="text-xs font-medium">{rating}</span>
-        </div>
-      )}
-    </div>
-    
-    <CardHeader className="pb-3">
-      {subtitle && (
-        <p className="text-sm font-medium text-yellow-600 dark:text-yellow-400 mb-1">
-          {subtitle}
-        </p>
-      )}
-      <CardTitle className="text-xl font-bold text-foreground group-hover:text-yellow-600 dark:group-hover:text-yellow-400 transition-colors">
-        {title}
-      </CardTitle>
-      {location && (
-        <div className="flex items-center gap-1 text-sm text-muted-foreground">
-          <MapPin className="h-3 w-3" />
-          {location}
-        </div>
-      )}
-    </CardHeader>
-    
-    <CardContent className="pb-4">
-      <CardDescription className="text-muted-foreground leading-relaxed">
-        {description}
-      </CardDescription>
-    </CardContent>
-    
-    <CardFooter className="flex items-center justify-between pt-0">
-      <div className="flex items-center gap-2">
-        {price && (
-          <span className="text-xl font-bold text-yellow-600 dark:text-yellow-400">
-            {price}
-          </span>
+    >
+      <div className="relative overflow-hidden">
+        <motion.img
+          src={image}
+          alt={title}
+          className="w-full h-80 object-cover transition-transform duration-500"
+          whileHover={{ scale: 1.05 }}
+        />
+        <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+        
+        {badge && (
+          <div className="absolute top-4 left-4">
+            <Badge className="bg-yellow-600 hover:bg-yellow-700 text-white border-0">
+              {badge}
+            </Badge>
+          </div>
+        )}
+        
+        {rating && (
+          <div className="absolute top-4 right-4 flex items-center gap-1 bg-white/90 dark:bg-gray-900/90 backdrop-blur-sm rounded-full px-2 py-1">
+            <Star className="h-3 w-3 fill-yellow-400 text-yellow-400" />
+            <span className="text-xs font-medium">{rating}</span>
+          </div>
         )}
       </div>
-      <Button 
-        className="bg-yellow-600 hover:bg-yellow-700 text-white border-0"
-        onClick={onButtonClick}
-      >
-        {buttonText}
-      </Button>
-    </CardFooter>
-  </DahabCard>
+      
+      <CardHeader className="pb-3 px-6 pt-4">
+        {subtitle && (
+          <p className="text-sm font-medium text-yellow-600 dark:text-yellow-400 mb-1">
+            {subtitle}
+          </p>
+        )}
+        <CardTitle className="text-xl font-bold text-foreground group-hover:text-yellow-600 dark:group-hover:text-yellow-400 transition-colors">
+          {title}
+        </CardTitle>
+        {location && (
+          <div className="flex items-center gap-1 text-sm text-muted-foreground">
+            <MapPin className="h-3 w-3" />
+            {location}
+          </div>
+        )}
+      </CardHeader>
+      
+      <CardContent className="pb-4 px-6">
+        <CardDescription className="text-muted-foreground leading-relaxed">
+          {description}
+        </CardDescription>
+      </CardContent>
+      
+      <CardFooter className="flex items-center justify-between pt-0 px-6 pb-6">
+        <div className="flex items-center gap-2">
+          {price && (
+            <span className="text-xl font-bold text-yellow-600 dark:text-yellow-400">
+              {price}
+            </span>
+          )}
+        </div>
+        <Button 
+          className="bg-yellow-600 hover:bg-yellow-700 text-white border-0"
+          onClick={onButtonClick}
+        >
+          {buttonText}
+        </Button>
+      </CardFooter>
+    </Card>
+  </motion.div>
 );
-
 // Activity Card
-const ActivityCard = ({ 
-  title, 
-  description, 
+const ActivityCard = ({
+  title,
+  description,
   // eslint-disable-next-line no-unused-vars
-  icon: Icon, 
-  duration, 
-  groupSize, 
+  icon: Icon,
+  duration,
+  groupSize,
   difficulty,
   price,
   onBookClick,
-  className 
+  className,
 }) => (
   <DahabCard className={className}>
     <CardHeader className="text-center pb-4">
@@ -142,12 +166,12 @@ const ActivityCard = ({
         {title}
       </CardTitle>
     </CardHeader>
-    
+
     <CardContent className="space-y-4">
       <CardDescription className="text-center text-muted-foreground">
         {description}
       </CardDescription>
-      
+
       <div className="grid grid-cols-3 gap-2 text-xs">
         {duration && (
           <div className="flex flex-col items-center p-2 rounded-lg bg-muted/50">
@@ -169,7 +193,7 @@ const ActivityCard = ({
         )}
       </div>
     </CardContent>
-    
+
     <CardFooter className="flex flex-col gap-3">
       {price && (
         <div className="text-center">
@@ -179,7 +203,7 @@ const ActivityCard = ({
           <span className="text-sm text-muted-foreground ml-1">per person</span>
         </div>
       )}
-      <Button 
+      <Button
         className="w-full bg-yellow-600 hover:bg-yellow-700 text-white border-0"
         onClick={onBookClick}
       >
@@ -190,14 +214,14 @@ const ActivityCard = ({
 );
 
 // Stats Card
-const StatsCard = ({ 
-  title, 
-  value, 
+const StatsCard = ({
+  title,
+  value,
   // eslint-disable-next-line no-unused-vars
-  icon: Icon, 
-  trend, 
+  icon: Icon,
+  trend,
   description,
-  className 
+  className,
 }) => (
   <DahabCard hover={false} className={className}>
     <CardContent className="p-6">
@@ -206,9 +230,7 @@ const StatsCard = ({
           <p className="text-sm font-medium text-muted-foreground mb-1">
             {title}
           </p>
-          <p className="text-3xl font-bold text-foreground">
-            {value}
-          </p>
+          <p className="text-3xl font-bold text-foreground">{value}</p>
           {trend && (
             <p className="text-sm text-green-600 dark:text-green-400 mt-1">
               {trend}
@@ -220,22 +242,20 @@ const StatsCard = ({
         </div>
       </div>
       {description && (
-        <p className="text-sm text-muted-foreground mt-3">
-          {description}
-        </p>
+        <p className="text-sm text-muted-foreground mt-3">{description}</p>
       )}
     </CardContent>
   </DahabCard>
 );
 
 // Testimonial Card
-const TestimonialCard = ({ 
-  name, 
-  location, 
-  rating, 
-  comment, 
+const TestimonialCard = ({
+  name,
+  location,
+  rating,
+  comment,
   avatar,
-  className 
+  className,
 }) => (
   <DahabCard className={className}>
     <CardContent className="p-6">
@@ -245,18 +265,18 @@ const TestimonialCard = ({
             key={i}
             className={cn(
               "h-4 w-4",
-              i < rating 
-                ? "fill-yellow-400 text-yellow-400" 
+              i < rating
+                ? "fill-yellow-400 text-yellow-400"
                 : "text-gray-300 dark:text-gray-600"
             )}
           />
         ))}
       </div>
-      
+
       <CardDescription className="text-base text-foreground mb-4 italic">
         "{comment}"
       </CardDescription>
-      
+
       <div className="flex items-center gap-3">
         {avatar && (
           <img
@@ -282,7 +302,7 @@ const CardExamples = () => {
         <h1 className="text-3xl font-bold text-foreground mb-8 text-center">
           Dahab Card Components
         </h1>
-        
+
         {/* Image Cards Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
           <ImageCard
@@ -296,7 +316,7 @@ const CardExamples = () => {
             price="$85"
             buttonText="Book Dive"
           />
-          
+
           <ImageCard
             title="Bedouin Desert Safari"
             subtitle="Cultural Experience"
@@ -308,7 +328,7 @@ const CardExamples = () => {
             price="$60"
             buttonText="Join Safari"
           />
-          
+
           <ImageCard
             title="Mount Sinai Sunrise"
             subtitle="Spiritual Journey"
@@ -321,7 +341,7 @@ const CardExamples = () => {
             buttonText="Book Trek"
           />
         </div>
-        
+
         {/* Activity Cards */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
           <ActivityCard
@@ -333,7 +353,7 @@ const CardExamples = () => {
             difficulty="Beginner"
             price="$75"
           />
-          
+
           <ActivityCard
             title="Windsurfing"
             description="Perfect conditions for windsurfing enthusiasts"
@@ -343,7 +363,7 @@ const CardExamples = () => {
             difficulty="Intermediate"
             price="$55"
           />
-          
+
           <StatsCard
             title="Happy Visitors"
             value="50K+"
@@ -351,7 +371,7 @@ const CardExamples = () => {
             trend="+12% this year"
             description="Travelers who experienced Dahab magic"
           />
-          
+
           <StatsCard
             title="Dive Sites"
             value="25+"
@@ -359,7 +379,7 @@ const CardExamples = () => {
             description="World-class diving locations"
           />
         </div>
-        
+
         {/* Testimonials */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <TestimonialCard
@@ -369,7 +389,7 @@ const CardExamples = () => {
             comment="The Blue Hole was absolutely incredible! The diving experience exceeded all expectations and the guides were fantastic."
             avatar="https://images.unsplash.com/photo-1494790108755-2616b612b-2616b612b639?w=150"
           />
-          
+
           <TestimonialCard
             name="Ahmed Hassan"
             location="Cairo, Egypt"
@@ -383,11 +403,11 @@ const CardExamples = () => {
   );
 };
 
-export { 
-  DahabCard, 
-  ImageCard, 
-  ActivityCard, 
-  StatsCard, 
+export {
+  DahabCard,
+  ImageCard,
+  ActivityCard,
+  StatsCard,
   TestimonialCard,
-  CardExamples 
+  CardExamples,
 };

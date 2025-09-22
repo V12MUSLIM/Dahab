@@ -6,13 +6,21 @@ import {
 } from "../components/ui/shadcn-io/marquee/index";
 // eslint-disable-next-line no-unused-vars
 import { motion } from "framer-motion";
-import { 
-  ImageCard, 
-  ActivityCard, 
-  StatsCard, 
-  TestimonialCard 
-} from "../components/card";
-import { Waves, Camera, Mountain, Users, Star, MapPin, Heart } from "lucide-react";
+import {
+  ImageCard,
+  ActivityCard,
+  StatsCard,
+  TestimonialCard,
+} from "../components/cardTemplates";
+import {
+  Waves,
+  Camera,
+  Mountain,
+  Users,
+  Star,
+  MapPin,
+  Heart,
+} from "lucide-react";
 
 export default function Home() {
   // Enhanced animation variants
@@ -273,7 +281,8 @@ export default function Home() {
               Popular Destinations
             </h2>
             <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-              Explore the most breathtaking locations that make Dahab a world-renowned destination
+              Explore the most breathtaking locations that make Dahab a
+              world-renowned destination
             </p>
           </div>
 
@@ -289,7 +298,7 @@ export default function Home() {
               price="$85"
               buttonText="Book Dive"
             />
-            
+
             <ImageCard
               title="Mount Sinai Trek"
               subtitle="Sacred Mountain"
@@ -301,7 +310,7 @@ export default function Home() {
               price="$45"
               buttonText="Join Trek"
             />
-            
+
             <ImageCard
               title="Colored Canyon"
               subtitle="Natural Wonder"
@@ -330,7 +339,8 @@ export default function Home() {
                 Adventures Await
               </h2>
               <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-                From underwater exploration to desert adventures, discover the activities that make Dahab special
+                From underwater exploration to desert adventures, discover the
+                activities that make Dahab special
               </p>
             </div>
 
@@ -344,7 +354,7 @@ export default function Home() {
                 difficulty="All Levels"
                 price="$75"
               />
-              
+
               <ActivityCard
                 title="Desert Safari"
                 description="Experience authentic Bedouin culture on a magical desert journey"
@@ -354,7 +364,7 @@ export default function Home() {
                 difficulty="Easy"
                 price="$60"
               />
-              
+
               <ActivityCard
                 title="Rock Climbing"
                 description="Challenge yourself on the stunning limestone cliffs of South Sinai"
@@ -364,7 +374,7 @@ export default function Home() {
                 difficulty="Intermediate"
                 price="$65"
               />
-              
+
               <ActivityCard
                 title="Windsurfing"
                 description="Perfect winds and conditions make Dahab a windsurfing paradise"
@@ -404,21 +414,21 @@ export default function Home() {
                 trend="+15% this year"
                 description="Satisfied visitors from around the world"
               />
-              
+
               <StatsCard
                 title="Dive Sites"
                 value="25+"
                 icon={Waves}
                 description="World-class diving locations accessible from Dahab"
               />
-              
+
               <StatsCard
                 title="Years Experience"
                 value="20+"
                 icon={Star}
                 description="Decades of expertise in Red Sea tourism"
               />
-              
+
               <StatsCard
                 title="Tour Guides"
                 value="50+"
@@ -443,7 +453,8 @@ export default function Home() {
                 What Our Guests Say
               </h2>
               <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-                Real experiences from travelers who discovered the magic of Dahab
+                Real experiences from travelers who discovered the magic of
+                Dahab
               </p>
             </div>
 
@@ -455,7 +466,7 @@ export default function Home() {
                 comment="The Blue Hole diving experience was absolutely incredible! Crystal clear waters, amazing marine life, and professional guides made this unforgettable."
                 avatar="https://images.unsplash.com/photo-1494790108755-2616b612b639?w=150&h=150&fit=crop&crop=face"
               />
-              
+
               <TestimonialCard
                 name="Marco Rodriguez"
                 location="Barcelona, Spain"
@@ -463,7 +474,7 @@ export default function Home() {
                 comment="Perfect blend of adventure and relaxation. The desert safari was magical, and the Bedouin hospitality was genuinely heartwarming."
                 avatar="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&h=150&fit=crop&crop=face"
               />
-              
+
               <TestimonialCard
                 name="Emma Thompson"
                 location="Sydney, Australia"
@@ -474,7 +485,7 @@ export default function Home() {
             </div>
           </div>
         </motion.div>
-         </motion.div>
-      </div>
+      </motion.div>
+    </div>
   );
 }

@@ -13,6 +13,7 @@ import {
   Menu,
   X,
   ChevronDown,
+  HomeIcon,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -43,7 +44,7 @@ import {
 import Logo from "@/icons/Logo";
 import { cn } from "@/lib/utils";
 import { ThemeToggle } from "@/components/theme-toggle";
-
+import { Link } from "react-router-dom";
 export default function DahabTourismNavbar() {
   const [isMobileDrawerOpen, setIsMobileDrawerOpen] = React.useState(false);
 
@@ -102,9 +103,10 @@ export default function DahabTourismNavbar() {
   return (
     <div className="w-full border-b bg-background/95 backdrop-blur-sm sticky top-0 z-50 shadow-sm border-border">
       <div className=" flex h-14 items-center justify-between px-4">
-        {/* Logo */}
-        <Logo />
-
+        <Link to="/">
+          {/* Logo */}
+          <Logo />
+        </Link>
         {/* Desktop Navigation */}
         <div className="hidden lg:flex items-center space-x-8">
           <NavigationMenu>
@@ -176,7 +178,7 @@ export default function DahabTourismNavbar() {
               {/* Stay */}
               <NavigationMenuItem>
                 <NavigationMenuLink
-                  href="/accommodation"
+                  href="/stay"
                   className={cn(
                     navigationMenuTriggerStyle(),
                     "flex items-center h-10 px-4 text-muted-foreground hover:text-yellow-600 hover:border-b-2 hover:border-yellow-600 transition-all dark:hover:text-yellow-400 dark:hover:border-yellow-400"
@@ -193,7 +195,7 @@ export default function DahabTourismNavbar() {
               {/* Dine */}
               <NavigationMenuItem>
                 <NavigationMenuLink
-                  href="/dining"
+                  href="/dine"
                   className={cn(
                     navigationMenuTriggerStyle(),
                     "flex items-center h-10 px-4 text-muted-foreground hover:text-yellow-600 hover:border-b-2 hover:border-yellow-600 transition-all dark:hover:text-yellow-400 dark:hover:border-yellow-400"
@@ -210,7 +212,7 @@ export default function DahabTourismNavbar() {
               {/* Plan Trip */}
               <NavigationMenuItem>
                 <NavigationMenuLink
-                  href="/plan-trip"
+                  href="/plantrip"
                   className={cn(
                     navigationMenuTriggerStyle(),
                     "flex items-center h-10 px-4 text-muted-foreground hover:text-yellow-600 hover:border-b-2 hover:border-yellow-600 transition-all dark:hover:text-yellow-400 dark:hover:border-yellow-400"
@@ -345,34 +347,48 @@ export default function DahabTourismNavbar() {
                         </AccordionContent>
                       </AccordionItem>
                     </Accordion>
-
-                    {/* Other Navigation Items */}
-                    <Button
-                      variant="ghost"
-                      className="w-full justify-start h-12 text-gray-700 hover:text-yellow-600 hover:bg-yellow-50"
-                      onClick={handleNavItemClick}
-                    >
-                      <Bed className="mr-3 h-5 w-5" />
-                      Stay
-                    </Button>
-
-                    <Button
-                      variant="ghost"
-                      className="w-full justify-start h-12 text-gray-700 hover:text-yellow-600 hover:bg-yellow-50"
-                      onClick={handleNavItemClick}
-                    >
-                      <Utensils className="mr-3 h-5 w-5" />
-                      Dine
-                    </Button>
-
-                    <Button
-                      variant="ghost"
-                      className="w-full justify-start h-12 text-gray-700 hover:text-yellow-600 hover:bg-yellow-50"
-                      onClick={handleNavItemClick}
-                    >
-                      <Calendar className="mr-3 h-5 w-5" />
-                      Plan Trip
-                    </Button>
+                    <Link to="/">
+                      {/* Other Navigation Items */}
+                      <Button
+                        variant="ghost"
+                        className="w-full justify-start h-12 text-gray-700 hover:text-yellow-600 hover:bg-yellow-50"
+                        onClick={handleNavItemClick}
+                      >
+                        <HomeIcon lassName="mr-3 h-5 w-5" />
+                        Home
+                      </Button>
+                    </Link>
+                    <Link to="/stay">
+                      {/* Other Navigation Items */}
+                      <Button
+                        variant="ghost"
+                        className="w-full justify-start h-12 text-gray-700 hover:text-yellow-600 hover:bg-yellow-50"
+                        onClick={handleNavItemClick}
+                      >
+                        <Bed className="mr-3 h-5 w-5" />
+                        Stay
+                      </Button>
+                    </Link>
+                    <Link to="/dine">
+                      <Button
+                        variant="ghost"
+                        className="w-full justify-start h-12 text-gray-700 hover:text-yellow-600 hover:bg-yellow-50"
+                        onClick={handleNavItemClick}
+                      >
+                        <Utensils className="mr-3 h-5 w-5" />
+                        Dine
+                      </Button>
+                    </Link>
+                    <Link to="/plantrip">
+                      <Button
+                        variant="ghost"
+                        className="w-full justify-start h-12 text-gray-700 hover:text-yellow-600 hover:bg-yellow-50"
+                        onClick={handleNavItemClick}
+                      >
+                        <Calendar className="mr-3 h-5 w-5" />
+                        Plan Trip
+                      </Button>
+                    </Link>
                   </div>
                 </div>
 
