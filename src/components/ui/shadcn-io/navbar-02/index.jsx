@@ -13,40 +13,42 @@ import {
   Menu,
   X,
   ChevronDown,
-  HomeIcon,
+  Home as HomeIcon,
+  Search,
+  Mail,
+  Star,
+  Users,
+  Info,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import {
-  NavigationMenu,
-  NavigationMenuContent,
-  NavigationMenuItem,
-  NavigationMenuLink,
-  NavigationMenuList,
-  NavigationMenuTrigger,
-  navigationMenuTriggerStyle,
-} from "@/components/ui/navigation-menu";
+  Sheet,
+  SheetClose,
+  SheetContent,
+  SheetDescription,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from "@/components/ui/sheet";
 import {
-  Drawer,
-  DrawerClose,
-  DrawerContent,
-  DrawerDescription,
-  DrawerFooter,
-  DrawerHeader,
-  DrawerTitle,
-  DrawerTrigger,
-} from "@/components/ui/drawer";
-import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-} from "@/components/ui/accordion";
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from "@/components/ui/collapsible";
+import { Separator } from "@/components/ui/separator";
 import Logo from "@/icons/Logo";
 import { cn } from "@/lib/utils";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { Link } from "react-router-dom";
+
 export default function DahabTourismNavbar() {
-  const [isMobileDrawerOpen, setIsMobileDrawerOpen] = React.useState(false);
+  const [isSheetOpen, setIsSheetOpen] = React.useState(false);
+  const [searchQuery, setSearchQuery] = React.useState("");
+  const [desktopSearchQuery, setDesktopSearchQuery] = React.useState("");
+  const [destinationsOpen, setDestinationsOpen] = React.useState(false);
+  const [experiencesOpen, setExperiencesOpen] = React.useState(false);
+  const [isSearchFocused, setIsSearchFocused] = React.useState(false);
 
   const destinations = [
     {
@@ -96,324 +98,414 @@ export default function DahabTourismNavbar() {
     },
   ];
 
-  const handleNavItemClick = () => {
-    setIsMobileDrawerOpen(false);
+  const handleLinkClick = () => {
+    setIsSheetOpen(false);
+    setDestinationsOpen(false);
+    setExperiencesOpen(false);
+  };
+
+  const handleSearch = (e, isDesktop = false) => {
+    e.preventDefault();
+    const query = isDesktop ? desktopSearchQuery : searchQuery;
+    // Handle search logic here
+    console.log("Searching for:", query);
+    if (!isDesktop) {
+      setIsSheetOpen(false);
+    }
+    // You can add navigation to search results page here
+    // navigate(`/search?q=${query}`);
+  };
+
+  const handleDesktopSearch = (e) => {
+    e.preventDefault();
+    handleSearch(e, true);
   };
 
   return (
-    <div className="w-full border-b bg-background/95 backdrop-blur-sm sticky top-0 z-50 shadow-sm border-border">
-      <div className=" flex h-14 items-center justify-between px-4">
-        <Link to="/">
-          {/* Logo */}
+    <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+      <div className="container flex h-16 max-w-screen-2xl items-center justify-between px-4">
+        {/* Logo */}
+        <Link to="/" className="flex items-center space-x-2">
           <Logo />
         </Link>
-        {/* Desktop Navigation */}
-        <div className="hidden lg:flex items-center space-x-8">
-          <NavigationMenu>
-            <NavigationMenuList className="flex items-center space-x-4">
-              {/* Destinations */}
-              <NavigationMenuItem>
-                <NavigationMenuTrigger className="flex items-center h-10 px-4 text-muted-foreground hover:text-yellow-600 hover:border-b-2 hover:border-yellow-600 transition-all dark:hover:text-yellow-400 dark:hover:border-yellow-400">
-                  <MapPin className="mr-2 h-4 w-4" />
-                  Destinations
-                </NavigationMenuTrigger>
-                <NavigationMenuContent>
-                  <div className="grid gap-3 p-6 w-[600px] grid-cols-2">
-                    {destinations.map((destination) => (
-                      <NavigationMenuLink key={destination.name} asChild>
-                        <a
-                          href={destination.href}
-                          className="group block select-none space-y-1 rounded-lg p-3 hover:bg-yellow-50 transition-colors"
-                        >
-                          <div className="flex items-center gap-2">
-                            <destination.icon className="h-5 w-5 text-yellow-600" />
-                            <div className="text-sm font-medium text-gray-700 dark:text-gray-200 transition-colors duration-200 group-hover:text-yellow-600 dark:group-hover:text-yellow-400">
-                              {destination.name}
-                            </div>
-                          </div>
-                          <p className="text-sm text-gray-600 leading-tight">
-                            {destination.description}
-                          </p>
-                        </a>
-                      </NavigationMenuLink>
-                    ))}
-                  </div>
-                </NavigationMenuContent>
-              </NavigationMenuItem>
 
-              {/* Experiences */}
-              <NavigationMenuItem>
-                <NavigationMenuTrigger
-                  className="flex items-center gap-2 h-10 px-4 text-muted-foreground 
-             hover:text-yellow-600 hover:border-b-2 hover:border-yellow-600 
-             border-b-2 border-transparent transition-colors duration-200 dark:hover:text-yellow-400 dark:hover:border-yellow-400"
-                >
-                  <Camera className="mr-2 h-4 w-4" />
-                  Experiences
-                </NavigationMenuTrigger>
-                <NavigationMenuContent>
-                  <div className="grid gap-3 p-6 w-[500px]">
-                    {experiences.map((experience) => (
-                      <NavigationMenuLink key={experience.name} asChild>
-                        <a
-                          href={experience.href}
-                          className="group block select-none space-y-1 rounded-lg p-3 hover:bg-yellow-50 transition-colors"
-                        >
-                          <div className="flex items-center gap-2">
-                            <experience.icon className="h-5 w-5 text-yellow-600" />
-                            <div className="text-sm font-medium text-gray-700 dark:text-gray-200 transition-colors duration-200 group-hover:text-yellow-600 dark:group-hover:text-yellow-400">
-                              {experience.name}
-                            </div>
-                          </div>
-                          <p className="text-sm text-gray-600 leading-tight">
-                            {experience.description}
-                          </p>
-                        </a>
-                      </NavigationMenuLink>
-                    ))}
-                  </div>
-                </NavigationMenuContent>
-              </NavigationMenuItem>
+        {/* Center Content - Desktop */}
+        <div className="hidden lg:flex items-center flex-1 max-w-3xl mx-8">
+          <nav className="flex items-center space-x-6 text-sm font-medium mr-8">
+            <Link
+              to="/"
+              className="text-foreground/60 transition-colors hover:text-amber-600 whitespace-nowrap"
+            >
+              Home
+            </Link>
+            <Link
+              to="/stay"
+              className="text-foreground/60 transition-colors hover:text-amber-600 whitespace-nowrap"
+            >
+              Stay
+            </Link>
+            <Link
+              to="/dine"
+              className="text-foreground/60 transition-colors hover:text-amber-600 whitespace-nowrap"
+            >
+              Dine
+            </Link>
+            <Link
+              to="/plantrip"
+              className="text-foreground/60 transition-colors hover:text-amber-600 whitespace-nowrap"
+            >
+              Plan Trip
+            </Link>
+          </nav>
 
-              {/* Stay */}
-              <NavigationMenuItem>
-                <NavigationMenuLink
-                  href="/stay"
-                  className={cn(
-                    navigationMenuTriggerStyle(),
-                    "flex items-center h-10 px-4 text-muted-foreground hover:text-yellow-600 hover:border-b-2 hover:border-yellow-600 transition-all dark:hover:text-yellow-400 dark:hover:border-yellow-400"
-                  )}
-                >
-                  <Bed
-                    className="mr-2 h-5 w-5 text-yellow-600 shrink-0"
-                    strokeWidth={2}
-                  />
-                  Stay
-                </NavigationMenuLink>
-              </NavigationMenuItem>
-
-              {/* Dine */}
-              <NavigationMenuItem>
-                <NavigationMenuLink
-                  href="/dine"
-                  className={cn(
-                    navigationMenuTriggerStyle(),
-                    "flex items-center h-10 px-4 text-muted-foreground hover:text-yellow-600 hover:border-b-2 hover:border-yellow-600 transition-all dark:hover:text-yellow-400 dark:hover:border-yellow-400"
-                  )}
-                >
-                  <Utensils
-                    className="mr-2 h-5 w-5 text-yellow-600 shrink-0"
-                    strokeWidth={2}
-                  />
-                  Dine
-                </NavigationMenuLink>
-              </NavigationMenuItem>
-
-              {/* Plan Trip */}
-              <NavigationMenuItem>
-                <NavigationMenuLink
-                  href="/plantrip"
-                  className={cn(
-                    navigationMenuTriggerStyle(),
-                    "flex items-center h-10 px-4 text-muted-foreground hover:text-yellow-600 hover:border-b-2 hover:border-yellow-600 transition-all dark:hover:text-yellow-400 dark:hover:border-yellow-400"
-                  )}
-                >
-                  <Calendar
-                    className="mr-2 h-5 w-5 text-yellow-600 shrink-0"
-                    strokeWidth={2}
-                  />
-                  Plan Trip
-                </NavigationMenuLink>
-              </NavigationMenuItem>
-            </NavigationMenuList>
-          </NavigationMenu>
+          {/* Desktop Search Bar */}
+          <form
+            onSubmit={handleDesktopSearch}
+            className="relative flex-1 max-w-sm"
+          >
+            <div
+              className={cn(
+                "relative transition-all duration-200",
+                isSearchFocused && "scale-105"
+              )}
+            >
+              <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+              <Input
+                placeholder="Search destinations..."
+                value={desktopSearchQuery}
+                onChange={(e) => setDesktopSearchQuery(e.target.value)}
+                onFocus={() => setIsSearchFocused(true)}
+                onBlur={() => setIsSearchFocused(false)}
+                className="pl-9 pr-4 h-9 bg-background/60 border-amber-200/50 focus:border-amber-400 focus:ring-2 focus:ring-amber-400/20 transition-all"
+              />
+            </div>
+          </form>
         </div>
 
-        {/* Desktop Actions */}
-        <div className="hidden lg:flex items-center gap-3">
-          <ThemeToggle />
-          <Button
-            variant="ghost"
-            size="sm"
-            className="text-muted-foreground hover:text-yellow-600 dark:hover:text-yellow-400"
-          >
-            <Phone className="mr-2 h-4 w-4" />
-            Contact
-          </Button>
+        {/* Right Actions */}
+        <div className="flex items-center space-x-3">
+          <div className="hidden sm:block">
+            <ThemeToggle />
+          </div>
+
           <Button
             size="sm"
-            className="bg-yellow-600 hover:bg-yellow-700 text-white px-6 dark:bg-yellow-500 dark:hover:bg-yellow-600"
+            className="hidden sm:inline-flex bg-gradient-to-r from-amber-600 to-orange-500 text-white hover:from-amber-700 hover:to-orange-600 transition-all shadow-lg shadow-amber-500/25"
           >
             Book Now
           </Button>
-        </div>
 
-        {/* Mobile Menu Drawer */}
-        <div className="lg:hidden flex items-center gap-3">
-          <ThemeToggle />
-          <Drawer
-            direction="right"
-            open={isMobileDrawerOpen}
-            onOpenChange={setIsMobileDrawerOpen}
-          >
-            <DrawerTrigger asChild>
-              <Button variant="ghost" size="sm">
-                <Menu className="h-6 w-6" />
+          {/* Universal Menu Sheet */}
+          <Sheet open={isSheetOpen} onOpenChange={setIsSheetOpen}>
+            <SheetTrigger asChild>
+              <Button
+                variant="ghost"
+                size="sm"
+                className="h-9 w-9 p-0 hover:bg-amber-50 hover:text-amber-600 transition-colors"
+              >
+                <Menu className="h-5 w-5" />
+                <span className="sr-only">Open menu</span>
               </Button>
-            </DrawerTrigger>
+            </SheetTrigger>
 
-            <DrawerContent className="h-full w-80 max-w-[85vw]">
+            <SheetContent
+              side="right"
+              className="w-full sm:w-[400px] p-0 overflow-y-auto border-l-2 border-amber-100"
+              // Remove the close button from SheetContent to avoid duplicate X
+              showCloseButton={false}
+            >
               <div className="flex flex-col h-full">
-                <DrawerHeader className="text-left border-b">
+                {/* Header */}
+                <SheetHeader className="px-6 py-5 border-b bg-gradient-to-br from-amber-50 via-orange-50 to-amber-50 dark:from-amber-950/30 dark:via-orange-950/20 dark:to-amber-950/30">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center space-x-3">
                       <div className="relative">
-                        <Waves className="h-6 w-6 text-yellow-600" />
-                        <div className="absolute -top-1 -right-1 w-2 h-2 bg-orange-400 rounded-full"></div>
+                        <div className="absolute inset-0 bg-gradient-to-br from-amber-400 to-orange-500 rounded-lg blur-md opacity-60"></div>
+                        <div className="relative bg-gradient-to-br from-amber-500 to-orange-600 p-2 rounded-lg shadow-lg">
+                          <Waves className="h-6 w-6 text-white" />
+                        </div>
                       </div>
-                      <DrawerTitle className="text-lg font-bold text-gray-900 dark:text-white">
-                        Dahab
-                      </DrawerTitle>
+                      <div>
+                        <SheetTitle className="text-xl font-bold text-foreground">
+                          Dahab Tourism
+                        </SheetTitle>
+                        <SheetDescription className="text-amber-600/80 font-medium text-xs">
+                          Red Sea Paradise • Egypt
+                        </SheetDescription>
+                      </div>
                     </div>
-                    <DrawerClose asChild>
-                      <Button variant="ghost" size="sm">
-                        <X className="h-5 w-5" />
-                      </Button>
-                    </DrawerClose>
+                    <SheetClose asChild></SheetClose>
                   </div>
-                  <DrawerDescription className="text-yellow-600 font-medium">
-                    Red Sea Paradise
-                  </DrawerDescription>
-                </DrawerHeader>
+                </SheetHeader>
 
-                {/* Mobile Navigation Items */}
-                <div className="flex-1 overflow-y-auto">
-                  <div className="p-4 space-y-2">
-                    {/* Destinations Dropdown */}
-                    <Accordion type="single" collapsible className="w-full">
-                      {/* Destinations */}
-                      <AccordionItem value="destinations">
-                        <AccordionTrigger className="flex items-center justify-between text-gray-700 hover:text-yellow-600 [&>svg:last-child]:hidden">
-                          <div className="flex items-center gap-3">
-                            <MapPin className="h-5 w-5 text-yellow-600" />
-                            <span>Destinations</span>
-                          </div>
-                          <ChevronDown className="ml-auto h-4 w-4 transition-transform duration-200 group-data-[state=open]:rotate-180" />
-                        </AccordionTrigger>
-                        <AccordionContent>
-                          <div className="space-y-2 pl-6">
-                            {destinations.map((destination) => {
-                              const Icon = destination.icon;
-                              return (
-                                <button
-                                  key={destination.name}
-                                  onClick={handleNavItemClick}
-                                  className="flex w-full items-center gap-3 p-2 text-sm rounded-lg hover:bg-yellow-50 text-gray-700 dark:text-gray-200 hover:text-yellow-600 dark:hover:text-yellow-400"
-                                >
-                                  <Icon className="h-5 w-5 text-yellow-600" />
-                                  <span>{destination.name}</span>
-                                </button>
-                              );
-                            })}
-                          </div>
-                        </AccordionContent>
-                      </AccordionItem>
+                {/* Search */}
+                <div className="px-6 py-4 border-b bg-gradient-to-r from-amber-50/50 to-orange-50/50 dark:from-amber-950/10 dark:to-orange-950/10">
+                  <form
+                    onSubmit={(e) => handleSearch(e, false)}
+                    className="relative"
+                  >
+                    <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-amber-600/60" />
+                    <Input
+                      placeholder="Search destinations, activities..."
+                      value={searchQuery}
+                      onChange={(e) => setSearchQuery(e.target.value)}
+                      className="pl-10 pr-4 bg-background border-amber-200 focus:border-amber-400 focus:ring-2 focus:ring-amber-400/20"
+                    />
+                  </form>
+                </div>
 
-                      {/* Experiences */}
-                      <AccordionItem value="experiences">
-                        <AccordionTrigger className="flex items-center justify-between text-gray-700 hover:text-yellow-600 [&>svg:last-child]:hidden">
-                          <div className="flex items-center gap-3">
-                            <Camera className="h-5 w-5 text-yellow-600" />
-                            <span>Experiences</span>
-                          </div>
-                          <ChevronDown className="ml-auto h-4 w-4 transition-transform duration-200 group-data-[state=open]:rotate-180" />
-                        </AccordionTrigger>
-                        <AccordionContent>
-                          <div className="space-y-2 pl-6">
-                            {experiences.map((experience) => {
-                              const Icon = experience.icon;
-                              return (
-                                <button
-                                  key={experience.name}
-                                  onClick={handleNavItemClick}
-                                  className="flex w-full items-center gap-3 p-2 text-sm rounded-lg hover:bg-yellow-50 text-gray-700 dark:text-gray-200 hover:text-yellow-600 dark:hover:text-yellow-400"
-                                >
-                                  <Icon className="h-5 w-5 text-yellow-600" />
-                                  <span>{experience.name}</span>
-                                </button>
-                              );
-                            })}
-                          </div>
-                        </AccordionContent>
-                      </AccordionItem>
-                    </Accordion>
-                    <Link to="/">
-                      {/* Other Navigation Items */}
+                {/* Navigation Content */}
+                <div className="flex-1 px-6 py-6 space-y-3">
+                  {/* Quick Actions - Mobile */}
+                  <div className="lg:hidden space-y-3 pb-4 border-b">
+                    <Button
+                      size="sm"
+                      className="w-full bg-gradient-to-r from-amber-600 to-orange-500 text-white hover:from-amber-700 hover:to-orange-600 transition-all shadow-lg shadow-amber-500/25"
+                      onClick={handleLinkClick}
+                    >
+                      Book Your Adventure
+                    </Button>
+                    <div className="flex justify-center">
+                      <ThemeToggle />
+                    </div>
+                  </div>
+
+                  {/* Main Navigation */}
+                  <div className="space-y-1">
+                    <Link to="/" onClick={handleLinkClick}>
                       <Button
                         variant="ghost"
-                        className="w-full justify-start h-12 text-gray-700 hover:text-yellow-600 hover:bg-yellow-50"
-                        onClick={handleNavItemClick}
+                        className="w-full justify-start h-12 text-base hover:bg-gradient-to-r hover:from-amber-50 hover:to-orange-50 hover:text-amber-700 transition-all group"
                       >
-                        <HomeIcon lassName="mr-3 h-5 w-5" />
+                        <HomeIcon className="mr-3 h-5 w-5 group-hover:text-amber-600" />
                         Home
                       </Button>
                     </Link>
-                    <Link to="/stay">
-                      {/* Other Navigation Items */}
+
+                    {/* Destinations Collapsible */}
+                    <Collapsible
+                      open={destinationsOpen}
+                      onOpenChange={setDestinationsOpen}
+                    >
+                      <CollapsibleTrigger asChild>
+                        <Button
+                          variant="ghost"
+                          className="w-full justify-between h-12 text-base hover:bg-gradient-to-r hover:from-amber-50 hover:to-orange-50 hover:text-amber-700 transition-all group"
+                        >
+                          <div className="flex items-center">
+                            <MapPin className="mr-3 h-5 w-5 group-hover:text-amber-600" />
+                            Destinations
+                          </div>
+                          <ChevronDown
+                            className={cn(
+                              "h-4 w-4 transition-transform text-amber-600/60",
+                              destinationsOpen && "rotate-180"
+                            )}
+                          />
+                        </Button>
+                      </CollapsibleTrigger>
+                      <CollapsibleContent className="space-y-1 mt-2 ml-4 border-l-2 border-amber-100 pl-4">
+                        {destinations.map((destination) => {
+                          const Icon = destination.icon;
+                          return (
+                            <Link
+                              key={destination.name}
+                              to={destination.href}
+                              onClick={handleLinkClick}
+                            >
+                              <Button
+                                variant="ghost"
+                                className="w-full justify-start h-10 text-sm text-muted-foreground hover:bg-amber-50/50 hover:text-amber-600 transition-all"
+                              >
+                                <Icon className="mr-3 h-4 w-4" />
+                                <div className="text-left">
+                                  <div className="font-medium">
+                                    {destination.name}
+                                  </div>
+                                  <div className="text-xs text-muted-foreground/70">
+                                    {destination.description}
+                                  </div>
+                                </div>
+                              </Button>
+                            </Link>
+                          );
+                        })}
+                      </CollapsibleContent>
+                    </Collapsible>
+
+                    {/* Experiences Collapsible */}
+                    <Collapsible
+                      open={experiencesOpen}
+                      onOpenChange={setExperiencesOpen}
+                    >
+                      <CollapsibleTrigger asChild>
+                        <Button
+                          variant="ghost"
+                          className="w-full justify-between h-12 text-base hover:bg-gradient-to-r hover:from-amber-50 hover:to-orange-50 hover:text-amber-700 transition-all group"
+                        >
+                          <div className="flex items-center">
+                            <Camera className="mr-3 h-5 w-5 group-hover:text-amber-600" />
+                            Experiences
+                          </div>
+                          <ChevronDown
+                            className={cn(
+                              "h-4 w-4 transition-transform text-amber-600/60",
+                              experiencesOpen && "rotate-180"
+                            )}
+                          />
+                        </Button>
+                      </CollapsibleTrigger>
+                      <CollapsibleContent className="space-y-1 mt-2 ml-4 border-l-2 border-amber-100 pl-4">
+                        {experiences.map((experience) => {
+                          const Icon = experience.icon;
+                          return (
+                            <Link
+                              key={experience.name}
+                              to={experience.href}
+                              onClick={handleLinkClick}
+                            >
+                              <Button
+                                variant="ghost"
+                                className="w-full justify-start h-10 text-sm text-muted-foreground hover:bg-amber-50/50 hover:text-amber-600 transition-all"
+                              >
+                                <Icon className="mr-3 h-4 w-4" />
+                                <div className="text-left">
+                                  <div className="font-medium">
+                                    {experience.name}
+                                  </div>
+                                  <div className="text-xs text-muted-foreground/70">
+                                    {experience.description}
+                                  </div>
+                                </div>
+                              </Button>
+                            </Link>
+                          );
+                        })}
+                      </CollapsibleContent>
+                    </Collapsible>
+
+                    <Link to="/stay" onClick={handleLinkClick}>
                       <Button
                         variant="ghost"
-                        className="w-full justify-start h-12 text-gray-700 hover:text-yellow-600 hover:bg-yellow-50"
-                        onClick={handleNavItemClick}
+                        className="w-full justify-start h-12 text-base hover:bg-gradient-to-r hover:from-amber-50 hover:to-orange-50 hover:text-amber-700 transition-all group"
                       >
-                        <Bed className="mr-3 h-5 w-5" />
+                        <Bed className="mr-3 h-5 w-5 group-hover:text-amber-600" />
                         Stay
                       </Button>
                     </Link>
-                    <Link to="/dine">
+
+                    <Link to="/dine" onClick={handleLinkClick}>
                       <Button
                         variant="ghost"
-                        className="w-full justify-start h-12 text-gray-700 hover:text-yellow-600 hover:bg-yellow-50"
-                        onClick={handleNavItemClick}
+                        className="w-full justify-start h-12 text-base hover:bg-gradient-to-r hover:from-amber-50 hover:to-orange-50 hover:text-amber-700 transition-all group"
                       >
-                        <Utensils className="mr-3 h-5 w-5" />
+                        <Utensils className="mr-3 h-5 w-5 group-hover:text-amber-600" />
                         Dine
                       </Button>
                     </Link>
-                    <Link to="/plantrip">
+
+                    <Link to="/plantrip" onClick={handleLinkClick}>
                       <Button
                         variant="ghost"
-                        className="w-full justify-start h-12 text-gray-700 hover:text-yellow-600 hover:bg-yellow-50"
-                        onClick={handleNavItemClick}
+                        className="w-full justify-start h-12 text-base hover:bg-gradient-to-r hover:from-amber-50 hover:to-orange-50 hover:text-amber-700 transition-all group"
                       >
-                        <Calendar className="mr-3 h-5 w-5" />
+                        <Calendar className="mr-3 h-5 w-5 group-hover:text-amber-600" />
                         Plan Trip
                       </Button>
                     </Link>
                   </div>
+
+                  <Separator className="my-4 bg-gradient-to-r from-amber-100 via-orange-100 to-amber-100" />
+
+                  {/* Additional Links */}
+                  <div className="space-y-1">
+                    <h3 className="font-semibold text-xs text-amber-600/70 uppercase tracking-wider px-3 mb-2">
+                      More
+                    </h3>
+
+                    <Link to="/about" onClick={handleLinkClick}>
+                      <Button
+                        variant="ghost"
+                        className="w-full justify-start h-10 text-sm hover:bg-amber-50/50 hover:text-amber-600 transition-all"
+                      >
+                        <Info className="mr-3 h-4 w-4" />
+                        About Dahab
+                      </Button>
+                    </Link>
+
+                    <Link to="/reviews" onClick={handleLinkClick}>
+                      <Button
+                        variant="ghost"
+                        className="w-full justify-start h-10 text-sm hover:bg-amber-50/50 hover:text-amber-600 transition-all"
+                      >
+                        <Star className="mr-3 h-4 w-4" />
+                        Reviews
+                      </Button>
+                    </Link>
+
+                    <Link to="/groups" onClick={handleLinkClick}>
+                      <Button
+                        variant="ghost"
+                        className="w-full justify-start h-10 text-sm hover:bg-amber-50/50 hover:text-amber-600 transition-all"
+                      >
+                        <Users className="mr-3 h-4 w-4" />
+                        Group Tours
+                      </Button>
+                    </Link>
+                  </div>
+
+                  <Separator className="my-4 bg-gradient-to-r from-amber-100 via-orange-100 to-amber-100" />
+
+                  {/* Contact Section */}
+                  <div className="space-y-1">
+                    <h3 className="font-semibold text-xs text-amber-600/70 uppercase tracking-wider px-3 mb-2">
+                      Get In Touch
+                    </h3>
+
+                    <Link to="/contact" onClick={handleLinkClick}>
+                      <Button
+                        variant="ghost"
+                        className="w-full justify-start h-10 text-sm hover:bg-amber-50/50 hover:text-amber-600 transition-all"
+                      >
+                        <Phone className="mr-3 h-4 w-4" />
+                        +20 123 456 789
+                      </Button>
+                    </Link>
+
+                    <Button
+                      variant="ghost"
+                      className="w-full justify-start h-10 text-sm hover:bg-amber-50/50 hover:text-amber-600 transition-all"
+                      onClick={() =>
+                        (window.location.href = "mailto:info@dahabtourism.com")
+                      }
+                    >
+                      <Mail className="mr-3 h-4 w-4" />
+                      info@dahabtourism.com
+                    </Button>
+                  </div>
                 </div>
 
-                {/* Mobile Footer Actions */}
-                <DrawerFooter className="border-t space-y-2  ">
-                  <Button
-                    variant="outline"
-                    className="w-full"
-                    onClick={handleNavItemClick}
-                  >
-                    <Phone className="mr-3 h-5 w-5 self-center " />
-                    Contact
-                  </Button>
-                  <Button
-                    className="w-full bg-yellow-600 hover:bg-yellow-700 text-white"
-                    onClick={handleNavItemClick}
-                  >
-                    Book Now
-                  </Button>
-                </DrawerFooter>
+                {/* Footer */}
+                <div className="border-t bg-gradient-to-br from-amber-50 via-orange-50 to-amber-50 dark:from-amber-950/30 dark:via-orange-950/20 dark:to-amber-950/30 px-6 py-4 mt-auto">
+                  <div className="text-center">
+                    <p className="font-bold text-sm bg-gradient-to-r from-amber-600 to-orange-600 bg-clip-text text-transparent">
+                      Experience Dahab
+                    </p>
+                    <p className="text-xs text-muted-foreground mt-1">
+                      Your gateway to Red Sea adventures
+                    </p>
+                    <div className="flex justify-center mt-3 space-x-1">
+                      <div className="w-8 h-1 bg-gradient-to-r from-amber-400 to-amber-500 rounded-full"></div>
+                      <div className="w-8 h-1 bg-gradient-to-r from-amber-500 to-orange-500 rounded-full"></div>
+                      <div className="w-8 h-1 bg-gradient-to-r from-orange-500 to-orange-400 rounded-full"></div>
+                    </div>
+                  </div>
+                </div>
               </div>
-            </DrawerContent>
-          </Drawer>
+            </SheetContent>
+          </Sheet>
         </div>
       </div>
-    </div>
+    </header>
   );
 }

@@ -55,7 +55,7 @@ export default function Home() {
           transition={{ duration: 1.2, ease: "easeOut" }}
         >
           <motion.img
-            src="/hero.png"
+            src={`${import.meta.env.BASE_URL}hero.png`}
             alt="Dahab"
             className="w-full h-full object-cover"
             initial={{ scale: 1.2 }}
@@ -156,7 +156,7 @@ export default function Home() {
             <MarqueeItem>
               <motion.div className="relative group">
                 <motion.img
-                  src="/image1.jpeg"
+                  src={`${import.meta.env.BASE_URL}image1.jpeg`}
                   alt="Blue Lagoon in Dahab"
                   className="h-64 w-auto rounded-xl object-cover shadow-lg"
                   whileHover={{ scale: 1.05, rotateY: 5 }}
@@ -220,7 +220,7 @@ export default function Home() {
             <MarqueeItem>
               <motion.div className="relative group">
                 <motion.img
-                  src="/image2.jpeg"
+                  src={`${import.meta.env.BASE_URL}image2.jpeg`}
                   alt="Sinai mountains sunset"
                   className="h-64 w-auto rounded-xl object-cover shadow-lg"
                   whileHover={{ scale: 1.05, rotateY: 5 }}
@@ -236,7 +236,7 @@ export default function Home() {
             <MarqueeItem>
               <motion.div className="relative group">
                 <motion.img
-                  src="/image3.jpeg"
+                  src={`${import.meta.env.BASE_URL}image3.jpeg`}
                   alt="Blue Hole diving"
                   className="h-64 w-auto rounded-xl object-cover shadow-lg"
                   whileHover={{ scale: 1.05, rotateY: 5 }}
@@ -252,7 +252,7 @@ export default function Home() {
             <MarqueeItem>
               <motion.div className="relative group">
                 <motion.img
-                  src="/image4.jpeg"
+                  src={`${import.meta.env.BASE_URL}image4.jpeg`}
                   alt="Bedouin beach camp"
                   className="h-64 w-auto rounded-xl object-cover shadow-lg"
                   whileHover={{ scale: 1.05, rotateY: 5 }}
@@ -303,7 +303,7 @@ export default function Home() {
               title="Mount Sinai Trek"
               subtitle="Sacred Mountain"
               description="Climb the legendary Mount Sinai and witness one of the world's most spectacular sunrises from this historically significant peak."
-              image="/image2.jpeg"
+              image={`${import.meta.env.BASE_URL}image2.jpeg`}
               badge="Spiritual Journey"
               rating="4.8"
               location="Sinai Peninsula"

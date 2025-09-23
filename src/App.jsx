@@ -1,5 +1,5 @@
 import "./App.css";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { HashRouter, Routes, Route } from "react-router-dom"; // Remove BrowserRouter, keep only HashRouter
 import Home from "./pages/Home";
 import Stay from "./pages/Stay";
 import Dine from "./pages/Dine";
@@ -15,7 +15,7 @@ function App() {
       enableSystem
       disableTransitionOnChange
     >
-      <BrowserRouter>
+      <HashRouter> {/* Change from BrowserRouter to HashRouter */}
         <DefaultLayout>
           <div className="App">
             <Routes>
@@ -26,7 +26,7 @@ function App() {
             </Routes>
           </div>
         </DefaultLayout>
-      </BrowserRouter>
+      </HashRouter>
     </ThemeProvider>
   );
 }
