@@ -1,8 +1,8 @@
 import "./App.css";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
-import Home from "./pages/Home";
+import { HashRouter, Routes, Route } from "react-router-dom"; 
 import Stay from "./pages/Stay";
 import Dine from "./pages/Dine";
+import Home from "./pages/Home";
 import PlantTrip from "./pages/PlanTrip";
 import DefaultLayout from "./layouts/DefaultLayout";
 import { ThemeProvider } from "./components/theme-provider";
@@ -15,7 +15,7 @@ function App() {
       enableSystem
       disableTransitionOnChange
     >
-      <BrowserRouter>
+      <HashRouter> 
         <DefaultLayout>
           <div className="App">
             <Routes>
@@ -26,7 +26,7 @@ function App() {
             </Routes>
           </div>
         </DefaultLayout>
-      </BrowserRouter>
+      </HashRouter>
     </ThemeProvider>
   );
 }

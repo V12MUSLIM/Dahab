@@ -1,11 +1,12 @@
 import Navbar02 from "../components/ui/shadcn-io/navbar-02";
+import Footer from "../components/sections/Footer";
 // eslint-disable-next-line no-unused-vars
 import { motion } from "framer-motion";
 
 export default function DefaultLayout({ children }) {
-  // Add children parameter
   return (
     <>
+      {/* Navbar */}
       <motion.div
         className="relative w-full"
         initial={{ opacity: 0, y: -20 }}
@@ -15,7 +16,11 @@ export default function DefaultLayout({ children }) {
         <Navbar02 />
       </motion.div>
 
-      {children}
+      {/* Page Content */}
+      <main className="min-h-screen">{children}</main>
+
+      {/* Footer */}
+      <Footer />
     </>
   );
 }
