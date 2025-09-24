@@ -218,22 +218,7 @@ export default function DahabTourismNavbar() {
                 {/* Header */}
                 <SheetHeader className="px-6 py-5 border-b bg-gradient-to-br from-amber-50 via-orange-50 to-amber-50 dark:from-amber-950/30 dark:via-orange-950/20 dark:to-amber-950/30">
                   <div className="flex items-center justify-between">
-                    <div className="flex items-center space-x-3">
-                      <div className="relative">
-                        <div className="absolute inset-0 bg-gradient-to-br from-amber-400 to-orange-500 rounded-lg blur-md opacity-60"></div>
-                        <div className="relative bg-gradient-to-br from-amber-500 to-orange-600 p-2 rounded-lg shadow-lg">
-                          <Waves className="h-6 w-6 text-white" />
-                        </div>
-                      </div>
-                      <div>
-                        <SheetTitle className="text-xl font-bold text-foreground">
-                          Dahab Tourism
-                        </SheetTitle>
-                        <SheetDescription className="text-amber-600/80 font-medium text-xs">
-                          Red Sea Paradise • Egypt
-                        </SheetDescription>
-                      </div>
-                    </div>
+                    <Logo />
                     <SheetClose asChild></SheetClose>
                   </div>
                 </SheetHeader>

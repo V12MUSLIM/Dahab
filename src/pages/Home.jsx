@@ -7,7 +7,7 @@ import TestimonialsSection from "../components/sections/TestimonialsSection";
 import FAQSection from "../components/sections/FAQSection";
 import CTASection from "../components/sections/CTASection";
 import ContactSection from "../components/sections/ContactSection";
-import Footer from "../components/sections/Footer";
+
 
 export default function Home() {
   return (
@@ -21,7 +21,7 @@ export default function Home() {
       <FAQSection />
       <CTASection />
       <ContactSection />
-      <Footer />
+  
     </div>
   );
 }
