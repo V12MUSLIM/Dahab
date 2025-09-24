@@ -7,6 +7,7 @@ import {
   CardTitle,
 } from "../ui/card";
 import { CheckCircle2 } from "lucide-react";
+// eslint-disable-next-line no-unused-vars
 import { motion } from "framer-motion";
 
 export default function PackageDealsSection() {

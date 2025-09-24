@@ -1,6 +1,7 @@
 import { Button } from "../ui/button";
 import { Badge } from "../ui/badge";
 import { ArrowRight, Phone, Sparkles, CheckCircle2 } from "lucide-react";
+// eslint-disable-next-line no-unused-vars
 import { motion } from "framer-motion";
 
 export default function CTASection() {

@@ -1,5 +1,6 @@
 import { Button } from "../ui/button";
 import { Badge } from "../ui/badge";
+// eslint-disable-next-line no-unused-vars
 import { motion } from "framer-motion";
 import {
   ArrowRight,

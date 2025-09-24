@@ -1,6 +1,7 @@
 import { Badge } from "../ui/badge";
 import { ActivityCard } from "../cardTemplates";
 import { Waves, Camera, Mountain } from "lucide-react";
+// eslint-disable-next-line no-unused-vars
 import { motion } from "framer-motion";
 
 export default function ActivitiesSection() {

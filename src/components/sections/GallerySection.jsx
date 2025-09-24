@@ -4,6 +4,7 @@ import {
   MarqueeContent,
   MarqueeItem,
 } from "../ui/shadcn-io/marquee/index";
+// eslint-disable-next-line no-unused-vars
 import { motion } from "framer-motion";
 
 export default function GallerySection() {
