@@ -1,6 +1,7 @@
 import * as React from "react";
 // eslint-disable-next-line no-unused-vars
 import { motion } from "framer-motion";
+import {Link} from "react-router-dom";
 import {
   Card,
   CardContent,
@@ -60,7 +61,8 @@ const ImageCard = ({
   price,
   buttonText = "Learn More",
   onButtonClick,
-  className 
+  className,
+  href,
 }) => (
   <motion.div
     initial={{ opacity: 0, y: 20 }}
@@ -134,12 +136,15 @@ const ImageCard = ({
             </span>
           )}
         </div>
-        <Button 
-          className="bg-yellow-600 hover:bg-yellow-700 text-white border-0"
-          onClick={onButtonClick}
-        >
-          {buttonText}
-        </Button>
+         <Link to={href}>
+            <Button 
+              className="bg-yellow-600 hover:bg-yellow-700 text-white border-0"
+              onClick={onButtonClick}
+            >
+              {buttonText}
+            </Button>
+          </Link>
+      
       </CardFooter>
     </Card>
   </motion.div>

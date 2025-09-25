@@ -22,6 +22,7 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { ArrowRight } from "lucide-react";
 import {
   Sheet,
   SheetClose,
@@ -120,7 +121,6 @@ export default function DahabTourismNavbar() {
     e.preventDefault();
     handleSearch(e, true);
   };
-
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="container flex h-16 max-w-screen-2xl items-center justify-between px-4">
@@ -155,6 +155,18 @@ export default function DahabTourismNavbar() {
               className="text-foreground/60 transition-colors hover:text-amber-600 whitespace-nowrap"
             >
               Plan Trip
+            </Link>
+            <Link
+              to="/destinations"
+              className="text-foreground/60 transition-colors hover:text-amber-600 whitespace-nowrap"
+            >
+             Destinations
+            </Link>
+            <Link
+              to="/experiences"
+              className="text-foreground/60 transition-colors hover:text-amber-600 whitespace-nowrap"
+            >
+             Experiences
             </Link>
           </nav>
 
@@ -315,6 +327,13 @@ export default function DahabTourismNavbar() {
                             </Link>
                           );
                         })}
+                        <Link to="/destinations">
+                        <Button variant="ghost"  onClick={() => setIsSheetOpen(false)} className="pt-auto text-amber-500 hover:shadow-yellow-500/25 transform hover:scale-105 transition-all duration-300 group w-full sm:w-auto">View All
+
+                        <ArrowRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />
+                        </Button>
+                        </Link>
+
                       </CollapsibleContent>
                     </Collapsible>
 
@@ -366,6 +385,15 @@ export default function DahabTourismNavbar() {
                             </Link>
                           );
                         })}
+
+                        <Link to="/experiences">
+                        <Button variant="ghost" onClick={() => setIsSheetOpen(false)} className="pt-auto text-amber-500 hover:shadow-yellow-500/25 transform hover:scale-105 transition-all duration-300 group w-full sm:w-auto">
+                        View All
+
+                        <ArrowRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />
+                        </Button>
+                        </Link>
+
                       </CollapsibleContent>
                     </Collapsible>
 
