@@ -42,8 +42,8 @@ export default function CTASection() {
             </h2>
 
             <p className="text-lg sm:text-xl text-gray-200 mb-8 max-w-2xl mx-auto">
-              Join thousands of travelers who've discovered the magic of
-              Dahab. Book now and get 20% off your first diving experience!
+              Join thousands of travelers who've discovered the magic of Dahab.
+              Book now and get 20% off your first diving experience!
             </p>
 
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-8">
