@@ -11,7 +11,6 @@ import {
   Calendar,
   Phone,
   Menu,
-  X,
   ChevronDown,
   Home as HomeIcon,
   Search,
@@ -27,9 +26,7 @@ import {
   Sheet,
   SheetClose,
   SheetContent,
-  SheetDescription,
   SheetHeader,
-  SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
 import {
@@ -223,8 +220,6 @@ export default function DahabTourismNavbar() {
             <SheetContent
               side="right"
               className="w-full sm:w-[400px] p-0 overflow-y-auto border-l-2 border-amber-100"
-              // Remove the close button from SheetContent to avoid duplicate X
-              showCloseButton={false}
             >
               <div className="flex flex-col h-full">
                 {/* Header */}

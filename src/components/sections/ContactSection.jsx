@@ -7,6 +7,7 @@ import {
   CardTitle,
 } from "../ui/card";
 import { Phone, Mail, MapPin } from "lucide-react";
+// eslint-disable-next-line no-unused-vars
 import { motion } from "framer-motion";
 
 export default function ContactSection() {
