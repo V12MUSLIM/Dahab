@@ -1,58 +1,14 @@
-import { Button } from "../ui/button";
-import { Badge } from "../ui/badge";
 import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from "../ui/card";
+  PrimaryButton,
+  SecondaryButton,
+} from "../customComponents/ButtonVarients";
+import { Badge } from "../ui/badge";
+import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
 import { CheckCircle2 } from "lucide-react";
 // eslint-disable-next-line no-unused-vars
 import { motion } from "framer-motion";
 
-export default function PackageDealsSection() {
-  const packages = [
-    {
-      title: "Adventure Seeker",
-      price: "$299",
-      duration: "3 Days",
-      features: [
-        "Blue Hole diving experience",
-        "Desert safari with Bedouin dinner",
-        "Snorkeling at Three Pools",
-        "Rock climbing session",
-        "All equipment included",
-      ],
-      popular: true,
-    },
-    {
-      title: "Relaxation Retreat",
-      price: "$249",
-      duration: "4 Days",
-      features: [
-        "Beachfront accommodation",
-        "Daily yoga sessions",
-        "Spa treatment package",
-        "Lagoon day trip",
-        "Sunset meditation",
-      ],
-      popular: false,
-    },
-    {
-      title: "Ultimate Explorer",
-      price: "$599",
-      duration: "7 Days",
-      features: [
-        "Advanced diving package",
-        "Mount Sinai overnight trek",
-        "Colored Canyon expedition",
-        "Windsurfing lessons",
-        "Photography workshop",
-      ],
-      popular: false,
-    },
-  ];
-
+export default function PackageDealsSection({ packages,badge,header,description }) {
   return (
     <motion.div
       className="w-full py-20 px-4"
@@ -64,14 +20,13 @@ export default function PackageDealsSection() {
       <div className="max-w-7xl mx-auto">
         <div className="text-center mb-12">
           <Badge className="mb-4 bg-yellow-100 dark:bg-yellow-900/30 text-yellow-800 dark:text-yellow-400 border-yellow-300 dark:border-yellow-700">
-            Special Offers
+         {badge}
           </Badge>
           <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-foreground mb-4">
-            Exclusive Package Deals
+            {header}
           </h2>
           <p className="text-lg sm:text-xl text-muted-foreground max-w-2xl mx-auto">
-            Choose from our carefully curated packages for an unforgettable
-            Dahab experience
+          {description}
           </p>
         </div>
 
@@ -97,7 +52,9 @@ export default function PackageDealsSection() {
                   </Badge>
                 )}
                 <CardHeader className="text-center pb-8 pt-8">
-                  <CardTitle className="text-xl sm:text-2xl mb-2">{pkg.title}</CardTitle>
+                  <CardTitle className="text-xl sm:text-2xl mb-2">
+                    {pkg.title}
+                  </CardTitle>
                   <div className="flex items-baseline justify-center gap-1">
                     <span className="text-3xl sm:text-4xl font-bold text-yellow-600 dark:text-yellow-500">
                       {pkg.price}
@@ -116,16 +73,12 @@ export default function PackageDealsSection() {
                       </li>
                     ))}
                   </ul>
-                  <Button
-                    className={`w-full ${
-                      pkg.popular
-                        ? "bg-gradient-to-r from-yellow-600 to-yellow-700 hover:from-yellow-700 hover:to-yellow-800 text-white"
-                        : ""
-                    }`}
-                    variant={pkg.popular ? "default" : "outline"}
-                  >
-                    Book Package
-                  </Button>
+                  {pkg.popular ? (
+                   <PrimaryButton>Book Now</PrimaryButton>
+
+                  ) : (
+                    <SecondaryButton>Book Now</SecondaryButton>
+                  )}
                 </CardContent>
               </Card>
             </motion.div>

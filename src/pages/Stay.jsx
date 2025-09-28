@@ -3,7 +3,7 @@ import {
   ImageCard,
   StatsCard,
   TestimonialCard,
-} from "@/components/cardTemplates";
+} from "@/components/customComponents/cardTemplates";
 import { MapPin, Star, Users, Calendar } from "lucide-react";
 import { Button } from "@/components/ui/button";
 

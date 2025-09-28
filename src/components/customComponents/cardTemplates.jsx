@@ -1,7 +1,7 @@
 import * as React from "react";
 // eslint-disable-next-line no-unused-vars
 import { motion } from "framer-motion";
-import {Link} from "react-router-dom";
+import { Link } from "react-router-dom";
 import {
   Card,
   CardContent,
@@ -11,7 +11,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
+import { PrimaryButton } from "./ButtonVarients";
 import { Star, MapPin, Calendar, Users } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -50,12 +50,12 @@ const DahabCard = React.forwardRef(
 DahabCard.displayName = "DahabCard";
 
 // Card with Image
-const ImageCard = ({ 
-  title, 
-  subtitle, 
-  description, 
-  image, 
-  badge, 
+const ImageCard = ({
+  title,
+  subtitle,
+  description,
+  image,
+  badge,
   rating,
   location,
   price,
@@ -88,7 +88,7 @@ const ImageCard = ({
           whileHover={{ scale: 1.05 }}
         />
         <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-        
+
         {badge && (
           <div className="absolute top-4 left-4">
             <Badge className="bg-yellow-600 hover:bg-yellow-700 text-white border-0">
@@ -96,7 +96,7 @@ const ImageCard = ({
             </Badge>
           </div>
         )}
-        
+
         {rating && (
           <div className="absolute top-4 right-4 flex items-center gap-1 bg-white/90 dark:bg-gray-900/90 backdrop-blur-sm rounded-full px-2 py-1">
             <Star className="h-3 w-3 fill-yellow-400 text-yellow-400" />
@@ -104,7 +104,7 @@ const ImageCard = ({
           </div>
         )}
       </div>
-      
+
       <CardHeader className="pb-3 px-6 pt-4">
         {subtitle && (
           <p className="text-sm font-medium text-yellow-600 dark:text-yellow-400 mb-1">
@@ -121,13 +121,13 @@ const ImageCard = ({
           </div>
         )}
       </CardHeader>
-      
+
       <CardContent className="pb-4 px-6">
         <CardDescription className="text-muted-foreground leading-relaxed">
           {description}
         </CardDescription>
       </CardContent>
-      
+
       <CardFooter className="flex items-center justify-between pt-0 px-6 pb-6">
         <div className="flex items-center gap-2">
           {price && (
@@ -136,15 +136,9 @@ const ImageCard = ({
             </span>
           )}
         </div>
-         <Link to={href}>
-            <Button 
-              className="bg-yellow-600 hover:bg-yellow-700 text-white border-0"
-              onClick={onButtonClick}
-            >
-              {buttonText}
-            </Button>
-          </Link>
-      
+        <Link to={href}>
+          <PrimaryButton onClick={onButtonClick}>{buttonText}</PrimaryButton>
+        </Link>
       </CardFooter>
     </Card>
   </motion.div>
@@ -208,12 +202,7 @@ const ActivityCard = ({
           <span className="text-sm text-muted-foreground ml-1">per person</span>
         </div>
       )}
-      <Button
-        className="w-full bg-yellow-600 hover:bg-yellow-700 text-white border-0"
-        onClick={onBookClick}
-      >
-        Book Now
-      </Button>
+      <PrimaryButton onClick={onBookClick}>Book now</PrimaryButton>
     </CardFooter>
   </DahabCard>
 );

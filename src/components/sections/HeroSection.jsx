@@ -1,16 +1,19 @@
-import { Button } from "../ui/button";
 import { Badge } from "../ui/badge";
+import { Link } from "react-router-dom";
 // eslint-disable-next-line no-unused-vars
 import { motion } from "framer-motion";
 import {
-  ArrowRight,
-  Calendar,
   Sparkles,
   Sun,
   Anchor,
   Star,
+  ArrowRight,
+  Calendar,
 } from "lucide-react";
-
+import {
+  PrimaryButton,
+  SecondaryButton,
+} from "../customComponents/ButtonVarients";
 export default function HeroSection() {
   // Animation variants
   const fadeInUp = {
@@ -112,30 +115,15 @@ export default function HeroSection() {
           animate="animate"
         >
           <motion.div variants={scaleIn}>
-            <Button
-              size="lg"
-              className="bg-gradient-to-r from-yellow-600 to-yellow-700 hover:from-yellow-700 hover:to-yellow-800 dark:from-yellow-600 dark:to-yellow-700 dark:hover:from-yellow-700 dark:hover:to-yellow-800 text-white font-semibold px-8 py-6 shadow-2xl hover:shadow-yellow-500/25 transform hover:scale-105 transition-all duration-300 border-0 group w-full sm:w-auto"
-              whileHover={{ scale: 1.05, y: -2 }}
-              whileTap={{ scale: 0.98 }}
-            >
-              Explore Now
-              <ArrowRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />
-            </Button>
+            <Link to="/experiences">
+              <PrimaryButton icon={ArrowRight}>Explore All</PrimaryButton>
+            </Link>
           </motion.div>
 
           <motion.div variants={scaleIn}>
-            <Button
-              size="lg"
-              variant="outline"
-              className="text-gray-900 border border-gray-300 bg-white/40 hover:bg-white/60
-               dark:text-white dark:border-white/40 dark:bg-white/10 dark:hover:bg-white/20
-               backdrop-blur-md font-semibold px-8 py-6 transform hover:scale-105 transition-all duration-300 w-full sm:w-auto"
-              whileHover={{ scale: 1.05, y: -2 }}
-              whileTap={{ scale: 0.98 }}
-            >
-              <Calendar className="mr-2 w-5 h-5" />
-              Plan Your Trip
-            </Button>
+            <Link to="/plantrip">
+              <SecondaryButton icon={Calendar}>Plan Your Trip</SecondaryButton>
+            </Link>
           </motion.div>
         </motion.div>
 

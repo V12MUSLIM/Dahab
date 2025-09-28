@@ -1,4 +1,4 @@
-import { Button } from "../ui/button";
+import { PrimaryButton } from "../customComponents/ButtonVarients";
 import {
   Card,
   CardContent,
@@ -73,10 +73,11 @@ export default function ContactSection() {
           {/* Newsletter */}
           <Card className="bg-gradient-to-r from-yellow-600/10 to-yellow-700/10 dark:from-yellow-600/20 dark:to-yellow-700/20 border-yellow-600/20">
             <CardHeader className="text-center">
-              <CardTitle className="text-xl sm:text-2xl">Stay Updated</CardTitle>
+              <CardTitle className="text-xl sm:text-2xl">
+                Stay Updated
+              </CardTitle>
               <CardDescription className="text-base sm:text-lg">
-                Subscribe to our newsletter for exclusive offers and travel
-                tips
+                Subscribe to our newsletter for exclusive offers and travel tips
               </CardDescription>
             </CardHeader>
             <CardContent>
@@ -86,9 +87,7 @@ export default function ContactSection() {
                   placeholder="Enter your email"
                   className="flex-1 px-4 py-2 rounded-lg border border-input bg-background focus:outline-none focus:ring-2 focus:ring-yellow-600"
                 />
-                <Button className="bg-gradient-to-r from-yellow-600 to-yellow-700 hover:from-yellow-700 hover:to-yellow-800 text-white w-full sm:w-auto">
-                  Subscribe
-                </Button>
+                <PrimaryButton>Subscribe</PrimaryButton>
               </div>
             </CardContent>
           </Card>

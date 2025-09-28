@@ -38,7 +38,7 @@ import { Separator } from "@/components/ui/separator";
 import Logo from "@/icons/Logo";
 import { cn } from "@/lib/utils";
 import { ThemeToggle } from "@/components/theme-toggle";
-import { Link } from "react-router-dom";
+import { NavLink } from "react-router-dom";
 
 export default function DahabTourismNavbar() {
   const [isSheetOpen, setIsSheetOpen] = React.useState(false);
@@ -96,7 +96,7 @@ export default function DahabTourismNavbar() {
     },
   ];
 
-  const handleLinkClick = () => {
+  const handleNavLinkClick = () => {
     setIsSheetOpen(false);
     setDestinationsOpen(false);
     setExperiencesOpen(false);
@@ -122,49 +122,79 @@ export default function DahabTourismNavbar() {
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="container flex h-16 max-w-screen-2xl items-center justify-between px-4">
         {/* Logo */}
-        <Link to="/" className="flex items-center space-x-2">
+        <NavLink to="/" className="flex items-center space-x-2">
           <Logo />
-        </Link>
+        </NavLink>
 
         {/* Center Content - Desktop */}
         <div className="hidden lg:flex items-center flex-1 max-w-3xl mx-8">
           <nav className="flex items-center space-x-6 text-sm font-medium mr-8">
-            <Link
+            <NavLink
               to="/"
-              className="text-foreground/60 transition-colors hover:text-amber-600 whitespace-nowrap"
+              end
+              className={({ isActive }) =>
+                cn(
+                  "transition-colors whitespace-nowrap",
+                  isActive
+                    ? "text-amber-600 font-semibold" // active style
+                    : "text-foreground/60 hover:text-amber-600"
+                )
+              }
             >
               Home
-            </Link>
-            <Link
+            </NavLink>
+            <NavLink
               to="/stay"
-              className="text-foreground/60 transition-colors hover:text-amber-600 whitespace-nowrap"
+              end
+              className={({ isActive }) =>
+                cn(
+                  "transition-colors whitespace-nowrap",
+                  isActive
+                    ? "text-amber-600 font-semibold" // active style
+                    : "text-foreground/60 hover:text-amber-600"
+                )
+              }
             >
               Stay
-            </Link>
-            <Link
+            </NavLink>
+            <NavLink
               to="/dine"
-              className="text-foreground/60 transition-colors hover:text-amber-600 whitespace-nowrap"
+              className={({ isActive }) =>
+                cn(
+                  "transition-colors whitespace-nowrap",
+                  isActive
+                    ? "text-amber-600 font-semibold" // active style
+                    : "text-foreground/60 hover:text-amber-600"
+                )
+              }
             >
               Dine
-            </Link>
-            <Link
+            </NavLink>
+            <NavLink
               to="/plantrip"
-              className="text-foreground/60 transition-colors hover:text-amber-600 whitespace-nowrap"
+              className={({ isActive }) =>
+                cn(
+                  "transition-colors whitespace-nowrap",
+                  isActive
+                    ? "text-amber-600 font-semibold" // active style
+                    : "text-foreground/60 hover:text-amber-600"
+                )
+              }
             >
               Plan Trip
-            </Link>
-            <Link
+            </NavLink>
+            <NavLink
               to="/destinations"
               className="text-foreground/60 transition-colors hover:text-amber-600 whitespace-nowrap"
             >
-             Destinations
-            </Link>
-            <Link
+              Destinations
+            </NavLink>
+            <NavLink
               to="/experiences"
               className="text-foreground/60 transition-colors hover:text-amber-600 whitespace-nowrap"
             >
-             Experiences
-            </Link>
+              Experiences
+            </NavLink>
           </nav>
 
           {/* Desktop Search Bar */}
@@ -253,7 +283,7 @@ export default function DahabTourismNavbar() {
                     <Button
                       size="sm"
                       className="w-full bg-gradient-to-r from-amber-600 to-orange-500 text-white hover:from-amber-700 hover:to-orange-600 transition-all shadow-lg shadow-amber-500/25"
-                      onClick={handleLinkClick}
+                      onClick={handleNavLinkClick}
                     >
                       Book Your Adventure
                     </Button>
@@ -264,7 +294,7 @@ export default function DahabTourismNavbar() {
 
                   {/* Main Navigation */}
                   <div className="space-y-1">
-                    <Link to="/" onClick={handleLinkClick}>
+                    <NavLink to="/" onClick={handleNavLinkClick}>
                       <Button
                         variant="ghost"
                         className="w-full justify-start h-12 text-base hover:bg-gradient-to-r hover:from-amber-50 hover:to-orange-50 hover:text-amber-700 transition-all group"
@@ -272,7 +302,7 @@ export default function DahabTourismNavbar() {
                         <HomeIcon className="mr-3 h-5 w-5 group-hover:text-amber-600" />
                         Home
                       </Button>
-                    </Link>
+                    </NavLink>
 
                     {/* Destinations Collapsible */}
                     <Collapsible
@@ -300,10 +330,10 @@ export default function DahabTourismNavbar() {
                         {destinations.map((destination) => {
                           const Icon = destination.icon;
                           return (
-                            <Link
+                            <NavLink
                               key={destination.name}
                               to={destination.href}
-                              onClick={handleLinkClick}
+                              onClick={handleNavLinkClick}
                             >
                               <Button
                                 variant="ghost"
@@ -319,16 +349,19 @@ export default function DahabTourismNavbar() {
                                   </div>
                                 </div>
                               </Button>
-                            </Link>
+                            </NavLink>
                           );
                         })}
-                        <Link to="/destinations">
-                        <Button variant="ghost"  onClick={() => setIsSheetOpen(false)} className="pt-auto text-amber-500 hover:shadow-yellow-500/25 transform hover:scale-105 transition-all duration-300 group w-full sm:w-auto">View All
-
-                        <ArrowRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />
-                        </Button>
-                        </Link>
-
+                        <NavLink to="/destinations">
+                          <Button
+                            variant="ghost"
+                            onClick={() => setIsSheetOpen(false)}
+                            className="pt-auto text-amber-500 hover:shadow-yellow-500/25 transform hover:scale-105 transition-all duration-300 group w-full sm:w-auto"
+                          >
+                            View All
+                            <ArrowRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />
+                          </Button>
+                        </NavLink>
                       </CollapsibleContent>
                     </Collapsible>
 
@@ -358,10 +391,10 @@ export default function DahabTourismNavbar() {
                         {experiences.map((experience) => {
                           const Icon = experience.icon;
                           return (
-                            <Link
+                            <NavLink
                               key={experience.name}
                               to={experience.href}
-                              onClick={handleLinkClick}
+                              onClick={handleNavLinkClick}
                             >
                               <Button
                                 variant="ghost"
@@ -377,22 +410,24 @@ export default function DahabTourismNavbar() {
                                   </div>
                                 </div>
                               </Button>
-                            </Link>
+                            </NavLink>
                           );
                         })}
 
-                        <Link to="/experiences">
-                        <Button variant="ghost" onClick={() => setIsSheetOpen(false)} className="pt-auto text-amber-500 hover:shadow-yellow-500/25 transform hover:scale-105 transition-all duration-300 group w-full sm:w-auto">
-                        View All
-
-                        <ArrowRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />
-                        </Button>
-                        </Link>
-
+                        <NavLink to="/experiences">
+                          <Button
+                            variant="ghost"
+                            onClick={() => setIsSheetOpen(false)}
+                            className="pt-auto text-amber-500 hover:shadow-yellow-500/25 transform hover:scale-105 transition-all duration-300 group w-full sm:w-auto"
+                          >
+                            View All
+                            <ArrowRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />
+                          </Button>
+                        </NavLink>
                       </CollapsibleContent>
                     </Collapsible>
 
-                    <Link to="/stay" onClick={handleLinkClick}>
+                    <NavLink to="/stay" onClick={handleNavLinkClick}>
                       <Button
                         variant="ghost"
                         className="w-full justify-start h-12 text-base hover:bg-gradient-to-r hover:from-amber-50 hover:to-orange-50 hover:text-amber-700 transition-all group"
@@ -400,9 +435,9 @@ export default function DahabTourismNavbar() {
                         <Bed className="mr-3 h-5 w-5 group-hover:text-amber-600" />
                         Stay
                       </Button>
-                    </Link>
+                    </NavLink>
 
-                    <Link to="/dine" onClick={handleLinkClick}>
+                    <NavLink to="/dine" onClick={handleNavLinkClick}>
                       <Button
                         variant="ghost"
                         className="w-full justify-start h-12 text-base hover:bg-gradient-to-r hover:from-amber-50 hover:to-orange-50 hover:text-amber-700 transition-all group"
@@ -410,9 +445,9 @@ export default function DahabTourismNavbar() {
                         <Utensils className="mr-3 h-5 w-5 group-hover:text-amber-600" />
                         Dine
                       </Button>
-                    </Link>
+                    </NavLink>
 
-                    <Link to="/plantrip" onClick={handleLinkClick}>
+                    <NavLink to="/plantrip" onClick={handleNavLinkClick}>
                       <Button
                         variant="ghost"
                         className="w-full justify-start h-12 text-base hover:bg-gradient-to-r hover:from-amber-50 hover:to-orange-50 hover:text-amber-700 transition-all group"
@@ -420,18 +455,18 @@ export default function DahabTourismNavbar() {
                         <Calendar className="mr-3 h-5 w-5 group-hover:text-amber-600" />
                         Plan Trip
                       </Button>
-                    </Link>
+                    </NavLink>
                   </div>
 
                   <Separator className="my-4 bg-gradient-to-r from-amber-100 via-orange-100 to-amber-100" />
 
-                  {/* Additional Links */}
+                  {/* Additional NavLinks */}
                   <div className="space-y-1">
                     <h3 className="font-semibold text-xs text-amber-600/70 uppercase tracking-wider px-3 mb-2">
                       More
                     </h3>
 
-                    <Link to="/about" onClick={handleLinkClick}>
+                    <NavLink to="/about" onClick={handleNavLinkClick}>
                       <Button
                         variant="ghost"
                         className="w-full justify-start h-10 text-sm hover:bg-amber-50/50 hover:text-amber-600 transition-all"
@@ -439,9 +474,9 @@ export default function DahabTourismNavbar() {
                         <Info className="mr-3 h-4 w-4" />
                         About Dahab
                       </Button>
-                    </Link>
+                    </NavLink>
 
-                    <Link to="/reviews" onClick={handleLinkClick}>
+                    <NavLink to="/reviews" onClick={handleNavLinkClick}>
                       <Button
                         variant="ghost"
                         className="w-full justify-start h-10 text-sm hover:bg-amber-50/50 hover:text-amber-600 transition-all"
@@ -449,9 +484,9 @@ export default function DahabTourismNavbar() {
                         <Star className="mr-3 h-4 w-4" />
                         Reviews
                       </Button>
-                    </Link>
+                    </NavLink>
 
-                    <Link to="/groups" onClick={handleLinkClick}>
+                    <NavLink to="/groups" onClick={handleNavLinkClick}>
                       <Button
                         variant="ghost"
                         className="w-full justify-start h-10 text-sm hover:bg-amber-50/50 hover:text-amber-600 transition-all"
@@ -459,7 +494,7 @@ export default function DahabTourismNavbar() {
                         <Users className="mr-3 h-4 w-4" />
                         Group Tours
                       </Button>
-                    </Link>
+                    </NavLink>
                   </div>
 
                   <Separator className="my-4 bg-gradient-to-r from-amber-100 via-orange-100 to-amber-100" />
@@ -470,7 +505,7 @@ export default function DahabTourismNavbar() {
                       Get In Touch
                     </h3>
 
-                    <Link to="/contact" onClick={handleLinkClick}>
+                    <NavLink to="/contact" onClick={handleNavLinkClick}>
                       <Button
                         variant="ghost"
                         className="w-full justify-start h-10 text-sm hover:bg-amber-50/50 hover:text-amber-600 transition-all"
@@ -478,7 +513,7 @@ export default function DahabTourismNavbar() {
                         <Phone className="mr-3 h-4 w-4" />
                         +20 123 456 789
                       </Button>
-                    </Link>
+                    </NavLink>
 
                     <Button
                       variant="ghost"

@@ -1,4 +1,7 @@
-import { Button } from "../ui/button";
+import {
+  PrimaryButton,
+  SecondaryButton,
+} from "../customComponents/ButtonVarients";
 import { Badge } from "../ui/badge";
 import { ArrowRight, Phone, Sparkles, CheckCircle2 } from "lucide-react";
 // eslint-disable-next-line no-unused-vars
@@ -47,24 +50,9 @@ export default function CTASection() {
             </p>
 
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-8">
-              <Button
-                size="lg"
-                className="bg-gradient-to-r from-yellow-600 to-yellow-700 hover:from-yellow-700 hover:to-yellow-800 text-white font-semibold px-8 py-6 shadow-2xl hover:shadow-yellow-500/25 transform hover:scale-105 transition-all duration-300 group w-full sm:w-auto"
-              >
-                Start Planning
-                <ArrowRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />
-              </Button>
+              <PrimaryButton icon={ArrowRight}>Start Planing</PrimaryButton>
 
-              <Button
-                size="lg"
-                variant="outline"
-                className="text-gray-900 border border-gray-300 bg-white/40 hover:bg-white/60
-               dark:text-white dark:border-white/40 dark:bg-white/10 dark:hover:bg-white/20
-               backdrop-blur-md font-semibold px-8 py-6 transform hover:scale-105 transition-all duration-300 w-full sm:w-auto"
-              >
-                <Phone className="mr-2 w-5 h-5" />
-                Contact Us
-              </Button>
+              <SecondaryButton icon={Phone}>Contact Us</SecondaryButton>
             </div>
 
             <div className="flex flex-wrap items-center justify-center gap-4 sm:gap-8 text-white/80">
