@@ -1,5 +1,5 @@
 import { Badge } from "../ui/badge";
-import { ActivityCard } from "../cardTemplates";
+import { ActivityCard } from "../customComponents/cardTemplates";
 import { Waves, Camera, Mountain } from "lucide-react";
 // eslint-disable-next-line no-unused-vars
 import { motion } from "framer-motion";
@@ -8,40 +8,44 @@ export default function ActivitiesSection() {
   const activities = [
     {
       title: "Scuba Diving",
-      description: "Explore the underwater paradise of the Red Sea with professional guides",
+      description:
+        "Explore the underwater paradise of the Red Sea with professional guides",
       icon: Waves,
       duration: "Half Day",
       groupSize: "8 people",
       difficulty: "All Levels",
-      price: "$75"
+      price: "$75",
     },
     {
       title: "Desert Safari",
-      description: "Experience authentic Bedouin culture on a magical desert journey",
+      description:
+        "Experience authentic Bedouin culture on a magical desert journey",
       icon: Camera,
       duration: "Full Day",
       groupSize: "12 people",
       difficulty: "Easy",
-      price: "$60"
+      price: "$60",
     },
     {
       title: "Rock Climbing",
-      description: "Challenge yourself on the stunning limestone cliffs of South Sinai",
+      description:
+        "Challenge yourself on the stunning limestone cliffs of South Sinai",
       icon: Mountain,
       duration: "4 hours",
       groupSize: "6 people",
       difficulty: "Intermediate",
-      price: "$65"
+      price: "$65",
     },
     {
       title: "Windsurfing",
-      description: "Perfect winds and conditions make Dahab a windsurfing paradise",
+      description:
+        "Perfect winds and conditions make Dahab a windsurfing paradise",
       icon: Waves,
       duration: "3 hours",
       groupSize: "4 people",
       difficulty: "Beginner+",
-      price: "$50"
-    }
+      price: "$50",
+    },
   ];
 
   return (
@@ -69,9 +73,9 @@ export default function ActivitiesSection() {
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
             {activities.map((activity, index) => (
-              <motion.div 
+              <motion.div
                 key={activity.title}
-                whileHover={{ y: -5 }} 
+                whileHover={{ y: -5 }}
                 transition={{ duration: 0.3 }}
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}

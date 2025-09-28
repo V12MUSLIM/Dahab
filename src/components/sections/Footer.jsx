@@ -1,4 +1,5 @@
 import { Button } from "../ui/button";
+import { SecondaryButton } from "../customComponents/ButtonVarients";
 import { Badge } from "../ui/badge";
 import { Separator } from "../ui/separator";
 import { Globe, Mail, Phone } from "lucide-react";

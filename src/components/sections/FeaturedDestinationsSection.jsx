@@ -6,7 +6,7 @@ import {
   CarouselNext,
   CarouselPrevious,
 } from "../ui/carousel";
-import { ImageCard } from "../cardTemplates";
+import { ImageCard } from "../customComponents/cardTemplates";
 // eslint-disable-next-line no-unused-vars
 import { motion } from "framer-motion";
 
@@ -15,47 +15,53 @@ export default function FeaturedDestinationsSection() {
     {
       title: "Blue Hole Diving",
       subtitle: "World Famous Dive Site",
-      description: "Experience the world's most famous diving spot with crystal clear waters, incredible marine life, and depths that challenge even experienced divers.",
-      image: "https://www.propertyfinder.eg/blog/wp-content/uploads/2019/10/blue-hole-dahab-800x600.jpg",
+      description:
+        "Experience the world's most famous diving spot with crystal clear waters, incredible marine life, and depths that challenge even experienced divers.",
+      image:
+        "https://www.propertyfinder.eg/blog/wp-content/uploads/2019/10/blue-hole-dahab-800x600.jpg",
       badge: "Must Visit",
       rating: "4.9",
       location: "Dahab Coast",
       price: "$85",
-      buttonText: "Book Dive"
+      buttonText: "Book Dive",
     },
     {
       title: "Mount Sinai Trek",
       subtitle: "Sacred Mountain",
-      description: "Climb the legendary Mount Sinai and witness one of the world's most spectacular sunrises from this historically significant peak.",
+      description:
+        "Climb the legendary Mount Sinai and witness one of the world's most spectacular sunrises from this historically significant peak.",
       image: `${import.meta.env.BASE_URL}image2.jpeg`,
       badge: "Spiritual Journey",
       rating: "4.8",
       location: "Sinai Peninsula",
       price: "$45",
-      buttonText: "Join Trek"
+      buttonText: "Join Trek",
     },
     {
       title: "Colored Canyon",
       subtitle: "Natural Wonder",
-      description: "Journey through stunning rock formations with vibrant colors created by millions of years of geological processes.",
-      image: "https://www.arabtravelers.com/wp-content/uploads/2023/05/Tourism-in-dahab-10.jpg",
+      description:
+        "Journey through stunning rock formations with vibrant colors created by millions of years of geological processes.",
+      image:
+        "https://www.arabtravelers.com/wp-content/uploads/2023/05/Tourism-in-dahab-10.jpg",
       badge: "Adventure",
       rating: "4.7",
       location: "Nuweiba Road",
       price: "$55",
-      buttonText: "Explore Now"
+      buttonText: "Explore Now",
     },
     {
       title: "Three Pools",
       subtitle: "Snorkeling Paradise",
-      description: "Discover natural rock pools teeming with marine life, perfect for snorkeling and underwater photography.",
+      description:
+        "Discover natural rock pools teeming with marine life, perfect for snorkeling and underwater photography.",
       image: `${import.meta.env.BASE_URL}image1.jpeg`,
       badge: "Family Friendly",
       rating: "4.6",
       location: "South Dahab",
       price: "$35",
-      buttonText: "Book Tour"
-    }
+      buttonText: "Book Tour",
+    },
   ];
 
   return (
@@ -83,7 +89,10 @@ export default function FeaturedDestinationsSection() {
         <Carousel className="w-full">
           <CarouselContent className="-ml-2 md:-ml-4">
             {destinations.map((destination, index) => (
-              <CarouselItem key={index} className="pl-2 md:pl-4 md:basis-1/2 lg:basis-1/3">
+              <CarouselItem
+                key={index}
+                className="pl-2 md:pl-4 md:basis-1/2 lg:basis-1/3"
+              >
                 <div className="h-full">
                   <ImageCard
                     title={destination.title}

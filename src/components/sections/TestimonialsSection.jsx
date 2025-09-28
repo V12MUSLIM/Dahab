@@ -1,5 +1,5 @@
 import { Badge } from "../ui/badge";
-import { TestimonialCard } from "../cardTemplates";
+import { TestimonialCard } from "../customComponents/cardTemplates";
 // eslint-disable-next-line no-unused-vars
 import { motion } from "framer-motion";
 
@@ -9,23 +9,26 @@ export default function TestimonialsSection() {
       name: "Sarah Johnson",
       role: "Adventure Traveler",
       avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Sarah",
-      content: "Dahab exceeded all my expectations! The diving at the Blue Hole was absolutely incredible, and the local hospitality made me feel right at home.",
-      rating: 5
+      content:
+        "Dahab exceeded all my expectations! The diving at the Blue Hole was absolutely incredible, and the local hospitality made me feel right at home.",
+      rating: 5,
     },
     {
       name: "Michael Chen",
       role: "Professional Photographer",
       avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Michael",
-      content: "As a photographer, Dahab is a dream destination. The contrast between the desert and sea creates stunning compositions. The sunrise from Mount Sinai is unforgettable!",
-      rating: 5
+      content:
+        "As a photographer, Dahab is a dream destination. The contrast between the desert and sea creates stunning compositions. The sunrise from Mount Sinai is unforgettable!",
+      rating: 5,
     },
     {
       name: "Emma Martinez",
       role: "Yoga Instructor",
       avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Emma",
-      content: "The perfect blend of adventure and relaxation. Morning yoga by the sea, afternoon diving, and evenings under the stars. Dahab has stolen my heart!",
-      rating: 5
-    }
+      content:
+        "The perfect blend of adventure and relaxation. Morning yoga by the sea, afternoon diving, and evenings under the stars. Dahab has stolen my heart!",
+      rating: 5,
+    },
   ];
 
   return (
@@ -46,8 +49,7 @@ export default function TestimonialsSection() {
               What Our Visitors Say
             </h2>
             <p className="text-lg sm:text-xl text-muted-foreground max-w-2xl mx-auto">
-              Real experiences from travelers who discovered the magic of
-              Dahab
+              Real experiences from travelers who discovered the magic of Dahab
             </p>
           </div>
 
