@@ -53,10 +53,15 @@ export default function Home() {
   return (
     <div className="min-h-screen bg-background overflow-x-hidden">
       <HeroSection />
-      <GallerySection />
+      <GallerySection 
+        badge="Gallery"
+        header=" Discover Dahab's Beauty "
+        paragraph="From pristine beaches to vibrant coral reefs, experience the magic
+              of Egypt's coastal gem "
+      />
       <PackageDealsSection
         packages={packages}
-        badge="Spechial ffers"
+        badge="Special Offers"
         header="Exclusive Packages Deals"
         description="   Choose from our carefully curated packages for an unforgettable
             Dahab experience"

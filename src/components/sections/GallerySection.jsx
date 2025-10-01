@@ -1,3 +1,4 @@
+import { Header } from "@radix-ui/react-accordion";
 import { Badge } from "../ui/badge";
 import {
   Marquee,
@@ -7,7 +8,7 @@ import {
 // eslint-disable-next-line no-unused-vars
 import { motion } from "framer-motion";
 
-export default function GallerySection() {
+export default function GallerySection({ badge , header , paragraph }) {
   const galleryImages = [
     {
       src: `${import.meta.env.BASE_URL}image1.jpeg`,
@@ -70,14 +71,14 @@ export default function GallerySection() {
         viewport={{ once: true }}
       >
         <Badge className="mb-4 bg-yellow-100 dark:bg-yellow-900/30 text-yellow-800 dark:text-yellow-400 border-yellow-300 dark:border-yellow-700">
-          Gallery
+          {badge}
         </Badge>
         <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-foreground mb-4">
-          Discover Dahab's Beauty
+          {header}
         </h2>
         <p className="text-lg sm:text-xl text-muted-foreground max-w-2xl mx-auto">
-          From pristine beaches to vibrant coral reefs, experience the magic
-          of Egypt's coastal gem
+              
+          {paragraph}
         </p>
       </motion.div>
 
