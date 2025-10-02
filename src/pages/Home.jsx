@@ -7,7 +7,8 @@ import TestimonialsSection from "../components/sections/TestimonialsSection";
 import FAQSection from "../components/sections/FAQSection";
 import CTASection from "../components/sections/CTASection";
 import ContactSection from "../components/sections/ContactSection";
-
+import { Sun, Anchor, Star, ArrowRight, Calendar } from "lucide-react";
+import { PrimaryButton, SecondaryButton } from "../components/customComponents/ButtonVarients"
 export default function Home() {
   const packages = [
     {
@@ -52,7 +53,22 @@ export default function Home() {
   ];
   return (
     <div className="min-h-screen bg-background overflow-x-hidden">
-      <HeroSection />
+       <HeroSection
+      image="hero.png"
+      title="Dahab"
+      subtitle="Red Sea Paradise — Where Adventure, Relaxation, and Culture Unite"
+      Icon={Sun}
+      badge="Sunny Escape"
+      PrimaryButton={PrimaryButton}
+      SecondaryButton={SecondaryButton}
+      primaryCta={{ label: "Explore All", href: "/experiences", icon: ArrowRight }}
+      secondaryCta={{ label: "Plan Your Trip", href: "/plantrip", icon: Calendar }}
+      stats={[
+        { icon: Sun, text: "330+ Sunny Days" },
+        { icon: Anchor, text: "25+ Dive Sites" },
+        { icon: Star, text: "4.9/5 Rating" },
+      ]}
+    />
       <GallerySection 
         badge="Gallery"
         header=" Discover Dahab's Beauty "

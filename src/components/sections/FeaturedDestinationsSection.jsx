@@ -10,7 +10,7 @@ import { ImageCard } from "../customComponents/cardTemplates";
 // eslint-disable-next-line no-unused-vars
 import { motion } from "framer-motion";
 
-export default function FeaturedDestinationsSection() {
+export default function FeaturedDestinationsSection({id}) {
   const destinations = [
     {
       title: "Blue Hole Diving",
@@ -66,6 +66,7 @@ export default function FeaturedDestinationsSection() {
 
   return (
     <motion.div
+    id={id}
       className="w-full py-16 px-4"
       initial={{ opacity: 0, y: 40 }}
       whileInView={{ opacity: 1, y: 0 }}
