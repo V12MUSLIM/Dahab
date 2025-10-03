@@ -9,8 +9,8 @@ import {
 import { ImageCard } from "../customComponents/cardTemplates";
 // eslint-disable-next-line no-unused-vars
 import { motion } from "framer-motion";
-
-export default function FeaturedDestinationsSection({id}) {
+import { ArrowLeft, ArrowRight } from "lucide-react";
+export default function FeaturedDestinationsSection({ id }) {
   const destinations = [
     {
       title: "Blue Hole Diving",
@@ -66,7 +66,7 @@ export default function FeaturedDestinationsSection({id}) {
 
   return (
     <motion.div
-    id={id}
+      id={id}
       className="w-full py-16 px-4"
       initial={{ opacity: 0, y: 40 }}
       whileInView={{ opacity: 1, y: 0 }}
@@ -85,6 +85,11 @@ export default function FeaturedDestinationsSection({id}) {
             Explore the most breathtaking locations that make Dahab a
             world-renowned destination
           </p>
+        </div>
+        <div className="flex items-center justify-center gap-3 mb-6 text-muted-foreground">
+          <ArrowLeft className="w-5 h-5" />
+          <h4 className="text-sm font-medium">Swipe</h4>
+          <ArrowRight className="w-5 h-5" />
         </div>
 
         <Carousel className="w-full">

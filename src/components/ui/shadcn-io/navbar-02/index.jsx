@@ -2,7 +2,6 @@
 
 import * as React from "react";
 import {
-  Icon,
   Search,
   Mail,
   Star,
@@ -19,8 +18,8 @@ import {
   Calendar,
   ChevronDown,
   Bed,
-   Utensils,
-   Phone
+  Utensils,
+  Phone,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -40,23 +39,26 @@ import Logo from "@/icons/Logo";
 import { cn } from "@/lib/utils";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { NavLink } from "react-router-dom";
+import { CONTACT, ROUTES, DESTINATIONS, EXPERIENCES, UI_TEXT} from "@/config/SiteConfig"
 
+// Icon mapping helper
+const iconMap = {
+  Waves,
+  Mountain,
+  Camera,
+};
 
-// Memoized navigation items to prevent re-renders
-const destinations = [
-  { name: "Blue Hole", description: "World-famous diving spot with crystal clear waters", icon: Waves, href: "/destinations/blue-hole" },
-  { name: "Mount Sinai", description: "Sacred mountain with breathtaking sunrise views", icon: Mountain, href: "/destinations/mount-sinai" },
-  { name: "Colored Canyon", description: "Spectacular rock formations and hiking trails", icon: Mountain, href: "/destinations/colored-canyon" },
-  { name: "Dahab Lagoon", description: "Perfect for windsurfing and kitesurfing", icon: Waves, href: "/destinations/lagoon" },
-];
+// Map destinations with actual icon components
+const destinations = DESTINATIONS.map(dest => ({
+  ...dest,
+  icon: iconMap[dest.iconName],
+}));
 
-
-const experiences = [
-  { name: "Scuba Diving", description: "Explore the Red Sea's underwater paradise", icon: Waves, href: "/activities/diving" },
-  { name: "Desert Safari", description: "Camel rides and Bedouin culture experiences", icon: Camera, href: "/activities/safari" },
-  { name: "Snorkeling Tours", description: "Discover colorful coral reefs and marine life", icon: Waves, href: "/activities/snorkeling" },
-];
-
+// Map experiences with actual icon components
+const experiences = EXPERIENCES.map(exp => ({
+  ...exp,
+  icon: iconMap[exp.iconName],
+}));
 
 // Memoized drawer content component
 const DrawerContentComponent = React.memo(({ isMobile = false, onClose }) => {
@@ -64,33 +66,35 @@ const DrawerContentComponent = React.memo(({ isMobile = false, onClose }) => {
   const [destinationsOpen, setDestinationsOpen] = React.useState(false);
   const [experiencesOpen, setExperiencesOpen] = React.useState(false);
 
-
   const handleNavLinkClick = React.useCallback(() => {
     onClose();
     setDestinationsOpen(false);
     setExperiencesOpen(false);
   }, [onClose]);
 
-
-  const handleSearch = React.useCallback((e) => {
-    e.preventDefault();
-    console.log("Searching for:", searchQuery);
-    onClose();
-  }, [searchQuery, onClose]);
-
+  const handleSearch = React.useCallback(
+    (e) => {
+      e.preventDefault();
+      console.log("Searching for:", searchQuery);
+      onClose();
+    },
+    [searchQuery, onClose]
+  );
 
   return (
     <div className="relative flex flex-col h-full">
       {/* Optimized glass background with will-change */}
-      <div 
+      <div
         className="absolute inset-0 backdrop-blur-md bg-white/95 dark:bg-gray-950/95 pointer-events-none"
-        style={{ willChange: 'transform' }}
+        style={{ willChange: "transform" }}
       />
-      
+
       <div className="relative flex-1 overflow-y-auto overscroll-contain px-6 py-6 space-y-4">
         {/* Header with close button */}
         <div className="flex items-center justify-between mb-4">
-          <h2 className="text-lg font-semibold text-amber-600 dark:text-amber-400">Menu</h2>
+          <h2 className="text-lg font-semibold text-amber-600 dark:text-amber-400">
+            {UI_TEXT.navigation.menu}
+          </h2>
           <DrawerClose asChild>
             <Button
               variant="ghost"
@@ -102,52 +106,63 @@ const DrawerContentComponent = React.memo(({ isMobile = false, onClose }) => {
           </DrawerClose>
         </div>
 
-
         {isMobile && (
           <div className="space-y-3 pb-4 border-b border-amber-400/20 dark:border-amber-500/30">
-            <Button
-              size="sm"
-              className="w-full bg-gradient-to-r from-amber-600 to-orange-500 text-white hover:from-amber-700 hover:to-orange-600 transition-all duration-200 shadow-lg shadow-amber-500/25"
-              onClick={handleNavLinkClick}
+            <NavLink
+              to={ROUTES.planTrip}
+              className={({ isActive }) =>
+                cn(
+                  "flex flex-col items-center justify-center flex-1 h-full space-y-1 transition-colors duration-200",
+                  isActive
+                    ? "text-amber-600 dark:text-amber-400"
+                    : "text-foreground/60"
+                )
+              }
             >
-              Book Your Adventure
-            </Button>
+              <Button
+                size="sm"
+                className="w-full bg-gradient-to-r from-amber-600 to-orange-500 text-white hover:from-amber-700 hover:to-orange-600 transition-all duration-200 shadow-lg shadow-amber-500/25"
+                onClick={handleNavLinkClick}
+              >
+                {UI_TEXT.buttons.bookAdventure}
+              </Button>
+            </NavLink>
             <div className="flex justify-center">
               <ThemeToggle />
             </div>
           </div>
         )}
 
-
         {/* Search with optimized transitions */}
         <form onSubmit={handleSearch}>
           <div className="relative">
             <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-amber-600 dark:text-amber-400" />
             <Input
-              placeholder="Search destinations, activities..."
+              placeholder={UI_TEXT.search.placeholder}
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="pl-10 pr-4 bg-white/50 dark:bg-black/20 backdrop-blur-sm border border-amber-400/40 dark:border-amber-500/50 focus:border-amber-500 focus:ring-2 focus:ring-amber-400/30 transition-all duration-200"
+              className="pl-10 pr-4 bg-white/50 dark:bg-black/20 border border-amber-400/40 dark:border-amber-500/50 focus:border-amber-500 focus:ring-2 focus:ring-amber-400/30 transition-all duration-200"
             />
           </div>
         </form>
 
-
         {/* Navigation with optimized hover states */}
         <nav className="space-y-2">
-          <NavLink to="/" onClick={handleNavLinkClick}>
+          <NavLink to={ROUTES.home} onClick={handleNavLinkClick}>
             <Button
               variant="ghost"
               className="w-full justify-start h-12 text-base hover:bg-amber-50 dark:hover:bg-amber-900/20 hover:text-amber-600 dark:hover:text-amber-400 transition-all duration-200"
             >
               <HomeIcon className="mr-3 h-5 w-5" />
-              Home
+              {UI_TEXT.navigation.home}
             </Button>
           </NavLink>
 
-
           {/* Destinations with smooth collapse */}
-          <Collapsible open={destinationsOpen} onOpenChange={setDestinationsOpen}>
+          <Collapsible
+            open={destinationsOpen}
+            onOpenChange={setDestinationsOpen}
+          >
             <CollapsibleTrigger asChild>
               <Button
                 variant="ghost"
@@ -155,7 +170,7 @@ const DrawerContentComponent = React.memo(({ isMobile = false, onClose }) => {
               >
                 <div className="flex items-center">
                   <MapPin className="mr-3 h-5 w-5" />
-                  Destinations
+                  {UI_TEXT.navigation.destinations}
                 </div>
                 <ChevronDown
                   className={cn(
@@ -175,23 +190,24 @@ const DrawerContentComponent = React.memo(({ isMobile = false, onClose }) => {
                     <Icon className="mr-3 h-4 w-4 flex-shrink-0" />
                     <div className="text-left">
                       <div className="font-medium">{name}</div>
-                      <div className="text-xs text-muted-foreground/70">{description}</div>
+                      <div className="text-xs text-muted-foreground/70">
+                        {description}
+                      </div>
                     </div>
                   </Button>
                 </NavLink>
               ))}
-              <NavLink to="/destinations" onClick={handleNavLinkClick}>
+              <NavLink to={ROUTES.destinations} onClick={handleNavLinkClick}>
                 <Button
                   variant="ghost"
                   className="text-amber-600 dark:text-amber-400 hover:bg-amber-50 dark:hover:bg-amber-900/20 transform hover:scale-105 transition-all duration-200 group w-full justify-start"
                 >
-                  View All
+                  {UI_TEXT.buttons.viewAll}
                   <ArrowRight className="ml-2 w-4 h-4 group-hover:translate-x-1 transition-transform duration-200" />
                 </Button>
               </NavLink>
             </CollapsibleContent>
           </Collapsible>
-
 
           {/* Experiences with smooth collapse */}
           <Collapsible open={experiencesOpen} onOpenChange={setExperiencesOpen}>
@@ -202,7 +218,7 @@ const DrawerContentComponent = React.memo(({ isMobile = false, onClose }) => {
               >
                 <div className="flex items-center">
                   <Camera className="mr-3 h-5 w-5" />
-                  Experiences
+                  {UI_TEXT.navigation.experiences}
                 </div>
                 <ChevronDown
                   className={cn(
@@ -222,130 +238,124 @@ const DrawerContentComponent = React.memo(({ isMobile = false, onClose }) => {
                     <Icon className="mr-3 h-4 w-4 flex-shrink-0" />
                     <div className="text-left">
                       <div className="font-medium">{name}</div>
-                      <div className="text-xs text-muted-foreground/70">{description}</div>
+                      <div className="text-xs text-muted-foreground/70">
+                        {description}
+                      </div>
                     </div>
                   </Button>
                 </NavLink>
               ))}
-              <NavLink to="/experiences" onClick={handleNavLinkClick}>
+              <NavLink to={ROUTES.experiences} onClick={handleNavLinkClick}>
                 <Button
                   variant="ghost"
                   className="text-amber-600 dark:text-amber-400 hover:bg-amber-50 dark:hover:bg-amber-900/20 transform hover:scale-105 transition-all duration-200 group w-full justify-start"
                 >
-                  View All
+                  {UI_TEXT.buttons.viewAll}
                   <ArrowRight className="ml-2 w-4 h-4 group-hover:translate-x-1 transition-transform duration-200" />
                 </Button>
               </NavLink>
             </CollapsibleContent>
           </Collapsible>
 
-
-          <NavLink to="/stay" onClick={handleNavLinkClick}>
+          <NavLink to={ROUTES.stay} onClick={handleNavLinkClick}>
             <Button
               variant="ghost"
               className="w-full justify-start h-12 text-base hover:bg-amber-50 dark:hover:bg-amber-900/20 hover:text-amber-600 dark:hover:text-amber-400 transition-all duration-200"
             >
               <Bed className="mr-3 h-5 w-5" />
-              Stay
+              {UI_TEXT.navigation.stay}
             </Button>
           </NavLink>
 
-
-          <NavLink to="/dine" onClick={handleNavLinkClick}>
+          <NavLink to={ROUTES.dine} onClick={handleNavLinkClick}>
             <Button
               variant="ghost"
               className="w-full justify-start h-12 text-base hover:bg-amber-50 dark:hover:bg-amber-900/20 hover:text-amber-600 dark:hover:text-amber-400 transition-all duration-200"
             >
               <Utensils className="mr-3 h-5 w-5" />
-              Dine
+              {UI_TEXT.navigation.dine}
             </Button>
           </NavLink>
 
-
-          <NavLink to="/plantrip" onClick={handleNavLinkClick}>
+          <NavLink to={ROUTES.planTrip} onClick={handleNavLinkClick}>
             <Button
               variant="ghost"
               className="w-full justify-start h-12 text-base hover:bg-amber-50 dark:hover:bg-amber-900/20 hover:text-amber-600 dark:hover:text-amber-400 transition-all duration-200"
             >
               <Calendar className="mr-3 h-5 w-5" />
-              Plan Trip
+              {UI_TEXT.navigation.planTrip}
             </Button>
           </NavLink>
 
-
           <Separator className="my-4 border-amber-400/20 dark:border-amber-500/30" />
-
 
           {/* More Section */}
           <div className="space-y-1">
             <h3 className="font-semibold text-xs text-amber-600 dark:text-amber-400 uppercase tracking-wider px-3 mb-2">
-              More
+              {UI_TEXT.sections.more}
             </h3>
 
-
-            <NavLink to="/about" onClick={handleNavLinkClick}>
+            <NavLink to={ROUTES.about} onClick={handleNavLinkClick}>
               <Button
                 variant="ghost"
                 className="w-full justify-start h-10 text-sm hover:bg-amber-50 dark:hover:bg-amber-900/20 hover:text-amber-600 dark:hover:text-amber-400 transition-all duration-200"
               >
                 <Info className="mr-3 h-4 w-4" />
-                About Dahab
+                {UI_TEXT.menu.aboutDahab}
               </Button>
             </NavLink>
 
-
-            <NavLink to="/reviews" onClick={handleNavLinkClick}>
+            <NavLink to={ROUTES.reviews} onClick={handleNavLinkClick}>
               <Button
                 variant="ghost"
                 className="w-full justify-start h-10 text-sm hover:bg-amber-50 dark:hover:bg-amber-900/20 hover:text-amber-600 dark:hover:text-amber-400 transition-all duration-200"
               >
                 <Star className="mr-3 h-4 w-4" />
-                Reviews
+                {UI_TEXT.menu.reviews}
               </Button>
             </NavLink>
 
-
-            <NavLink to="/groups" onClick={handleNavLinkClick}>
+            <NavLink to={ROUTES.groups} onClick={handleNavLinkClick}>
               <Button
                 variant="ghost"
                 className="w-full justify-start h-10 text-sm hover:bg-amber-50 dark:hover:bg-amber-900/20 hover:text-amber-600 dark:hover:text-amber-400 transition-all duration-200"
               >
                 <Users className="mr-3 h-4 w-4" />
-                Group Tours
+                {UI_TEXT.menu.groupTours}
               </Button>
             </NavLink>
           </div>
 
-
           <Separator className="my-4 border-amber-400/20 dark:border-amber-500/30" />
-
 
           {/* Contact Section */}
           <div className="space-y-1">
             <h3 className="font-semibold text-xs text-amber-600 dark:text-amber-400 uppercase tracking-wider px-3 mb-2">
-              Get In Touch
+              {UI_TEXT.sections.getInTouch}
             </h3>
 
-
-            <NavLink to="/contact" onClick={handleNavLinkClick}>
+            <NavLink to={ROUTES.contact} onClick={handleNavLinkClick}>
               <Button
                 variant="ghost"
                 className="w-full justify-start h-10 text-sm hover:bg-amber-50 dark:hover:bg-amber-900/20 hover:text-amber-600 dark:hover:text-amber-400 transition-all duration-200"
               >
                 <Phone className="mr-3 h-4 w-4" />
-                +20 123 456 789
+                {CONTACT.phone}
               </Button>
             </NavLink>
 
-
-            <Button
-              variant="ghost"
-              className="w-full justify-start h-10 text-sm hover:bg-amber-50 dark:hover:bg-amber-900/20 hover:text-amber-600 dark:hover:text-amber-400 transition-all duration-200"
-              onClick={() => (window.location.href = "mailto:info@dahabtourism.com")}
+            <a
+              href={`mailto:${CONTACT.email}`}
+              className="block"
             >
-              <Mail className="mr-3 h-4 w-4" />
-             info@dahabtourism.com
-            </Button>
+              <Button
+                variant="ghost"
+                className="w-full justify-start h-10 text-sm hover:bg-amber-50 dark:hover:bg-amber-900/20 hover:text-amber-600 dark:hover:text-amber-400 transition-all duration-200"
+              >
+                <Mail className="mr-3 h-4 w-4" />
+                {CONTACT.email}
+              </Button>
+            </a>
           </div>
         </nav>
       </div>
@@ -353,9 +363,7 @@ const DrawerContentComponent = React.memo(({ isMobile = false, onClose }) => {
   );
 });
 
-
-DrawerContentComponent.displayName = 'DrawerContentComponent';
-
+DrawerContentComponent.displayName = "DrawerContentComponent";
 
 export default function DahabTourismNavbar() {
   const [isDesktopDrawerOpen, setIsDesktopDrawerOpen] = React.useState(false);
@@ -363,27 +371,27 @@ export default function DahabTourismNavbar() {
   const [desktopSearchQuery, setDesktopSearchQuery] = React.useState("");
   const [isSearchFocused, setIsSearchFocused] = React.useState(false);
 
-
-  const handleDesktopSearch = React.useCallback((e) => {
-    e.preventDefault();
-    console.log("Searching for:", desktopSearchQuery);
-  }, [desktopSearchQuery]);
-
+  const handleDesktopSearch = React.useCallback(
+    (e) => {
+      e.preventDefault();
+      console.log("Searching for:", desktopSearchQuery);
+    },
+    [desktopSearchQuery]
+  );
 
   return (
     <>
       {/* Desktop Header */}
       <header className="hidden lg:block sticky top-0 z-50 w-full border-b border-amber-400/20 dark:border-amber-500/30 bg-white/80 dark:bg-gray-950/80 backdrop-blur-xl shadow-sm">
         <div className="container flex h-16 max-w-screen-2xl items-center justify-between px-4">
-          <NavLink to="/" className="flex items-center space-x-2">
+          <NavLink to={ROUTES.home} className="flex items-center space-x-2">
             <Logo />
           </NavLink>
-
 
           <div className="flex items-center flex-1 max-w-3xl mx-8">
             <nav className="flex items-center space-x-6 text-sm font-medium mr-8">
               <NavLink
-                to="/"
+                to={ROUTES.home}
                 end
                 className={({ isActive }) =>
                   cn(
@@ -394,10 +402,10 @@ export default function DahabTourismNavbar() {
                   )
                 }
               >
-                Home
+                {UI_TEXT.navigation.home}
               </NavLink>
               <NavLink
-                to="/stay"
+                to={ROUTES.stay}
                 className={({ isActive }) =>
                   cn(
                     "transition-colors duration-200 whitespace-nowrap",
@@ -407,10 +415,10 @@ export default function DahabTourismNavbar() {
                   )
                 }
               >
-                Stay
+                {UI_TEXT.navigation.stay}
               </NavLink>
               <NavLink
-                to="/dine"
+                to={ROUTES.dine}
                 className={({ isActive }) =>
                   cn(
                     "transition-colors duration-200 whitespace-nowrap",
@@ -420,10 +428,10 @@ export default function DahabTourismNavbar() {
                   )
                 }
               >
-                Dine
+                {UI_TEXT.navigation.dine}
               </NavLink>
               <NavLink
-                to="/plantrip"
+                to={ROUTES.planTrip}
                 className={({ isActive }) =>
                   cn(
                     "transition-colors duration-200 whitespace-nowrap",
@@ -433,10 +441,10 @@ export default function DahabTourismNavbar() {
                   )
                 }
               >
-                Plan Trip
+                {UI_TEXT.navigation.planTrip}
               </NavLink>
               <NavLink
-                to="/destinations"
+                to={ROUTES.destinations}
                 className={({ isActive }) =>
                   cn(
                     "transition-colors duration-200 whitespace-nowrap",
@@ -446,10 +454,10 @@ export default function DahabTourismNavbar() {
                   )
                 }
               >
-                Destinations
+                {UI_TEXT.navigation.destinations}
               </NavLink>
               <NavLink
-                to="/experiences"
+                to={ROUTES.experiences}
                 className={({ isActive }) =>
                   cn(
                     "transition-colors duration-200 whitespace-nowrap",
@@ -459,13 +467,15 @@ export default function DahabTourismNavbar() {
                   )
                 }
               >
-                Experiences
+                {UI_TEXT.navigation.experiences}
               </NavLink>
             </nav>
 
-
             {/* Desktop Search */}
-            <form onSubmit={handleDesktopSearch} className="relative flex-1 max-w-sm">
+            <form
+              onSubmit={handleDesktopSearch}
+              className="relative flex-1 max-w-sm"
+            >
               <div
                 className={cn(
                   "relative transition-all duration-200",
@@ -474,7 +484,7 @@ export default function DahabTourismNavbar() {
               >
                 <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
                 <Input
-                  placeholder="Search destinations..."
+                  placeholder={UI_TEXT.search.desktopPlaceholder}
                   value={desktopSearchQuery}
                   onChange={(e) => setDesktopSearchQuery(e.target.value)}
                   onFocus={() => setIsSearchFocused(true)}
@@ -485,19 +495,32 @@ export default function DahabTourismNavbar() {
             </form>
           </div>
 
-
           <div className="flex items-center space-x-3">
             <ThemeToggle />
-            <Button
-              size="sm"
-              className="bg-gradient-to-r from-amber-600 to-orange-500 text-white hover:from-amber-700 hover:to-orange-600 transition-all duration-200 shadow-lg shadow-amber-500/25"
+            <NavLink
+              to={ROUTES.planTrip}
+              className={({ isActive }) =>
+                cn(
+                  "flex flex-col items-center justify-center flex-1 h-full space-y-1 transition-colors duration-200",
+                  isActive
+                    ? "text-amber-600 dark:text-amber-400"
+                    : "text-foreground/60"
+                )
+              }
             >
-              Book Now
-            </Button>
-
-
+              <Button
+                size="sm"
+                className="bg-gradient-to-r from-amber-600 to-orange-500 text-white hover:from-amber-700 hover:to-orange-600 transition-all duration-200 shadow-lg shadow-amber-500/25 cursor-pointer"
+              >
+                {UI_TEXT.buttons.bookNow}
+              </Button>
+            </NavLink>
             {/* Desktop Drawer */}
-            <Drawer open={isDesktopDrawerOpen} onOpenChange={setIsDesktopDrawerOpen} direction="right">
+            <Drawer
+              open={isDesktopDrawerOpen}
+              onOpenChange={setIsDesktopDrawerOpen}
+              direction="right"
+            >
               <DrawerTrigger asChild>
                 <Button
                   variant="ghost"
@@ -505,94 +528,107 @@ export default function DahabTourismNavbar() {
                   className="h-9 w-9 p-0 hover:bg-amber-50 dark:hover:bg-amber-950/50 hover:text-amber-600 dark:hover:text-amber-400 transition-colors duration-200"
                 >
                   <Menu className="h-5 w-5" />
-                  <span className="sr-only">Open menu</span>
+                  <span className="sr-only">{UI_TEXT.aria.openMenu}</span>
                 </Button>
               </DrawerTrigger>
-              <DrawerContent 
+              <DrawerContent
                 className="fixed right-0 top-0 h-full w-full sm:w-[400px] p-0 rounded-none border-l border-amber-400/20 dark:border-amber-500/30"
-                style={{ transform: 'translateX(0)' }}
+                style={{ transform: "translateX(0)" }}
               >
-                <DrawerContentComponent isMobile={false} onClose={() => setIsDesktopDrawerOpen(false)} />
+                <DrawerContentComponent
+                  isMobile={false}
+                  onClose={() => setIsDesktopDrawerOpen(false)}
+                />
               </DrawerContent>
             </Drawer>
           </div>
         </div>
       </header>
 
-
       {/* Mobile Bottom Navigation */}
       <nav className="lg:hidden fixed bottom-0 left-0 right-0 z-50 border-t border-amber-400/20 dark:border-amber-500/30 bg-white/80 dark:bg-gray-950/80 backdrop-blur-xl pb-safe shadow-lg">
         <div className="flex items-center justify-center h-16 px-2">
           <NavLink
-            to="/"
+            to={ROUTES.home}
             end
             className={({ isActive }) =>
               cn(
                 "flex flex-col items-center justify-center flex-1 h-full space-y-1 transition-colors duration-200",
-                isActive ? "text-amber-600 dark:text-amber-400" : "text-foreground/60"
+                isActive
+                  ? "text-amber-600 dark:text-amber-400"
+                  : "text-foreground/60"
               )
             }
           >
             <HomeIcon className="h-5 w-5" />
-            <span className="text-xs font-medium">Home</span>
+            <span className="text-xs font-medium">{UI_TEXT.navigation.home}</span>
           </NavLink>
 
-
           <NavLink
-            to="/destinations"
+            to={ROUTES.destinations}
             className={({ isActive }) =>
               cn(
                 "flex flex-col items-center justify-center flex-1 h-full space-y-1 transition-colors duration-200",
-                isActive ? "text-amber-600 dark:text-amber-400" : "text-foreground/60"
+                isActive
+                  ? "text-amber-600 dark:text-amber-400"
+                  : "text-foreground/60"
               )
             }
           >
             <MapPin className="h-5 w-5" />
-            <span className="text-xs font-medium">Places</span>
+            <span className="text-xs font-medium">{UI_TEXT.navigation.places}</span>
           </NavLink>
 
-
           <NavLink
-            to="/experiences"
+            to={ROUTES.experiences}
             className={({ isActive }) =>
               cn(
                 "flex flex-col items-center justify-center flex-1 h-full space-y-1 transition-colors duration-200",
-                isActive ? "text-amber-600 dark:text-amber-400" : "text-foreground/60"
+                isActive
+                  ? "text-amber-600 dark:text-amber-400"
+                  : "text-foreground/60"
               )
             }
           >
             <Camera className="h-5 w-5" />
-            <span className="text-xs font-medium">Activities</span>
+            <span className="text-xs font-medium">{UI_TEXT.navigation.activities}</span>
           </NavLink>
 
-
           <NavLink
-            to="/plantrip"
+            to={ROUTES.planTrip}
             className={({ isActive }) =>
               cn(
                 "flex flex-col items-center justify-center flex-1 h-full space-y-1 transition-colors duration-200",
-                isActive ? "text-amber-600 dark:text-amber-400" : "text-foreground/60"
+                isActive
+                  ? "text-amber-600 dark:text-amber-400"
+                  : "text-foreground/60"
               )
             }
           >
             <Calendar className="h-5 w-5" />
-            <span className="text-xs font-medium">Plan</span>
+            <span className="text-xs font-medium">{UI_TEXT.navigation.plan}</span>
           </NavLink>
 
-
           {/* Mobile Drawer */}
-          <Drawer open={isMobileDrawerOpen} onOpenChange={setIsMobileDrawerOpen} direction="right">
+          <Drawer
+            open={isMobileDrawerOpen}
+            onOpenChange={setIsMobileDrawerOpen}
+            direction="right"
+          >
             <DrawerTrigger asChild>
               <button className="flex flex-col items-center justify-center flex-1 h-full space-y-1 transition-colors duration-200 text-foreground/60 hover:text-amber-600 dark:hover:text-amber-400">
                 <Menu className="h-5 w-5" />
-                <span className="text-xs font-medium">More</span>
+                <span className="text-xs font-medium">{UI_TEXT.navigation.more}</span>
               </button>
             </DrawerTrigger>
-            <DrawerContent 
+            <DrawerContent
               className="fixed right-0 top-0 h-full w-full sm:w-[90%] max-w-[400px] p-0 rounded-none border-l border-amber-400/20 dark:border-amber-500/30"
-              style={{ transform: 'translateX(0)' }}
+              style={{ transform: "translateX(0)" }}
             >
-              <DrawerContentComponent isMobile={true} onClose={() => setIsMobileDrawerOpen(false)} />
+              <DrawerContentComponent
+                isMobile={true}
+                onClose={() => setIsMobileDrawerOpen(false)}
+              />
             </DrawerContent>
           </Drawer>
         </div>
