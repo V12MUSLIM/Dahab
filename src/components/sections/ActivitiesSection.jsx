@@ -1,5 +1,6 @@
 import { Badge } from "../ui/badge";
 import { ActivityCard } from "../customComponents/cardTemplates";
+// eslint-disable-next-line no-unused-vars
 import { motion } from "framer-motion";
 
 // Animation constants

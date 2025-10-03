@@ -1,5 +1,6 @@
 import { Badge } from "../ui/badge";
 import { Link } from "react-router-dom";
+// eslint-disable-next-line no-unused-vars
 import { motion, useReducedMotion } from "framer-motion";
 import { useState } from "react";
 
