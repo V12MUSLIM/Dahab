@@ -7,7 +7,7 @@ import TestimonialsSection from "../components/sections/TestimonialsSection";
 import FAQSection from "../components/sections/FAQSection";
 import CTASection from "../components/sections/CTASection";
 import ContactSection from "../components/sections/ContactSection";
-import SwipeIcon from "@/icons/SwipeIcon";
+
 import {
   Sun,
   Anchor,
@@ -145,11 +145,15 @@ export default function Home() {
         description="   Choose from our carefully curated packages for an unforgettable
             Dahab experience"
       />
-      
-      
+
       <FeaturedDestinationsSection />
-      <ActivitiesSection badge='Activities' header='Adventures Await' description='From underwater exploration to desert adventures, discover the
-              activities that make Dahab special' activities={activities}/>
+      <ActivitiesSection
+        badge="Activities"
+        header="Adventures Await"
+        description="From underwater exploration to desert adventures, discover the
+              activities that make Dahab special"
+        activities={activities}
+      />
       <TestimonialsSection />
       <FAQSection />
       <CTASection />
