@@ -106,6 +106,51 @@ export default function Home() {
       price: "$50",
     },
   ];
+  const galleryImages = [
+    {
+      src: `${import.meta.env.BASE_URL}image1.jpeg`,
+      alt: "Blue Lagoon in Dahab",
+      title: "Blue Lagoon Paradise",
+      description: "Crystal clear waters perfect for swimming",
+    },
+    {
+      src: "https://www.propertyfinder.eg/blog/wp-content/uploads/2019/10/blue-hole-dahab-800x600.jpg",
+      alt: "Blue Hole diving spot",
+      title: "Famous Blue Hole",
+      description: "World's most iconic diving destination",
+    },
+    {
+      src: "https://www.arabtravelers.com/wp-content/uploads/2023/05/Tourism-in-dahab-10.jpg",
+      alt: "Dahab coastline",
+      title: "Stunning Coastline",
+      description: "Miles of pristine beaches await",
+    },
+    {
+      src: "https://assets.annahar.com/ContentFilesArchive/422721Image1-1180x677_d.jpg",
+      alt: "Desert meets sea",
+      title: "Desert Meets Sea",
+      description: "Unique landscape of mountains and ocean",
+    },
+    {
+      src: `${import.meta.env.BASE_URL}image2.jpeg`,
+      alt: "Sinai mountains sunset",
+      title: "Sinai Mountain Sunset",
+      description: "Breathtaking views from sacred peaks",
+    },
+    {
+      src: `${import.meta.env.BASE_URL}image3.jpeg`,
+      alt: "Blue Hole diving",
+      title: "World-Class Diving",
+      description: "Explore vibrant coral reefs",
+    },
+    {
+      src: `${import.meta.env.BASE_URL}image4.jpeg`,
+      alt: "Bedouin beach camp",
+      title: "Bedouin Beach Culture",
+      description: "Experience authentic local traditions",
+    },
+  ];
+
   return (
     <div className="min-h-screen bg-background overflow-x-hidden">
       <HeroSection
@@ -133,10 +178,12 @@ export default function Home() {
         ]}
       />
       <GallerySection
-        badge="Gallery"
-        header=" Discover Dahab's Beauty "
-        paragraph="From pristine beaches to vibrant coral reefs, experience the magic
-              of Egypt's coastal gem "
+        badge="Explore Dahab"
+        header="Discover Paradise"
+        paragraph="Experience the stunning beauty of Dahab through our curated gallery"
+        images={galleryImages}
+        autoPlay={true}
+        autoPlayInterval={5000}
       />
       <PackageDealsSection
         packages={packages}
