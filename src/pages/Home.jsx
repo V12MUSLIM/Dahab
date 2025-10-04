@@ -7,7 +7,7 @@ import TestimonialsSection from "../components/sections/TestimonialsSection";
 import FAQSection from "../components/sections/FAQSection";
 import CTASection from "../components/sections/CTASection";
 import ContactSection from "../components/sections/ContactSection";
-
+import SocialMediaSection from "@/components/sections/SocialMediaSection";
 import {
   Sun,
   Anchor,
@@ -183,7 +183,7 @@ export default function Home() {
         paragraph="Experience the stunning beauty of Dahab through our curated gallery"
         images={galleryImages}
         autoPlay={true}
-        autoPlayInterval={5000}
+        autoPlayInterval={2500}
       />
       <PackageDealsSection
         packages={packages}
@@ -205,6 +205,7 @@ export default function Home() {
       <FAQSection />
       <CTASection />
       <ContactSection />
+      <SocialMediaSection/>
     </div>
   );
 }

@@ -85,7 +85,7 @@ const DrawerContentComponent = React.memo(({ isMobile = false, onClose }) => {
     <div className="relative flex flex-col h-full">
       {/* Optimized glass background with will-change */}
       <div
-        className="absolute inset-0 backdrop-blur-md bg-white/95 dark:bg-gray-950/95 pointer-events-none"
+        className="absolute inset-0 backdrop-blur-md bg-white/95 dark:bg-black/95 pointer-events-none"
         style={{ willChange: "transform" }}
       />
 
@@ -382,7 +382,7 @@ export default function DahabTourismNavbar() {
   return (
     <>
       {/* Desktop Header */}
-      <header className="hidden lg:block sticky top-0 z-50 w-full border-b border-amber-400/20 dark:border-amber-500/30 bg-white/80 dark:bg-gray-950/80 backdrop-blur-xl shadow-sm">
+      <header className="hidden lg:block sticky top-0 z-50 w-full border-b border-amber-400/20 dark:border-amber-500/30 bg-white/80 dark:bg-black/40 backdrop-blur-xl shadow-sm">
         <div className="container flex h-16 max-w-screen-2xl items-center justify-between px-4">
           <NavLink to={ROUTES.home} className="flex items-center space-x-2">
             <Logo />
@@ -546,7 +546,8 @@ export default function DahabTourismNavbar() {
       </header>
 
       {/* Mobile Bottom Navigation */}
-      <nav className="lg:hidden fixed bottom-0 left-0 right-0 z-50 border-t border-amber-400/20 dark:border-amber-500/30 bg-white/80 dark:bg-gray-950/80 backdrop-blur-xl pb-safe shadow-lg">
+    <nav className="lg:hidden fixed bottom-0 left-0 right-0 z-50 border-t border-amber-400/20 dark:border-amber-500/30 bg-white/40 dark:bg-black/40 backdrop-blur-xl pb-safe shadow-lg">
+
         <div className="flex items-center justify-center h-16 px-2">
           <NavLink
             to={ROUTES.home}

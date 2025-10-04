@@ -11,40 +11,41 @@ import Autoplay from "embla-carousel-autoplay";
 // eslint-disable-next-line no-unused-vars
 import { motion } from "framer-motion";
 
-export default function GallerySection({ 
-  badge, 
-  header, 
-  paragraph, 
-  images = [], 
-  autoPlay = true, 
-  autoPlayInterval = 5000 
+export default function GallerySection({
+  badge,
+  header,
+  paragraph,
+  images = [],
+  autoPlay = true,
+  autoPlayInterval = 3000, 
+  transitionSpeed = 20, 
 }) {
   const [carouselApi, setCarouselApi] = useState(null);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [scrollSnaps, setScrollSnaps] = useState([]);
 
-  // Create autoplay plugin with useRef to prevent recreation
+  // Autoplay plugin
   const autoplayPlugin = useRef(
     Autoplay({
       delay: autoPlayInterval,
-      stopOnInteraction: true,
+      stopOnInteraction: false,
       stopOnMouseEnter: true,
     })
   );
 
-  // Update current index when carousel changes
+  // Update current index
   const onSelect = useCallback(() => {
     if (!carouselApi) return;
     setCurrentIndex(carouselApi.selectedScrollSnap());
   }, [carouselApi]);
 
-  // Navigate to specific slide
+  // Scroll to slide
   const scrollTo = (index) => {
     if (!carouselApi) return;
     carouselApi.scrollTo(index);
   };
 
-  // Initialize carousel API
+  // Setup carousel listeners
   useEffect(() => {
     if (!carouselApi) return;
 
@@ -99,12 +100,14 @@ export default function GallerySection({
           )}
         </div>
 
-        {/* Carousel Container */}
+        {/* Carousel */}
         <div className="relative max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
           <Carousel
             opts={{
               align: "center",
               loop: true,
+              draggable: true,
+              duration: transitionSpeed, // 🎯 faster transition
             }}
             plugins={autoPlay ? [autoplayPlugin.current] : []}
             setApi={setCarouselApi}
@@ -126,11 +129,11 @@ export default function GallerySection({
                         className="w-full h-full object-cover"
                         loading="lazy"
                       />
-                      {/* Gradient overlay */}
-                      <div className="absolute inset-0 bg-gradient-to-t from-transparent via-transparent to-transparent dark:from-black/95 dark:via-black/60 dark:to-transparent transition-colors duration-300" />
-                      
-                      {/* Image Overlay with Title and Description */}
-                      <div className="absolute bottom-0 left-0 right-0 p-4 sm:p-6 md:p-8 lg:p-10 bg-gradient-to-t from-black/80 via-black/40 to-transparent dark:from-transparent dark:via-transparent dark:to-transparent">
+                      {/* Gradient overlay (non-blocking) */}
+                      <div className="absolute inset-0 bg-gradient-to-t from-transparent via-transparent to-transparent dark:from-black/95 dark:via-black/60 dark:to-transparent transition-colors duration-300 pointer-events-none" />
+
+                      {/* Overlay text (non-blocking) */}
+                      <div className="absolute bottom-0 left-0 right-0 p-4 sm:p-6 md:p-8 lg:p-10 bg-gradient-to-t from-black/80 via-black/40 to-transparent dark:from-transparent dark:via-transparent dark:to-transparent pointer-events-none">
                         <motion.div
                           initial={{ y: 20, opacity: 0 }}
                           animate={{ y: 0, opacity: 1 }}
@@ -150,12 +153,12 @@ export default function GallerySection({
               ))}
             </CarouselContent>
 
-            {/* Navigation Buttons */}
-            <CarouselPrevious className="hidden sm:flex -left-12 lg:-left-16 bg-yellow-600 hover:bg-yellow-700 border-2 border-yellow-500 hover:border-yellow-400 text-white shadow-xl hover:shadow-2xl hover:shadow-yellow-600/50 transition-all duration-300 w-12 h-12 lg:w-14 lg:h-14 dark:bg-yellow-600 dark:hover:bg-yellow-700 dark:border-yellow-500 dark:hover:border-yellow-400 dark:shadow-yellow-600/50" />
-            <CarouselNext className="hidden sm:flex -right-12 lg:-right-16 bg-yellow-600 hover:bg-yellow-700 border-2 border-yellow-500 hover:border-yellow-400 text-white shadow-xl hover:shadow-2xl hover:shadow-yellow-600/50 transition-all duration-300 w-12 h-12 lg:w-14 lg:h-14 dark:bg-yellow-600 dark:hover:bg-yellow-700 dark:border-yellow-500 dark:hover:border-yellow-400 dark:shadow-yellow-600/50" />
+            {/* Show arrows only on large screens */}
+            <CarouselPrevious className="hidden lg:flex -left-16 bg-yellow-600 hover:bg-yellow-700 border-2 border-yellow-500 hover:border-yellow-400 text-white shadow-xl hover:shadow-2xl hover:shadow-yellow-600/50 transition-all duration-300 w-14 h-14 dark:bg-yellow-600 dark:hover:bg-yellow-700 dark:border-yellow-500 dark:hover:border-yellow-400 dark:shadow-yellow-600/50" />
+            <CarouselNext className="hidden lg:flex -right-16 bg-yellow-600 hover:bg-yellow-700 border-2 border-yellow-500 hover:border-yellow-400 text-white shadow-xl hover:shadow-2xl hover:shadow-yellow-600/50 transition-all duration-300 w-14 h-14 dark:bg-yellow-600 dark:hover:bg-yellow-700 dark:border-yellow-500 dark:hover:border-yellow-400 dark:shadow-yellow-600/50" />
           </Carousel>
 
-          {/* Dot Indicators */}
+          {/* Dot indicators */}
           <div className="flex justify-center gap-2 sm:gap-3 mt-6 sm:mt-8 flex-wrap px-4">
             {scrollSnaps.map((_, index) => (
               <button
@@ -171,10 +174,12 @@ export default function GallerySection({
             ))}
           </div>
 
-          {/* Image Counter */}
+          {/* Counter */}
           <div className="text-center mt-4 sm:mt-5">
             <span className="inline-flex items-center gap-2 px-4 sm:px-6 py-2 sm:py-2.5 rounded-full bg-background border border-border text-sm sm:text-base font-bold shadow-md">
-              <span className="text-yellow-600 text-lg dark:text-yellow-500">{currentIndex + 1}</span>
+              <span className="text-yellow-600 text-lg dark:text-yellow-500">
+                {currentIndex + 1}
+              </span>
               <span className="text-muted-foreground">/</span>
               <span className="text-foreground">{images.length}</span>
             </span>
