@@ -1,5 +1,6 @@
 import Navbar02 from "../components/ui/shadcn-io/navbar-02";
 import Footer from "../components/sections/Footer";
+import UpButton from "@/components/UpButton";
 // eslint-disable-next-line no-unused-vars
 import { motion } from "framer-motion";
 
@@ -15,7 +16,7 @@ export default function DefaultLayout({ children }) {
       >
         <Navbar02 />
       </motion.div>
-
+      <UpButton />
       {/* Page Content */}
       <main className="min-h-screen">{children}</main>
 
