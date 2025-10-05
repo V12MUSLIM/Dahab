@@ -1,6 +1,6 @@
 import { Mail, MapPin, Phone } from "lucide-react";
 import { Badge } from "../ui/badge";
-export default function SocialMediaSection() {
+export default function SocialMediaSection({badge='',header,description}) {
   const socialLinks = [
     {
       name: "Facebook",
@@ -51,13 +51,13 @@ export default function SocialMediaSection() {
       <div className="max-w-6xl mx-auto px-4">
         <div className="text-center mb-16">
           <Badge className="mb-4 bg-yellow-100 dark:bg-yellow-900/30 text-yellow-800 dark:text-yellow-400 border-yellow-300 dark:border-yellow-700">
-            Connect
+         { badge}
           </Badge>
           <h2 className="text-4xl md:text-5xl font-bold mb-4 text-black dark:text-white">
-            Stay Connected
+            {header}
           </h2>
           <p className="text-gray-400 text-lg max-w-2xl mx-auto">
-            Follow our journey and stay updated with the latest from Dahab
+           {description}
           </p>
         </div>
 

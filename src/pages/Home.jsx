@@ -205,7 +205,11 @@ export default function Home() {
       <FAQSection />
       <CTASection />
       <ContactSection />
-      <SocialMediaSection/>
+      <SocialMediaSection
+      badge="Conect"
+      header="Stay Connected"
+      description=" Follow our journey and stay updated with the latest from Dahab"
+      />
     </div>
   );
 }
