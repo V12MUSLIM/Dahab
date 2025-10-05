@@ -3,302 +3,587 @@
 import React from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { motion } from "framer-motion";
+import { PrimaryButton, SecondaryButton } from '../customComponents/ButtonVarients'; 
+import GallerySection from './GallerySection';
+import HeroSection from './HeroSection';
 
-import { Button } from '@/components/ui/button';
-import {MarqueeItem,MarqueeContent} from "../ui/shadcn-io/marquee/index";
+// استخدام Context
+import { useDestinations } from '@/context/DestinationsContext';
 
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "../ui/card";
 
-export const destinationsData = [
-  {
-    id: 1,
-    title: "Blue Hole",
-    description:
-      "World-famous diving spot with crystal clear water and vibrant marine life, offering unparalleled underwater experiences for divers of all levels. Its stunning geological formations and diverse ecosystem make it a must-visit.",
-    imageUrl:
-      "https://dynamic-media-cdn.tripadvisor.com/media/photo-o/1f/d8/3f/1c/blue-hole.jpg?w=1400&h=-1&s=1",
-    href: "/destinations/blue-hole",
-    IdPage: "blue-hole",
-    subtitle: "World Famous Dive Site",
-    badge: "Must Visit",
-    rating: "4.9",
-    location: "Dahab Coast",
-    price: "$85",
-  },
-  {
-    id: 2,
-    title: "Mount Sinai",
-    description:
-      "A sacred mountain with breathtaking sunrise views and deep historical significance, revered by multiple faiths. The journey to its peak is an unforgettable spiritual and physical challenge.",
-    imageUrl:
-      "https://www.tripsinegypt.com/wp-content/uploads/2023/10/camel-looking-out-at-mount-sinai-in-egypt-trips-in-egypt.jpg",
-    href: "/destinations/mount-sinai",
-    IdPage: "mount-sinai",
-    subtitle: "Sacred Mountain",
-    badge: "Spiritual Journey",
-    rating: "4.8",
-    location: "Sinai Peninsula",
-    price: "$45",
-  },
-  {
-    id: 3,
-    title: "Colored Canyon",
-    description:
-      "Hike through spectacular rock formations with an incredible palette of natural colors. A true masterpiece of nature that captivates every visitor.",
-    imageUrl: "https://www.youregypttours.com/storage/1208/1681127279.jpg",
-    href: "/destinations/colored-canyon",
-    IdPage: "colored-canyon",
-    subtitle: "Natural Wonder",
-    badge: "Adventure",
-    rating: "4.7",
-    location: "Nuweiba Road",
-    price: "$55",
-  },
-  {
-    id: 4,
-    title: "Dahab Lagoon",
-    description:
-      "The perfect spot for windsurfing and kitesurfing, with calm waters and reliable winds, making it ideal for both beginners and professionals.",
-    imageUrl:
-      "https://cf.bstatic.com/xdata/images/hotel/max1024x768/511701167.jpg?k=c515cafbb679765be30f57f6da71539f014838d33a25dd29c45a0c1de534ec12&o=&hp=1",
-    href: "/destinations/dahab-lagoon",
-    IdPage: "dahab-lagoon",
-    subtitle: "Windsurfing & Kitesurfing",
-    badge: "Water Sports",
-    rating: "4.6",
-    location: "North Dahab",
-    price: "$60",
-  },
-  {
-    id: 5,
-    title: "Abu Galum",
-    description:
-      "A stunning protectorate where the desert meets the sea, offering a unique landscape and pristine coral reefs perfect for snorkeling.",
-    imageUrl:
-      "https://res.cloudinary.com/ddjuftfy2/image/upload/f_webp,c_fill/multitenacy/wikis/2024-10-05-03-38-29-167015d7589e39.webp",
-    href: "/destinations/abu-galum",
-    IdPage: "abu-galum",
-    subtitle: "Desert & Sea",
-    badge: "Nature Reserve",
-    rating: "4.8",
-    location: "South Sinai",
-    price: "$70",
-  },
-];
+import { 
+  Clock, MapPin, Users, Star, Phone, Mail, 
+  Calendar, Award, Shield, Heart, Waves, Mountain, 
+  Compass, Check, Camera, ChevronLeft, Sun, 
+  ArrowRight, Navigation, ExternalLink, Fish, Wind, 
+  Sunrise, Car, Info, AlertCircle, Backpack, Coffee,
+  Utensils
+} from 'lucide-react';
 
-const galleryImages = [
-    {
-      src: `${import.meta.env.BASE_URL}image1.jpeg`,
-      alt: "Blue Lagoon in Dahab",
-      title: "Blue Lagoon Paradise",
-      description: "Crystal clear waters perfect for swimming"
-    },
-    {
-      src: "https://www.propertyfinder.eg/blog/wp-content/uploads/2019/10/blue-hole-dahab-800x600.jpg",
-      alt: "Blue Hole diving spot",
-      title: "Famous Blue Hole",
-      description: "World's most iconic diving destination"
-    },
-    {
-      src: "https://www.arabtravelers.com/wp-content/uploads/2023/05/Tourism-in-dahab-10.jpg",
-      alt: "Dahab coastline",
-      title: "Stunning Coastline",
-      description: "Miles of pristine beaches await"
-    },
-    {
-      src: "https://assets.annahar.com/ContentFilesArchive/422721Image1-1180x677_d.jpg",
-      alt: "Desert meets sea",
-      title: "Desert Meets Sea",
-      description: "Unique landscape of mountains and ocean"
-    },
-    {
-      src: `${import.meta.env.BASE_URL}image2.jpeg`,
-      alt: "Sinai mountains sunset",
-      title: "Sinai Mountain Sunset",
-      description: "Breathtaking views from sacred peaks"
-    },
-    {
-      src: `${import.meta.env.BASE_URL}image3.jpeg`,
-      alt: "Blue Hole diving",
-      title: "World-Class Diving",
-      description: "Explore vibrant coral reefs"
-    },
-    {
-      src: `${import.meta.env.BASE_URL}image4.jpeg`,
-      alt: "Bedouin beach camp",
-      title: "Bedouin Beach Culture",
-      description: "Experience authentic local traditions"
-    }
-  ];
-
-
+const iconMap = {
+  Waves, Camera, Shield, Mountain, Compass, Fish, 
+  Wind, Sunrise, Car, Backpack, Sun, Info, AlertCircle,
+  Coffee, Utensils, Check, MapPin
+};
 
 export default function DestinationDetail() {
   const { IdPage } = useParams();
-  const destination = destinationsData.find(d => d.IdPage === IdPage);
-  
-  
-const fadeInUp = {
-    initial: { opacity: 0, y: 60 },
-    animate: { opacity: 1, y: 0 },
-    transition: { duration: 0.8, ease: "easeOut" },
-  };
+  const { getDestinationById, toggleFavorite, isFavorite } = useDestinations();
+  const destination = getDestinationById(IdPage);
 
   if (!destination) {
     return (
-      <div className="min-h-screen flex items-center justify-center dark:bg-black">
-        <h1 className="text-3xl font-bold dark:text-white">Destination not found!</h1>
+      <div className="min-h-screen flex flex-col items-center justify-center dark:bg-black">
+        <h1 className="text-3xl font-bold dark:text-white mb-4">Destination not found!</h1>
+        <p className="text-muted-foreground mb-6">The destination you're looking for doesn't exist.</p>
+        <Link to="/destinations">
+          <PrimaryButton icon={ChevronLeft}>
+            Back to All Destinations
+          </PrimaryButton>
+        </Link>
       </div>
     );
   }
 
+  const googleMapsLink = destination.locationDetails
+    ? `https://www.google.com/maps/search/?api=1&query=${destination.locationDetails.coordinates.lat},${destination.locationDetails.coordinates.lng}`
+    : '';
+
+  const handleFavoriteClick = () => {
+    toggleFavorite(destination.id);
+  };
+
   return (
     <div className="min-h-screen bg-white dark:bg-black text-gray-900 dark:text-gray-100 pb-12">
-      <motion.div
-        className="relative h-[50vh] md:h-[65vh] w-full overflow-hidden"
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ duration: 0.8 }}
-      >
-        <img
-          src={destination.imageUrl}
-          alt={destination.title}
-          className="absolute inset-0 w-full h-full object-cover z-0 filter brightness-75"
-        />
-        <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent z-10"></div>
-        <div className="absolute inset-0 flex flex-col items-center justify-center text-center text-white z-20 p-6">
-    
-          <motion.h1
-              className="text-4xl sm:text-6xl md:text-7xl lg:text-8xl xl:text-9xl font-black tracking-tight mb-6 bg-gradient-to-b from-white via-gray-100 to-gray-300 bg-clip-text text-transparent drop-shadow-2xl"
-            variants={fadeInUp}
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.3, duration: 0.8 }}
-          >
-            {destination.title}
-          </motion.h1>
-          <motion.p
-            className="mt-2 text-lg md:text-xl lg:text-2xl font-semibold text-amber-300"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.5, duration: 0.8 }}
-          >
-            {destination.subtitle}
-          </motion.p>
-        </div>
-      </motion.div>
+      {/* Hero Section */}
+      <HeroSection
+        image={destination.imageUrl}
+        title={destination.title}
+        subtitle={destination.subtitle}
+        Icon={Sun}
+        badge={destination.badge}
+        PrimaryButton={PrimaryButton}
+        primaryCta={{
+          label: "Book Now",
+          href: "#booking",
+          icon: ArrowRight,
+        }}
+        secondaryCta={{
+          label: "View Location",
+          href: "#location",
+          icon: MapPin,
+        }}
+        stats={[
+          { icon: Clock, text: destination.duration },
+          { icon: Users, text: destination.groupSize },
+          { icon: Star, text: `${destination.rating}/5 Rating` },
+        ]}
+      />
 
+      {/* Gallery Section */}
+      <GallerySection
+        images={destination.galleryImages || []}
+        autoPlay={true}
+        autoPlayInterval={2000}
+      />
 
-       <MarqueeContent className="py-4">
-            {galleryImages.map((image, index) => (
-              <MarqueeItem key={index}>
-                <motion.div className="relative group overflow-hidden rounded-xl mx-2">
-                  <motion.img
-                    src={image.src}
-                    alt={image.alt}
-                    className="h-72 w-auto rounded-xl object-cover shadow-xl dark:shadow-2xl"
-                    whileHover={{ scale: 1.08, rotateY: 5 }}
-                    transition={{ duration: 0.4 }}
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-all duration-300 rounded-xl flex items-end">
-                    <div className="p-6 w-full">
-                      <p className="text-white font-bold text-lg mb-1">
-                        {image.title}
-                      </p>
-                      <p className="text-white/80 text-sm">
-                        {image.description}
-                      </p>
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 md:gap-8">
+          
+          {/* Main Content Area */}
+          <div className="lg:col-span-2 space-y-8">
+            
+            {/* Badge & Description */}
+            {destination.badge && (
+              <motion.span
+                className="inline-block bg-yellow-600 dark:bg-yellow-500 text-white text-sm font-semibold px-4 py-2 rounded-full shadow-md"
+                initial={{ opacity: 0, x: -20 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ delay: 0.7, duration: 0.6 }}
+              >
+                {destination.badge}
+              </motion.span>
+            )}
+
+            <motion.p
+              className="text-lg md:text-xl leading-relaxed text-muted-foreground"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.9, duration: 0.8 }}
+            >
+              {destination.longDescription || destination.description}
+            </motion.p>
+
+            {/* Quick Info Cards */}
+            <motion.div 
+              className="grid grid-cols-1 md:grid-cols-4 gap-6 md:gap-8"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 1.1, duration: 0.8 }}
+            >
+              <Card className="transition-all duration-300 hover:scale-105 hover:shadow-2xl cursor-pointer">
+                <CardHeader>
+                  <Clock className="w-8 h-8 text-yellow-600 dark:text-yellow-500 mb-4" />
+                  <CardTitle>Duration</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-muted-foreground">{destination.duration}</p>
+                </CardContent>
+              </Card>
+              
+              <Card className="transition-all duration-300 hover:scale-105 hover:shadow-2xl cursor-pointer">
+                <CardHeader>
+                  <Users className="w-8 h-8 text-yellow-600 dark:text-yellow-500 mb-4" />
+                  <CardTitle>Group Size</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-muted-foreground">{destination.groupSize}</p>
+                </CardContent>
+              </Card>
+              
+              <Card className="transition-all duration-300 hover:scale-105 hover:shadow-2xl cursor-pointer">
+                <CardHeader>
+                  <Star className="w-8 h-8 text-yellow-600 dark:text-yellow-500 mb-4" />
+                  <CardTitle>Rating</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-muted-foreground">{destination.rating}/5.0</p>
+                </CardContent>
+              </Card>
+              
+              <Card className="transition-all duration-300 hover:scale-105 hover:shadow-2xl cursor-pointer">
+                <CardHeader>
+                  <Mountain className="w-8 h-8 text-yellow-600 dark:text-yellow-500 mb-4" />
+                  <CardTitle>Difficulty</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-muted-foreground">{destination.difficulty}</p>
+                </CardContent>
+              </Card>
+            </motion.div>
+
+            {/* Location Section */}
+            {destination.locationDetails && (
+              <motion.div
+                id="location"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 1.3, duration: 0.8 }}
+              >
+                <Card className="transition-all duration-300 hover:scale-[1.02] hover:shadow-2xl">
+                  <CardHeader>
+                    <MapPin className="w-8 h-8 text-yellow-600 dark:text-yellow-500 mb-4" />
+                    <CardTitle>Location & How to Get There</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="relative w-full h-64 md:h-80 bg-gray-200 dark:bg-gray-800 rounded-lg overflow-hidden mb-6">
+                      <iframe
+                        width="100%"
+                        height="100%"
+                        frameBorder="0"
+                        style={{ border: 0 }}
+                        referrerPolicy="no-referrer-when-downgrade"
+                        src={`https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3456.789!2d${destination.locationDetails.coordinates.lng}!3d${destination.locationDetails.coordinates.lat}!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2z${destination.locationDetails.coordinates.lat}!5e0!3m2!1sen!2seg!4v1234567890`}
+                        allowFullScreen
+                        loading="lazy"
+                        title={`Map showing ${destination.title}`}
+                      ></iframe>
+                    </div>
+                    
+                    <div className="space-y-4">
+                      <div>
+                        <p className="text-muted-foreground mb-2">
+                          <strong>Address:</strong>
+                        </p>
+                        <p className="text-muted-foreground">
+                          {destination.locationDetails.address}
+                        </p>
+                      </div>
+
+                      <div>
+                        <p className="text-muted-foreground mb-2">
+                          <strong>Distance:</strong>
+                        </p>
+                        <p className="text-muted-foreground">
+                          {destination.locationDetails.distance}
+                        </p>
+                      </div>
+
+                      <div>
+                        <p className="text-muted-foreground mb-2">
+                          <strong>Access:</strong>
+                        </p>
+                        <p className="text-muted-foreground">
+                          {destination.locationDetails.access}
+                        </p>
+                      </div>
+
+                      {destination.locationDetails.nearby && destination.locationDetails.nearby.length > 0 && (
+                        <div>
+                          <p className="text-muted-foreground mb-2">
+                            <strong>Nearby Attractions:</strong>
+                          </p>
+                          <ul className="space-y-1">
+                            {destination.locationDetails.nearby.map((place, idx) => (
+                              <li key={idx} className="text-muted-foreground">
+                                • {place}
+                              </li>
+                            ))}
+                          </ul>
+                        </div>
+                      )}
+
+                      <a 
+                        href={googleMapsLink}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center gap-2 text-yellow-600 dark:text-yellow-500 hover:underline font-semibold mt-4"
+                      >
+                        <ExternalLink className="w-4 h-4" />
+                        Open in Google Maps
+                      </a>
+                    </div>
+                  </CardContent>
+                </Card>
+              </motion.div>
+            )}
+
+            {/* Highlights Section */}
+            {destination.highlights && destination.highlights.length > 0 && (
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 1.5, duration: 0.8 }}
+              >
+                <Card className="bg-gradient-to-r from-yellow-600/10 to-yellow-700/10 dark:from-yellow-600/20 dark:to-yellow-700/20 border-yellow-600/20 transition-all duration-300 hover:scale-[1.02] hover:shadow-2xl">
+                  <CardHeader>
+                    <Award className="w-8 h-8 text-yellow-600 dark:text-yellow-500 mb-4" />
+                    <CardTitle>Experience Highlights</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <ul className="space-y-3">
+                      {destination.highlights.map((highlight, index) => (
+                        <li key={index} className="flex items-start gap-3">
+                          <Check className="w-5 h-5 text-yellow-600 dark:text-yellow-500 flex-shrink-0 mt-0.5" />
+                          <span className="text-muted-foreground">{highlight}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </CardContent>
+                </Card>
+              </motion.div>
+            )}
+
+            {/* Activities Grid */}
+            {destination.activities && destination.activities.length > 0 && (
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 1.7, duration: 0.8 }}
+              >
+                <h2 className="text-2xl md:text-3xl font-bold mb-6">Activities Included</h2>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8">
+                  {destination.activities.map((activity, index) => {
+                    const IconComponent = iconMap[activity.icon] || Waves;
+                    return (
+                      <Card 
+                        key={index}
+                        className="transition-all duration-300 hover:scale-105 hover:shadow-2xl cursor-pointer"
+                      >
+                        <CardHeader>
+                          <IconComponent className="w-8 h-8 text-yellow-600 dark:text-yellow-500 mb-4" />
+                          <CardTitle>{activity.name}</CardTitle>
+                        </CardHeader>
+                        <CardContent>
+                          <p className="text-muted-foreground">{activity.description}</p>
+                          {activity.difficulty && (
+                            <p className="text-sm text-muted-foreground mt-2">
+                              <strong>Difficulty:</strong> {activity.difficulty}
+                            </p>
+                          )}
+                          {activity.duration && (
+                            <p className="text-sm text-muted-foreground">
+                              <strong>Duration:</strong> {activity.duration}
+                            </p>
+                          )}
+                        </CardContent>
+                      </Card>
+                    );
+                  })}
+                </div>
+              </motion.div>
+            )}
+
+            {/* What's Included */}
+            {destination.included && destination.included.length > 0 && (
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 1.9, duration: 0.8 }}
+              >
+                <Card className="transition-all duration-300 hover:scale-[1.02] hover:shadow-2xl">
+                  <CardHeader>
+                    <Check className="w-8 h-8 text-yellow-600 dark:text-yellow-500 mb-4" />
+                    <CardTitle>What's Included</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                      {destination.included.map((item, index) => (
+                        <div key={index} className="flex items-center gap-3">
+                          <div className="w-2 h-2 bg-yellow-600 dark:bg-yellow-500 rounded-full"></div>
+                          <span className="text-muted-foreground">{item}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </CardContent>
+                </Card>
+              </motion.div>
+            )}
+
+            {/* Reviews Section */}
+            {destination.reviews && destination.reviews.length > 0 && (
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 2.1, duration: 0.8 }}
+              >
+                <h2 className="text-2xl font-bold mb-6">Traveler Reviews</h2>
+                <div className="space-y-4">
+                  {destination.reviews.map((review, index) => (
+                    <Card 
+                      key={index}
+                      className="transition-all duration-300 hover:scale-[1.02] hover:shadow-2xl cursor-pointer"
+                    >
+                      <CardHeader>
+                        <div className="flex items-center justify-between mb-2">
+                          <div>
+                            <CardTitle className="text-lg">{review.name}</CardTitle>
+                            {review.nationality && (
+                              <CardDescription className="text-sm">{review.nationality}</CardDescription>
+                            )}
+                          </div>
+                          <div className="flex items-center gap-1">
+                            {[...Array(review.rating)].map((_, i) => (
+                              <Star key={i} className="w-4 h-4 fill-yellow-600 text-yellow-600 dark:fill-yellow-500 dark:text-yellow-500" />
+                            ))}
+                          </div>
+                        </div>
+                        <CardDescription>{review.date}</CardDescription>
+                      </CardHeader>
+                      <CardContent>
+                        <p className="text-muted-foreground">{review.comment}</p>
+                        {review.verified && (
+                          <p className="text-xs text-green-600 dark:text-green-400 mt-2">
+                            ✓ Verified Purchase
+                          </p>
+                        )}
+                      </CardContent>
+                    </Card>
+                  ))}
+                </div>
+              </motion.div>
+            )}
+
+            {/* Practical Information */}
+            {destination.practicalInfo && (
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 2.3, duration: 0.8 }}
+              >
+                <Card className="transition-all duration-300 hover:scale-[1.02] hover:shadow-2xl">
+                  <CardHeader>
+                    <Info className="w-8 h-8 text-yellow-600 dark:text-yellow-500 mb-4" />
+                    <CardTitle>Practical Information</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="space-y-6">
+                      {destination.practicalInfo.requirements && destination.practicalInfo.requirements.length > 0 && (
+                        <div>
+                          <h3 className="font-semibold mb-3">Requirements</h3>
+                          <ul className="space-y-2">
+                            {destination.practicalInfo.requirements.map((req, index) => {
+                              const ReqIcon = iconMap[req.icon] || Shield;
+                              return (
+                                <li key={index} className="flex items-start gap-3">
+                                  <ReqIcon className="w-5 h-5 text-yellow-600 dark:text-yellow-500 flex-shrink-0 mt-0.5" />
+                                  <span className="text-muted-foreground">{req.text}</span>
+                                </li>
+                              );
+                            })}
+                          </ul>
+                        </div>
+                      )}
+
+                      {destination.practicalInfo.whatToBring && destination.practicalInfo.whatToBring.length > 0 && (
+                        <div>
+                          <h3 className="font-semibold mb-3">What to Bring</h3>
+                          <ul className="space-y-2">
+                            {destination.practicalInfo.whatToBring.map((item, index) => {
+                              const ItemIcon = iconMap[item.icon] || Backpack;
+                              return (
+                                <li key={index} className="flex items-start gap-3">
+                                  <ItemIcon className="w-5 h-5 text-yellow-600 dark:text-yellow-500 flex-shrink-0 mt-0.5" />
+                                  <span className="text-muted-foreground">{item.text}</span>
+                                </li>
+                              );
+                            })}
+                          </ul>
+                        </div>
+                      )}
+
+                      {destination.practicalInfo.cancellation && (
+                        <div className="pt-4 border-t">
+                          <p className="text-sm text-muted-foreground">
+                            <strong>Cancellation Policy:</strong> {destination.practicalInfo.cancellation}
+                          </p>
+                        </div>
+                      )}
+                    </div>
+                  </CardContent>
+                </Card>
+              </motion.div>
+            )}
+          </div>
+
+          {/* Sidebar - Booking Card */}
+          <div className="lg:col-span-1">
+            <motion.div 
+              id="booking"
+              className="sticky top-24"
+              initial={{ opacity: 0, x: 20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: 1.1, duration: 0.8 }}
+            >
+              <Card className="bg-gradient-to-r from-yellow-600/10 to-yellow-700/10 dark:from-yellow-600/20 dark:to-yellow-700/20 border-yellow-600/20 transition-all duration-300 hover:scale-[1.02] hover:shadow-2xl">
+                <CardHeader className="text-center">
+                  <CardDescription className="text-sm">
+                    Starting from
+                  </CardDescription>
+                  <CardTitle className="text-4xl md:text-5xl font-black text-yellow-600 dark:text-yellow-500">
+                    {destination.price}
+                    <span className="text-xl font-normal text-muted-foreground">/person</span>
+                  </CardTitle>
+                  <div className="flex items-center justify-center gap-1 mt-3">
+                    <Star className="w-5 h-5 fill-yellow-600 text-yellow-600 dark:fill-yellow-500 dark:text-yellow-500" />
+                    <span className="font-bold text-lg">{destination.rating}</span>
+                    <span className="text-muted-foreground text-sm ml-1">(250+ reviews)</span>
+                  </div>
+                </CardHeader>
+
+                <CardContent className="space-y-4">
+                  <div className="space-y-3">
+                    <div className="p-4 bg-white dark:bg-gray-900 rounded-lg transition-all duration-300 hover:scale-105 hover:shadow-lg cursor-pointer">
+                      <p className="text-muted-foreground text-sm mb-2">Best Time to Visit</p>
+                      <div className="flex items-center gap-2">
+                        <Calendar className="w-5 h-5 text-yellow-600 dark:text-yellow-500" />
+                        <span className="font-semibold">{destination.bestTime}</span>
+                      </div>
+                    </div>
+
+                    <div className="p-4 bg-white dark:bg-gray-900 rounded-lg transition-all duration-300 hover:scale-105 hover:shadow-lg cursor-pointer">
+                      <p className="text-muted-foreground text-sm mb-2">Difficulty Level</p>
+                      <div className="flex items-center gap-2">
+                        <Mountain className="w-5 h-5 text-yellow-600 dark:text-yellow-500" />
+                        <span className="font-semibold">{destination.difficulty}</span>
+                      </div>
                     </div>
                   </div>
-                </motion.div>
-              </MarqueeItem>
-            ))}
-          </MarqueeContent>
-    
-     
-     
-     
-     
-   
-     
-     
-     
-     
 
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
-        {destination.badge && (
-          <motion.span
-            className="inline-block bg-amber-500 text-gray-900 text-sm font-semibold px-4 py-1 rounded-full mb-6 shadow-md"
-            initial={{ opacity: 0, x: -20 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ delay: 0.7, duration: 0.6 }}
-          >
-            {destination.badge}
-          </motion.span>
-        )}
+                  <div className="space-y-3 pt-4 flex flex-col">
+                    <PrimaryButton className="w-full">
+                      Book Now
+                    </PrimaryButton>
 
-        <motion.p
-          className="text-lg md:text-xl leading-relaxed text-gray-700 dark:text-gray-300 mb-10"
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.9, duration: 0.8 }}
-        >
-          {destination.description}
-        </motion.p>
+                    <SecondaryButton
+                      onClick={handleFavoriteClick}
+                      className="w-full"
+                    >
+                      <Heart className={`w-5 h-5 mr-2 ${isFavorite(destination.id) ? 'fill-current text-red-500' : ''}`} />
+                      {isFavorite(destination.id) ? 'Remove from Wishlist' : 'Add to Wishlist'}
+                    </SecondaryButton>
+                  </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
-          <motion.div
-            className="bg-gray-100 dark:bg-gray-800 p-6 rounded-lg shadow-md flex items-center space-x-4"
-            initial={{ opacity: 0, scale: 0.9 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ delay: 1.1, duration: 0.6 }}
-          >
-            <span className="text-amber-500 text-3xl">⭐</span>
-            <div>
-              <p className="text-xl font-bold">{destination.rating}</p>
-              <p className="text-sm text-gray-500 dark:text-gray-400">Rating</p>
-            </div>
-          </motion.div>
+                  <div className="pt-6 border-t">
+                    <h3 className="font-bold mb-4 text-center">Contact Us</h3>
+                    <div className="space-y-3">
+                      <a 
+                        href="tel:+201234567890" 
+                        className="flex items-center gap-3 p-3 bg-white dark:bg-gray-900 rounded-lg transition-all duration-300 hover:scale-105 hover:shadow-lg"
+                      >
+                        <Phone className="w-5 h-5 text-yellow-600 dark:text-yellow-500" />
+                        <span className="text-sm">+20 123 456 7890</span>
+                      </a>
+                      
+                      <a 
+                        href="mailto:info@dahab-tours.com" 
+                        className="flex items-center gap-3 p-3 bg-white dark:bg-gray-900 rounded-lg transition-all duration-300 hover:scale-105 hover:shadow-lg"
+                      >
+                        <Mail className="w-5 h-5 text-yellow-600 dark:text-yellow-500" />
+                        <span className="text-sm break-all">info@dahab-tours.com</span>
+                      </a>
+                    </div>
+                  </div>
 
-          <motion.div
-            className="bg-gray-100 dark:bg-gray-800 p-6 rounded-lg shadow-md flex items-center space-x-4"
-            initial={{ opacity: 0, scale: 0.9 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ delay: 1.3, duration: 0.6 }}
-          >
-            <span className="text-blue-500 text-3xl">📍</span>
-            <div>
-              <p className="text-xl font-bold">{destination.location}</p>
-              <p className="text-sm text-gray-500 dark:text-gray-400">Location</p>
-            </div>
-          </motion.div>
+                  <div className="pt-6 border-t">
+                    <div className="flex items-center justify-center gap-2 text-sm">
+                      <Shield className="w-5 h-5 text-yellow-600 dark:text-yellow-500" />
+                      <span>100% Secure Booking</span>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
 
-          <motion.div
-            className="bg-gray-100 dark:bg-gray-800 p-6 rounded-lg shadow-md flex items-center space-x-4"
-            initial={{ opacity: 0, scale: 0.9 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ delay: 1.5, duration: 0.6 }}
-          >
-            <span className="text-green-500 text-3xl">💰</span>
-            <div>
-              <p className="text-xl font-bold">{destination.price}</p>
-              <p className="text-sm text-gray-500 dark:text-gray-400">Per Person</p>
-            </div>
-          </motion.div>
+              <Card className="mt-6 transition-all duration-300 hover:scale-[1.02] hover:shadow-2xl">
+                <CardHeader>
+                  <CardTitle className="text-lg">Why Book With Us?</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <ul className="space-y-3 text-sm">
+                    <li className="flex items-start gap-3">
+                      <Check className="w-5 h-5 text-green-600 flex-shrink-0 mt-0.5" />
+                      <span className="text-muted-foreground">Best price guarantee</span>
+                    </li>
+                    <li className="flex items-start gap-3">
+                      <Check className="w-5 h-5 text-green-600 flex-shrink-0 mt-0.5" />
+                      <span className="text-muted-foreground">24/7 customer support</span>
+                    </li>
+                    <li className="flex items-start gap-3">
+                      <Check className="w-5 h-5 text-green-600 flex-shrink-0 mt-0.5" />
+                      <span className="text-muted-foreground">Free cancellation</span>
+                    </li>
+                    <li className="flex items-start gap-3">
+                      <Check className="w-5 h-5 text-green-600 flex-shrink-0 mt-0.5" />
+                      <span className="text-muted-foreground">Experienced guides</span>
+                    </li>
+                    <li className="flex items-start gap-3">
+                      <Check className="w-5 h-5 text-green-600 flex-shrink-0 mt-0.5" />
+                      <span className="text-muted-foreground">Small group sizes</span>
+                    </li>
+                  </ul>
+                </CardContent>
+              </Card>
+            </motion.div>
+          </div>
         </div>
 
         <motion.div
           className="text-center mt-12"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          transition={{ delay: 1.7, duration: 0.8 }}
+          transition={{ delay: 2.5, duration: 0.8 }}
         >
           <Link to="/destinations">
-            <Button
-              size="lg"
-              className="bg-amber-500 text-gray-900 hover:bg-amber-600 font-bold text-lg"
-            >
+            <PrimaryButton icon={ChevronLeft}>
               Back to All Destinations
-            </Button>
+            </PrimaryButton>
           </Link>
         </motion.div>
       </div>
