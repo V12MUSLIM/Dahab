@@ -16,11 +16,12 @@ export default function HeroSection({
   subtitle = "Your subtitle goes here...",
   Icon,
   badge,
-  primaryCta = { label: "Get Started", href: "#" },
+  primaryCta,
   secondaryCta = { label: "Learn More", href: "#" },
   PrimaryButton,
   SecondaryButton,
   stats = [],
+  imageURL,
 }) {
   const [imageLoaded, setImageLoaded] = useState(false);
   const shouldReduceMotion = useReducedMotion();
@@ -91,7 +92,13 @@ export default function HeroSection({
         transition={{ duration: 1.2, ease: "easeOut" }}
       >
         <motion.img
-          src={`${import.meta.env.BASE_URL}${image}`}
+          src={
+            imageURL
+              ? imageURL 
+              : image
+              ? `${import.meta.env.BASE_URL}${image}` 
+              : "https://lightwidget.com/wp-content/uploads/localhost-file-not-found.jpg"
+          }
           alt={`${title} background`}
           className="w-full h-full object-cover"
           onLoad={() => setImageLoaded(true)}
@@ -140,7 +147,11 @@ export default function HeroSection({
           <motion.p
             className="mt-4 text-lg sm:text-xl md:text-2xl text-gray-100 font-light tracking-wide leading-relaxed drop-shadow-lg max-w-3xl mx-auto px-4"
             variants={fadeInUp}
-            transition={{ duration: FADE_DURATION, ease: "easeOut", delay: 0.1 }}
+            transition={{
+              duration: FADE_DURATION,
+              ease: "easeOut",
+              delay: 0.1,
+            }}
           >
             {subtitle}
           </motion.p>
@@ -170,7 +181,11 @@ export default function HeroSection({
           <motion.div
             className="mt-12 flex flex-wrap items-center justify-center gap-4 sm:gap-8 text-white/90 px-4"
             variants={fadeInUp}
-            transition={{ duration: FADE_DURATION, ease: "easeOut", delay: 0.2 }}
+            transition={{
+              duration: FADE_DURATION,
+              ease: "easeOut",
+              delay: 0.2,
+            }}
           >
             {stats.map((stat, idx) => (
               <div key={idx} className="flex items-center gap-2">

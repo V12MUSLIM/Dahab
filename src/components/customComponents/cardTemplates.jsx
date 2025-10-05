@@ -74,73 +74,74 @@ const ImageCard = ({
     }}
     className={cn("group", className)}
   >
-    <Card
-      className={cn(
-        "overflow-hidden border-border bg-card transition-all duration-300 p-0",
-        "hover:shadow-xl hover:shadow-yellow-500/10 hover:border-yellow-200 dark:hover:border-yellow-800/50"
-      )}
-    >
-      <div className="relative overflow-hidden">
-        <motion.img
-          src={image}
-          alt={title}
-          className="w-full h-80 object-cover transition-transform duration-500"
-          whileHover={{ scale: 1.05 }}
-        />
-        <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-
-        {badge && (
-          <div className="absolute top-4 left-4">
-            <Badge className="bg-yellow-600 hover:bg-yellow-700 text-white border-0">
-              {badge}
-            </Badge>
-          </div>
+    <Link to={href}>
+      <Card
+        className={cn(
+          "overflow-hidden border-border bg-card transition-all duration-300 p-0",
+          "hover:shadow-xl hover:shadow-yellow-500/10 hover:border-yellow-200 dark:hover:border-yellow-800/50"
         )}
+      >
+        <div className="relative overflow-hidden">
+          <motion.img
+            src={image}
+            alt={title}
+            className="w-full h-80 object-cover transition-transform duration-500"
+            whileHover={{ scale: 1.05 }}
+          />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
 
-        {rating && (
-          <div className="absolute top-4 right-4 flex items-center gap-1 bg-white/90 dark:bg-gray-900/90 backdrop-blur-sm rounded-full px-2 py-1">
-            <Star className="h-3 w-3 fill-yellow-400 text-yellow-400" />
-            <span className="text-xs font-medium">{rating}</span>
-          </div>
-        )}
-      </div>
+          {badge && (
+            <div className="absolute top-4 left-4">
+              <Badge className="bg-yellow-600 hover:bg-yellow-700 text-white border-0">
+                {badge}
+              </Badge>
+            </div>
+          )}
 
-      <CardHeader className="pb-3 px-6 pt-4">
-        {subtitle && (
-          <p className="text-sm font-medium text-yellow-600 dark:text-yellow-400 mb-1">
-            {subtitle}
-          </p>
-        )}
-        <CardTitle className="text-xl font-bold text-foreground group-hover:text-yellow-600 dark:group-hover:text-yellow-400 transition-colors">
-          {title}
-        </CardTitle>
-        {location && (
-          <div className="flex items-center gap-1 text-sm text-muted-foreground">
-            <MapPin className="h-3 w-3" />
-            {location}
-          </div>
-        )}
-      </CardHeader>
-
-      <CardContent className="pb-4 px-6">
-        <CardDescription className="text-muted-foreground leading-relaxed">
-          {description}
-        </CardDescription>
-      </CardContent>
-
-      <CardFooter className="flex items-center justify-between pt-0 px-6 pb-6">
-        <div className="flex items-center gap-2">
-          {price && (
-            <span className="text-xl font-bold text-yellow-600 dark:text-yellow-400">
-              {price}
-            </span>
+          {rating && (
+            <div className="absolute top-4 right-4 flex items-center gap-1 bg-white/90 dark:bg-gray-900/90 backdrop-blur-sm rounded-full px-2 py-1">
+              <Star className="h-3 w-3 fill-yellow-400 text-yellow-400" />
+              <span className="text-xs font-medium">{rating}</span>
+            </div>
           )}
         </div>
-        <Link to={href}>
+
+        <CardHeader className="pb-3 px-6 pt-4">
+          {subtitle && (
+            <p className="text-sm font-medium text-yellow-600 dark:text-yellow-400 mb-1">
+              {subtitle}
+            </p>
+          )}
+          <CardTitle className="text-xl font-bold text-foreground group-hover:text-yellow-600 dark:group-hover:text-yellow-400 transition-colors">
+            {title}
+          </CardTitle>
+          {location && (
+            <div className="flex items-center gap-1 text-sm text-muted-foreground">
+              <MapPin className="h-3 w-3" />
+              {location}
+            </div>
+          )}
+        </CardHeader>
+
+        <CardContent className="pb-4 px-6">
+          <CardDescription className="text-muted-foreground leading-relaxed">
+            {description}
+          </CardDescription>
+        </CardContent>
+
+        <CardFooter className="flex items-center justify-between pt-0 px-6 pb-6">
+          <div className="flex items-center gap-2">
+            {price && (
+              <span className="text-xl font-bold text-yellow-600 dark:text-yellow-400">
+                {price}
+              </span>
+            )}
+          </div>
+
           <PrimaryButton onClick={onButtonClick}>{buttonText}</PrimaryButton>
-        </Link>
-      </CardFooter>
-    </Card>
+        </CardFooter>
+      </Card>
+    </Link>
   </motion.div>
 );
 // Activity Card

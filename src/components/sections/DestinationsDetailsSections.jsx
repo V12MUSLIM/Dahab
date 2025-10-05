@@ -1,15 +1,17 @@
 "use client";
 
-import React from 'react';
-import { useParams, Link } from 'react-router-dom';
+import React from "react";
+import { useParams, Link } from "react-router-dom";
+// eslint-disable-next-line no-unused-vars
 import { motion } from "framer-motion";
-import { PrimaryButton, SecondaryButton } from '../customComponents/ButtonVarients'; 
-import GallerySection from './GallerySection';
-import HeroSection from './HeroSection';
-
-// استخدام Context
-import { useDestinations } from '@/context/DestinationsContext';
-
+import {
+  PrimaryButton,
+  SecondaryButton,
+} from "../customComponents/ButtonVarients";
+import GallerySection from "./GallerySection";
+import HeroSection from "./HeroSection";
+import { useDestinations } from "@/context/DestinationsContext";
+import SocialMediaSection from "./SocialMediaSection";
 import {
   Card,
   CardContent,
@@ -18,19 +20,56 @@ import {
   CardTitle,
 } from "../ui/card";
 
-import { 
-  Clock, MapPin, Users, Star, Phone, Mail, 
-  Calendar, Award, Shield, Heart, Waves, Mountain, 
-  Compass, Check, Camera, ChevronLeft, Sun, 
-  ArrowRight, Navigation, ExternalLink, Fish, Wind, 
-  Sunrise, Car, Info, AlertCircle, Backpack, Coffee,
-  Utensils
-} from 'lucide-react';
+import {
+  Clock,
+  MapPin,
+  Users,
+  Star,
+  Phone,
+  Mail,
+  Calendar,
+  Award,
+  Shield,
+  Heart,
+  Waves,
+  Mountain,
+  Compass,
+  Check,
+  Camera,
+  ChevronLeft,
+  Sun,
+  ArrowRight,
+  Navigation,
+  ExternalLink,
+  Fish,
+  Wind,
+  Sunrise,
+  Car,
+  Info,
+  AlertCircle,
+  Backpack,
+  Coffee,
+  Utensils,
+} from "lucide-react";
 
 const iconMap = {
-  Waves, Camera, Shield, Mountain, Compass, Fish, 
-  Wind, Sunrise, Car, Backpack, Sun, Info, AlertCircle,
-  Coffee, Utensils, Check, MapPin
+  Waves,
+  Camera,
+  Shield,
+  Mountain,
+  Compass,
+  Fish,
+  Wind,
+  Sunrise,
+  Car,
+  Backpack,
+  Sun,
+  Info,
+  AlertCircle,
+  Coffee,
+  Utensils,
+  Check,
+  MapPin,
 };
 
 export default function DestinationDetail() {
@@ -41,8 +80,12 @@ export default function DestinationDetail() {
   if (!destination) {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center dark:bg-black">
-        <h1 className="text-3xl font-bold dark:text-white mb-4">Destination not found!</h1>
-        <p className="text-muted-foreground mb-6">The destination you're looking for doesn't exist.</p>
+        <h1 className="text-3xl font-bold dark:text-white mb-4">
+          Destination not found!
+        </h1>
+        <p className="text-muted-foreground mb-6">
+          The destination you're looking for doesn't exist.
+        </p>
         <Link to="/destinations">
           <PrimaryButton icon={ChevronLeft}>
             Back to All Destinations
@@ -54,7 +97,7 @@ export default function DestinationDetail() {
 
   const googleMapsLink = destination.locationDetails
     ? `https://www.google.com/maps/search/?api=1&query=${destination.locationDetails.coordinates.lat},${destination.locationDetails.coordinates.lng}`
-    : '';
+    : "";
 
   const handleFavoriteClick = () => {
     toggleFavorite(destination.id);
@@ -64,22 +107,12 @@ export default function DestinationDetail() {
     <div className="min-h-screen bg-white dark:bg-black text-gray-900 dark:text-gray-100 pb-12">
       {/* Hero Section */}
       <HeroSection
-        image={destination.imageUrl}
+        imageURL={destination.imageUrl}
         title={destination.title}
         subtitle={destination.subtitle}
         Icon={Sun}
         badge={destination.badge}
         PrimaryButton={PrimaryButton}
-        primaryCta={{
-          label: "Book Now",
-          href: "#booking",
-          icon: ArrowRight,
-        }}
-        secondaryCta={{
-          label: "View Location",
-          href: "#location",
-          icon: MapPin,
-        }}
         stats={[
           { icon: Clock, text: destination.duration },
           { icon: Users, text: destination.groupSize },
@@ -96,10 +129,8 @@ export default function DestinationDetail() {
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 md:gap-8">
-          
           {/* Main Content Area */}
           <div className="lg:col-span-2 space-y-8">
-            
             {/* Badge & Description */}
             {destination.badge && (
               <motion.span
@@ -122,7 +153,7 @@ export default function DestinationDetail() {
             </motion.p>
 
             {/* Quick Info Cards */}
-            <motion.div 
+            <motion.div
               className="grid grid-cols-1 md:grid-cols-4 gap-6 md:gap-8"
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
@@ -134,37 +165,45 @@ export default function DestinationDetail() {
                   <CardTitle>Duration</CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <p className="text-muted-foreground">{destination.duration}</p>
+                  <p className="text-muted-foreground">
+                    {destination.duration}
+                  </p>
                 </CardContent>
               </Card>
-              
+
               <Card className="transition-all duration-300 hover:scale-105 hover:shadow-2xl cursor-pointer">
                 <CardHeader>
                   <Users className="w-8 h-8 text-yellow-600 dark:text-yellow-500 mb-4" />
                   <CardTitle>Group Size</CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <p className="text-muted-foreground">{destination.groupSize}</p>
+                  <p className="text-muted-foreground">
+                    {destination.groupSize}
+                  </p>
                 </CardContent>
               </Card>
-              
+
               <Card className="transition-all duration-300 hover:scale-105 hover:shadow-2xl cursor-pointer">
                 <CardHeader>
                   <Star className="w-8 h-8 text-yellow-600 dark:text-yellow-500 mb-4" />
                   <CardTitle>Rating</CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <p className="text-muted-foreground">{destination.rating}/5.0</p>
+                  <p className="text-muted-foreground">
+                    {destination.rating}/5.0
+                  </p>
                 </CardContent>
               </Card>
-              
+
               <Card className="transition-all duration-300 hover:scale-105 hover:shadow-2xl cursor-pointer">
                 <CardHeader>
                   <Mountain className="w-8 h-8 text-yellow-600 dark:text-yellow-500 mb-4" />
                   <CardTitle>Difficulty</CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <p className="text-muted-foreground">{destination.difficulty}</p>
+                  <p className="text-muted-foreground">
+                    {destination.difficulty}
+                  </p>
                 </CardContent>
               </Card>
             </motion.div>
@@ -196,7 +235,7 @@ export default function DestinationDetail() {
                         title={`Map showing ${destination.title}`}
                       ></iframe>
                     </div>
-                    
+
                     <div className="space-y-4">
                       <div>
                         <p className="text-muted-foreground mb-2">
@@ -225,22 +264,28 @@ export default function DestinationDetail() {
                         </p>
                       </div>
 
-                      {destination.locationDetails.nearby && destination.locationDetails.nearby.length > 0 && (
-                        <div>
-                          <p className="text-muted-foreground mb-2">
-                            <strong>Nearby Attractions:</strong>
-                          </p>
-                          <ul className="space-y-1">
-                            {destination.locationDetails.nearby.map((place, idx) => (
-                              <li key={idx} className="text-muted-foreground">
-                                • {place}
-                              </li>
-                            ))}
-                          </ul>
-                        </div>
-                      )}
+                      {destination.locationDetails.nearby &&
+                        destination.locationDetails.nearby.length > 0 && (
+                          <div>
+                            <p className="text-muted-foreground mb-2">
+                              <strong>Nearby Attractions:</strong>
+                            </p>
+                            <ul className="space-y-1">
+                              {destination.locationDetails.nearby.map(
+                                (place, idx) => (
+                                  <li
+                                    key={idx}
+                                    className="text-muted-foreground"
+                                  >
+                                    • {place}
+                                  </li>
+                                )
+                              )}
+                            </ul>
+                          </div>
+                        )}
 
-                      <a 
+                      <a
                         href={googleMapsLink}
                         target="_blank"
                         rel="noopener noreferrer"
@@ -272,7 +317,9 @@ export default function DestinationDetail() {
                       {destination.highlights.map((highlight, index) => (
                         <li key={index} className="flex items-start gap-3">
                           <Check className="w-5 h-5 text-yellow-600 dark:text-yellow-500 flex-shrink-0 mt-0.5" />
-                          <span className="text-muted-foreground">{highlight}</span>
+                          <span className="text-muted-foreground">
+                            {highlight}
+                          </span>
                         </li>
                       ))}
                     </ul>
@@ -288,12 +335,14 @@ export default function DestinationDetail() {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 1.7, duration: 0.8 }}
               >
-                <h2 className="text-2xl md:text-3xl font-bold mb-6">Activities Included</h2>
+                <h2 className="text-2xl md:text-3xl font-bold mb-6">
+                  Activities Included
+                </h2>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8">
                   {destination.activities.map((activity, index) => {
                     const IconComponent = iconMap[activity.icon] || Waves;
                     return (
-                      <Card 
+                      <Card
                         key={index}
                         className="transition-all duration-300 hover:scale-105 hover:shadow-2xl cursor-pointer"
                       >
@@ -302,7 +351,9 @@ export default function DestinationDetail() {
                           <CardTitle>{activity.name}</CardTitle>
                         </CardHeader>
                         <CardContent>
-                          <p className="text-muted-foreground">{activity.description}</p>
+                          <p className="text-muted-foreground">
+                            {activity.description}
+                          </p>
                           {activity.difficulty && (
                             <p className="text-sm text-muted-foreground mt-2">
                               <strong>Difficulty:</strong> {activity.difficulty}
@@ -357,28 +408,37 @@ export default function DestinationDetail() {
                 <h2 className="text-2xl font-bold mb-6">Traveler Reviews</h2>
                 <div className="space-y-4">
                   {destination.reviews.map((review, index) => (
-                    <Card 
+                    <Card
                       key={index}
                       className="transition-all duration-300 hover:scale-[1.02] hover:shadow-2xl cursor-pointer"
                     >
                       <CardHeader>
                         <div className="flex items-center justify-between mb-2">
                           <div>
-                            <CardTitle className="text-lg">{review.name}</CardTitle>
+                            <CardTitle className="text-lg">
+                              {review.name}
+                            </CardTitle>
                             {review.nationality && (
-                              <CardDescription className="text-sm">{review.nationality}</CardDescription>
+                              <CardDescription className="text-sm">
+                                {review.nationality}
+                              </CardDescription>
                             )}
                           </div>
                           <div className="flex items-center gap-1">
                             {[...Array(review.rating)].map((_, i) => (
-                              <Star key={i} className="w-4 h-4 fill-yellow-600 text-yellow-600 dark:fill-yellow-500 dark:text-yellow-500" />
+                              <Star
+                                key={i}
+                                className="w-4 h-4 fill-yellow-600 text-yellow-600 dark:fill-yellow-500 dark:text-yellow-500"
+                              />
                             ))}
                           </div>
                         </div>
                         <CardDescription>{review.date}</CardDescription>
                       </CardHeader>
                       <CardContent>
-                        <p className="text-muted-foreground">{review.comment}</p>
+                        <p className="text-muted-foreground">
+                          {review.comment}
+                        </p>
                         {review.verified && (
                           <p className="text-xs text-green-600 dark:text-green-400 mt-2">
                             ✓ Verified Purchase
@@ -405,44 +465,64 @@ export default function DestinationDetail() {
                   </CardHeader>
                   <CardContent>
                     <div className="space-y-6">
-                      {destination.practicalInfo.requirements && destination.practicalInfo.requirements.length > 0 && (
-                        <div>
-                          <h3 className="font-semibold mb-3">Requirements</h3>
-                          <ul className="space-y-2">
-                            {destination.practicalInfo.requirements.map((req, index) => {
-                              const ReqIcon = iconMap[req.icon] || Shield;
-                              return (
-                                <li key={index} className="flex items-start gap-3">
-                                  <ReqIcon className="w-5 h-5 text-yellow-600 dark:text-yellow-500 flex-shrink-0 mt-0.5" />
-                                  <span className="text-muted-foreground">{req.text}</span>
-                                </li>
-                              );
-                            })}
-                          </ul>
-                        </div>
-                      )}
+                      {destination.practicalInfo.requirements &&
+                        destination.practicalInfo.requirements.length > 0 && (
+                          <div>
+                            <h3 className="font-semibold mb-3">Requirements</h3>
+                            <ul className="space-y-2">
+                              {destination.practicalInfo.requirements.map(
+                                (req, index) => {
+                                  const ReqIcon = iconMap[req.icon] || Shield;
+                                  return (
+                                    <li
+                                      key={index}
+                                      className="flex items-start gap-3"
+                                    >
+                                      <ReqIcon className="w-5 h-5 text-yellow-600 dark:text-yellow-500 flex-shrink-0 mt-0.5" />
+                                      <span className="text-muted-foreground">
+                                        {req.text}
+                                      </span>
+                                    </li>
+                                  );
+                                }
+                              )}
+                            </ul>
+                          </div>
+                        )}
 
-                      {destination.practicalInfo.whatToBring && destination.practicalInfo.whatToBring.length > 0 && (
-                        <div>
-                          <h3 className="font-semibold mb-3">What to Bring</h3>
-                          <ul className="space-y-2">
-                            {destination.practicalInfo.whatToBring.map((item, index) => {
-                              const ItemIcon = iconMap[item.icon] || Backpack;
-                              return (
-                                <li key={index} className="flex items-start gap-3">
-                                  <ItemIcon className="w-5 h-5 text-yellow-600 dark:text-yellow-500 flex-shrink-0 mt-0.5" />
-                                  <span className="text-muted-foreground">{item.text}</span>
-                                </li>
-                              );
-                            })}
-                          </ul>
-                        </div>
-                      )}
+                      {destination.practicalInfo.whatToBring &&
+                        destination.practicalInfo.whatToBring.length > 0 && (
+                          <div>
+                            <h3 className="font-semibold mb-3">
+                              What to Bring
+                            </h3>
+                            <ul className="space-y-2">
+                              {destination.practicalInfo.whatToBring.map(
+                                (item, index) => {
+                                  const ItemIcon =
+                                    iconMap[item.icon] || Backpack;
+                                  return (
+                                    <li
+                                      key={index}
+                                      className="flex items-start gap-3"
+                                    >
+                                      <ItemIcon className="w-5 h-5 text-yellow-600 dark:text-yellow-500 flex-shrink-0 mt-0.5" />
+                                      <span className="text-muted-foreground">
+                                        {item.text}
+                                      </span>
+                                    </li>
+                                  );
+                                }
+                              )}
+                            </ul>
+                          </div>
+                        )}
 
                       {destination.practicalInfo.cancellation && (
                         <div className="pt-4 border-t">
                           <p className="text-sm text-muted-foreground">
-                            <strong>Cancellation Policy:</strong> {destination.practicalInfo.cancellation}
+                            <strong>Cancellation Policy:</strong>{" "}
+                            {destination.practicalInfo.cancellation}
                           </p>
                         </div>
                       )}
@@ -455,7 +535,7 @@ export default function DestinationDetail() {
 
           {/* Sidebar - Booking Card */}
           <div className="lg:col-span-1">
-            <motion.div 
+            <motion.div
               id="booking"
               className="sticky top-24"
               initial={{ opacity: 0, x: 20 }}
@@ -469,65 +549,94 @@ export default function DestinationDetail() {
                   </CardDescription>
                   <CardTitle className="text-4xl md:text-5xl font-black text-yellow-600 dark:text-yellow-500">
                     {destination.price}
-                    <span className="text-xl font-normal text-muted-foreground">/person</span>
+                    <span className="text-xl font-normal text-muted-foreground">
+                      /person
+                    </span>
                   </CardTitle>
                   <div className="flex items-center justify-center gap-1 mt-3">
                     <Star className="w-5 h-5 fill-yellow-600 text-yellow-600 dark:fill-yellow-500 dark:text-yellow-500" />
-                    <span className="font-bold text-lg">{destination.rating}</span>
-                    <span className="text-muted-foreground text-sm ml-1">(250+ reviews)</span>
+                    <span className="font-bold text-lg">
+                      {destination.rating}
+                    </span>
+                    <span className="text-muted-foreground text-sm ml-1">
+                      (250+ reviews)
+                    </span>
                   </div>
                 </CardHeader>
 
                 <CardContent className="space-y-4">
                   <div className="space-y-3">
                     <div className="p-4 bg-white dark:bg-gray-900 rounded-lg transition-all duration-300 hover:scale-105 hover:shadow-lg cursor-pointer">
-                      <p className="text-muted-foreground text-sm mb-2">Best Time to Visit</p>
+                      <p className="text-muted-foreground text-sm mb-2">
+                        Best Time to Visit
+                      </p>
                       <div className="flex items-center gap-2">
                         <Calendar className="w-5 h-5 text-yellow-600 dark:text-yellow-500" />
-                        <span className="font-semibold">{destination.bestTime}</span>
+                        <span className="font-semibold">
+                          {destination.bestTime}
+                        </span>
                       </div>
                     </div>
 
                     <div className="p-4 bg-white dark:bg-gray-900 rounded-lg transition-all duration-300 hover:scale-105 hover:shadow-lg cursor-pointer">
-                      <p className="text-muted-foreground text-sm mb-2">Difficulty Level</p>
+                      <p className="text-muted-foreground text-sm mb-2">
+                        Difficulty Level
+                      </p>
                       <div className="flex items-center gap-2">
                         <Mountain className="w-5 h-5 text-yellow-600 dark:text-yellow-500" />
-                        <span className="font-semibold">{destination.difficulty}</span>
+                        <span className="font-semibold">
+                          {destination.difficulty}
+                        </span>
                       </div>
                     </div>
                   </div>
 
                   <div className="space-y-3 pt-4 flex flex-col">
-                    <PrimaryButton className="w-full">
-                      Book Now
-                    </PrimaryButton>
+                    <PrimaryButton className="w-full">Book Now</PrimaryButton>
 
                     <SecondaryButton
                       onClick={handleFavoriteClick}
                       className="w-full"
                     >
-                      <Heart className={`w-5 h-5 mr-2 ${isFavorite(destination.id) ? 'fill-current text-red-500' : ''}`} />
-                      {isFavorite(destination.id) ? 'Remove from Wishlist' : 'Add to Wishlist'}
+                      <Heart
+                        className={`w-5 h-5 mr-2 ${
+                          isFavorite(destination.id)
+                            ? "fill-current text-red-500"
+                            : ""
+                        }`}
+                      />
+                      {isFavorite(destination.id)
+                        ? "Remove from Wishlist"
+                        : "Add to Wishlist"}
                     </SecondaryButton>
                   </div>
 
-                  <div className="pt-6 border-t">
-                    <h3 className="font-bold mb-4 text-center">Contact Us</h3>
-                    <div className="space-y-3">
-                      <a 
-                        href="tel:+201234567890" 
-                        className="flex items-center gap-3 p-3 bg-white dark:bg-gray-900 rounded-lg transition-all duration-300 hover:scale-105 hover:shadow-lg"
+                  <div className="space-y-3 flex flex-col items-center">
+                    {/* Email Card */}
+                    <div
+                      className="flex items-center gap-3 px-5 py-3 rounded-2xl border border-amber-500/50 shadow-sm 
+    bg-transparent dark:bg-transparent transition-all duration-300 hover:scale-[1.02]"
+                    >
+                      <Mail className="h-6 w-6 text-amber-600 dark:text-amber-400" />
+                      <a
+                        href="mailto:info@dahabtourism.com"
+                        className="text-lg font-medium text-gray-900 dark:text-gray-100 hover:text-amber-600 dark:hover:text-amber-400 transition-colors"
                       >
-                        <Phone className="w-5 h-5 text-yellow-600 dark:text-yellow-500" />
-                        <span className="text-sm">+20 123 456 7890</span>
+                        info@dahabtourism.com
                       </a>
-                      
-                      <a 
-                        href="mailto:info@dahab-tours.com" 
-                        className="flex items-center gap-3 p-3 bg-white dark:bg-gray-900 rounded-lg transition-all duration-300 hover:scale-105 hover:shadow-lg"
+                    </div>
+
+                    {/* Phone Card */}
+                    <div
+                      className="flex items-center gap-3 px-5 py-3 rounded-2xl border border-amber-500/50 shadow-sm 
+    bg-transparent dark:bg-transparent transition-all duration-300 hover:scale-[1.02]"
+                    >
+                      <Phone className="h-6 w-6 text-amber-600 dark:text-amber-400" />
+                      <a
+                        href="tel:+20123456789"
+                        className="text-lg font-medium text-gray-900 dark:text-gray-100 hover:text-amber-600 dark:hover:text-amber-400 transition-colors"
                       >
-                        <Mail className="w-5 h-5 text-yellow-600 dark:text-yellow-500" />
-                        <span className="text-sm break-all">info@dahab-tours.com</span>
+                        +20 123 456 789
                       </a>
                     </div>
                   </div>
@@ -549,23 +658,33 @@ export default function DestinationDetail() {
                   <ul className="space-y-3 text-sm">
                     <li className="flex items-start gap-3">
                       <Check className="w-5 h-5 text-green-600 flex-shrink-0 mt-0.5" />
-                      <span className="text-muted-foreground">Best price guarantee</span>
+                      <span className="text-muted-foreground">
+                        Best price guarantee
+                      </span>
                     </li>
                     <li className="flex items-start gap-3">
                       <Check className="w-5 h-5 text-green-600 flex-shrink-0 mt-0.5" />
-                      <span className="text-muted-foreground">24/7 customer support</span>
+                      <span className="text-muted-foreground">
+                        24/7 customer support
+                      </span>
                     </li>
                     <li className="flex items-start gap-3">
                       <Check className="w-5 h-5 text-green-600 flex-shrink-0 mt-0.5" />
-                      <span className="text-muted-foreground">Free cancellation</span>
+                      <span className="text-muted-foreground">
+                        Free cancellation
+                      </span>
                     </li>
                     <li className="flex items-start gap-3">
                       <Check className="w-5 h-5 text-green-600 flex-shrink-0 mt-0.5" />
-                      <span className="text-muted-foreground">Experienced guides</span>
+                      <span className="text-muted-foreground">
+                        Experienced guides
+                      </span>
                     </li>
                     <li className="flex items-start gap-3">
                       <Check className="w-5 h-5 text-green-600 flex-shrink-0 mt-0.5" />
-                      <span className="text-muted-foreground">Small group sizes</span>
+                      <span className="text-muted-foreground">
+                        Small group sizes
+                      </span>
                     </li>
                   </ul>
                 </CardContent>
