@@ -138,7 +138,7 @@ const ImageCard = ({
             )}
           </div>
 
-          <PrimaryButton onClick={onButtonClick}>{buttonText}</PrimaryButton>
+          <PrimaryButton className="w-40" onClick={onButtonClick}>{buttonText}</PrimaryButton>
         </CardFooter>
       </Card>
     </Link>
