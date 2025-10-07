@@ -4,11 +4,11 @@ import { useDestinations } from "@/context/DestinationsContext";
 import { DestinationCard } from "@/components/customComponents/cardTemplates";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
-import { Search, Filter, MapPin } from "lucide-react";
+import { Search, Filter, MapPin, Compass, Star, Users } from "lucide-react";
+// eslint-disable-next-line no-unused-vars
 import { motion } from "framer-motion";
 import HeroSection from "@/components/sections/HeroSection";
 import SocialMediaSection from "@/components/sections/SocialMediaSection";
-import { Compass, Star, Users } from "lucide-react";
 
 export default function DestinationsPage() {
   const { destinations, getAllCategories, getDestinationsByCategory } =
@@ -192,7 +192,9 @@ export default function DestinationsPage() {
           </motion.div>
         ) : (
           <div className="text-center py-20">
-            <div className="text-6xl mb-4">🔍</div>
+           <div className="flex justify-center mb-4">
+              <Search className="w-24 h-24 text-muted-foreground" />
+            </div>
             <h3 className="text-2xl font-semibold mb-2">
               No destinations found
             </h3>
@@ -219,9 +221,6 @@ export default function DestinationsPage() {
         header="Stay Connected"
         description="Follow our journey and stay updated with the latest from Dahab"
       />
-
-  
-    
     </div>
   );
 }
