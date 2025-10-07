@@ -208,14 +208,12 @@ const DestinationCard = ({
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => setIsHovered(false)}
       >
-        <a href={href} className="block">
+        <Link to={href}>
           <Card
             className={cn(
-              "overflow-hidden border-2 backdrop-blur-xl transition-all duration-300 p-0",
-              "bg-white/90 dark:bg-gray-900/90",
-              "hover:shadow-2xl hover:shadow-yellow-500/20 hover:border-yellow-400 dark:hover:border-yellow-500",
-              "border-yellow-500/50 dark:border-yellow-600/50"
-            )}
+          "overflow-hidden border-border bg-card transition-all duration-300 p-0",
+          "hover:shadow-xl hover:shadow-yellow-500/10 hover:border-yellow-200 dark:hover:border-yellow-800/50"
+        )}
           >
             <div className="relative overflow-hidden h-80">
               <AnimatePresence mode="wait">
@@ -383,14 +381,13 @@ const DestinationCard = ({
                   </motion.span>
                 )}
               </div>
-              <Link to={href}>
-                <PrimaryButton className="w-40" onClick={onButtonClick}>
-                  {buttonText}
-                </PrimaryButton>
-              </Link>
+
+              <PrimaryButton className="w-40" onClick={onButtonClick}>
+                {buttonText}
+              </PrimaryButton>
             </CardFooter>
           </Card>
-        </a>
+        </Link>
       </motion.div>
 
       {/* Full Screen Gallery Modal */}
