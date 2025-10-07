@@ -208,129 +208,128 @@ const DestinationCard = ({
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => setIsHovered(false)}
       >
-        <Link to={href}>
-          <Card
-            className={cn(
-          "overflow-hidden border-border bg-card transition-all duration-300 p-0",
-          "hover:shadow-xl hover:shadow-yellow-500/10 hover:border-yellow-200 dark:hover:border-yellow-800/50"
-        )}
-          >
-            <div className="relative overflow-hidden h-80">
-              <AnimatePresence mode="wait">
-                <motion.img
-                  key={currentImageIndex}
-                  src={images[currentImageIndex]}
-                  alt={`${title} - Image ${currentImageIndex + 1}`}
-                  className="w-full h-full object-cover"
-                  initial={{ opacity: 0, scale: 1.1 }}
-                  animate={{ opacity: 1, scale: isHovered ? 1.1 : 1 }}
-                  exit={{ opacity: 0, scale: 0.9 }}
-                  transition={{ duration: 0.5 }}
-                  onClick={openGallery}
-                />
-              </AnimatePresence>
+        <Card
+          className={cn(
+            "overflow-hidden border-border bg-card transition-all duration-300 p-0",
+            "hover:shadow-xl hover:shadow-yellow-500/10 hover:border-yellow-200 dark:hover:border-yellow-800/50"
+          )}
+        >
+          <div className="relative overflow-hidden h-80">
+            <AnimatePresence mode="wait">
+              <motion.img
+                key={currentImageIndex}
+                src={images[currentImageIndex]}
+                alt={`${title} - Image ${currentImageIndex + 1}`}
+                className="w-full h-full object-cover"
+                initial={{ opacity: 0, scale: 1.1 }}
+                animate={{ opacity: 1, scale: isHovered ? 1.1 : 1 }}
+                exit={{ opacity: 0, scale: 0.9 }}
+                transition={{ duration: 0.5 }}
+                onClick={openGallery}
+              />
+            </AnimatePresence>
 
-              <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
 
-              {badge && (
-                <motion.div
-                  className="absolute top-4 left-4"
-                  initial={{ opacity: 0, x: -20 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ delay: 0.2 }}
-                >
-                  <Badge className="bg-gradient-to-r from-yellow-500 to-amber-600 text-white border-0 shadow-lg">
-                    {badge}
-                  </Badge>
-                </motion.div>
-              )}
+            {badge && (
+              <motion.div
+                className="absolute top-4 left-4"
+                initial={{ opacity: 0, x: -20 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ delay: 0.2 }}
+              >
+                <Badge className="bg-gradient-to-r from-yellow-500 to-amber-600 text-white border-0 shadow-lg">
+                  {badge}
+                </Badge>
+              </motion.div>
+            )}
 
-              {rating && (
-                <motion.div
-                  className="absolute top-4 right-4 flex items-center gap-1 bg-white/20 dark:bg-gray-900/20 backdrop-blur-md rounded-full px-3 py-1.5 shadow-lg border border-yellow-400/30"
-                  initial={{ opacity: 0, x: 20 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ delay: 0.2 }}
-                >
-                  <Star className="h-3.5 w-3.5 fill-yellow-400 text-yellow-400" />
-                  <span className="text-xs font-semibold text-white">
-                    {rating}
-                  </span>
-                </motion.div>
-              )}
+            {rating && (
+              <motion.div
+                className="absolute top-4 right-4 flex items-center gap-1 bg-white/20 dark:bg-gray-900/20 backdrop-blur-md rounded-full px-3 py-1.5 shadow-lg border border-yellow-400/30"
+                initial={{ opacity: 0, x: 20 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ delay: 0.2 }}
+              >
+                <Star className="h-3.5 w-3.5 fill-yellow-400 text-yellow-400" />
+                <span className="text-xs font-semibold text-white">
+                  {rating}
+                </span>
+              </motion.div>
+            )}
 
-              {/* Navigation Arrows */}
-              <AnimatePresence>
-                {isHovered && images.length > 1 && (
-                  <>
-                    <motion.button
-                      initial={{ opacity: 0, x: -10 }}
-                      animate={{ opacity: 1, x: 0 }}
-                      exit={{ opacity: 0, x: -10 }}
-                      transition={{ duration: 0.2 }}
-                      onClick={prevImage}
-                      className="absolute left-2 top-1/2 -translate-y-1/2 bg-white/20 backdrop-blur-md hover:bg-white/30 text-white rounded-full p-2 transition-all z-10"
-                    >
-                      <ChevronLeft className="h-5 w-5" />
-                    </motion.button>
-                    <motion.button
-                      initial={{ opacity: 0, x: 10 }}
-                      animate={{ opacity: 1, x: 0 }}
-                      exit={{ opacity: 0, x: 10 }}
-                      transition={{ duration: 0.2 }}
-                      onClick={nextImage}
-                      className="absolute right-2 top-1/2 -translate-y-1/2 bg-white/20 backdrop-blur-md hover:bg-white/30 text-white rounded-full p-2 transition-all z-10"
-                    >
-                      <ChevronRight className="h-5 w-5" />
-                    </motion.button>
-                  </>
-                )}
-              </AnimatePresence>
-
-              {/* Thumbnail Gallery on Hover */}
-              <AnimatePresence>
-                {isHovered && images.length > 1 && (
-                  <motion.div
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: 20 }}
-                    transition={{ duration: 0.3 }}
-                    className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2 z-10"
+            {/* Navigation Arrows */}
+            <AnimatePresence>
+              {isHovered && images.length > 1 && (
+                <>
+                  <motion.button
+                    initial={{ opacity: 0, x: -10 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    exit={{ opacity: 0, x: -10 }}
+                    transition={{ duration: 0.2 }}
+                    onClick={prevImage}
+                    className="absolute left-2 top-1/2 -translate-y-1/2 bg-white/20 backdrop-blur-md hover:bg-white/30 text-white rounded-full p-2 transition-all z-10"
                   >
-                    {images.map((img, index) => (
-                      <motion.button
-                        key={index}
-                        onClick={(e) => {
-                          e.preventDefault();
-                          e.stopPropagation();
-                          setCurrentImageIndex(index);
-                        }}
-                        className={cn(
-                          "w-12 h-12 rounded-lg overflow-hidden border-2 transition-all",
-                          currentImageIndex === index
-                            ? "border-yellow-400 scale-110 shadow-lg"
-                            : "border-white/50 opacity-70 hover:opacity-100"
-                        )}
-                        whileHover={{ scale: 1.1 }}
-                        whileTap={{ scale: 0.95 }}
-                      >
-                        <img
-                          src={img}
-                          alt={`Thumbnail ${index + 1}`}
-                          className="w-full h-full object-cover"
-                        />
-                      </motion.button>
-                    ))}
-                  </motion.div>
-                )}
-              </AnimatePresence>
+                    <ChevronLeft className="h-5 w-5" />
+                  </motion.button>
+                  <motion.button
+                    initial={{ opacity: 0, x: 10 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    exit={{ opacity: 0, x: 10 }}
+                    transition={{ duration: 0.2 }}
+                    onClick={nextImage}
+                    className="absolute right-2 top-1/2 -translate-y-1/2 bg-white/20 backdrop-blur-md hover:bg-white/30 text-white rounded-full p-2 transition-all z-10"
+                  >
+                    <ChevronRight className="h-5 w-5" />
+                  </motion.button>
+                </>
+              )}
+            </AnimatePresence>
 
-              {/* Image Counter */}
-              <div className="absolute bottom-4 right-4 bg-black/70 dark:bg-white/20 backdrop-blur-sm text-white dark:text-white text-xs px-2 py-1 rounded-full font-medium">
-                {currentImageIndex + 1} / {images.length}
-              </div>
+            {/* Thumbnail Gallery on Hover */}
+            <AnimatePresence>
+              {isHovered && images.length > 1 && (
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: 20 }}
+                  transition={{ duration: 0.3 }}
+                  className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2 z-10"
+                >
+                  {images.map((img, index) => (
+                    <motion.button
+                      key={index}
+                      onClick={(e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        setCurrentImageIndex(index);
+                      }}
+                      className={cn(
+                        "w-12 h-12 rounded-lg overflow-hidden border-2 transition-all",
+                        currentImageIndex === index
+                          ? "border-yellow-400 scale-110 shadow-lg"
+                          : "border-white/50 opacity-70 hover:opacity-100"
+                      )}
+                      whileHover={{ scale: 1.1 }}
+                      whileTap={{ scale: 0.95 }}
+                    >
+                      <img
+                        src={img}
+                        alt={`Thumbnail ${index + 1}`}
+                        className="w-full h-full object-cover"
+                      />
+                    </motion.button>
+                  ))}
+                </motion.div>
+              )}
+            </AnimatePresence>
+
+            {/* Image Counter */}
+            <div className="absolute bottom-4 right-4 bg-black/70 dark:bg-white/20 backdrop-blur-sm text-white dark:text-white text-xs px-2 py-1 rounded-full font-medium">
+              {currentImageIndex + 1} / {images.length}
             </div>
-
+          </div>
+          <Link to={href}>
             <CardHeader className="pb-3 px-6 pt-5">
               {subtitle && (
                 <motion.p
@@ -341,6 +340,7 @@ const DestinationCard = ({
                   {subtitle}
                 </motion.p>
               )}
+
               <CardTitle
                 className={cn(
                   "text-xl font-bold transition-colors duration-300",
@@ -368,26 +368,25 @@ const DestinationCard = ({
                 {description}
               </CardDescription>
             </CardContent>
+          </Link>
+          <CardFooter className="flex items-center justify-between pt-0 px-6 pb-6">
+            <div className="flex items-center gap-2">
+              {price && (
+                <motion.span
+                  className="text-2xl font-bold text-yellow-500 dark:text-yellow-400"
+                  animate={{ scale: isHovered ? 1.08 : 1 }}
+                  transition={{ duration: 0.3 }}
+                >
+                  {price}
+                </motion.span>
+              )}
+            </div>
 
-            <CardFooter className="flex items-center justify-between pt-0 px-6 pb-6">
-              <div className="flex items-center gap-2">
-                {price && (
-                  <motion.span
-                    className="text-2xl font-bold text-yellow-500 dark:text-yellow-400"
-                    animate={{ scale: isHovered ? 1.08 : 1 }}
-                    transition={{ duration: 0.3 }}
-                  >
-                    {price}
-                  </motion.span>
-                )}
-              </div>
-
-              <PrimaryButton className="w-40" onClick={onButtonClick}>
-                {buttonText}
-              </PrimaryButton>
-            </CardFooter>
-          </Card>
-        </Link>
+            <PrimaryButton className="w-40" onClick={onButtonClick}>
+              {buttonText}
+            </PrimaryButton>
+          </CardFooter>
+        </Card>
       </motion.div>
 
       {/* Full Screen Gallery Modal */}
