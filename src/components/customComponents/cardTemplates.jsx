@@ -1,6 +1,6 @@
 import * as React from "react";
 // eslint-disable-next-line no-unused-vars
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import { Link } from "react-router-dom";
 import {
   Card,
@@ -12,9 +12,17 @@ import {
 } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { PrimaryButton } from "./ButtonVarients";
-import { Star, MapPin, Calendar, Users } from "lucide-react";
+import {
+  Star,
+  MapPin,
+  Calendar,
+  Users,
+  ChevronLeft,
+  ChevronRight,
+  X,
+} from "lucide-react";
 import { cn } from "@/lib/utils";
-
+import { useState } from "react";
 // Enhanced Card wrapper with animations
 const DahabCard = React.forwardRef(
   ({ className, children, hover = true, ...props }, ref) => (
@@ -138,12 +146,341 @@ const ImageCard = ({
             )}
           </div>
 
-          <PrimaryButton className="w-40" onClick={onButtonClick}>{buttonText}</PrimaryButton>
+          <PrimaryButton className="w-40" onClick={onButtonClick}>
+            {buttonText}
+          </PrimaryButton>
         </CardFooter>
       </Card>
     </Link>
   </motion.div>
 );
+const DestinationCard = ({
+  title = "Blue Hole",
+  subtitle = "Dahab, Egypt",
+  description = "One of the world's most famous dive sites, featuring crystal-clear waters and vibrant marine life.",
+  images = [
+    "https://images.unsplash.com/photo-1559827260-dc66d52bef19?w=800&h=600&fit=crop",
+    "https://images.unsplash.com/photo-1544551763-46a013bb70d5?w=800&h=600&fit=crop",
+    "https://images.unsplash.com/photo-1583212292454-1fe6229603b7?w=800&h=600&fit=crop",
+    "https://images.unsplash.com/photo-1682687220742-aba13b6e50ba?w=800&h=600&fit=crop",
+  ],
+  badge = "Popular",
+  rating = "4.9",
+  location = "South Sinai",
+  price = "$85",
+  buttonText = "Book Now",
+  onButtonClick = () => {},
+  className,
+  href,
+}) => {
+  const [isHovered, setIsHovered] = useState(false);
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const [isGalleryOpen, setIsGalleryOpen] = useState(false);
+
+  const nextImage = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setCurrentImageIndex((prev) => (prev + 1) % images.length);
+  };
+
+  const prevImage = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setCurrentImageIndex((prev) => (prev - 1 + images.length) % images.length);
+  };
+
+  const openGallery = (e) => {
+    e.preventDefault();
+    setIsGalleryOpen(true);
+  };
+
+  return (
+    <>
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.4, ease: "easeOut" }}
+        whileHover={{
+          y: -8,
+          transition: { duration: 0.2 },
+        }}
+        className={cn("group cursor-pointer", className)}
+        onMouseEnter={() => setIsHovered(true)}
+        onMouseLeave={() => setIsHovered(false)}
+      >
+        <a href={href} className="block">
+          <Card
+            className={cn(
+              "overflow-hidden border-2 backdrop-blur-xl transition-all duration-300 p-0",
+              "bg-white/90 dark:bg-gray-900/90",
+              "hover:shadow-2xl hover:shadow-yellow-500/20 hover:border-yellow-400 dark:hover:border-yellow-500",
+              "border-yellow-500/50 dark:border-yellow-600/50"
+            )}
+          >
+            <div className="relative overflow-hidden h-80">
+              <AnimatePresence mode="wait">
+                <motion.img
+                  key={currentImageIndex}
+                  src={images[currentImageIndex]}
+                  alt={`${title} - Image ${currentImageIndex + 1}`}
+                  className="w-full h-full object-cover"
+                  initial={{ opacity: 0, scale: 1.1 }}
+                  animate={{ opacity: 1, scale: isHovered ? 1.1 : 1 }}
+                  exit={{ opacity: 0, scale: 0.9 }}
+                  transition={{ duration: 0.5 }}
+                  onClick={openGallery}
+                />
+              </AnimatePresence>
+
+              <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+
+              {badge && (
+                <motion.div
+                  className="absolute top-4 left-4"
+                  initial={{ opacity: 0, x: -20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: 0.2 }}
+                >
+                  <Badge className="bg-gradient-to-r from-yellow-500 to-amber-600 text-white border-0 shadow-lg">
+                    {badge}
+                  </Badge>
+                </motion.div>
+              )}
+
+              {rating && (
+                <motion.div
+                  className="absolute top-4 right-4 flex items-center gap-1 bg-white/20 dark:bg-gray-900/20 backdrop-blur-md rounded-full px-3 py-1.5 shadow-lg border border-yellow-400/30"
+                  initial={{ opacity: 0, x: 20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: 0.2 }}
+                >
+                  <Star className="h-3.5 w-3.5 fill-yellow-400 text-yellow-400" />
+                  <span className="text-xs font-semibold text-white">
+                    {rating}
+                  </span>
+                </motion.div>
+              )}
+
+              {/* Navigation Arrows */}
+              <AnimatePresence>
+                {isHovered && images.length > 1 && (
+                  <>
+                    <motion.button
+                      initial={{ opacity: 0, x: -10 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      exit={{ opacity: 0, x: -10 }}
+                      transition={{ duration: 0.2 }}
+                      onClick={prevImage}
+                      className="absolute left-2 top-1/2 -translate-y-1/2 bg-white/20 backdrop-blur-md hover:bg-white/30 text-white rounded-full p-2 transition-all z-10"
+                    >
+                      <ChevronLeft className="h-5 w-5" />
+                    </motion.button>
+                    <motion.button
+                      initial={{ opacity: 0, x: 10 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      exit={{ opacity: 0, x: 10 }}
+                      transition={{ duration: 0.2 }}
+                      onClick={nextImage}
+                      className="absolute right-2 top-1/2 -translate-y-1/2 bg-white/20 backdrop-blur-md hover:bg-white/30 text-white rounded-full p-2 transition-all z-10"
+                    >
+                      <ChevronRight className="h-5 w-5" />
+                    </motion.button>
+                  </>
+                )}
+              </AnimatePresence>
+
+              {/* Thumbnail Gallery on Hover */}
+              <AnimatePresence>
+                {isHovered && images.length > 1 && (
+                  <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: 20 }}
+                    transition={{ duration: 0.3 }}
+                    className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2 z-10"
+                  >
+                    {images.map((img, index) => (
+                      <motion.button
+                        key={index}
+                        onClick={(e) => {
+                          e.preventDefault();
+                          e.stopPropagation();
+                          setCurrentImageIndex(index);
+                        }}
+                        className={cn(
+                          "w-12 h-12 rounded-lg overflow-hidden border-2 transition-all",
+                          currentImageIndex === index
+                            ? "border-yellow-400 scale-110 shadow-lg"
+                            : "border-white/50 opacity-70 hover:opacity-100"
+                        )}
+                        whileHover={{ scale: 1.1 }}
+                        whileTap={{ scale: 0.95 }}
+                      >
+                        <img
+                          src={img}
+                          alt={`Thumbnail ${index + 1}`}
+                          className="w-full h-full object-cover"
+                        />
+                      </motion.button>
+                    ))}
+                  </motion.div>
+                )}
+              </AnimatePresence>
+
+              {/* Image Counter */}
+              <div className="absolute bottom-4 right-4 bg-black/70 dark:bg-white/20 backdrop-blur-sm text-white dark:text-white text-xs px-2 py-1 rounded-full font-medium">
+                {currentImageIndex + 1} / {images.length}
+              </div>
+            </div>
+
+            <CardHeader className="pb-3 px-6 pt-5">
+              {subtitle && (
+                <motion.p
+                  className="text-sm font-semibold text-yellow-500 dark:text-yellow-400 mb-1 uppercase tracking-wide"
+                  animate={{ x: isHovered ? 4 : 0 }}
+                  transition={{ duration: 0.3 }}
+                >
+                  {subtitle}
+                </motion.p>
+              )}
+              <CardTitle
+                className={cn(
+                  "text-xl font-bold transition-colors duration-300",
+                  isHovered
+                    ? "text-yellow-500 dark:text-yellow-400"
+                    : "text-gray-900 dark:text-white"
+                )}
+              >
+                {title}
+              </CardTitle>
+              {location && (
+                <motion.div
+                  className="flex items-center gap-1 text-sm text-gray-700 dark:text-gray-300 mt-2"
+                  animate={{ x: isHovered ? 4 : 0 }}
+                  transition={{ duration: 0.3, delay: 0.05 }}
+                >
+                  <MapPin className="h-4 w-4" />
+                  {location}
+                </motion.div>
+              )}
+            </CardHeader>
+
+            <CardContent className="pb-4 px-6">
+              <CardDescription className="text-gray-700 dark:text-gray-300 leading-relaxed">
+                {description}
+              </CardDescription>
+            </CardContent>
+
+            <CardFooter className="flex items-center justify-between pt-0 px-6 pb-6">
+              <div className="flex items-center gap-2">
+                {price && (
+                  <motion.span
+                    className="text-2xl font-bold text-yellow-500 dark:text-yellow-400"
+                    animate={{ scale: isHovered ? 1.08 : 1 }}
+                    transition={{ duration: 0.3 }}
+                  >
+                    {price}
+                  </motion.span>
+                )}
+              </div>
+              <Link to={href}>
+                <PrimaryButton className="w-40" onClick={onButtonClick}>
+                  {buttonText}
+                </PrimaryButton>
+              </Link>
+            </CardFooter>
+          </Card>
+        </a>
+      </motion.div>
+
+      {/* Full Screen Gallery Modal */}
+      <AnimatePresence>
+        {isGalleryOpen && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 bg-black/95 z-50 flex items-center justify-center p-4"
+            onClick={() => setIsGalleryOpen(false)}
+          >
+            <button
+              onClick={() => setIsGalleryOpen(false)}
+              className="absolute top-4 right-4 text-white hover:text-yellow-400 transition-colors z-50"
+            >
+              <X className="h-8 w-8" />
+            </button>
+
+            <motion.button
+              onClick={(e) => {
+                e.stopPropagation();
+                prevImage(e);
+              }}
+              className="absolute left-4 top-1/2 -translate-y-1/2 bg-white/20 backdrop-blur-md hover:bg-white/30 text-white rounded-full p-3 transition-all z-50"
+              whileHover={{ scale: 1.1 }}
+              whileTap={{ scale: 0.9 }}
+            >
+              <ChevronLeft className="h-6 w-6" />
+            </motion.button>
+
+            <motion.button
+              onClick={(e) => {
+                e.stopPropagation();
+                nextImage(e);
+              }}
+              className="absolute right-4 top-1/2 -translate-y-1/2 bg-white/20 backdrop-blur-md hover:bg-white/30 text-white rounded-full p-3 transition-all z-50"
+              whileHover={{ scale: 1.1 }}
+              whileTap={{ scale: 0.9 }}
+            >
+              <ChevronRight className="h-6 w-6" />
+            </motion.button>
+
+            <AnimatePresence mode="wait">
+              <motion.img
+                key={currentImageIndex}
+                src={images[currentImageIndex]}
+                alt={`${title} - Image ${currentImageIndex + 1}`}
+                className="max-h-[90vh] max-w-[90vw] object-contain"
+                initial={{ opacity: 0, scale: 0.9 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0, scale: 0.9 }}
+                transition={{ duration: 0.3 }}
+                onClick={(e) => e.stopPropagation()}
+              />
+            </AnimatePresence>
+
+            <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex gap-2">
+              {images.map((img, index) => (
+                <button
+                  key={index}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setCurrentImageIndex(index);
+                  }}
+                  className={cn(
+                    "w-16 h-16 rounded-lg overflow-hidden border-2 transition-all",
+                    currentImageIndex === index
+                      ? "border-yellow-400 scale-110 shadow-lg"
+                      : "border-white/50 opacity-70 hover:opacity-100"
+                  )}
+                >
+                  <img
+                    src={img}
+                    alt={`Thumbnail ${index + 1}`}
+                    className="w-full h-full object-cover"
+                  />
+                </button>
+              ))}
+            </div>
+
+            <div className="absolute top-4 left-1/2 -translate-x-1/2 bg-black/50 backdrop-blur-sm text-white px-4 py-2 rounded-full">
+              {currentImageIndex + 1} / {images.length}
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </>
+  );
+};
 // Activity Card
 const ActivityCard = ({
   title,
@@ -289,120 +626,11 @@ const TestimonialCard = ({
   </DahabCard>
 );
 
-// Usage Examples
-const CardExamples = () => {
-  return (
-    <div className="p-8 space-y-8 bg-background min-h-screen">
-      <div className="max-w-6xl mx-auto">
-        <h1 className="text-3xl font-bold text-foreground mb-8 text-center">
-          Dahab Card Components
-        </h1>
-
-        {/* Image Cards Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
-          <ImageCard
-            title="Blue Hole Diving"
-            subtitle="Popular Attraction"
-            description="Experience the world's most famous diving spot with crystal clear waters and incredible marine life."
-            image="https://www.propertyfinder.eg/blog/wp-content/uploads/2019/10/blue-hole-dahab-800x600.jpg"
-            badge="Best Seller"
-            rating="4.9"
-            location="Dahab, Egypt"
-            price="$85"
-            buttonText="Book Dive"
-          />
-
-          <ImageCard
-            title="Bedouin Desert Safari"
-            subtitle="Cultural Experience"
-            description="Journey through the Sinai desert on camelback and experience authentic Bedouin hospitality."
-            image="https://assets.annahar.com/ContentFilesArchive/422721Image1-1180x677_d.jpg"
-            badge="Authentic"
-            rating="4.7"
-            location="Sinai Desert"
-            price="$60"
-            buttonText="Join Safari"
-          />
-
-          <ImageCard
-            title="Mount Sinai Sunrise"
-            subtitle="Spiritual Journey"
-            description="Climb the sacred Mount Sinai and witness one of the world's most breathtaking sunrises."
-            image="https://www.arabtravelers.com/wp-content/uploads/2023/05/Tourism-in-dahab-10.jpg"
-            badge="Must Do"
-            rating="4.8"
-            location="Mount Sinai"
-            price="$45"
-            buttonText="Book Trek"
-          />
-        </div>
-
-        {/* Activity Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
-          <ActivityCard
-            title="Scuba Diving"
-            description="Explore the underwater paradise of the Red Sea"
-            icon={Star}
-            duration="3 hours"
-            groupSize="6 people"
-            difficulty="Beginner"
-            price="$75"
-          />
-
-          <ActivityCard
-            title="Windsurfing"
-            description="Perfect conditions for windsurfing enthusiasts"
-            icon={MapPin}
-            duration="2 hours"
-            groupSize="4 people"
-            difficulty="Intermediate"
-            price="$55"
-          />
-
-          <StatsCard
-            title="Happy Visitors"
-            value="50K+"
-            icon={Users}
-            trend="+12% this year"
-            description="Travelers who experienced Dahab magic"
-          />
-
-          <StatsCard
-            title="Dive Sites"
-            value="25+"
-            icon={Star}
-            description="World-class diving locations"
-          />
-        </div>
-
-        {/* Testimonials */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <TestimonialCard
-            name="Sarah Johnson"
-            location="London, UK"
-            rating={5}
-            comment="The Blue Hole was absolutely incredible! The diving experience exceeded all expectations and the guides were fantastic."
-            avatar="https://images.unsplash.com/photo-1494790108755-2616b612b-2616b612b639?w=150"
-          />
-
-          <TestimonialCard
-            name="Ahmed Hassan"
-            location="Cairo, Egypt"
-            rating={5}
-            comment="Perfect blend of adventure and relaxation. The desert safari was unforgettable and the Bedouin culture experience was authentic."
-            avatar="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150"
-          />
-        </div>
-      </div>
-    </div>
-  );
-};
-
 export {
   DahabCard,
   ImageCard,
   ActivityCard,
   StatsCard,
   TestimonialCard,
-  CardExamples,
+  DestinationCard,
 };

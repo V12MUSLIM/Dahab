@@ -1,5 +1,5 @@
 import "./App.css";
-import { HashRouter, Routes, Route } from "react-router-dom"; 
+import { HashRouter, Routes, Route } from "react-router-dom";
 import Stay from "./pages/Stay";
 import Dine from "./pages/Dine";
 import Home from "./pages/Home";
@@ -11,7 +11,7 @@ import DefaultLayout from "./layouts/DefaultLayout";
 import DestinationDetail from "./components/sections/DestinationsDetailsSections";
 import { DestinationsProvider } from "./Context/DestinationsContext";
 import { ThemeProvider } from "./components/theme-provider";
-
+import NotFound from "./pages/404";
 
 function App() {
   return (
@@ -21,7 +21,7 @@ function App() {
       enableSystem
       disableTransitionOnChange
     >
-      <HashRouter> 
+      <HashRouter>
         <DefaultLayout>
           <DestinationsProvider>
             <div className="App">
@@ -31,10 +31,16 @@ function App() {
                 <Route path="/dine" element={<Dine />} />
                 <Route path="/plantrip" element={<PlantTrip />} />
                 <Route path="/destinations" element={<Destinations />} />
-                <Route path="/destinations/:IdPage" element={<DestinationDetail />} />
+                <Route
+                  path="/destinations/:IdPage"
+                  element={<DestinationDetail />}
+                />
                 <Route path="/experiences" element={<Experiences />} />
-                <Route path="/experiences/:IdPage" element={<ExperiencesDetail />} />
-
+                <Route
+                  path="/experiences/:IdPage"
+                  element={<ExperiencesDetail />}
+                />
+                <Route path="*" element={<NotFound />} />
               </Routes>
             </div>
           </DestinationsProvider>
