@@ -1,3 +1,4 @@
+// DestinationsPage.jsx
 import React, { useState } from "react";
 import { useDestinations } from "@/context/DestinationsContext";
 import { DestinationCard } from "@/components/customComponents/cardTemplates";
@@ -84,6 +85,7 @@ export default function DestinationsPage() {
           { icon: Star, text: "4.9/5 Rating" },
         ]}
       />
+
       <div className="container mx-auto px-4 py-12">
         {/* Search and Filters */}
         <div className="mb-12 space-y-6">
@@ -210,12 +212,16 @@ export default function DestinationsPage() {
           </div>
         )}
       </div>
+
       {/* SocialMediaSection */}
       <SocialMediaSection
-        badge="Conect"
+        badge="Connect"
         header="Stay Connected"
-        description=" Follow our journey and stay updated with the latest from Dahab"
+        description="Follow our journey and stay updated with the latest from Dahab"
       />
+
+  
+    
     </div>
   );
 }
