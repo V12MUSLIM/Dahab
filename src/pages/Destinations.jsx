@@ -1,88 +1,212 @@
-"use client";
+// DestinationsPage.jsx
+import React, { useState } from 'react';
+import { useDestinations } from '@/context/DestinationsContext';
+import { DestinationCard } from '@/components/customComponents/cardTemplates';
+import { Badge } from '@/components/ui/badge';
+import { Input } from '@/components/ui/input';
+import { Search, Filter, MapPin } from 'lucide-react';
+import { motion } from 'framer-motion';
 
-import { ImageCard } from "@/components/customComponents/cardTemplates";
-import { motion } from "framer-motion";
-import { useDestinations } from "@/context/DestinationsContext";
-import HeroSection from "@/components/sections/HeroSection";
-
-export default function Destinations() {
-  const { destinations, getAllCategories, getDestinationsByCategory, toggleFavorite, isFavorite } = useDestinations();
-
- 
-  const categories = getAllCategories();
-
+export default function DestinationsPage() {
+  const { 
+    destinations, 
+    getAllCategories, 
+    searchDestinations,
+    getDestinationsByCategory 
+  } = useDestinations();
+  
+  const [selectedCategory, setSelectedCategory] = useState('All');
+  const [searchQuery, setSearchQuery] = useState('');
+  const [priceFilter, setPriceFilter] = useState('all');
+  
+  // Get all unique categories
+  const categories = ['All', ...getAllCategories()];
+  
+  // Filter destinations based on category and search
+  const getFilteredDestinations = () => {
+    let filtered = selectedCategory === 'All' 
+      ? destinations 
+      : getDestinationsByCategory(selectedCategory);
+    
+    // Apply search filter
+    if (searchQuery) {
+      const searchLower = searchQuery.toLowerCase();
+      filtered = filtered.filter(dest =>
+        dest.title.toLowerCase().includes(searchLower) ||
+        dest.description.toLowerCase().includes(searchLower) ||
+        dest.location.toLowerCase().includes(searchLower)
+      );
+    }
+    
+    // Apply price filter
+    if (priceFilter !== 'all') {
+      filtered = filtered.filter(dest => {
+        const price = parseInt(dest.price.replace('$', ''));
+        if (priceFilter === 'low') return price < 50;
+        if (priceFilter === 'medium') return price >= 50 && price < 80;
+        if (priceFilter === 'high') return price >= 80;
+        return true;
+      });
+    }
+    
+    return filtered;
+  };
+  
+  const filteredDestinations = getFilteredDestinations();
+  
   return (
-    <div className="dark:bg-black dark:text-amber-50 min-h-screen">
-      <HeroSection
-        title={<span>Explore Our <span className="text-amber-500">Destinations</span></span>}
-        subtitle="Discover your next adventure with our curated travel destinations."
-        imageURL="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ6n29sm6e6Hgu-Yb_VLT1kWn8w1q1jRbJJXQ&s"
-      />
+    <div className="min-h-screen bg-gradient-to-b from-background to-muted/20">
+      {/* Hero Section */}
+      <div className="relative bg-gradient-to-r from-yellow-500 to-yellow-600 text-white py-20">
+        <div className="container mx-auto px-4">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
+            className="text-center max-w-4xl mx-auto"
+          >
+            <h1 className="text-5xl md:text-6xl font-bold mb-6">
+              Discover Dahab Adventures
+            </h1>
+            <p className="text-xl md:text-2xl text-yellow-50 mb-8">
+              Explore breathtaking water adventures, desert safaris, and cultural experiences
+            </p>
+            <div className="flex items-center gap-4 text-yellow-100">
+              <MapPin className="w-5 h-5" />
+              <span className="text-lg">17+ Amazing Destinations</span>
+            </div>
+          </motion.div>
+        </div>
+      </div>
 
-      <div className="max-w-7xl mx-auto py-8 sm:py-12 px-4 sm:px-6 lg:px-8">
-        
-        {categories.map((category, categoryIndex) => {
-          const categoryDestinations = getDestinationsByCategory(category);
-          
-          return (
-            <motion.section
-              key={category}
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.6, delay: categoryIndex * 0.1 }}
-              className="mb-12 sm:mb-16"
+      <div className="container mx-auto px-4 py-12">
+        {/* Search and Filters */}
+        <div className="mb-12 space-y-6">
+          {/* Search Bar */}
+          <div className="max-w-2xl mx-auto">
+            <div className="relative">
+              <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-muted-foreground w-5 h-5" />
+              <Input
+                type="text"
+                placeholder="Search destinations..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="pl-12 py-6 text-lg"
+              />
+            </div>
+          </div>
+
+          {/* Category Filter */}
+          <div className="flex items-center justify-center gap-3 flex-wrap">
+            <Filter className="w-5 h-5 text-muted-foreground" />
+            {categories.map((category) => (
+              <Badge
+                key={category}
+                variant={selectedCategory === category ? "default" : "outline"}
+                className="cursor-pointer px-4 py-2 text-sm hover:bg-yellow-500 hover:text-white transition-all"
+                onClick={() => setSelectedCategory(category)}
+              >
+                {category}
+              </Badge>
+            ))}
+          </div>
+
+          {/* Price Filter */}
+          <div className="flex items-center justify-center gap-3 flex-wrap">
+            <span className="text-sm text-muted-foreground">Price Range:</span>
+            {[
+              { value: 'all', label: 'All Prices' },
+              { value: 'low', label: 'Under $50' },
+              { value: 'medium', label: '$50 - $80' },
+              { value: 'high', label: '$80+' }
+            ].map((filter) => (
+              <Badge
+                key={filter.value}
+                variant={priceFilter === filter.value ? "default" : "outline"}
+                className="cursor-pointer px-4 py-2 text-sm hover:bg-yellow-500 hover:text-white transition-all"
+                onClick={() => setPriceFilter(filter.value)}
+              >
+                {filter.label}
+              </Badge>
+            ))}
+          </div>
+        </div>
+
+        {/* Results Count */}
+        <div className="mb-6 text-center">
+          <p className="text-muted-foreground">
+            Showing <span className="font-semibold text-foreground">{filteredDestinations.length}</span> destinations
+            {selectedCategory !== 'All' && (
+              <span> in <span className="font-semibold text-yellow-600">{selectedCategory}</span></span>
+            )}
+          </p>
+        </div>
+
+        {/* Destinations Grid */}
+        {filteredDestinations.length > 0 ? (
+          <motion.div 
+            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.5 }}
+          >
+            {filteredDestinations.map((destination, index) => (
+              <motion.div
+                key={destination.id}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.4, delay: index * 0.1 }}
+              >
+                <DestinationCard
+                  title={destination.title}
+                  subtitle={destination.subtitle}
+                  description={destination.description}
+                  images={destination.galleryImages.map(img => img.src)}
+                  badge={destination.badge}
+                  rating={destination.rating}
+                  location={destination.location}
+                  price={destination.price}
+                  buttonText="View Details"
+                  onButtonClick={() => console.log('View:', destination.title)}
+                  href={destination.href}
+                />
+              </motion.div>
+            ))}
+          </motion.div>
+        ) : (
+          <div className="text-center py-20">
+            <div className="text-6xl mb-4">🔍</div>
+            <h3 className="text-2xl font-semibold mb-2">No destinations found</h3>
+            <p className="text-muted-foreground mb-6">
+              Try adjusting your search or filters
+            </p>
+            <button
+              onClick={() => {
+                setSearchQuery('');
+                setSelectedCategory('All');
+                setPriceFilter('all');
+              }}
+              className="px-6 py-3 bg-yellow-500 text-white rounded-lg hover:bg-yellow-600 transition-colors"
             >
-              
-              <div className="mb-6 sm:mb-8 flex flex-col items-center">
-                <motion.h2
-                  className="
-                    text-2xl sm:text-3xl md:text-4xl lg:text-5xl
-                    font-bold text-gray-900 dark:text-white mb-2
-                    border-b-4 border-amber-500 pb-2 text-center
-                    w-full max-w-3xl px-4
-                  "
-                >
-                  {category}
-                </motion.h2>
+              Clear All Filters
+            </button>
+          </div>
+        )}
+      </div>
 
-                
-              </div>
-
-             
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-8">
-                {categoryDestinations.map((destination, index) => (
-                  <motion.div
-                    key={destination.id}
-                    initial={{ opacity: 0, scale: 0.9 }}
-                    whileInView={{ opacity: 1, scale: 1 }}
-                    viewport={{ once: true }}
-                    transition={{ duration: 0.5, delay: index * 0.1 }}
-                    className="w-full"
-                  >
-                    <ImageCard
-                      title={destination.title}
-                      subtitle={destination.subtitle}
-                      description={destination.description}
-                      image={destination.imageUrl}
-                      badge={destination.badge}
-                      rating={destination.rating}
-                      location={destination.location}
-                      price={destination.price}
-                      buttonText="Discover More"
-                      href={destination.href}
-                      onFavoriteClick={() => toggleFavorite(destination.id)}
-                      isFavorite={isFavorite(destination.id)}
-                    />
-                  </motion.div>
-                ))}
-              </div>
-              {categoryIndex < categories.length - 1 && (
-                <div className="mt-12 sm:mt-16 border-t border-gray-200 dark:border-gray-800"></div>
-              )}
-            </motion.section>
-          );
-        })}
+      {/* CTA Section */}
+      <div className="bg-gradient-to-r from-yellow-500 to-yellow-600 text-white py-16 mt-16">
+        <div className="container mx-auto px-4 text-center">
+          <h2 className="text-3xl md:text-4xl font-bold mb-4">
+            Ready for Your Adventure?
+          </h2>
+          <p className="text-xl text-yellow-50 mb-8 max-w-2xl mx-auto">
+            Book your dream destination today and experience the magic of Dahab
+          </p>
+          <button className="px-8 py-4 bg-white text-yellow-600 font-semibold rounded-lg hover:bg-yellow-50 transition-colors text-lg">
+            Contact Us Now
+          </button>
+        </div>
       </div>
     </div>
   );
