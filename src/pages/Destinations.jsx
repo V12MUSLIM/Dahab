@@ -220,20 +220,8 @@ export default function DestinationsPage() {
         description="Follow our journey and stay updated with the latest from Dahab"
       />
 
-      {/* CTA Section */}
-      <div className="bg-gradient-to-r from-yellow-500 to-yellow-600 text-white py-16 mt-16">
-        <div className="container mx-auto px-4 text-center">
-          <h2 className="text-3xl md:text-4xl font-bold mb-4">
-            Ready for Your Adventure?
-          </h2>
-          <p className="text-xl text-yellow-50 mb-8 max-w-2xl mx-auto">
-            Book your dream destination today and experience the magic of Dahab
-          </p>
-          <button className="px-8 py-4 bg-white text-yellow-600 font-semibold rounded-lg hover:bg-yellow-50 transition-colors text-lg">
-            Contact Us Now
-          </button>
-        </div>
-      </div>
+  
+    
     </div>
   );
 }
