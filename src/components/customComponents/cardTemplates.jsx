@@ -1,6 +1,6 @@
 import * as React from "react";
 // eslint-disable-next-line no-unused-vars
-import { motion,AnimatePresence } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import { Link } from "react-router-dom";
 import {
   Card,
@@ -12,7 +12,15 @@ import {
 } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { PrimaryButton } from "./ButtonVarients";
-import { Star, MapPin, Calendar, Users,ChevronLeft, ChevronRight, X} from "lucide-react";
+import {
+  Star,
+  MapPin,
+  Calendar,
+  Users,
+  ChevronLeft,
+  ChevronRight,
+  X,
+} from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useState } from "react";
 // Enhanced Card wrapper with animations
@@ -163,7 +171,7 @@ const DestinationCard = ({
   buttonText = "Book Now",
   onButtonClick = () => {},
   className,
-  href = "#",
+  href,
 }) => {
   const [isHovered, setIsHovered] = useState(false);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
@@ -375,10 +383,11 @@ const DestinationCard = ({
                   </motion.span>
                 )}
               </div>
-
-              <PrimaryButton className="w-40" onClick={onButtonClick}>
-                {buttonText}
-              </PrimaryButton>
+              <Link to={href}>
+                <PrimaryButton className="w-40" onClick={onButtonClick}>
+                  {buttonText}
+                </PrimaryButton>
+              </Link>
             </CardFooter>
           </Card>
         </a>
@@ -617,4 +626,11 @@ const TestimonialCard = ({
   </DahabCard>
 );
 
-export { DahabCard, ImageCard, ActivityCard, StatsCard, TestimonialCard , DestinationCard};
+export {
+  DahabCard,
+  ImageCard,
+  ActivityCard,
+  StatsCard,
+  TestimonialCard,
+  DestinationCard,
+};

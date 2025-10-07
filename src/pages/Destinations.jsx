@@ -11,7 +11,6 @@ export default function DestinationsPage() {
   const { 
     destinations, 
     getAllCategories, 
-    searchDestinations,
     getDestinationsByCategory 
   } = useDestinations();
   
