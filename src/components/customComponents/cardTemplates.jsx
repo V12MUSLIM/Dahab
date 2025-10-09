@@ -21,6 +21,7 @@ import {
   ChevronRight,
   X,
 } from "lucide-react";
+import DynamicIcon from "../common/DynamicIcon";
 import { cn } from "@/lib/utils";
 import { useState } from "react";
 // Enhanced Card wrapper with animations
@@ -481,8 +482,7 @@ const DestinationCard = ({
 const ActivityCard = ({
   title,
   description,
-  // eslint-disable-next-line no-unused-vars
-  icon: Icon,
+  icon, // string from backend
   duration,
   groupSize,
   difficulty,
@@ -493,11 +493,9 @@ const ActivityCard = ({
   <DahabCard className={className}>
     <CardHeader className="text-center pb-4">
       <div className="mx-auto mb-4 p-3 rounded-full bg-yellow-100 dark:bg-yellow-900/20 w-fit">
-        <Icon className="h-8 w-8 text-yellow-600 dark:text-yellow-400" />
+        <DynamicIcon name={icon} className="h-8 w-8 text-yellow-600 dark:text-yellow-400" />
       </div>
-      <CardTitle className="text-xl font-bold text-foreground">
-        {title}
-      </CardTitle>
+      <CardTitle className="text-xl font-bold text-foreground">{title}</CardTitle>
     </CardHeader>
 
     <CardContent className="space-y-4">
@@ -531,7 +529,7 @@ const ActivityCard = ({
       {price && (
         <div className="text-center">
           <span className="text-2xl font-bold text-yellow-600 dark:text-yellow-400">
-            {price}
+            ${price}
           </span>
           <span className="text-sm text-muted-foreground ml-1">per person</span>
         </div>
@@ -540,6 +538,8 @@ const ActivityCard = ({
     </CardFooter>
   </DahabCard>
 );
+
+
 
 // Stats Card
 const StatsCard = ({
