@@ -1,6 +1,7 @@
 "use client";
 
 import { ImageCard } from "@/components/customComponents/cardTemplates";
+// eslint-disable-next-line no-unused-vars
 import { motion } from "framer-motion";
 
 const experiencesByCategory = [

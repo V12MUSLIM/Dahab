@@ -1,6 +1,9 @@
+import { usePackages } from "../hooks/usePackages";
+import { useActivities } from "../hooks/useActivities";
+
+import PackageDealsSection from "../components/sections/PackageDealsSection";
 import HeroSection from "../components/sections/HeroSection";
 import GallerySection from "../components/sections/GallerySection";
-import PackageDealsSection from "../components/sections/PackageDealsSection";
 import FeaturedDestinationsSection from "../components/sections/FeaturedDestinationsSection";
 import ActivitiesSection from "../components/sections/ActivitiesSection";
 import TestimonialsSection from "../components/sections/TestimonialsSection";
@@ -8,22 +11,33 @@ import FAQSection from "../components/sections/FAQSection";
 import CTASection from "../components/sections/CTASection";
 import ContactSection from "../components/sections/ContactSection";
 import SocialMediaSection from "@/components/sections/SocialMediaSection";
-import {
-  Sun,
-  Anchor,
-  Star,
-  ArrowRight,
-  Calendar,
-  Waves,
-  Camera,
-  Mountain,
-} from "lucide-react";
+
+import { Sun, Anchor, Star, ArrowRight, Calendar, Waves, Camera, Mountain } from "lucide-react";
 import {
   PrimaryButton,
   SecondaryButton,
 } from "../components/customComponents/ButtonVarients";
+
 export default function Home() {
-  const packages = [
+  const {
+    data: packages,
+    isLoading: packagesLoading,
+    error: packagesError,
+  } = usePackages();
+
+  const {
+    data: activities,
+    isLoading: activitiesLoading,
+    error: activitiesError,
+  } = useActivities();
+
+  console.log("Activities from TanStack:", activities);
+
+  const isLoading = packagesLoading || activitiesLoading;
+  const error = packagesError || activitiesError;
+
+  // Fallback data for packages
+  const fallbackPackages = [
     {
       title: "Adventure Seeker",
       price: "$299",
@@ -64,7 +78,9 @@ export default function Home() {
       popular: false,
     },
   ];
-  const activities = [
+
+  // Fallback data for activities
+  const fallbackActivities = [
     {
       title: "Scuba Diving",
       description:
@@ -106,6 +122,26 @@ export default function Home() {
       price: "$50",
     },
   ];
+
+  if (isLoading)
+    return (
+      <div className="w-full h-screen flex flex-col justify-center items-center">
+        <div className="relative">
+          <div className="w-12 h-12 border-4 border-gray-200 border-t-orange-500 rounded-full animate-spin"></div>
+        </div>
+        <h3 className="mt-6 text-2xl font-semibold text-gray-800">
+          Loading...
+        </h3>
+      </div>
+    );
+
+  if (error)
+    return (
+      <div className="text-center mt-10 text-red-500">
+        Error loading data
+      </div>
+    );
+
   const galleryImages = [
     {
       src: `${import.meta.env.BASE_URL}image1.jpeg`,
@@ -156,7 +192,7 @@ export default function Home() {
       <HeroSection
         image="hero.png"
         title="Dahab"
-        subtitle="Red Sea Paradise — Where Adventure, Relaxation, and Culture Unite"
+        subtitle="Red Sea Paradise – Where Adventure, Relaxation, and Culture Unite"
         Icon={Sun}
         badge="Sunny Escape"
         PrimaryButton={PrimaryButton}
@@ -177,6 +213,7 @@ export default function Home() {
           { icon: Star, text: "4.9/5 Rating" },
         ]}
       />
+
       <GallerySection
         badge="Explore Dahab"
         header="Discover Paradise"
@@ -185,30 +222,32 @@ export default function Home() {
         autoPlay={true}
         autoPlayInterval={2500}
       />
+
       <PackageDealsSection
-        packages={packages}
+        packages={packages || fallbackPackages}
         badge="Special Offers"
         header="Exclusive Packages Deals"
-        description="   Choose from our carefully curated packages for an unforgettable
-            Dahab experience"
+        description="Choose from our carefully curated packages for an unforgettable Dahab experience"
       />
 
       <FeaturedDestinationsSection />
+
       <ActivitiesSection
         badge="Activities"
         header="Adventures Await"
-        description="From underwater exploration to desert adventures, discover the
-              activities that make Dahab special"
-        activities={activities}
+        description="From underwater exploration to desert adventures, discover the activities that make Dahab special"
+        activities={activities || fallbackActivities}
       />
+
       <TestimonialsSection />
       <FAQSection />
       <CTASection />
       <ContactSection />
+
       <SocialMediaSection
-      badge="Conect"
-      header="Stay Connected"
-      description=" Follow our journey and stay updated with the latest from Dahab"
+        badge="Connect"
+        header="Stay Connected"
+        description="Follow our journey and stay updated with the latest from Dahab"
       />
     </div>
   );
