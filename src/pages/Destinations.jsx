@@ -2,9 +2,8 @@
 import React, { useState } from "react";
 import { useDestinations } from "@/context/DestinationsContext";
 import { DestinationCard } from "@/components/customComponents/cardTemplates";
-import { Badge } from "@/components/ui/badge";
-import { Input } from "@/components/ui/input";
-import { Search, Filter, MapPin, Compass, Star, Users } from "lucide-react";
+import FilteringTool from "@/components/customComponents/FilteringTool";
+import { Search,  MapPin, Compass, Star, Users } from "lucide-react";
 // eslint-disable-next-line no-unused-vars
 import { motion } from "framer-motion";
 import HeroSection from "@/components/sections/HeroSection";
@@ -88,56 +87,17 @@ export default function DestinationsPage() {
 
       <div className="container mx-auto px-4 py-12">
         {/* Search and Filters */}
-        <div className="mb-12 space-y-6">
-          {/* Search Bar */}
-          <div className="max-w-2xl mx-auto">
-            <div className="relative">
-              <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-muted-foreground w-5 h-5" />
-              <Input
-                type="text"
-                placeholder="Search destinations..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="pl-12 py-6 text-lg"
-              />
-            </div>
-          </div>
-
-          {/* Category Filter */}
-          <div className="flex items-center justify-center gap-3 flex-wrap">
-            <Filter className="w-5 h-5 text-muted-foreground" />
-            {categories.map((category) => (
-              <Badge
-                key={category}
-                variant={selectedCategory === category ? "default" : "outline"}
-                className="cursor-pointer px-4 py-2 text-sm hover:bg-yellow-500 hover:text-white transition-all"
-                onClick={() => setSelectedCategory(category)}
-              >
-                {category}
-              </Badge>
-            ))}
-          </div>
-
-          {/* Price Filter */}
-          <div className="flex items-center justify-center gap-3 flex-wrap">
-            <span className="text-sm text-muted-foreground">Price Range:</span>
-            {[
-              { value: "all", label: "All Prices" },
-              { value: "low", label: "Under $50" },
-              { value: "medium", label: "$50 - $80" },
-              { value: "high", label: "$80+" },
-            ].map((filter) => (
-              <Badge
-                key={filter.value}
-                variant={priceFilter === filter.value ? "default" : "outline"}
-                className="cursor-pointer px-4 py-2 text-sm hover:bg-yellow-500 hover:text-white transition-all"
-                onClick={() => setPriceFilter(filter.value)}
-              >
-                {filter.label}
-              </Badge>
-            ))}
-          </div>
-        </div>
+        <FilteringTool
+                  searchQuery={searchQuery}
+                  onSearchChange={setSearchQuery}
+                  selectedCategory={selectedCategory}
+                  onCategoryChange={setSelectedCategory}
+                  categories={categories}
+                  priceFilter={priceFilter}
+                  onPriceFilterChange={setPriceFilter}
+                  searchPlaceholder="Search restaurants, cuisine, or dishes..."
+                  showPriceFilter={true}
+                />
 
         {/* Results Count */}
         <div className="mb-6 text-center">
