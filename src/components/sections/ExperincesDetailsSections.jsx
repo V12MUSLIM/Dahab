@@ -1,10 +1,12 @@
 "use client";
 import { useParams, Link } from 'react-router-dom';
+// eslint-disable-next-line no-unused-vars
 import { motion } from "framer-motion";
 import React from 'react';
 
 import { Button } from '@/components/ui/button';
 import GallerySection from "./GallerySection";
+// eslint-disable-next-line react-refresh/only-export-components
 export const experiencesData = [
   {
     id: 1,  
