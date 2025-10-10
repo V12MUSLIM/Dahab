@@ -11,8 +11,21 @@ import FAQSection from "../components/sections/FAQSection";
 import CTASection from "../components/sections/CTASection";
 import ContactSection from "../components/sections/ContactSection";
 import SocialMediaSection from "@/components/sections/SocialMediaSection";
+import ApiError from "@/components/apiStatue/ApiError";
+// Import skeleton components
+import { PageSkeleton } from "@/components/skeletons/PageSkeleton";
 
-import { Sun, Anchor, Star, ArrowRight, Calendar, Waves, Camera, Mountain } from "lucide-react";
+import {
+  Sun,
+  Anchor,
+  Star,
+  ArrowRight,
+  Calendar,
+  Waves,
+  Camera,
+  Mountain,
+  TriangleAlert,
+} from "lucide-react";
 import {
   PrimaryButton,
   SecondaryButton,
@@ -30,8 +43,6 @@ export default function Home() {
     isLoading: activitiesLoading,
     error: activitiesError,
   } = useActivities();
-
-  console.log("Activities from TanStack:", activities);
 
   const isLoading = packagesLoading || activitiesLoading;
   const error = packagesError || activitiesError;
@@ -123,24 +134,14 @@ export default function Home() {
     },
   ];
 
-  if (isLoading)
-    return (
-      <div className="w-full h-screen flex flex-col justify-center items-center">
-        <div className="relative">
-          <div className="w-12 h-12 border-4 border-gray-200 border-t-orange-500 rounded-full animate-spin"></div>
-        </div>
-        <h3 className="mt-6 text-2xl font-semibold text-gray-800">
-          Loading...
-        </h3>
-      </div>
-    );
-
-  if (error)
-    return (
-      <div className="text-center mt-10 text-red-500">
-        Error loading data
-      </div>
-    );
+  // Show skeleton loading state
+  if (isLoading) {
+    return <PageSkeleton />;
+  }
+ // show Error state
+  if (error) {
+    return <ApiError />;
+  }
 
   const galleryImages = [
     {
