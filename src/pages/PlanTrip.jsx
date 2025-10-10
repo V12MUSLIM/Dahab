@@ -134,7 +134,11 @@ const packages = [
     <>
       <HeroSection
         image="image1.jpeg"
-        title="Plan Your Dream Trip"
+          title={
+          <span>
+          Plan Your <span className="text-amber-500">Dream Trip</span>
+          </span>
+        }
         subtitle="From crystal-clear waters to golden deserts — craft your perfect Dahab journey with ease."
         Icon={Calendar}
         badge="Plan & Book"
