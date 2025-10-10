@@ -10,6 +10,7 @@ import ExperiencesDetail from "./components/sections/ExperincesDetailsSections";
 import DefaultLayout from "./layouts/DefaultLayout";
 import DestinationDetail from "./components/sections/DestinationsDetailsSections";
 import { DestinationsProvider } from "./context/DestinationsContext";
+import { DineProvider } from "./Context/DineContext";   
 import { ThemeProvider } from "./components/theme-provider";
 import NotFound from "./pages/404";
 import ScrollToTop from "./components/ScrollToTop";
@@ -25,6 +26,7 @@ function App() {
         <ScrollToTop/>
         <DefaultLayout>
           <DestinationsProvider>
+            <DineProvider>
             <div className="App">
               <Routes>
                 <Route path="/" element={<Home />} />
@@ -44,6 +46,7 @@ function App() {
                 <Route path="*" element={<NotFound />} />
               </Routes>
             </div>
+            </DineProvider>
           </DestinationsProvider>
         </DefaultLayout>
       </HashRouter>
