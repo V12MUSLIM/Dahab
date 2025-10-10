@@ -135,7 +135,7 @@ export default function HeroSection({
 
         {/* Title */}
         <motion.h1
-          className="text-4xl sm:text-6xl md:text-7xl lg:text-8xl xl:text-9xl font-black tracking-tight mb-6 bg-gradient-to-b from-white via-gray-100 to-gray-300 bg-clip-text text-transparent drop-shadow-2xl"
+          className=" text-4xl sm:text-6xl md:text-7xl lg:text-8xl xl:text-9xl font-black tracking-tight mb-6 bg-gradient-to-b from-white via-gray-100 to-gray-300 bg-clip-text text-transparent drop-shadow-2xl"
           variants={fadeInUp}
           transition={{ duration: FADE_DURATION, ease: "easeOut" }}
         >

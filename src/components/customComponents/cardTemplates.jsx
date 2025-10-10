@@ -15,7 +15,7 @@ import { PrimaryButton } from "./ButtonVarients";
 import {
   Star,
   MapPin,
-  Calendar,
+  Clock,
   Users,
   ChevronLeft,
   ChevronRight,
@@ -192,6 +192,7 @@ const DestinationCard = ({
 
   const openGallery = (e) => {
     e.preventDefault();
+    e.stopPropagation();
     setIsGalleryOpen(true);
   };
 
@@ -215,7 +216,11 @@ const DestinationCard = ({
             "hover:shadow-xl hover:shadow-yellow-500/10 hover:border-yellow-200 dark:hover:border-yellow-800/50"
           )}
         >
-          <div className="relative overflow-hidden h-80">
+          {/* IMAGE SECTION - NO LINK WRAPPER */}
+          <div
+            className="relative overflow-hidden h-80 cursor-pointer"
+            onClick={openGallery}
+          >
             <AnimatePresence mode="wait">
               <motion.img
                 key={currentImageIndex}
@@ -226,7 +231,6 @@ const DestinationCard = ({
                 animate={{ opacity: 1, scale: isHovered ? 1.1 : 1 }}
                 exit={{ opacity: 0, scale: 0.9 }}
                 transition={{ duration: 0.5 }}
-                onClick={openGallery}
               />
             </AnimatePresence>
 
@@ -330,6 +334,8 @@ const DestinationCard = ({
               {currentImageIndex + 1} / {images.length}
             </div>
           </div>
+
+          {/* CONTENT SECTION - WITH LINK WRAPPER */}
           <Link to={href}>
             <CardHeader className="pb-3 px-6 pt-5">
               {subtitle && (
@@ -370,6 +376,7 @@ const DestinationCard = ({
               </CardDescription>
             </CardContent>
           </Link>
+
           <CardFooter className="flex items-center justify-between pt-0 px-6 pb-6">
             <div className="flex items-center gap-2">
               {price && (
@@ -382,10 +389,11 @@ const DestinationCard = ({
                 </motion.span>
               )}
             </div>
-
-            <PrimaryButton className="w-40" onClick={onButtonClick}>
-              {buttonText}
-            </PrimaryButton>
+            <Link to={href}>
+              <PrimaryButton className="w-40" onClick={onButtonClick}>
+                {buttonText}
+              </PrimaryButton>
+            </Link>
           </CardFooter>
         </Card>
       </motion.div>
@@ -482,64 +490,81 @@ const DestinationCard = ({
 const ActivityCard = ({
   title,
   description,
-  icon, // string from backend
+  icon,
   duration,
   groupSize,
   difficulty,
   price,
   onBookClick,
   className,
-}) => (
-  <DahabCard className={className}>
-    <CardHeader className="text-center pb-4">
-      <div className="mx-auto mb-4 p-3 rounded-full bg-yellow-100 dark:bg-yellow-900/20 w-fit">
-        <DynamicIcon name={icon} className="h-8 w-8 text-yellow-600 dark:text-yellow-400" />
-      </div>
-      <CardTitle className="text-xl font-bold text-foreground">{title}</CardTitle>
-    </CardHeader>
-
-    <CardContent className="space-y-4">
-      <CardDescription className="text-center text-muted-foreground">
-        {description}
-      </CardDescription>
-
-      <div className="grid grid-cols-3 gap-2 text-xs">
-        {duration && (
-          <div className="flex flex-col items-center p-2 rounded-lg bg-muted/50">
-            <Calendar className="h-4 w-4 text-muted-foreground mb-1" />
-            <span className="font-medium">{duration}</span>
-          </div>
-        )}
-        {groupSize && (
-          <div className="flex flex-col items-center p-2 rounded-lg bg-muted/50">
-            <Users className="h-4 w-4 text-muted-foreground mb-1" />
-            <span className="font-medium">{groupSize}</span>
-          </div>
-        )}
-        {difficulty && (
-          <div className="flex flex-col items-center p-2 rounded-lg bg-muted/50">
-            <span className="text-muted-foreground mb-1">Level</span>
-            <span className="font-medium">{difficulty}</span>
-          </div>
-        )}
-      </div>
-    </CardContent>
-
-    <CardFooter className="flex flex-col gap-3">
-      {price && (
-        <div className="text-center">
-          <span className="text-2xl font-bold text-yellow-600 dark:text-yellow-400">
-            ${price}
-          </span>
-          <span className="text-sm text-muted-foreground ml-1">per person</span>
+}) => {
+  return (
+    <DahabCard
+      className={`transition-shadow duration-200 hover:shadow-lg ${className}`}
+    >
+      <CardHeader className="text-center pb-3">
+        <div className="mx-auto mb-3 p-3 rounded-full bg-yellow-50 dark:bg-yellow-900/20 w-fit">
+          <DynamicIcon
+            name={icon}
+            className="h-7 w-7 text-yellow-600 dark:text-yellow-500"
+          />
         </div>
-      )}
-      <PrimaryButton onClick={onBookClick}>Book now</PrimaryButton>
-    </CardFooter>
-  </DahabCard>
-);
+        <CardTitle className="text-lg font-semibold text-gray-900 dark:text-white">
+          {title}
+        </CardTitle>
+      </CardHeader>
 
+      <CardContent className="space-y-4">
+        <CardDescription className="text-center text-sm text-gray-600 dark:text-gray-400">
+          {description}
+        </CardDescription>
 
+        <div className="grid grid-cols-3 gap-2 text-xs">
+          {duration && (
+            <div className="flex flex-col items-center p-2 rounded-lg bg-gray-50 dark:bg-yellow-900/10">
+              <Clock className="h-4 w-4 text-gray-500 dark:text-yellow-600 mb-1" />
+              <span className="font-medium text-gray-700 dark:text-gray-300">
+                {duration}
+              </span>
+            </div>
+          )}
+          {groupSize && (
+            <div className="flex flex-col items-center p-2 rounded-lg bg-gray-50 dark:bg-yellow-900/10">
+              <Users className="h-4 w-4 text-gray-500 dark:text-yellow-600 mb-1" />
+              <span className="font-medium text-gray-700 dark:text-gray-300">
+                {groupSize}
+              </span>
+            </div>
+          )}
+          {difficulty && (
+            <div className="flex flex-col items-center p-2 rounded-lg bg-gray-50 dark:bg-yellow-900/10">
+              <span className="text-gray-500 dark:text-yellow-600 mb-1 text-xs">
+                Level
+              </span>
+              <span className="font-medium text-gray-700 dark:text-gray-300">
+                {difficulty}
+              </span>
+            </div>
+          )}
+        </div>
+      </CardContent>
+
+      <CardFooter className="flex flex-col gap-3">
+        {price && (
+          <div className="text-center">
+            <span className="text-2xl font-bold text-yellow-600 dark:text-yellow-500">
+              ${price}
+            </span>
+            <span className="text-sm text-gray-500 dark:text-gray-400 ml-1">
+              per person
+            </span>
+          </div>
+        )}
+        <PrimaryButton onClick={onBookClick}>Book now</PrimaryButton>
+      </CardFooter>
+    </DahabCard>
+  );
+};
 
 // Stats Card
 const StatsCard = ({

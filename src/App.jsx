@@ -9,10 +9,10 @@ import Experiences from "./pages/Experiences";
 import ExperiencesDetail from "./components/sections/ExperincesDetailsSections";
 import DefaultLayout from "./layouts/DefaultLayout";
 import DestinationDetail from "./components/sections/DestinationsDetailsSections";
-import { DestinationsProvider } from "./Context/DestinationsContext";
+import { DestinationsProvider } from "./context/DestinationsContext";
 import { ThemeProvider } from "./components/theme-provider";
 import NotFound from "./pages/404";
-
+import ScrollToTop from "./components/ScrollToTop";
 function App() {
   return (
     <ThemeProvider
@@ -22,6 +22,7 @@ function App() {
       disableTransitionOnChange
     >
       <HashRouter>
+        <ScrollToTop/>
         <DefaultLayout>
           <DestinationsProvider>
             <div className="App">
