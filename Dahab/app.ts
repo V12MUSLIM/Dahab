@@ -12,7 +12,7 @@ import activitiesRouter from "./src/home/activities/activities-router";
 
 dotenv.config();
 
-const PORT = process.env.PORT;
+const PORT = Number(process.env.PORT);
 const URI = process.env.DB_URL;
 const DB_NAME = process.env.DB_NAME;
 //${URI}/${DB_NAME}
@@ -58,6 +58,6 @@ app.use((err: any, req: Request, res: Response, next: NextFunction) => {
     });
 });
 
-app.listen(PORT, () => {
-    console.log(`Server is running on port ${PORT} (http://localhost:${PORT})`);
+app.listen(PORT, "0.0.0.0", () => {
+    console.log(`✅ Server is running on http://localhost:${PORT}`);
 });
