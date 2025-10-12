@@ -9,6 +9,7 @@ import cors from "cors";
 import morgan from "morgan";
 import packagesRouter from './src/home/packages/package-router'
 import activitiesRouter from "./src/home/activities/activities-router";
+import destinationRouter from "./src/home/Destination/destination-router"
 
 dotenv.config();
 
@@ -48,6 +49,7 @@ app.use(
 // routes
 app.use("/api/packages", packagesRouter);
 app.use("/api/activities", activitiesRouter);
+app.use("/api/destination", destinationRouter);
 
 app.use((err: any, req: Request, res: Response, next: NextFunction) => {
     console.error(err);
