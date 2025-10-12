@@ -1,10 +1,15 @@
 import { Badge } from "../ui/badge";
 import { Link } from "react-router-dom";
 // eslint-disable-next-line no-unused-vars
-import { motion, useReducedMotion } from "framer-motion";
+import {
+  // eslint-disable-next-line no-unused-vars
+  motion,
+  useReducedMotion,
+  useScroll,
+  useTransform,
+} from "framer-motion";
 import { useState } from "react";
 
-// Animation constants
 const FADE_DURATION = 0.8;
 const SCALE_DURATION = 0.6;
 const STAGGER_DELAY = 0.15;
@@ -26,7 +31,13 @@ export default function HeroSection({
   const [imageLoaded, setImageLoaded] = useState(false);
   const shouldReduceMotion = useReducedMotion();
 
-  // Animation variants - properly structured
+  // 👇 Parallax setup
+  const { scrollY } = useScroll();
+  const yParallax = useTransform(scrollY, [0, 800], [0, 120], {
+    clamp: true, // prevents motion beyond the last value
+  }); // parallax range
+
+  // Animation variants
   const fadeInUp = {
     initial: { opacity: 0, y: shouldReduceMotion ? 0 : 60 },
     animate: { opacity: 1, y: 0 },
@@ -65,7 +76,7 @@ export default function HeroSection({
         animate: { scale: 1, opacity: imageLoaded ? 1 : 0 },
       };
 
-  // Helper component for CTA buttons
+  // CTA Button helper
   const CTAButton = ({ cta, Button, variants }) => {
     if (!cta || !Button) return null;
 
@@ -84,7 +95,7 @@ export default function HeroSection({
 
   return (
     <section className="relative w-full h-screen flex items-center justify-center overflow-hidden">
-      {/* Background image */}
+      {/* Background image with Parallax */}
       <motion.div
         className="absolute inset-0 w-full h-full z-0"
         initial={{ opacity: 0 }}
@@ -94,14 +105,15 @@ export default function HeroSection({
         <motion.img
           src={
             imageURL
-              ? imageURL 
+              ? imageURL
               : image
-              ? `${import.meta.env.BASE_URL}${image}` 
+              ? `${import.meta.env.BASE_URL}${image}`
               : "https://lightwidget.com/wp-content/uploads/localhost-file-not-found.jpg"
           }
           alt={`${title} background`}
           className="w-full h-full object-cover"
           onLoad={() => setImageLoaded(true)}
+          style={{ y: yParallax }} // 👈 Parallax movement
           {...imageAnimation}
           transition={{ duration: 1.2, ease: "easeOut" }}
         />
@@ -135,7 +147,7 @@ export default function HeroSection({
 
         {/* Title */}
         <motion.h1
-          className=" text-4xl sm:text-6xl md:text-7xl lg:text-8xl xl:text-9xl font-black tracking-tight mb-6 bg-gradient-to-b from-white via-gray-100 to-gray-300 bg-clip-text text-transparent drop-shadow-2xl"
+          className="text-4xl sm:text-6xl md:text-7xl lg:text-8xl xl:text-9xl font-black tracking-tight mb-6 bg-gradient-to-b from-white via-gray-100 to-gray-300 bg-clip-text text-transparent drop-shadow-2xl"
           variants={fadeInUp}
           transition={{ duration: FADE_DURATION, ease: "easeOut" }}
         >
