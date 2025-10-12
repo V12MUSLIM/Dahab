@@ -18,7 +18,7 @@ export default function FeaturedDestinationsSection({ id }) {
       description:
         "Experience the world's most famous diving spot with crystal clear waters, incredible marine life, and depths that challenge even experienced divers.",
       image:
-        "https://www.propertyfinder.eg/blog/wp-content/uploads/2019/10/blue-hole-dahab-800x600.jpg",
+        "image1.webp",
       badge: "Must Visit",
       rating: "4.9",
       location: "Dahab Coast",
@@ -30,7 +30,7 @@ export default function FeaturedDestinationsSection({ id }) {
       subtitle: "Sacred Mountain",
       description:
         "Climb the legendary Mount Sinai and witness one of the world's most spectacular sunrises from this historically significant peak.",
-      image: `${import.meta.env.BASE_URL}image2.jpeg`,
+      image: `${import.meta.env.BASE_URL}image2.webp`,
       badge: "Spiritual Journey",
       rating: "4.8",
       location: "Sinai Peninsula",
@@ -43,7 +43,7 @@ export default function FeaturedDestinationsSection({ id }) {
       description:
         "Journey through stunning rock formations with vibrant colors created by millions of years of geological processes.",
       image:
-        "https://www.arabtravelers.com/wp-content/uploads/2023/05/Tourism-in-dahab-10.jpg",
+        "image3.webp",
       badge: "Adventure",
       rating: "4.7",
       location: "Nuweiba Road",
@@ -55,7 +55,7 @@ export default function FeaturedDestinationsSection({ id }) {
       subtitle: "Snorkeling Paradise",
       description:
         "Discover natural rock pools teeming with marine life, perfect for snorkeling and underwater photography.",
-      image: `${import.meta.env.BASE_URL}image1.jpeg`,
+      image: "image4.webp",
       badge: "Family Friendly",
       rating: "4.6",
       location: "South Dahab",

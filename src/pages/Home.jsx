@@ -1,19 +1,36 @@
+import { lazy, Suspense } from "react";
 import { usePackages } from "../hooks/usePackages";
 import { useActivities } from "../hooks/useActivities";
 
-import PackageDealsSection from "../components/sections/PackageDealsSection";
+// Eager load - Above the fold components
 import HeroSection from "../components/sections/HeroSection";
-import GallerySection from "../components/sections/GallerySection";
-import FeaturedDestinationsSection from "../components/sections/FeaturedDestinationsSection";
-import ActivitiesSection from "../components/sections/ActivitiesSection";
-import TestimonialsSection from "../components/sections/TestimonialsSection";
-import FAQSection from "../components/sections/FAQSection";
-import CTASection from "../components/sections/CTASection";
-import ContactSection from "../components/sections/ContactSection";
-import SocialMediaSection from "@/components/sections/SocialMediaSection";
-import ApiError from "@/components/apiStatue/ApiError";
-// Import skeleton components
 import { PageSkeleton } from "@/components/skeletons/PageSkeleton";
+import ApiError from "@/components/apiStatue/ApiError";
+
+// Lazy load - Below the fold components
+const GallerySection = lazy(() =>
+  import("../components/sections/GallerySection")
+);
+const PackageDealsSection = lazy(() =>
+  import("../components/sections/PackageDealsSection")
+);
+const FeaturedDestinationsSection = lazy(() =>
+  import("../components/sections/FeaturedDestinationsSection")
+);
+const ActivitiesSection = lazy(() =>
+  import("../components/sections/ActivitiesSection")
+);
+const TestimonialsSection = lazy(() =>
+  import("../components/sections/TestimonialsSection")
+);
+const FAQSection = lazy(() => import("../components/sections/FAQSection"));
+const CTASection = lazy(() => import("../components/sections/CTASection"));
+const ContactSection = lazy(() =>
+  import("../components/sections/ContactSection")
+);
+const SocialMediaSection = lazy(() =>
+  import("@/components/sections/SocialMediaSection")
+);
 
 import {
   Sun,
@@ -24,12 +41,22 @@ import {
   Waves,
   Camera,
   Mountain,
-  TriangleAlert,
 } from "lucide-react";
 import {
   PrimaryButton,
   SecondaryButton,
 } from "../components/customComponents/ButtonVarients";
+
+// Loading fallback component
+const SectionLoader = () => (
+  <div className="w-full h-64 flex items-center justify-center">
+    <div className="animate-pulse space-y-4 w-full max-w-4xl px-4">
+      <div className="h-8 bg-gray-200 rounded w-1/4 mx-auto"></div>
+      <div className="h-4 bg-gray-200 rounded w-1/2 mx-auto"></div>
+      <div className="h-32 bg-gray-200 rounded"></div>
+    </div>
+  </div>
+);
 
 export default function Home() {
   const {
@@ -45,7 +72,6 @@ export default function Home() {
   } = useActivities();
 
   const isLoading = packagesLoading || activitiesLoading;
-  const error = packagesError || activitiesError;
 
   // Fallback data for packages
   const fallbackPackages = [
@@ -134,54 +160,39 @@ export default function Home() {
     },
   ];
 
-  // Show skeleton loading state
-  if (isLoading) {
+  // Use fallback data if API fails, otherwise use API data
+  const displayPackages = packages || fallbackPackages;
+  const displayActivities = activities || fallbackActivities;
+
+  // Show skeleton loading state only on initial load
+  if (isLoading && !packages && !activities) {
     return <PageSkeleton />;
   }
- // show Error state
-  if (error) {
-    return <ApiError />;
-  }
+
+  // Optional: Show a subtle warning banner if data failed to load but page is still functional
+  const showWarning = (packagesError || activitiesError) && !isLoading;
 
   const galleryImages = [
     {
-      src: `${import.meta.env.BASE_URL}image1.jpeg`,
-      alt: "Blue Lagoon in Dahab",
-      title: "Blue Lagoon Paradise",
-      description: "Crystal clear waters perfect for swimming",
-    },
-    {
-      src: "https://www.propertyfinder.eg/blog/wp-content/uploads/2019/10/blue-hole-dahab-800x600.jpg",
-      alt: "Blue Hole diving spot",
-      title: "Famous Blue Hole",
-      description: "World's most iconic diving destination",
-    },
-    {
-      src: "https://www.arabtravelers.com/wp-content/uploads/2023/05/Tourism-in-dahab-10.jpg",
-      alt: "Dahab coastline",
-      title: "Stunning Coastline",
-      description: "Miles of pristine beaches await",
-    },
-    {
-      src: "https://assets.annahar.com/ContentFilesArchive/422721Image1-1180x677_d.jpg",
+      src: "image1.webp",
       alt: "Desert meets sea",
       title: "Desert Meets Sea",
       description: "Unique landscape of mountains and ocean",
     },
     {
-      src: `${import.meta.env.BASE_URL}image2.jpeg`,
+      src: "image2.webp",
       alt: "Sinai mountains sunset",
       title: "Sinai Mountain Sunset",
       description: "Breathtaking views from sacred peaks",
     },
     {
-      src: `${import.meta.env.BASE_URL}image3.jpeg`,
+      src: "image3.webp",
       alt: "Blue Hole diving",
       title: "World-Class Diving",
       description: "Explore vibrant coral reefs",
     },
     {
-      src: `${import.meta.env.BASE_URL}image4.jpeg`,
+      src: "image4.webp",
       alt: "Bedouin beach camp",
       title: "Bedouin Beach Culture",
       description: "Experience authentic local traditions",
@@ -190,8 +201,18 @@ export default function Home() {
 
   return (
     <div className="min-h-screen bg-background overflow-x-hidden">
+      {/* Optional warning banner */}
+      {showWarning && (
+        <div className="bg-yellow-50 border-b border-yellow-200 px-4 py-3 text-center">
+          <p className="text-sm text-yellow-800">
+            Some content is currently unavailable. Showing cached information.
+          </p>
+        </div>
+      )}
+
+      {/* Hero Section - Loaded immediately (above the fold) */}
       <HeroSection
-        image="hero.png"
+        image="hero.webp"
         title="Dahab"
         subtitle="Red Sea Paradise – Where Adventure, Relaxation, and Culture Unite"
         Icon={Sun}
@@ -215,41 +236,55 @@ export default function Home() {
         ]}
       />
 
-      <GallerySection
-        badge="Explore Dahab"
-        header="Discover Paradise"
-        paragraph="Experience the stunning beauty of Dahab through our curated gallery"
-        images={galleryImages}
-        autoPlay={true}
-        autoPlayInterval={2500}
-      />
+      {/* Gallery Section - Lazy loaded */}
+      <Suspense fallback={<SectionLoader />}>
+        <GallerySection
+          badge="Explore Dahab"
+          header="Discover Paradise"
+          paragraph="Experience the stunning beauty of Dahab through our curated gallery"
+          images={galleryImages}
+          autoPlay={true}
+          autoPlayInterval={2500}
+        />
+      </Suspense>
 
-      <PackageDealsSection
-        packages={packages || fallbackPackages}
-        badge="Special Offers"
-        header="Exclusive Packages Deals"
-        description="Choose from our carefully curated packages for an unforgettable Dahab experience"
-      />
+      {/* Package Deals Section - Lazy loaded */}
+      <Suspense fallback={<SectionLoader />}>
+        <PackageDealsSection
+          packages={displayPackages}
+          badge="Special Offers"
+          header="Exclusive Packages Deals"
+          description="Choose from our carefully curated packages for an unforgettable Dahab experience"
+        />
+      </Suspense>
 
-      <FeaturedDestinationsSection />
+      {/* Featured Destinations Section - Lazy loaded */}
+      <Suspense fallback={<SectionLoader />}>
+        <FeaturedDestinationsSection />
+      </Suspense>
 
-      <ActivitiesSection
-        badge="Activities"
-        header="Adventures Await"
-        description="From underwater exploration to desert adventures, discover the activities that make Dahab special"
-        activities={activities || fallbackActivities}
-      />
+      {/* Activities Section - Lazy loaded */}
+      <Suspense fallback={<SectionLoader />}>
+        <ActivitiesSection
+          badge="Activities"
+          header="Adventures Await"
+          description="From underwater exploration to desert adventures, discover the activities that make Dahab special"
+          activities={displayActivities}
+        />
+      </Suspense>
 
-      <TestimonialsSection />
-      <FAQSection />
-      <CTASection />
-      <ContactSection />
-
-      <SocialMediaSection
-        badge="Connect"
-        header="Stay Connected"
-        description="Follow our journey and stay updated with the latest from Dahab"
-      />
+      {/* Group non-critical sections together in one Suspense boundary */}
+      <Suspense fallback={<SectionLoader />}>
+        <TestimonialsSection />
+        <FAQSection />
+        <CTASection />
+        <ContactSection />
+        <SocialMediaSection
+          badge="Connect"
+          header="Stay Connected"
+          description="Follow our journey and stay updated with the latest from Dahab"
+        />
+      </Suspense>
     </div>
   );
 }
