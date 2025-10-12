@@ -1,13 +1,13 @@
-// src/context/DestinationsContext.jsx
+
 "use client";
 
 import React, { createContext, useContext, useState, useMemo } from 'react';
 
 const destinationsInitialData = [
   
-  // ==================== Water Adventures Category (5 رحلات) ====================
+  // ==================== Water Adventures Category  ====================
   
-  // 1. Blue Hole - أشهر موقع غوص في العالم
+  // 1. Blue Hole 
   {
     id: 1,
     category: "Water Adventures",
@@ -78,7 +78,7 @@ const destinationsInitialData = [
     }
   },
 
-  // 2. Dahab Lagoon - مركز رياضات مائية عالمي
+  // 2. Dahab Lagoon 
   {
     id: 2,
     category: "Water Adventures",
@@ -150,7 +150,7 @@ const destinationsInitialData = [
     }
   },
 
-  // 3. Three Pools Snorkeling - جوهرة مخفية
+  // 3. Three Pools Snorkeling 
   {
     id: 3,
     category: "Water Adventures",
@@ -221,7 +221,7 @@ const destinationsInitialData = [
     }
   },
 
-  // 4. Ras Mohammed National Park Diving - أفضل غوص في مصر
+  // 4. Ras Mohammed National Park Diving 
   {
     id: 4,
     category: "Water Adventures",
@@ -294,7 +294,7 @@ const destinationsInitialData = [
     }
   },
 
-  // 5. Eel Garden Snorkeling - حديقة ثعبان البحر
+  // 5. Eel Garden Snorkeling 
   {
     id: 5,
     category: "Water Adventures",
@@ -364,9 +364,9 @@ const destinationsInitialData = [
     }
   },
 
-  // ==================== Desert Adventures Category (5 رحلات) ====================
+  // ==================== Desert Adventures Category (5) ====================
 
-  // 6. Mount Sinai - الجبل المقدس
+  // 6. Mount Sinai 
   {
     id: 6,
     category: "Desert Adventures",
@@ -437,7 +437,7 @@ const destinationsInitialData = [
     }
   },
 
-  // 7. Colored Canyon - تحفة جيولوجية
+  // 7. Colored Canyon
   {
     id: 7,
     category: "Desert Adventures",
@@ -508,7 +508,7 @@ const destinationsInitialData = [
     }
   },
 
-  // 8. White Canyon Safari - وادي أبيض ساحر
+  // 8. White Canyon Safari   
   {
     id: 8,
     category: "Desert Adventures",
@@ -579,7 +579,7 @@ const destinationsInitialData = [
     }
   },
 
-  // 9. Quad Bike Desert Safari - مغامرة الصحراء
+  // 9. Quad Bike Desert Safari
   {
     id: 9,
     category: "Desert Adventures",
@@ -650,7 +650,7 @@ const destinationsInitialData = [
     }
   },
 
-  // 10. Bedouin Dinner & Stars - عشاء بدوي تقليدي
+  // 10. Bedouin Dinner & Stars   
   {
     id: 10,
     category: "Desert Adventures",
@@ -796,7 +796,7 @@ const destinationsInitialData = [
     }
   },
 
-  // 12. Wadi Gnai Oasis - واحة خضراء
+  // 12. Wadi Gnai Oasis 
   {
     id: 12,
     category: "Nature & Wildlife",
@@ -867,7 +867,7 @@ const destinationsInitialData = [
     }
   },
 
-  // 13. Nabq National Park - محمية نبق
+  // 13. Nabq National Park 
   {
     id: 13,
     category: "Nature & Wildlife",
@@ -938,7 +938,7 @@ const destinationsInitialData = [
     }
   },
 
-  // 14. Dolphin House Snorkeling - بيت الدلافين
+  // 14. Dolphin House Snorkeling
   {
     id: 14,
     category: "Nature & Wildlife",
@@ -1011,7 +1011,7 @@ const destinationsInitialData = [
     }
   },
 
-  // 15. Ras Mohammed Safari - سفاري بحري
+  // 15. Ras Mohammed Safari
   {
     id: 15,
     category: "Nature & Wildlife",
@@ -1085,9 +1085,9 @@ const destinationsInitialData = [
     }
   },
 
-  // ==================== Cultural & Historical Category (5 رحلات) ====================
+  // ==================== Cultural & Historical Category (5) ====================
 
-  // 16. St. Catherine's Monastery - دير سانت كاترين
+  // 16. St. Catherine's Monastery 
   {
     id: 16,
     category: "Cultural & Historical",
@@ -1158,12 +1158,11 @@ const destinationsInitialData = [
     }
   },
 
-  // 17-20: أكمل باقي رحلات Cultural & Historical و Relaxation & Wellness...
-  // سأكملهم في الرد التالي لأن الكود طويل جداً
+
 
 ];
 
-// Context Provider Code (نفس الكود السابق)
+// Context Provider Code 
 const DestinationsContext = createContext(undefined);
 
 export function DestinationsProvider({ children }) {
