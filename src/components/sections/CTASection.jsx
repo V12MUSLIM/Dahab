@@ -19,7 +19,7 @@ export default function CTASection() {
       {/* Background with gradient overlay */}
       <div className="absolute inset-0">
         <img
-          src={`${import.meta.env.BASE_URL}contactimage.png`}
+          src={`${import.meta.env.BASE_URL}contactimage.webp`}
           alt="Dahab sunset"
           className="w-full h-full object-cover"
         />
