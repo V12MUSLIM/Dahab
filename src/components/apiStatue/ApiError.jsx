@@ -12,10 +12,10 @@ export default function ApiError({ message }) {
         aria-live="assertive"
       >
         <TriangleAlert className="w-14 h-14 text-red-600 mx-auto" />
-        <h2 className="text-2xl font-semibold text-gray-800">
+        <h2 className="text-2xl font-semibold text-gray-800 dark:text-white">
           Oops! Something went wrong
         </h2>
-        <p className="text-gray-600">
+        <p className="text-gray-600 dark:text-white">
           {message || "We couldn't load the content. Please try again later."}
         </p>
         <PrimaryButton

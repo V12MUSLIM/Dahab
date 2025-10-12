@@ -21,9 +21,9 @@ import {
   ChevronRight,
   X,
 } from "lucide-react";
-import DynamicIcon from "../common/DynamicIcon";
 import { cn } from "@/lib/utils";
 import { useState } from "react";
+
 // Enhanced Card wrapper with animations
 const DahabCard = React.forwardRef(
   ({ className, children, hover = true, ...props }, ref) => (
@@ -155,16 +155,12 @@ const ImageCard = ({
     </Link>
   </motion.div>
 );
+
 const DestinationCard = ({
   title = "Blue Hole",
   subtitle = "Dahab, Egypt",
   description = "One of the world's most famous dive sites, featuring crystal-clear waters and vibrant marine life.",
-  images = [
-    "https://images.unsplash.com/photo-1559827260-dc66d52bef19?w=800&h=600&fit=crop",
-    "https://images.unsplash.com/photo-1544551763-46a013bb70d5?w=800&h=600&fit=crop",
-    "https://images.unsplash.com/photo-1583212292454-1fe6229603b7?w=800&h=600&fit=crop",
-    "https://images.unsplash.com/photo-1682687220742-aba13b6e50ba?w=800&h=600&fit=crop",
-  ],
+  images = [], // REMOVED DEFAULT IMAGES - pass them from parent component
   badge = "Popular",
   rating = "4.9",
   location = "South Sinai",
@@ -178,16 +174,21 @@ const DestinationCard = ({
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [isGalleryOpen, setIsGalleryOpen] = useState(false);
 
+  // If no images provided, show placeholder
+  const displayImages = images.length > 0 ? images : ["/Dahab/placeholder.jpg"];
+
   const nextImage = (e) => {
     e.preventDefault();
     e.stopPropagation();
-    setCurrentImageIndex((prev) => (prev + 1) % images.length);
+    setCurrentImageIndex((prev) => (prev + 1) % displayImages.length);
   };
 
   const prevImage = (e) => {
     e.preventDefault();
     e.stopPropagation();
-    setCurrentImageIndex((prev) => (prev - 1 + images.length) % images.length);
+    setCurrentImageIndex(
+      (prev) => (prev - 1 + displayImages.length) % displayImages.length
+    );
   };
 
   const openGallery = (e) => {
@@ -216,7 +217,7 @@ const DestinationCard = ({
             "hover:shadow-xl hover:shadow-yellow-500/10 hover:border-yellow-200 dark:hover:border-yellow-800/50"
           )}
         >
-          {/* IMAGE SECTION - NO LINK WRAPPER */}
+          {/* IMAGE SECTION */}
           <div
             className="relative overflow-hidden h-80 cursor-pointer"
             onClick={openGallery}
@@ -224,9 +225,10 @@ const DestinationCard = ({
             <AnimatePresence mode="wait">
               <motion.img
                 key={currentImageIndex}
-                src={images[currentImageIndex]}
+                src={displayImages[currentImageIndex]}
                 alt={`${title} - Image ${currentImageIndex + 1}`}
                 className="w-full h-full object-cover"
+                loading="lazy"
                 initial={{ opacity: 0, scale: 1.1 }}
                 animate={{ opacity: 1, scale: isHovered ? 1.1 : 1 }}
                 exit={{ opacity: 0, scale: 0.9 }}
@@ -263,9 +265,9 @@ const DestinationCard = ({
               </motion.div>
             )}
 
-            {/* Navigation Arrows */}
+            {/* Navigation Arrows - Only show if multiple images */}
             <AnimatePresence>
-              {isHovered && images.length > 1 && (
+              {isHovered && displayImages.length > 1 && (
                 <>
                   <motion.button
                     initial={{ opacity: 0, x: -10 }}
@@ -291,9 +293,9 @@ const DestinationCard = ({
               )}
             </AnimatePresence>
 
-            {/* Thumbnail Gallery on Hover */}
+            {/* Thumbnail Gallery - Only show if multiple images */}
             <AnimatePresence>
-              {isHovered && images.length > 1 && (
+              {isHovered && displayImages.length > 1 && (
                 <motion.div
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
@@ -301,7 +303,7 @@ const DestinationCard = ({
                   transition={{ duration: 0.3 }}
                   className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2 z-10"
                 >
-                  {images.map((img, index) => (
+                  {displayImages.map((img, index) => (
                     <motion.button
                       key={index}
                       onClick={(e) => {
@@ -322,6 +324,7 @@ const DestinationCard = ({
                         src={img}
                         alt={`Thumbnail ${index + 1}`}
                         className="w-full h-full object-cover"
+                        loading="lazy"
                       />
                     </motion.button>
                   ))}
@@ -329,13 +332,15 @@ const DestinationCard = ({
               )}
             </AnimatePresence>
 
-            {/* Image Counter */}
-            <div className="absolute bottom-4 right-4 bg-black/70 dark:bg-white/20 backdrop-blur-sm text-white dark:text-white text-xs px-2 py-1 rounded-full font-medium">
-              {currentImageIndex + 1} / {images.length}
-            </div>
+            {/* Image Counter - Only show if multiple images */}
+            {displayImages.length > 1 && (
+              <div className="absolute bottom-4 right-4 bg-black/70 dark:bg-white/20 backdrop-blur-sm text-white dark:text-white text-xs px-2 py-1 rounded-full font-medium">
+                {currentImageIndex + 1} / {displayImages.length}
+              </div>
+            )}
           </div>
 
-          {/* CONTENT SECTION - WITH LINK WRAPPER */}
+          {/* CONTENT SECTION */}
           <Link to={href}>
             <CardHeader className="pb-3 px-6 pt-5">
               {subtitle && (
@@ -415,34 +420,38 @@ const DestinationCard = ({
               <X className="h-8 w-8" />
             </button>
 
-            <motion.button
-              onClick={(e) => {
-                e.stopPropagation();
-                prevImage(e);
-              }}
-              className="absolute left-4 top-1/2 -translate-y-1/2 bg-white/20 backdrop-blur-md hover:bg-white/30 text-white rounded-full p-3 transition-all z-50"
-              whileHover={{ scale: 1.1 }}
-              whileTap={{ scale: 0.9 }}
-            >
-              <ChevronLeft className="h-6 w-6" />
-            </motion.button>
+            {displayImages.length > 1 && (
+              <>
+                <motion.button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    prevImage(e);
+                  }}
+                  className="absolute left-4 top-1/2 -translate-y-1/2 bg-white/20 backdrop-blur-md hover:bg-white/30 text-white rounded-full p-3 transition-all z-50"
+                  whileHover={{ scale: 1.1 }}
+                  whileTap={{ scale: 0.9 }}
+                >
+                  <ChevronLeft className="h-6 w-6" />
+                </motion.button>
 
-            <motion.button
-              onClick={(e) => {
-                e.stopPropagation();
-                nextImage(e);
-              }}
-              className="absolute right-4 top-1/2 -translate-y-1/2 bg-white/20 backdrop-blur-md hover:bg-white/30 text-white rounded-full p-3 transition-all z-50"
-              whileHover={{ scale: 1.1 }}
-              whileTap={{ scale: 0.9 }}
-            >
-              <ChevronRight className="h-6 w-6" />
-            </motion.button>
+                <motion.button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    nextImage(e);
+                  }}
+                  className="absolute right-4 top-1/2 -translate-y-1/2 bg-white/20 backdrop-blur-md hover:bg-white/30 text-white rounded-full p-3 transition-all z-50"
+                  whileHover={{ scale: 1.1 }}
+                  whileTap={{ scale: 0.9 }}
+                >
+                  <ChevronRight className="h-6 w-6" />
+                </motion.button>
+              </>
+            )}
 
             <AnimatePresence mode="wait">
               <motion.img
                 key={currentImageIndex}
-                src={images[currentImageIndex]}
+                src={displayImages[currentImageIndex]}
                 alt={`${title} - Image ${currentImageIndex + 1}`}
                 className="max-h-[90vh] max-w-[90vw] object-contain"
                 initial={{ opacity: 0, scale: 0.9 }}
@@ -453,44 +462,50 @@ const DestinationCard = ({
               />
             </AnimatePresence>
 
-            <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex gap-2">
-              {images.map((img, index) => (
-                <button
-                  key={index}
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    setCurrentImageIndex(index);
-                  }}
-                  className={cn(
-                    "w-16 h-16 rounded-lg overflow-hidden border-2 transition-all",
-                    currentImageIndex === index
-                      ? "border-yellow-400 scale-110 shadow-lg"
-                      : "border-white/50 opacity-70 hover:opacity-100"
-                  )}
-                >
-                  <img
-                    src={img}
-                    alt={`Thumbnail ${index + 1}`}
-                    className="w-full h-full object-cover"
-                  />
-                </button>
-              ))}
-            </div>
+            {displayImages.length > 1 && (
+              <>
+                <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex gap-2">
+                  {displayImages.map((img, index) => (
+                    <button
+                      key={index}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setCurrentImageIndex(index);
+                      }}
+                      className={cn(
+                        "w-16 h-16 rounded-lg overflow-hidden border-2 transition-all",
+                        currentImageIndex === index
+                          ? "border-yellow-400 scale-110 shadow-lg"
+                          : "border-white/50 opacity-70 hover:opacity-100"
+                      )}
+                    >
+                      <img
+                        src={img}
+                        alt={`Thumbnail ${index + 1}`}
+                        className="w-full h-full object-cover"
+                        loading="lazy"
+                      />
+                    </button>
+                  ))}
+                </div>
 
-            <div className="absolute top-4 left-1/2 -translate-x-1/2 bg-black/50 backdrop-blur-sm text-white px-4 py-2 rounded-full">
-              {currentImageIndex + 1} / {images.length}
-            </div>
+                <div className="absolute top-4 left-1/2 -translate-x-1/2 bg-black/50 backdrop-blur-sm text-white px-4 py-2 rounded-full">
+                  {currentImageIndex + 1} / {displayImages.length}
+                </div>
+              </>
+            )}
           </motion.div>
         )}
       </AnimatePresence>
     </>
   );
 };
+
 // Activity Card
 const ActivityCard = ({
   title,
   description,
-  icon,
+  icon: Icon, // Now expects a component, not a string
   duration,
   groupSize,
   difficulty,
@@ -504,10 +519,9 @@ const ActivityCard = ({
     >
       <CardHeader className="text-center pb-3">
         <div className="mx-auto mb-3 p-3 rounded-full bg-yellow-50 dark:bg-yellow-900/20 w-fit">
-          <DynamicIcon
-            name={icon}
-            className="h-7 w-7 text-yellow-600 dark:text-yellow-500"
-          />
+          {Icon && (
+            <Icon className="h-7 w-7 text-yellow-600 dark:text-yellow-500" />
+          )}
         </div>
         <CardTitle className="text-lg font-semibold text-gray-900 dark:text-white">
           {title}
