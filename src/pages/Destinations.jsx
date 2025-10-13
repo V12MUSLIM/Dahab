@@ -1,13 +1,21 @@
-// DestinationsPage.jsx
-import React, { useState } from "react";
+"use client";
+import { useState, lazy, Suspense } from "react";
 import { useDestinations } from "@/context/DestinationsContext";
-import { DestinationCard } from "@/components/customComponents/cardTemplates";
-import FilteringTool from "@/components/customComponents/FilteringTool";
-import { Search,  MapPin, Compass, Star, Users } from "lucide-react";
-// eslint-disable-next-line no-unused-vars
-import { motion } from "framer-motion";
+import { Search, MapPin, Compass, Star, Users } from "lucide-react";
 import HeroSection from "@/components/sections/HeroSection";
-import SocialMediaSection from "@/components/sections/SocialMediaSection";
+
+// Lazy-load below the fold components
+const DestinationCard = lazy(() =>
+  import("@/components/customComponents/cardTemplates").then((module) => ({
+    default: module.DestinationCard,
+  }))
+);
+const FilteringTool = lazy(() =>
+  import("@/components/customComponents/FilteringTool")
+);
+const SocialMediaSection = lazy(() =>
+  import("@/components/sections/SocialMediaSection")
+);
 
 export default function DestinationsPage() {
   const { destinations, getAllCategories, getDestinationsByCategory } =
@@ -20,7 +28,7 @@ export default function DestinationsPage() {
   // Get all unique categories
   const categories = ["All", ...getAllCategories()];
 
-  // Filter destinations based on category and search
+  // Filter destinations based on category, search, and price
   const getFilteredDestinations = () => {
     let filtered =
       selectedCategory === "All"
@@ -87,17 +95,19 @@ export default function DestinationsPage() {
 
       <div className="container mx-auto px-4 py-12">
         {/* Search and Filters */}
-        <FilteringTool
-                  searchQuery={searchQuery}
-                  onSearchChange={setSearchQuery}
-                  selectedCategory={selectedCategory}
-                  onCategoryChange={setSelectedCategory}
-                  categories={categories}
-                  priceFilter={priceFilter}
-                  onPriceFilterChange={setPriceFilter}
-                  searchPlaceholder="Search restaurants, cuisine, or dishes..."
-                  showPriceFilter={true}
-                />
+        <Suspense fallback={<div>Loading search & filters...</div>}>
+          <FilteringTool
+            searchQuery={searchQuery}
+            onSearchChange={setSearchQuery}
+            selectedCategory={selectedCategory}
+            onCategoryChange={setSelectedCategory}
+            categories={categories}
+            priceFilter={priceFilter}
+            onPriceFilterChange={setPriceFilter}
+            searchPlaceholder="Search destinations..."
+            showPriceFilter={true}
+          />
+        </Suspense>
 
         {/* Results Count */}
         <div className="mb-6 text-center">
@@ -120,21 +130,12 @@ export default function DestinationsPage() {
         </div>
 
         {/* Destinations Grid */}
-        {filteredDestinations.length > 0 ? (
-          <motion.div
-            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 0.5 }}
-          >
-            {filteredDestinations.map((destination, index) => (
-              <motion.div
-                key={destination.id}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.4, delay: index * 0.1 }}
-              >
+        <Suspense fallback={<div>Loading destinations...</div>}>
+          {filteredDestinations.length > 0 ? (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+              {filteredDestinations.map((destination) => (
                 <DestinationCard
+                  key={destination.id}
                   title={destination.title}
                   subtitle={destination.subtitle}
                   description={destination.description}
@@ -147,40 +148,42 @@ export default function DestinationsPage() {
                   onButtonClick={() => console.log("View:", destination.title)}
                   href={destination.href}
                 />
-              </motion.div>
-            ))}
-          </motion.div>
-        ) : (
-          <div className="text-center py-20">
-           <div className="flex justify-center mb-4">
-              <Search className="w-24 h-24 text-muted-foreground" />
+              ))}
             </div>
-            <h3 className="text-2xl font-semibold mb-2">
-              No destinations found
-            </h3>
-            <p className="text-muted-foreground mb-6">
-              Try adjusting your search or filters
-            </p>
-            <button
-              onClick={() => {
-                setSearchQuery("");
-                setSelectedCategory("All");
-                setPriceFilter("all");
-              }}
-              className="px-6 py-3 bg-yellow-500 text-white rounded-lg hover:bg-yellow-600 transition-colors"
-            >
-              Clear All Filters
-            </button>
-          </div>
-        )}
+          ) : (
+            <div className="text-center py-20">
+              <div className="flex justify-center mb-4">
+                <Search className="w-24 h-24 text-muted-foreground" />
+              </div>
+              <h3 className="text-2xl font-semibold mb-2">
+                No destinations found
+              </h3>
+              <p className="text-muted-foreground mb-6">
+                Try adjusting your search or filters
+              </p>
+              <button
+                onClick={() => {
+                  setSearchQuery("");
+                  setSelectedCategory("All");
+                  setPriceFilter("all");
+                }}
+                className="px-6 py-3 bg-yellow-500 text-white rounded-lg hover:bg-yellow-600 transition-colors"
+              >
+                Clear All Filters
+              </button>
+            </div>
+          )}
+        </Suspense>
       </div>
 
       {/* SocialMediaSection */}
-      <SocialMediaSection
-        badge="Connect"
-        header="Stay Connected"
-        description="Follow our journey and stay updated with the latest from Dahab"
-      />
+      <Suspense fallback={<div>Loading social...</div>}>
+        <SocialMediaSection
+          badge="Connect"
+          header="Stay Connected"
+          description="Follow our journey and stay updated with the latest from Dahab"
+        />
+      </Suspense>
     </div>
   );
 }
