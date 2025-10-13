@@ -7,7 +7,8 @@ import { DineProvider } from "./Context/DineContext";
 import { ThemeProvider } from "./components/theme-provider";
 import ScrollToTop from "./components/ScrollToTop";
 import { PageSkeleton } from "@/components/skeletons/PageSkeleton"; // Your loading component
-
+import LoginPage from "./pages/Login";
+import SignupPage from "./pages/SignUp";
 // EAGER LOAD: Only Home page (critical for first paint)
 import Home from "./pages/Home";
 
@@ -101,6 +102,22 @@ function App() {
                     element={
                       <Suspense fallback={<PageSkeleton />}>
                         <NotFound />
+                      </Suspense>
+                    }
+                  />
+                  <Route
+                    path="/login"
+                    element={
+                      <Suspense fallback={<PageSkeleton />}>
+                      <LoginPage/>
+                      </Suspense>
+                    }
+                  />
+                  <Route
+                    path="/signup"
+                    element={
+                      <Suspense fallback={<PageSkeleton />}>
+                      <SignupPage/>
                       </Suspense>
                     }
                   />
