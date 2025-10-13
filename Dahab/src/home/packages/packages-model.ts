@@ -29,6 +29,7 @@ const PackageSchema = new Schema<IPackage>({
         type: Boolean,
         default: false
     },
-});
+}, { timestamps: true }
+);
 
 export const Package = mongoose.model<IPackage>("Package", PackageSchema, "packages");
