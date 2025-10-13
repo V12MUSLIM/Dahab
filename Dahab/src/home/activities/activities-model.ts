@@ -2,16 +2,16 @@ import mongoose, { Schema } from "mongoose";
 
 
 export interface Iactivities {
-    title:string;
-    description:string;
-    icon:string;
-    duration:string;
-    groupSize:number;
-    difficulty:string
-    price:number;
+    title: string;
+    description: string;
+    icon: string;
+    duration: string;
+    groupSize: number;
+    difficulty: string
+    price: number;
 }
 
-const activitiesSchema= new Schema<Iactivities>({
+const activitiesSchema = new Schema<Iactivities>({
     title: {
         type: String,
         required: true
@@ -39,8 +39,11 @@ const activitiesSchema= new Schema<Iactivities>({
     price: {
         type: Number,
         required: true
-    }
-})
+    },
+},
+    { timestamps: true }
+
+)
 
 
-export const Activities=mongoose.model<Iactivities>("activities",activitiesSchema,"activities")
+export const Activities = mongoose.model<Iactivities>("activities", activitiesSchema, "activities")
