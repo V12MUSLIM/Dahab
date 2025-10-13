@@ -1,6 +1,6 @@
 "use client";
 import { useState, lazy, Suspense } from "react";
-import { useDestinations } from "@/context/DestinationsContext";
+import { useDestinations } from "@/hooks/useDestination"
 import { Search, MapPin, Compass, Star, Users } from "lucide-react";
 import HeroSection from "@/components/sections/HeroSection";
 
@@ -17,16 +17,22 @@ const SocialMediaSection = lazy(() =>
   import("@/components/sections/SocialMediaSection")
 );
 
-export default function DestinationsPage() {
-  const { destinations, getAllCategories, getDestinationsByCategory } =
-    useDestinations();
-
+export default function Destinations() {
   const [selectedCategory, setSelectedCategory] = useState("All");
   const [searchQuery, setSearchQuery] = useState("");
   const [priceFilter, setPriceFilter] = useState("all");
 
+  // Get data from backend via useDestinations hook
+  const { 
+    destinations, 
+    getAllCategories, 
+    getDestinationsByCategory,
+    isLoading,
+    error 
+  } = useDestinations();
+
   // Get all unique categories
-  const categories = ["All", ...getAllCategories()];
+  const categories = getAllCategories();
 
   // Filter destinations based on category, search, and price
   const getFilteredDestinations = () => {
@@ -61,6 +67,35 @@ export default function DestinationsPage() {
   };
 
   const filteredDestinations = getFilteredDestinations();
+
+  // Handle loading state
+  if (isLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-amber-500 mx-auto mb-4"></div>
+          <p className="text-lg text-muted-foreground">Loading destinations...</p>
+        </div>
+      </div>
+    );
+  }
+
+  // Handle error state
+  if (error) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-center">
+          <p className="text-lg text-red-500 mb-4">Error loading destinations: {error}</p>
+          <button
+            onClick={() => window.location.reload()}
+            className="px-6 py-3 bg-amber-500 text-white rounded-lg hover:bg-amber-600 transition-colors"
+          >
+            Retry
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-background to-muted/20">
