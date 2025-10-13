@@ -3,107 +3,234 @@ import { createContext, useContext } from "react";
 export const DineContext = createContext();
 
 export const DineProvider = ({ children }) => {
-   const categories = [
-    "All",
-    "Beachfront Dining",
-    "Local Egyptian Food",
-    "International Cuisine",
-    "Fresh Seafood",
-    "Cafés & Bakeries",
-    "Rooftop & Lounges"
-  ];
- const restaurants = [
-    {
-      id: 1,
-      title: "Blue Beach Restaurant",
-      category: "Beachfront Dining",
-      subtitle: "Mediterranean Cuisine",
-      description: "Fresh seafood and Mediterranean dishes with stunning Red Sea views. Enjoy dining with your feet in the sand.",
-      image: "https://images.unsplash.com/photo-1414235077428-338989a2e8c0?q=80&w=2070&auto=format&fit=crop",
-      badge: "Popular",
-      priceValue: 75,
-      rating: "4.8",
-      location: "Dahab Beachfront",
-      price: "$25-40",
-      buttonText: "View Menu",
-      href: "/restaurants/blue-beach"
-    },
-    {
-      id: 2,
-      title: "Bedouin Tent Restaurant",
-      category: "Local Egyptian Food",
-      subtitle: "Traditional Egyptian",
-      description: "Authentic Bedouin dining experience under traditional tents with live music and stargazing.",
-      image: "https://images.unsplash.com/photo-1544025162-d76694265947?q=80&w=2069&auto=format&fit=crop",
-      badge: "Must Try",
-      priceValue: 45,
-      rating: "4.9",
-      location: "Desert Camp, 15km from Dahab",
-      price: "$15-25",
-      buttonText: "Reserve Table",
-      href: "/restaurants/bedouin-tent"
-    },
-    {
-      id: 3,
-      title: "Lighthouse Café",
-      category: "Cafés & Bakeries",
-      subtitle: "Café & Bakery",
-      description: "Cozy café serving specialty coffee, fresh pastries, and healthy breakfast options with sea views.",
-      image: "https://images.unsplash.com/photo-1554118811-1e0d58224f24?q=80&w=2047&auto=format&fit=crop",
-      badge: "Breakfast",
-      priceValue: 25,
-      rating: "4.6",
-      location: "Dahab Lighthouse",
-      price: "$8-15",
-      buttonText: "Visit Café",
-      href: "/restaurants/lighthouse-cafe"
-    },
-    {
-      id: 4,
-      title: "Sunset Rooftop Lounge",
-      category: "Rooftop & Lounges",
-      subtitle: "International Fusion",
-      description: "Trendy rooftop bar with panoramic views, creative cocktails, and fusion cuisine perfect for sunset.",
-      image: "https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?q=80&w=2070&auto=format&fit=crop",
-      badge: "Sunset Views",
-      priceValue: 85,
-      rating: "4.7",
-      location: "Dahab City Center",
-      price: "$20-35",
-      buttonText: "Book Table",
-      href: "/restaurants/sunset-rooftop"
-    },
-    {
-      id: 5,
-      title: "Diver's Den Seafood",
-      category: "Fresh Seafood",
-      subtitle: "Fresh Seafood",
-      description: "Famous among divers for fresh catch of the day and hearty portions. Casual beachfront atmosphere.",
-      image: "https://images.unsplash.com/photo-1559339352-11d035aa65de?q=80&w=2074&auto=format&fit=crop",
-      badge: "Fresh Daily",
-      priceValue: 55,
-      rating: "4.8",
-      location: "Lagoon Beach",
-      price: "$18-30",
-      buttonText: "See Menu",
-      href: "/restaurants/divers-den"
-    },
-    {
-      id: 6,
-      title: "Bella Italia",
-      category: "International Cuisine",
-      subtitle: "Authentic Italian",
-      description: "Authentic Italian restaurant with homemade pasta, wood-fired pizza, and extensive wine list.",
-      image: "https://images.unsplash.com/photo-1551183053-bf91a1d81141?q=80&w=2532&auto=format&fit=crop",
-      badge: "Romantic",
-      priceValue: 60,
-      rating: "4.7",
-      location: "Mashraba Street",
-      price: "$15-28",
-      buttonText: "Reserve Now",
-      href: "/restaurants/bella-italia"
-    }
-  ];
+const categories = [
+  "All",
+  "Seafood Restaurants",
+  "Egyptian & Oriental",
+  "Syrian & Levantine",
+  "Cafés & Bakeries",
+  "Italian",
+  "Asian & Sushi",
+];
+
+const restaurants = [
+  // Seafood Restaurants
+  {
+    id: 1,
+    title: "Prawn House Seafood Restaurant",
+    category: "Seafood Restaurants",
+    subtitle: "Fresh Sea Food",
+    description:
+      "Located on Al Fanar street, famous for fresh fish, reasonable prices and excellent service.",
+    image:
+      "https://blogs.realestate.gov.eg/wp-content/uploads/2024/09/Prawn-House-Seafood-Restaurant-Dahab-Egypt1.png",
+    badge: "Fresh & Tasty",
+    priceValue: 70,
+    rating: "4.9",
+    location: "Al Fanar Street, Sharm El Sheikh",
+    price: "$25-45",
+    buttonText: "View Menu",
+    href: "/restaurants/prawn-house",
+  },
+  {
+    id: 2,
+    title: "Shark Restaurant",
+    category: "Seafood Restaurants",
+    subtitle: "Seafood & Grilled Fish",
+    description:
+      "Located at Masbat Bay waterfront, known for grilled fish and diverse mid-range options.",
+    image:
+      "https://media-cdn.tripadvisor.com/media/photo-s/01/bd/4f/30/shark.jpg",
+    badge: "Seafood Specialist",
+    priceValue: 60,
+    rating: "4.7",
+    location: "Masbat Bay, Sharm El Sheikh",
+    price: "$20-40",
+    buttonText: "Book a Table",
+    href: "/restaurants/shark-restaurant",
+  },
+  {
+    id: 3,
+    title: "Al Manar Restaurant",
+    category: "Seafood Restaurants",
+    subtitle: "Local Seafood",
+    description:
+      "At Masbat, offering fresh fish dishes with spectacular Red Sea views.",
+    image:
+      "https://dynamic-media-cdn.tripadvisor.com/media/photo-o/0e/9a/44/82/photo0jpg.jpg?w=900&h=500&s=1",
+    badge: "Top Pick",
+    priceValue: 50,
+    rating: "4.8",
+    location: "Masbat, Dahab",
+    price: "$15-35",
+    buttonText: "Visit Restaurant",
+    href: "/restaurants/al-manar",
+  },
+
+  // Egyptian & Oriental
+  {
+    id: 4,
+    title: "King Chicken",
+    category: "Egyptian & Oriental",
+    subtitle: "Egyptian Traditional",
+    description:
+      "Offering popular Egyptian dishes: grills, stuffed vegetables, homemade specialties.",
+    image:
+      "",
+    badge: "Local Favorite",
+    priceValue: 30,
+    rating: "4.6",
+    location: "Dahab City Center",
+    price: "$10-25",
+    buttonText: "Try Now",
+    href: "/restaurants/king-chicken",
+  },
+  {
+    id: 5,
+    title: "El Sharkawy Restaurant",
+    category: "Egyptian & Oriental",
+    subtitle: "Authentic Egyptian",
+    description:
+      "Located in Assala, known for simple but very tasty local Egyptian food and warm atmosphere.",
+    image:
+      "https://media-cdn.tripadvisor.com/media/photo-s/01/1f/4e/14/image2jpg.jpg",
+    badge: "Authentic",
+    priceValue: 28,
+    rating: "4.5",
+    location: "Assala, Dahab",
+    price: "$12-22",
+    buttonText: "Book Table",
+    href: "/restaurants/el-sharkawy",
+  },
+  {
+    id: 6,
+    title: "Yum Yum Egyptian Food",
+    category: "Egyptian & Oriental",
+    subtitle: "Fast Egyptian Food",
+    description:
+      "Specializing in fast local Egyptian favorites: foul, koshari, grills and popular plates.",
+    image:
+      "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQqFddJuB1LMtPqfEyiFiLtLvUr2CunzAFo6XKu14BWPXNIOdu6HG7YCcfiIO6FzDnqZoY&usqp=CAU",
+    badge: "Quick Bites",
+    priceValue: 15,
+    rating: "4.7",
+    location: "Old Dahab",
+    price: "$5-15",
+    buttonText: "Menu",
+    href: "/restaurants/yum-yum",
+  },
+
+  // Syrian & Levantine
+  {
+    id: 7,
+    title: "Beirut Nights",
+    category: "Syrian & Levantine",
+    subtitle: "Lebanese & Syrian",
+    description:
+      "Famous for authentic Lebanese and Syrian mezze dishes, live music and friendly atmosphere.",
+    image:
+      "https://cdn.britannica.com/26/198626-050-AAE8502C/Meze-trays-Appetizers-Lebanese-cuisine.jpg",
+    badge: "Levantine Flavors",
+    priceValue: 40,
+    rating: "4.7",
+    location: "Zamalek, Cairo",
+    price: "$15-30",
+    buttonText: "Reserve Table",
+    href: "/restaurants/beirut-nights",
+  },
+  {
+    id: 8,
+    title: "Damascus Plaza",
+    category: "Syrian & Levantine",
+    subtitle: "Syrian Cuisine",
+    description:
+      "Popular shawarma and kebabs with authentic spices, loved across the region.",
+    image:
+      "https://www.simplyrecipes.com/thmb/Gm63Hbc8xIgWr8ztJWvSKQFwKsA=/750x0/filters:no_upscale():max_bytes(150000):strip_icc()/Simply-Recipes-Shawarma-LEAD-24-c690bb1798a548feb6b3a46eb3e34db2.jpg",
+    badge: "Must Try",
+    priceValue: 30,
+    rating: "4.6",
+    location: "Maadi, Cairo",
+    price: "$10-25",
+    buttonText: "View Menu",
+    href: "/restaurants/damascus-plaza",
+  },
+  {
+    id: 9,
+    title: "Levantine Sweets Café",
+    category: "Syrian & Levantine",
+    subtitle: "Levantine Desserts",
+    description: "Specialty sweets and coffee with charming ambiance.",
+    image:
+      "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRqQKTvqsRWyo8pTlMu48nQOnVzhAcjLfFh0Atn9fR6hQ&s",
+    badge: "Sweet Treats",
+    priceValue: 18,
+    rating: "4.5",
+    location: "Heliopolis, Cairo",
+    price: "$5-15",
+    buttonText: "Order Now",
+    href: "/restaurants/levantine-sweets-cafe",
+  },
+
+  // Cafés & Bakeries
+  {
+    id: 10,
+    title: "Everyday Café",
+    category: "Cafés & Bakeries",
+    subtitle: "Scenic Coffee Spot",
+    description:
+      "Located on the seaside promenade with stunning views, best coffee and juices for relaxed long visits.",
+    image:
+      "https://i.insinai.com/uploads/everyday_cafe_dahab_1_400x400.jpg",
+    badge: "Sea View",
+    priceValue: 20,
+    rating: "4.7",
+    location: "Seaside Promenade, Dahab",
+    price: "$5-12",
+    buttonText: "Visit Café",
+    href: "/cafes/everyday-cafe",
+  },
+  {
+    id: 11,
+    title: "Ralph’s German Bakery",
+    category: "Cafés & Bakeries",
+    subtitle: "Bakery & Breakfast",
+    description:
+      "Famous for breakfast and pastries, homely vibe with excellent coffee and sweets.",
+    image:
+      "https://img.ibnbattutatravel.com/ibnams/uploads/userfiles/73/ralph-german-bakery.jpg",
+    badge: "Breakfast Spot",
+    priceValue: 15,
+    rating: "4.8",
+    location: "Dahab City Center",
+    price: "$5-15",
+    buttonText: "See Menu",
+    href: "/cafes/ralphs-german-bakery",
+  },
+  {
+    id: 12,
+    title: "Flat White Café",
+    category: "Cafés & Bakeries",
+    subtitle: "Relaxed & Cozy",
+    description:
+      "A great café to relax with quality coffee, near the waterfront with cozy atmosphere.",
+    image:
+      "https://www.habibs.life/blog/wp-content/uploads/2022/02/flat-white-cafe-dahab.jpg",
+    badge: "Cozy Setting",
+    priceValue: 18,
+    rating: "4.6",
+    location: "Waterfront, Dahab",
+    price: "$6-14",
+    buttonText: "Try Coffee",
+    href: "/cafes/flat-white-cafe",
+  },
+];
+
+
+
+
+
+
 
   return (
     <DineContext.Provider value={{ restaurants ,categories}}>

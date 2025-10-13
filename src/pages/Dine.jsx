@@ -1,13 +1,24 @@
 "use client";
-
-import { ImageCard } from "@/components/customComponents/cardTemplates";
+import { lazy, Suspense } from "react";
 import { Utensils, Phone, Star, Users, Search } from "lucide-react";
-import { motion } from "framer-motion";
+
 import HeroSection from "@/components/sections/HeroSection";
-import SocialMediaSection from "@/components/sections/SocialMediaSection";
-import FilteringTool from "@/components/customComponents/FilteringTool";
 import { useDine } from "@/Context/DineContext";
 import { useState } from "react";
+
+// Lazy load - Below the fold components
+const FilteringTool = lazy(() =>
+  import("../components/customComponents/FilteringTool")
+);
+const ImageCard = lazy(() =>
+  import("../components/customComponents/cardTemplates").then((module) => ({
+    default: module.ImageCard,
+  }))
+);
+
+const SocialMediaSection = lazy(() =>
+  import("@/components/sections/SocialMediaSection")
+);
 
 export default function Dine() {
   const [selectedCategory, setSelectedCategory] = useState("All");
@@ -20,7 +31,7 @@ export default function Dine() {
 
   // Toggle favorite
   const toggleFavorite = (id) => {
-    setFavorites(prev => 
+    setFavorites(prev =>
       prev.includes(id) ? prev.filter(fav => fav !== id) : [...prev, id]
     );
   };
@@ -94,17 +105,19 @@ export default function Dine() {
 
       <div className="container mx-auto px-4 py-12">
         {/* FilteringTool Component */}
-        <FilteringTool
-          searchQuery={searchQuery}
-          onSearchChange={setSearchQuery}
-          selectedCategory={selectedCategory}
-          onCategoryChange={setSelectedCategory}
-          categories={categories}
-          priceFilter={priceFilter}
-          onPriceFilterChange={setPriceFilter}
-          searchPlaceholder="Search restaurants, cuisine, or dishes..."
-          showPriceFilter={true}
-        />
+        <Suspense >
+          <FilteringTool
+            searchQuery={searchQuery}
+            onSearchChange={setSearchQuery}
+            selectedCategory={selectedCategory}
+            onCategoryChange={setSelectedCategory}
+            categories={categories}
+            priceFilter={priceFilter}
+            onPriceFilterChange={setPriceFilter}
+            searchPlaceholder="Search restaurants, cuisine, or dishes..."
+            showPriceFilter={true}
+          />
+        </Suspense>
 
         {/* Results Count */}
         <div className="mb-6 text-center">
@@ -120,29 +133,22 @@ export default function Dine() {
                 in{" "}
                 <span className="font-semibold text-yellow-600">
                   {selectedCategory}
-                </span>
+                </span> 
               </span>
             )}
           </p>
         </div>
 
         {/* Restaurants Grid */}
-        {filteredRestaurants.length > 0 ? (
-          <motion.div
-            id="restaurants"
-            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 0.5 }}
-          >
-            {filteredRestaurants.map((restaurant, index) => (
-              <motion.div
-                key={restaurant.id}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.4, delay: index * 0.1 }}
-              >
+        <Suspense>
+          {filteredRestaurants.length > 0 ? (
+            <div
+              id="restaurants"
+              className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
+            >
+              {filteredRestaurants.map((restaurant) => (
                 <ImageCard
+                  key={restaurant.id}
                   title={restaurant.title}
                   subtitle={restaurant.subtitle}
                   description={restaurant.description}
@@ -156,40 +162,42 @@ export default function Dine() {
                   onFavoriteClick={() => toggleFavorite(restaurant.id)}
                   isFavorite={isFavorite(restaurant.id)}
                 />
-              </motion.div>
-            ))}
-          </motion.div>
-        ) : (
-          <div className="text-center py-20">
-            <div className="flex justify-center mb-4">
-              <Search className="w-24 h-24 text-muted-foreground" />
+              ))}
             </div>
-            <h3 className="text-2xl font-semibold mb-2">
-              No restaurants found
-            </h3>
-            <p className="text-muted-foreground mb-6">
-              Try adjusting your search or filters
-            </p>
-            <button
-              onClick={() => {
-                setSearchQuery("");
-                setSelectedCategory("All");
-                setPriceFilter("all");
-              }}
-              className="px-6 py-3 bg-yellow-500 text-white rounded-lg hover:bg-yellow-600 transition-colors"
-            >
-              Clear All Filters
-            </button>
-          </div>
-        )}
+          ) : (
+            <div className="text-center py-20">
+              <div className="flex justify-center mb-4">
+                <Search className="w-24 h-24 text-muted-foreground" />
+              </div>
+              <h3 className="text-2xl font-semibold mb-2">
+                No restaurants found
+              </h3>
+              <p className="text-muted-foreground mb-6">
+                Try adjusting your search or filters
+              </p>
+              <button
+                onClick={() => {
+                  setSearchQuery("");
+                  setSelectedCategory("All");
+                  setPriceFilter("all");
+                }}
+                className="px-6 py-3 bg-yellow-500 text-white rounded-lg hover:bg-yellow-600 transition-colors"
+              >
+                Clear All Filters
+              </button>
+            </div>
+          )}
+        </Suspense>
       </div>
 
       {/* Social Media Section */}
-      <SocialMediaSection
-        badge="Connect"
-        header="Stay Connected"
-        description="Follow our journey and stay updated with the latest from Dahab"
-      />
+      <Suspense >
+        <SocialMediaSection
+          badge="Connect"
+          header="Stay Connected"
+          description="Follow our journey and stay updated with the latest from Dahab"
+        />
+      </Suspense>
     </div>
   );
 }
