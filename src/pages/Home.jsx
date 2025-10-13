@@ -5,7 +5,6 @@ import { useActivities } from "../hooks/useActivities";
 // Eager load - Above the fold components
 import HeroSection from "../components/sections/HeroSection";
 import { PageSkeleton } from "@/components/skeletons/PageSkeleton";
-import ApiError from "@/components/apiStatue/ApiError";
 
 // Lazy load - Below the fold components
 const GallerySection = lazy(() =>
@@ -57,7 +56,16 @@ const SectionLoader = () => (
     </div>
   </div>
 );
-
+const iconMap = {
+  Waves: Waves,
+  Camera: Camera,
+  Mountain: Mountain,
+  Sun: Sun,
+  Anchor: Anchor,
+  Star: Star,
+  ArrowRight: ArrowRight,
+  Calendar: Calendar,
+};
 export default function Home() {
   const {
     data: packages,
@@ -126,7 +134,7 @@ export default function Home() {
       duration: "Half Day",
       groupSize: "8 people",
       difficulty: "All Levels",
-      price: "$75",
+      price: "75",
     },
     {
       title: "Desert Safari",
@@ -136,7 +144,7 @@ export default function Home() {
       duration: "Full Day",
       groupSize: "12 people",
       difficulty: "Easy",
-      price: "$60",
+      price: "60",
     },
     {
       title: "Rock Climbing",
@@ -146,7 +154,7 @@ export default function Home() {
       duration: "4 hours",
       groupSize: "6 people",
       difficulty: "Intermediate",
-      price: "$65",
+      price: "65",
     },
     {
       title: "Windsurfing",
@@ -156,13 +164,18 @@ export default function Home() {
       duration: "3 hours",
       groupSize: "4 people",
       difficulty: "Beginner+",
-      price: "$50",
+      price: "50",
     },
   ];
 
   // Use fallback data if API fails, otherwise use API data
   const displayPackages = packages || fallbackPackages;
-  const displayActivities = activities || fallbackActivities;
+  const displayActivities = activities
+    ? activities.map((activity) => ({
+        ...activity,
+        icon: iconMap[activity.icon] || Waves, // fallback to Waves if icon not found
+      }))
+    : fallbackActivities;
 
   // Show skeleton loading state only on initial load
   if (isLoading && !packages && !activities) {
