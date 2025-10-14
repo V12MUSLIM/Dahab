@@ -1,4 +1,4 @@
-// hooks/useDestination.js
+
 import { useQuery } from "@tanstack/react-query";
 import { getDestinations } from "@/services/destination";
 import { useState } from "react";
