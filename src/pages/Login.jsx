@@ -1,19 +1,46 @@
-import React, { useState } from "react";
-import { Eye, EyeOff, Mail, Lock, ArrowRight } from "lucide-react";
-import { Input } from "@/components/ui/input";
+import React from "react";
+import { Mail, Lock } from "lucide-react";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { loginSchema } from "@/schemas/authSchema";
+import { FormInput } from "@/components/customComponents/FormInput";
 import {
   FormPrimaryButton,
   FormSecondaryButton,
 } from "@/components/customComponents/FormButtons";
 import { useNavigate } from "react-router-dom";
-// Login Page Component
+import { toast } from "sonner"
 const LoginPage = () => {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [showPassword, setShowPassword] = useState(false);
   const navigate = useNavigate();
-  const handleSubmit = (e) => {
-    e.preventDefault();
+
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isSubmitting },
+  } = useForm({
+    resolver: zodResolver(loginSchema),
+    defaultValues: {
+      email: "",
+      password: "",
+      rememberMe: false,
+    },
+  });
+
+  const onSubmit = async (data) => {
+    try {
+      console.log("Login data:", data);
+      // TODO: Add your API call here
+      // const response = await loginUser(data);
+      
+      // Simulate API call
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+      
+      toast.success("Login successful!")
+      // navigate("/dashboard");
+    } catch (error) {
+      console.error("Login error:", error);
+      toast.error("Something went wrong while logging in. Please try again.");
+    }
   };
 
   return (
@@ -55,50 +82,35 @@ const LoginPage = () => {
             </div>
 
             {/* Form */}
-            <form onSubmit={handleSubmit} className="space-y-6">
+            <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
               {/* Email Input */}
-              <div className="relative">
-                <Mail className="absolute left-4 top-1/2 transform -translate-y-1/2 w-6 h-6 text-gray-500 dark:text-gray-400 z-10" />
-                <Input
-                  type="email"
-                  placeholder="Email address"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  className="w-full pl-14 pr-4 py-7 text-lg bg-white/70 dark:bg-white/10 border-gray-300 dark:border-white/20 text-gray-900 dark:text-white placeholder:text-gray-500 dark:placeholder:text-gray-400 focus-visible:ring-yellow-600 dark:focus-visible:ring-yellow-500 focus-visible:border-yellow-600 dark:focus-visible:border-yellow-500"
-                />
-              </div>
+              <FormInput
+                icon={Mail}
+                type="email"
+                placeholder="Email address"
+                error={errors.email}
+                register={register("email")}
+              />
 
               {/* Password Input */}
-              <div className="relative">
-                <Lock className="absolute left-4 top-1/2 transform -translate-y-1/2 w-6 h-6 text-gray-500 dark:text-gray-400 z-10" />
-                <Input
-                  type={showPassword ? "text" : "password"}
-                  placeholder="Password"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  className="w-full pl-14 pr-14 py-7 text-lg bg-white/70 dark:bg-white/10 border-gray-300 dark:border-white/20 text-gray-900 dark:text-white placeholder:text-gray-500 dark:placeholder:text-gray-400 focus-visible:ring-yellow-600 dark:focus-visible:ring-yellow-500 focus-visible:border-yellow-600 dark:focus-visible:border-yellow-500"
-                />
-                <button
-                  type="button"
-                  onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-600 hover:text-gray-800 dark:text-gray-400 dark:hover:text-gray-300 z-10"
-                >
-                  {showPassword ? (
-                    <EyeOff className="w-6 h-6" />
-                  ) : (
-                    <Eye className="w-6 h-6" />
-                  )}
-                </button>
-              </div>
+              <FormInput
+                icon={Lock}
+                type="password"
+                placeholder="Password"
+                error={errors.password}
+                register={register("password")}
+              />
 
               <div className="flex items-center justify-between text-base">
                 <label className="flex items-center text-gray-700 dark:text-gray-300 cursor-pointer">
                   <input
                     type="checkbox"
+                    {...register("rememberMe")}
                     className="mr-2 rounded w-4 h-4 border-gray-300 dark:border-gray-600"
                   />
                   Remember me
                 </label>
+                
                 <a
                   href="#"
                   className="text-yellow-600 hover:text-yellow-700 dark:text-yellow-400 dark:hover:text-yellow-300 font-semibold"
@@ -107,7 +119,13 @@ const LoginPage = () => {
                 </a>
               </div>
 
-              <FormPrimaryButton  className="text-xl">Login</FormPrimaryButton>
+              <FormPrimaryButton
+                type="submit"
+                disabled={isSubmitting}
+                className="text-xl"
+              >
+                {isSubmitting ? "Logging in..." : "Login"}
+              </FormPrimaryButton>
 
               <div className="relative my-8">
                 <div className="absolute inset-0 flex items-center">
@@ -121,7 +139,8 @@ const LoginPage = () => {
               </div>
 
               <FormSecondaryButton
-                onClick={() => console.log("Google Sign Up")}
+                type="button"
+                onClick={() => console.log("Google Login")}
               >
                 <svg
                   className="w-5 h-5 mr-2"
@@ -145,7 +164,7 @@ const LoginPage = () => {
                     fill="#EA4335"
                   />
                 </svg>
-               Login with Google
+                Login with Google
               </FormSecondaryButton>
             </form>
 
@@ -154,9 +173,7 @@ const LoginPage = () => {
               <p className="text-gray-700 dark:text-gray-300 text-base">
                 Don't have an account?{" "}
                 <button
-                  onClick={() => {
-                    navigate("/signup");
-                  }}
+                  onClick={() => navigate("/signup")}
                   className="text-yellow-600 hover:text-yellow-700 dark:text-yellow-400 dark:hover:text-yellow-300 font-semibold cursor-pointer"
                 >
                   Sign up
