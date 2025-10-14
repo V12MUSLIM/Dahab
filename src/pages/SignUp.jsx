@@ -1,5 +1,8 @@
-import React, { useState } from "react";
-import { Eye, EyeOff, Mail, Lock, User, ArrowRight } from "lucide-react";
+import React from "react";
+import { Mail, Lock, User, ArrowRight } from "lucide-react";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { signupSchema } from "@/schemas/authSchema";
 import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
@@ -8,69 +11,129 @@ import {
   FormPrimaryButton,
   FormSecondaryButton,
 } from "@/components/customComponents/FormButtons";
+import { Spinner } from "@/components/ui/spinner";
+import { toast } from "sonner";
 
-// Custom Input Wrapper for icons and password toggle
-const InputWithIcon = ({
+// Signup Input Component (optimized for signup page styling)
+const SignupInput = ({
   icon: Icon,
   type = "text",
   placeholder,
-  value,
-  onChange,
-  className = "",
+  error,
+  register,
+  ...props
 }) => {
-  const [showPassword, setShowPassword] = useState(false);
+  const [showPassword, setShowPassword] = React.useState(false);
   const inputType = type === "password" && showPassword ? "text" : type;
 
   return (
-    <div className="relative">
-      {Icon && (
-        <Icon className="absolute left-3 sm:left-4 top-1/2 transform -translate-y-1/2 w-4 h-4 sm:w-5 sm:h-5 text-gray-700 dark:text-gray-500 z-10" />
-      )}
-      <Input
-        type={inputType}
-        placeholder={placeholder}
-        value={value}
-        onChange={onChange}
-        className={`pl-10 sm:pl-12 pr-10 sm:pr-12 py-2.5 sm:py-3 h-auto text-base bg-white dark:bg-white/5 border-2 border-gray-500 dark:border-white/20 rounded-lg focus-visible:ring-2 focus-visible:ring-yellow-600 dark:focus-visible:ring-yellow-500 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 backdrop-blur-sm transition-all ${className}`}
-      />
-      {type === "password" && (
-        <button
-          type="button"
-          onClick={() => setShowPassword(!showPassword)}
-          className="absolute right-3 sm:right-4 top-1/2 transform -translate-y-1/2 text-gray-700 hover:text-gray-900 dark:text-gray-500 dark:hover:text-gray-300 z-10 p-1"
-          aria-label={showPassword ? "Hide password" : "Show password"}
-        >
-          {showPassword ? (
-            <EyeOff className="w-4 h-4 sm:w-5 sm:h-5" />
-          ) : (
-            <Eye className="w-4 h-4 sm:w-5 sm:h-5" />
-          )}
-        </button>
+    <div className="space-y-1">
+      <div className="relative">
+        {Icon && (
+          <Icon className="absolute left-3 sm:left-4 top-1/2 transform -translate-y-1/2 w-4 h-4 sm:w-5 sm:h-5 text-gray-700 dark:text-gray-500 z-10" />
+        )}
+        <Input
+          type={inputType}
+          placeholder={placeholder}
+          {...register}
+          className={`pl-10 sm:pl-12 pr-10 sm:pr-12 py-2.5 sm:py-3 h-auto text-base bg-white dark:bg-white/5 border-2 ${
+            error
+              ? "border-red-500 dark:border-red-500"
+              : "border-gray-500 dark:border-white/20"
+          } rounded-lg focus-visible:ring-2 focus-visible:ring-yellow-600 dark:focus-visible:ring-yellow-500 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 backdrop-blur-sm transition-all`}
+          {...props}
+        />
+        {type === "password" && (
+          <button
+            type="button"
+            onClick={() => setShowPassword(!showPassword)}
+            className="absolute right-3 sm:right-4 top-1/2 transform -translate-y-1/2 text-gray-700 hover:text-gray-900 dark:text-gray-500 dark:hover:text-gray-300 z-10 p-1"
+            aria-label={showPassword ? "Hide password" : "Show password"}
+          >
+            {showPassword ? (
+              <svg
+                className="w-4 h-4 sm:w-5 sm:h-5"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21"
+                />
+              </svg>
+            ) : (
+              <svg
+                className="w-4 h-4 sm:w-5 sm:h-5"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
+                />
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"
+                />
+              </svg>
+            )}
+          </button>
+        )}
+      </div>
+      {error && (
+        <p className="text-red-500 dark:text-red-400 text-xs sm:text-sm ml-1">
+          {error.message}
+        </p>
       )}
     </div>
   );
 };
 
-// Signup Page Component
 export default function SignupPage() {
-  const [fullName, setFullName] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
-  const [agreedToTerms, setAgreedToTerms] = useState(false);
   const navigate = useNavigate();
 
-  const handleSignup = () => {
-    if (!agreedToTerms) {
-      alert("Please agree to the Terms of Service and Privacy Policy");
-      return;
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isSubmitting },
+    setValue,
+    watch,
+  } = useForm({
+    resolver: zodResolver(signupSchema),
+    defaultValues: {
+      fullName: "",
+      email: "",
+      password: "",
+      confirmPassword: "",
+      agreedToTerms: false,
+    },
+  });
+
+  const agreedToTerms = watch("agreedToTerms");
+
+  const onSubmit = async (data) => {
+    try {
+      console.log("Signup data:", data);
+      // TODO: Add your API call here
+      // const response = await signupUser(data);
+
+      // Simulate API call
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+
+      toast.success("Account created successfully!");
+      // navigate("/login");
+    } catch (error) {
+      console.error("Signup error:", error);
+      toast.error("Signup failed. Please try again.");
     }
-    if (password !== confirmPassword) {
-      alert("Passwords do not match");
-      return;
-    }
-    console.log("Signup:", { fullName, email, password });
-    alert("Account created successfully! Ready to integrate with backend.");
   };
 
   return (
@@ -86,7 +149,7 @@ export default function SignupPage() {
       {/* Main Container */}
       <div className="relative z-10 w-full max-w-md">
         {/* Card with Background Image */}
-        <div className="relative overflow-hidden rounded-xl sm:rounded-2xl shadow-2xl">
+        <div className="relative overflow-hidden rounded-xl sm:rounded-2xl">
           {/* Background with overlay */}
           <div
             className="absolute inset-0 bg-cover bg-center"
@@ -113,70 +176,95 @@ export default function SignupPage() {
             </div>
 
             {/* Form */}
-            <div className="space-y-4 sm:space-y-5">
-              <InputWithIcon
+            <form
+              onSubmit={handleSubmit(onSubmit)}
+              className="space-y-4 sm:space-y-5"
+            >
+              <SignupInput
                 icon={User}
                 type="text"
                 placeholder="Full name"
-                value={fullName}
-                onChange={(e) => setFullName(e.target.value)}
+                error={errors.fullName}
+                register={register("fullName")}
               />
 
-              <InputWithIcon
+              <SignupInput
                 icon={Mail}
                 type="email"
                 placeholder="Email address"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
+                error={errors.email}
+                register={register("email")}
               />
 
-              <InputWithIcon
+              <SignupInput
                 icon={Lock}
                 type="password"
                 placeholder="Password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
+                error={errors.password}
+                register={register("password")}
               />
 
-              <InputWithIcon
+              <SignupInput
                 icon={Lock}
                 type="password"
                 placeholder="Confirm password"
-                value={confirmPassword}
-                onChange={(e) => setConfirmPassword(e.target.value)}
+                error={errors.confirmPassword}
+                register={register("confirmPassword")}
               />
 
-              {/* Terms and Conditions - Optimized for small screens */}
-              <div className="flex items-start gap-2">
-                <Checkbox
-                  id="terms"
-                  checked={agreedToTerms}
-                  onCheckedChange={setAgreedToTerms}
-                  className="border-2 border-gray-600 data-[state=checked]:bg-yellow-600 data-[state=checked]:border-yellow-600 shrink-0 mt-0.5"
-                />
-                <Label
-                  htmlFor="terms"
-                  className="text-xs sm:text-sm text-gray-900 dark:text-gray-300 cursor-pointer leading-relaxed"
-                >
-                  I agree to the{" "}
-                  <a
-                    href="#"
-                    className="text-yellow-500 dark:text-yellow-400 hover:text-yellow-800 dark:hover:text-yellow-300 font-semibold underline-offset-2 hover:underline transition-colors"
+              {/* Terms and Conditions */}
+              <div className="space-y-1">
+                <div className="flex items-start gap-2">
+                  <Checkbox
+                    id="terms"
+                    checked={agreedToTerms}
+                    onCheckedChange={(checked) =>
+                      setValue("agreedToTerms", checked)
+                    }
+                    className="border-2 border-gray-600 data-[state=checked]:bg-yellow-600 data-[state=checked]:border-yellow-600 shrink-0 mt-0.5"
+                  />
+                  <Label
+                    htmlFor="terms"
+                    className="text-xs sm:text-sm text-gray-900 dark:text-gray-300 cursor-pointer leading-relaxed"
                   >
-                    Terms of Service
-                  </a>{" "}
-                  and{" "}
-                  <a
-                    href="#"
-                    className="text-yellow-500 dark:text-yellow-400 hover:text-yellow-800 dark:hover:text-yellow-300 font-semibold underline-offset-2 hover:underline transition-colors"
-                  >
-                    Privacy Policy
-                  </a>
-                </Label>
+                    I agree to the{" "}
+                    <a
+                      href="#"
+                      className="text-yellow-500 dark:text-yellow-400 hover:text-yellow-800 dark:hover:text-yellow-300 font-semibold underline-offset-2 hover:underline transition-colors"
+                    >
+                      Terms of Service
+                    </a>{" "}
+                    and{" "}
+                    <a
+                      href="#"
+                      className="text-yellow-500 dark:text-yellow-400 hover:text-yellow-800 dark:hover:text-yellow-300 font-semibold underline-offset-2 hover:underline transition-colors"
+                    >
+                      Privacy Policy
+                    </a>
+                  </Label>
+                </div>
+                {errors.agreedToTerms && (
+                  <p className="text-red-500 dark:text-red-400 text-xs sm:text-sm ml-1">
+                    {errors.agreedToTerms.message}
+                  </p>
+                )}
               </div>
 
-              <FormPrimaryButton onClick={handleSignup} icon={ArrowRight}>
-                Create Account
+              <FormPrimaryButton
+                type="submit"
+                disabled={isSubmitting}
+                aria-disabled={isSubmitting}
+                aria-busy={isSubmitting}
+                icon={isSubmitting ? null : ArrowRight}
+              >
+                {isSubmitting ? (
+                  <div className="flex items-center gap-2">
+                    <Spinner className="w-4 h-4" />
+                    <span>Creating Account...</span>
+                  </div>
+                ) : (
+                  "Create Account"
+                )}
               </FormPrimaryButton>
 
               {/* Elegant Divider */}
@@ -193,6 +281,7 @@ export default function SignupPage() {
 
               {/* Google Sign Up Button */}
               <FormSecondaryButton
+                type="button"
                 onClick={() => console.log("Google Sign Up")}
               >
                 <svg
@@ -219,16 +308,14 @@ export default function SignupPage() {
                 </svg>
                 <span className="text-xs sm:text-sm">Google</span>
               </FormSecondaryButton>
-            </div>
+            </form>
 
             {/* Footer */}
             <div className="mt-5 sm:mt-6 text-center">
               <p className="text-xs sm:text-sm text-gray-900 dark:text-gray-300">
                 Already have an account?{" "}
                 <button
-                  onClick={() => {
-                    navigate("/login");
-                  }}
+                  onClick={() => navigate("/login")}
                   className="text-yellow-700 dark:text-yellow-400 hover:text-yellow-800 dark:hover:text-yellow-300 font-semibold cursor-pointer bg-transparent border-none p-0 underline-offset-2 hover:underline"
                 >
                   Login
