@@ -10,8 +10,8 @@ import {
 } from "../customComponents/ButtonVarients";
 import GallerySection from "./GallerySection";
 import HeroSection from "./HeroSection";
-import { useDestinations } from "@/context/DestinationsContext";
 import SocialMediaSection from "./SocialMediaSection";
+import { useDestinations } from "@/hooks/useDestination";
 import {
   Card,
   CardContent,
