@@ -6,8 +6,6 @@ import { DineProvider } from "./Context/DineContext";
 import { ThemeProvider } from "./components/theme-provider";
 import ScrollToTop from "./components/ScrollToTop";
 import { PageSkeleton } from "@/components/skeletons/PageSkeleton";
-import LoginPage from "./pages/Login";
-import SignupPage from "./pages/SignUp";
 import { Toaster } from "@/components/ui/sonner";
 
 // EAGER LOAD
@@ -26,7 +24,8 @@ const DestinationDetail = lazy(() =>
   import("./components/sections/DestinationsDetailsSections")
 );
 const NotFound = lazy(() => import("./pages/404"));
-
+const LoginPage = lazy(() => import("./pages/Login"));
+const SignupPage = lazy(() => import("./pages/SignUp"));
 function App() {
   return (
     <ThemeProvider
