@@ -4,12 +4,15 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { loginSchema } from "@/schemas/authSchema";
 import { FormInput } from "@/components/customComponents/FormInput";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Spinner } from "@/components/ui/spinner";
 import {
   FormPrimaryButton,
   FormSecondaryButton,
 } from "@/components/customComponents/FormButtons";
 import { useNavigate } from "react-router-dom";
-import { toast } from "sonner"
+import { toast } from "sonner";
+
 const LoginPage = () => {
   const navigate = useNavigate();
 
@@ -31,12 +34,12 @@ const LoginPage = () => {
       console.log("Login data:", data);
       // TODO: Add your API call here
       // const response = await loginUser(data);
-      
+
       // Simulate API call
       await new Promise((resolve) => setTimeout(resolve, 1000));
-      
-      toast.success("Login successful!")
-      // navigate("/dashboard");
+
+      toast.success("Login successful!");
+       navigate("/");
     } catch (error) {
       console.error("Login error:", error);
       toast.error("Something went wrong while logging in. Please try again.");
@@ -47,11 +50,11 @@ const LoginPage = () => {
     <div
       className="min-h-screen bg-cover bg-center bg-no-repeat flex items-center justify-center p-4 relative"
       style={{
-        backgroundImage: `url('login.webp')`,
+        backgroundImage: `url('image3.webp')`,
       }}
     >
       {/* Overlay for better contrast with blur */}
-      <div className="absolute inset-0 bg-yellow-50/60 dark:bg-black/80 backdrop-blur-sm"></div>
+      <div className="absolute inset-0 bg-yellow-50/0 dark:bg-black/80 backdrop-blur-sm"></div>
 
       <div className="w-full max-w-2xl relative z-10">
         {/* Larger Card Container */}
@@ -60,10 +63,10 @@ const LoginPage = () => {
           <div
             className="absolute inset-0 bg-cover bg-center"
             style={{
-              backgroundImage: `url('image1.webp')`,
+              backgroundImage: `url('image3.webp')`,
             }}
           >
-            <div className="absolute inset-0 bg-gradient-to-b from-white/80 via-white/85 to-white/90 dark:from-black/70 dark:via-black/80 dark:to-black/90 backdrop-blur-sm"></div>
+            <div className="absolute inset-0 bg-gradient-to-b from-white/5 to-white/50 dark:from-black/60 dark:via-black/70 dark:to-black/80 backdrop-blur-sm"></div>
           </div>
 
           {/* Content */}
@@ -110,10 +113,10 @@ const LoginPage = () => {
                   />
                   Remember me
                 </label>
-                
+
                 <a
                   href="#"
-                  className="text-yellow-600 hover:text-yellow-700 dark:text-yellow-400 dark:hover:text-yellow-300 font-semibold"
+                  className="text-yellow-500 hover:text-yellow-700 dark:text-yellow-400 dark:hover:text-yellow-300 font-semibold"
                 >
                   Forgot password?
                 </a>
@@ -124,7 +127,13 @@ const LoginPage = () => {
                 disabled={isSubmitting}
                 className="text-xl"
               >
-                {isSubmitting ? "Logging in..." : "Login"}
+                {isSubmitting ? (
+                  <div className="flex items-center gap-2">
+                    <Spinner className="w-4 h-4">Logging in...</Spinner>
+                  </div>
+                ) : (
+                  "Login"
+                )}
               </FormPrimaryButton>
 
               <div className="relative my-8">
@@ -132,7 +141,7 @@ const LoginPage = () => {
                   <div className="w-full border-t border-gray-300 dark:border-gray-600"></div>
                 </div>
                 <div className="relative flex justify-center text-base">
-                  <span className="px-4 bg-white/40 dark:bg-black/40 text-gray-700 dark:text-gray-300">
+                  <span className="px-4 py-1 text-sm text-gray-700 dark:text-gray-300 bg-white/30 dark:bg-black/30 backdrop-blur-md border border-white/20 dark:border-gray-800/40 rounded-full shadow-sm">
                     Or continue with
                   </span>
                 </div>
