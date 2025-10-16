@@ -58,6 +58,7 @@ export const Toaster = (props) => {
                 border: "1px solid rgba(34, 197, 94, 0.5)",
                 color: "#bbf7d0",
                 boxShadow: "0 8px 24px rgba(34, 197, 94, 0.15)",
+               
               }
             : {
                 ...baseStyle,
@@ -65,6 +66,7 @@ export const Toaster = (props) => {
                 border: "1px solid rgba(34, 197, 94, 0.4)",
                 color: "#14532d",
                 boxShadow: "0 8px 24px rgba(34, 197, 94, 0.25)",
+               
               },
         },
         error: {

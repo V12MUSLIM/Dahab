@@ -109,7 +109,7 @@ const DrawerContentComponent = React.memo(({ isMobile = false, onClose }) => {
         {isMobile && (
           <div className="space-y-3 pb-4 border-b border-amber-400/20 dark:border-amber-500/30">
             <NavLink
-              to={ROUTES.planTrip}
+              to={ROUTES.login}
               className={({ isActive }) =>
                 cn(
                   "flex flex-col items-center justify-center flex-1 h-full space-y-1 transition-colors duration-200",
@@ -124,7 +124,7 @@ const DrawerContentComponent = React.memo(({ isMobile = false, onClose }) => {
                 className="w-full bg-gradient-to-r from-amber-600 to-orange-500 text-white hover:from-amber-700 hover:to-orange-600 transition-all duration-200 shadow-lg shadow-amber-500/25"
                 onClick={handleNavLinkClick}
               >
-                {UI_TEXT.buttons.bookAdventure}
+                {UI_TEXT.buttons.login}
               </Button>
             </NavLink>
             <div className="flex justify-center">
@@ -512,7 +512,7 @@ export default function DahabTourismNavbar() {
                 size="sm"
                 className="bg-gradient-to-r from-amber-600 to-orange-500 text-white hover:from-amber-700 hover:to-orange-600 transition-all duration-200 shadow-lg shadow-amber-500/25 cursor-pointer"
               >
-                {UI_TEXT.buttons.bookNow}
+                {UI_TEXT.buttons.login}
               </Button>
             </NavLink>
             {/* Desktop Drawer */}
