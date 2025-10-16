@@ -1,6 +1,6 @@
 import express from 'express'
-import { addDestination } from './destination-handler/add-destination'
-import { getDestination } from './destination-handler/get-destinations'
+import { addDestination } from './destination-controller/add-destination'
+import { getDestination } from './destination-controller/get-destinations'
 
 
 
