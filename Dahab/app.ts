@@ -10,14 +10,16 @@ import morgan from "morgan";
 import packagesRouter from './src/home/packages/package-router'
 import activitiesRouter from "./src/home/activities/activities-router";
 import destinationRouter from "./src/home/Destination/destination-router"
+import mongoSanitize from "express-mongo-sanitize";
+import xss from "xss-clean";
 
 dotenv.config();
 
 const PORT = Number(process.env.PORT);
 const URI = process.env.DB_URL;
 const DB_NAME = process.env.DB_NAME;
-//${URI}/${DB_NAME}
-mongoose.connect(`mongodb+srv://dahab_db:dahab_db_password@dahab.kmztbok.mongodb.net/dahab`)
+
+mongoose.connect(`${URI}/${DB_NAME}`)
     .then(() => console.log("MongoDB connected"))
     .catch((err) => {
         console.error("MongoDB connection error:", err);
@@ -26,16 +28,18 @@ mongoose.connect(`mongodb+srv://dahab_db:dahab_db_password@dahab.kmztbok.mongodb
 
 const app = express();
 
-// Security middlewares
+
 app.use(helmet());
- app.use(
- cors({
-     origin: process.env.CORS_ORIGIN?.split(",") ?? ["http://localhost:5173"],
-     credentials: true,
- })
- );
+app.use(
+    cors({
+        origin: process.env.CORS_ORIGIN?.split(",") ?? ["http://localhost:5173"],
+        credentials: true,
+    })
+);
 app.use(morgan("dev"));
 app.use(express.json());
+app.use(mongoSanitize());
+app.use(xss());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 
@@ -60,6 +64,6 @@ app.use((err: any, req: Request, res: Response, next: NextFunction) => {
     });
 });
 
-app.listen(PORT, "0.0.0.0", () => {
+app.listen(PORT,"0.0.0.0", () => {
     console.log(`✅ Server is running on http://localhost:${PORT}`);
 });
