@@ -100,8 +100,8 @@ export const UI_TEXT = {
     menu: "Menu",
   },
   buttons: {
-    bookNow: "Login",
-    bookAdventure: "Book Your Adventure",
+    
+    login: "Login",
     viewAll: "View All",
   },
   sections: {

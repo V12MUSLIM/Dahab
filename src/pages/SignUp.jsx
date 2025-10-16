@@ -230,14 +230,14 @@ export default function SignupPage() {
                     I agree to the{" "}
                     <a
                       href="#"
-                      className="text-yellow-500 dark:text-yellow-400 hover:text-yellow-800 dark:hover:text-yellow-300 font-semibold underline-offset-2 hover:underline transition-colors"
+                      className="text-yellow-700 dark:text-yellow-400 hover:text-yellow-800 dark:hover:text-yellow-300 font-semibold underline-offset-2 hover:underline transition-colors"
                     >
                       Terms of Service
                     </a>{" "}
                     and{" "}
                     <a
                       href="#"
-                      className="text-yellow-500 dark:text-yellow-400 hover:text-yellow-800 dark:hover:text-yellow-300 font-semibold underline-offset-2 hover:underline transition-colors"
+                      className="text-yellow-700 dark:text-yellow-400 hover:text-yellow-800 dark:hover:text-yellow-300 font-semibold underline-offset-2 hover:underline transition-colors"
                     >
                       Privacy Policy
                     </a>
