@@ -1,8 +1,9 @@
 "use client";
 import { useState, lazy, Suspense } from "react";
-import { useDestinations } from "@/hooks/useDestination"
-import { Search, MapPin, Compass, Star, Users } from "lucide-react";
+import { useDestinations } from "@/hooks/useDestination";
+import { Search, MapPin, Compass, Star, Users, AlertCircle } from "lucide-react";
 import HeroSection from "@/components/sections/HeroSection";
+import { PrimaryButton } from "@/components/customComponents/ButtonVarients";
 
 // Lazy-load below the fold components
 const DestinationCard = lazy(() =>
@@ -17,21 +18,697 @@ const SocialMediaSection = lazy(() =>
   import("@/components/sections/SocialMediaSection")
 );
 
+// Loading fallback component for sections
+const SectionDestinationsLoading = () => (
+  <div className="w-full h-32 flex items-center justify-center">
+    <div className="animate-pulse space-y-4 w-full max-w-4xl px-4">
+      <div className="h-8 bg-gray-200 rounded w-1/4 mx-auto"></div>
+      <div className="h-4 bg-gray-200 rounded w-1/2 mx-auto"></div>
+      <div className="h-16 bg-gray-200 rounded"></div>
+    </div>
+  </div>
+);
+
+// Full page loading skeleton
+const PageSkeleton = () => (
+  <div className="min-h-screen flex items-center justify-center">
+    <div className="text-center">
+      <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-amber-500 mx-auto mb-4"></div>
+      <p className="text-lg text-muted-foreground">Loading destinations...</p>
+    </div>
+  </div>
+);
+
 export default function Destinations() {
   const [selectedCategory, setSelectedCategory] = useState("All");
   const [searchQuery, setSearchQuery] = useState("");
   const [priceFilter, setPriceFilter] = useState("all");
 
   // Get data from backend via useDestinations hook
-  const { 
-    destinations, 
-    getAllCategories, 
-    getDestinationsByCategory,
+  const {
+    destinations: apiDestinations,
+    getAllCategories: apiGetAllCategories,
+    getDestinationsByCategory: apiGetDestinationsByCategory,
     isLoading,
-    error 
+    error,
   } = useDestinations();
 
-  // Get all unique categories
+  // Fallback destinations data
+  const fallbackDestinations = [
+    // 1. Blue Hole
+    {
+      id: 1,
+      category: "Water Adventures",
+      title: "Blue Hole",
+      description:
+        "World-famous diving spot with crystal clear water and vibrant marine life, offering unparalleled underwater experiences for divers of all levels.",
+      longDescription:
+        "The Blue Hole in Dahab is a legendary dive site that has captured the imagination of divers worldwide. This natural submarine sinkhole plunges to depths of over 130 meters, creating a mesmerizing vertical shaft through the reef. The site features stunning coral walls, diverse marine ecosystems, and the famous archway tunnel at 55 meters depth. Whether you're a recreational diver exploring the shallow sections or a technical diver venturing into the depths, the Blue Hole offers an unforgettable underwater experience with visibility often exceeding 40 meters.",
+      imageUrl:
+        "https://dynamic-media-cdn.tripadvisor.com/media/photo-o/1f/d8/3f/1c/blue-hole.jpg?w=1400&h=-1&s=1",
+      href: "/destinations/blue-hole",
+      IdPage: "blue-hole",
+      subtitle: "World Famous Dive Site",
+      badge: "Must Visit",
+      rating: "4.9",
+      location: "Dahab Coast",
+      price: "$85",
+      duration: "Full Day (8 hours)",
+      groupSize: "Max 12 people",
+      difficulty: "Intermediate to Advanced",
+      bestTime: "March to November",
+      galleryImages: [
+        {
+          src: "https://dynamic-media-cdn.tripadvisor.com/media/photo-o/1f/d8/3f/1c/blue-hole.jpg?w=1400&h=-1&s=1",
+          alt: "Blue Hole aerial view",
+          title: "Iconic Blue Hole",
+          description: "Aerial view of famous diving spot",
+        },
+        {
+          src: "https://www.scubadiving.com/sites/scubadiving.com/files/styles/655_1x_/public/images/2023/02/blue-hole-dahab-egypt.jpg",
+          alt: "Underwater view",
+          title: "Underwater Paradise",
+          description: "Crystal clear waters",
+        },
+        {
+          src: "https://cdn.getyourguide.com/img/tour/5c3f4f4e8c9c6.jpeg/98.jpg",
+          alt: "Diving at Blue Hole",
+          title: "Professional Diving",
+          description: "Expert instructors",
+        },
+        {
+          src: "https://www.propertyfinder.eg/blog/wp-content/uploads/2019/10/blue-hole-dahab-800x600.jpg",
+          alt: "Coral reef",
+          title: "Vibrant Corals",
+          description: "Rich marine ecosystem",
+        },
+        {
+          src: "https://www.arabtravelers.com/wp-content/uploads/2023/05/Tourism-in-dahab-10.jpg",
+          alt: "Beach view",
+          title: "Beach Setting",
+          description: "Relaxing atmosphere",
+        },
+        {
+          src: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ6n29sm6e6Hgu-Yb_VLT1kWn8w1q1jRbJJXQ&s",
+          alt: "The Archway",
+          title: "Famous Archway",
+          description: "55-meter challenge",
+        },
+      ],
+      locationDetails: {
+        address: "Blue Hole Beach, Dahab, South Sinai Governorate, Egypt",
+        coordinates: { lat: 28.5942, lng: 34.5324 },
+        distance: "15 km north of Dahab city center",
+        access: "Accessible by car or taxi, approximately 20 minutes from Dahab",
+        nearby: [
+          "The Bells dive site (100m)",
+          "Laguna Restaurant (500m)",
+          "Blue Beach Club (1km)",
+          "Canyon dive site (3km)",
+        ],
+      },
+      detailedItinerary: [
+        {
+          time: "08:00 AM",
+          title: "Hotel Pickup",
+          description: "Pickup from your hotel in Dahab",
+          duration: "20 minutes",
+          icon: "Car",
+        },
+        {
+          time: "08:30 AM",
+          title: "Arrival & Registration",
+          description: "Check-in at dive center",
+          duration: "30 minutes",
+          icon: "Info",
+        },
+        {
+          time: "09:00 AM",
+          title: "Safety Briefing",
+          description: "Comprehensive dive briefing",
+          duration: "30 minutes",
+          icon: "Shield",
+        },
+        {
+          time: "10:00 AM",
+          title: "First Dive",
+          description: "Main dive to explore the Blue Hole",
+          duration: "45 minutes",
+          icon: "Waves",
+        },
+        {
+          time: "12:00 PM",
+          title: "Second Dive",
+          description: "Additional dive or snorkeling",
+          duration: "40 minutes",
+          icon: "Fish",
+        },
+        {
+          time: "01:00 PM",
+          title: "Lunch Break",
+          description: "Egyptian lunch at beachside restaurant",
+          duration: "60 minutes",
+          icon: "Utensils",
+        },
+        {
+          time: "03:30 PM",
+          title: "Return Transfer",
+          description: "Transfer back to hotel",
+          duration: "20 minutes",
+          icon: "Car",
+        },
+      ],
+      included: [
+        "PADI instructor",
+        "All diving equipment",
+        "Underwater photography",
+        "Lunch",
+        "Hotel transfer",
+        "Insurance",
+        "Two tank dives",
+        "Refreshments",
+      ],
+      notIncluded: [
+        "Personal equipment rent",
+        "Nitrox fills",
+        "Tips",
+        "Souvenirs",
+      ],
+      activities: [
+        {
+          name: "Deep Diving",
+          icon: "Waves",
+          description: "Explore depths up to 130m",
+          difficulty: "Advanced",
+          duration: "45 minutes",
+        },
+        {
+          name: "Coral Reef Tour",
+          icon: "Fish",
+          description: "Discover marine life",
+          difficulty: "Beginner",
+          duration: "40 minutes",
+        },
+        {
+          name: "Photography",
+          icon: "Camera",
+          description: "Underwater photos included",
+          difficulty: "All levels",
+          duration: "Throughout",
+        },
+        {
+          name: "Safety Training",
+          icon: "Shield",
+          description: "Safety briefing",
+          difficulty: "All levels",
+          duration: "30 minutes",
+        },
+      ],
+      highlights: [
+        "World's most famous blue hole",
+        "Archway at 55m depth",
+        "Rare fish species",
+        "40m+ visibility",
+        "PADI instructors",
+        "Small groups",
+      ],
+      reviews: [
+        {
+          name: "Sarah Johnson",
+          nationality: "USA",
+          rating: 5,
+          comment:
+            "Absolutely breathtaking! Professional instructors and stunning marine life!",
+          date: "Sep 2025",
+          verified: true,
+          helpful: 45,
+        },
+        {
+          name: "Ahmed Hassan",
+          nationality: "Egypt",
+          rating: 5,
+          comment: "Best diving experience ever! Amazing visibility!",
+          date: "Aug 2025",
+          verified: true,
+          helpful: 38,
+        },
+      ],
+      practicalInfo: {
+        requirements: [
+          { text: "Valid diving certification", icon: "Shield" },
+          { text: "Medical fitness", icon: "AlertCircle" },
+          { text: "Min age 18 years", icon: "Info" },
+        ],
+        whatToBring: [
+          { text: "Swimwear and towel", icon: "Backpack" },
+          { text: "Reef-safe sunscreen", icon: "Sun" },
+          { text: "Camera", icon: "Camera" },
+        ],
+        cancellation: "Free cancellation up to 48 hours before",
+      },
+    },
+
+    // 2. Dahab Lagoon
+    {
+      id: 2,
+      category: "Water Adventures",
+      title: "Dahab Lagoon",
+      description:
+        "Perfect spot for windsurfing and kitesurfing with shallow calm waters and consistent winds ideal for all skill levels.",
+      longDescription:
+        "Dahab Lagoon is world-renowned for kitesurfing and windsurfing. The shallow flat waters with steady thermal winds create perfect learning conditions. Professional IKO certified instructors offer comprehensive lessons in multiple languages. The lagoon's unique geography provides a safe environment with water rarely exceeding waist depth, making it ideal for beginners while still challenging for professionals.",
+      imageUrl:
+        "https://cf.bstatic.com/xdata/images/hotel/max1024x768/511701167.jpg?k=c515cafbb679765be30f57f6da71539f014838d33a25dd29c45a0c1de534ec12&o=&hp=1",
+      href: "/destinations/dahab-lagoon",
+      IdPage: "dahab-lagoon",
+      subtitle: "Windsurfing & Kitesurfing Paradise",
+      badge: "Water Sports",
+      rating: "4.6",
+      location: "North Dahab",
+      price: "$60",
+      duration: "Full Day (6 hours)",
+      groupSize: "Max 8 people",
+      difficulty: "Beginner to Advanced",
+      bestTime: "March to November",
+      galleryImages: [
+        {
+          src: "https://cf.bstatic.com/xdata/images/hotel/max1024x768/511701167.jpg?k=c515cafbb679765be30f57f6da71539f014838d33a25dd29c45a0c1de534ec12&o=&hp=1",
+          alt: "Kitesurfing",
+          title: "Perfect Conditions",
+          description: "Ideal shallow waters",
+        },
+        {
+          src: "https://www.propertyfinder.eg/blog/wp-content/uploads/2019/10/blue-hole-dahab-800x600.jpg",
+          alt: "Windsurfing",
+          title: "Learn to Surf",
+          description: "Professional instruction",
+        },
+        {
+          src: "https://www.arabtravelers.com/wp-content/uploads/2023/05/Tourism-in-dahab-10.jpg",
+          alt: "Lagoon",
+          title: "Stunning Lagoon",
+          description: "Crystal clear waters",
+        },
+        {
+          src: "https://dynamic-media-cdn.tripadvisor.com/media/photo-o/1f/d8/3f/1c/blue-hole.jpg?w=1400&h=-1&s=1",
+          alt: "Beach",
+          title: "Beach Life",
+          description: "Relaxed atmosphere",
+        },
+        {
+          src: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ6n29sm6e6Hgu-Yb_VLT1kWn8w1q1jRbJJXQ&s",
+          alt: "Equipment",
+          title: "Modern Gear",
+          description: "Latest equipment",
+        },
+        {
+          src: "https://www.youregypttours.com/storage/1208/1681127279.jpg",
+          alt: "Mountains",
+          title: "Scenic Backdrop",
+          description: "Mountains meet sea",
+        },
+      ],
+      locationDetails: {
+        address: "Dahab Lagoon, North Dahab, South Sinai, Egypt",
+        coordinates: { lat: 28.5167, lng: 34.5167 },
+        distance: "3 km from Dahab center",
+        access: "Easy walk, bike, or taxi",
+        nearby: [
+          "Kitesurf schools",
+          "Beach clubs (200m)",
+          "Restaurants (100m)",
+          "Dive centers (500m)",
+        ],
+      },
+      detailedItinerary: [
+        {
+          time: "09:00 AM",
+          title: "Meeting",
+          description: "Meet at kitesurf center",
+          duration: "15 min",
+          icon: "Info",
+        },
+        {
+          time: "09:15 AM",
+          title: "Theory",
+          description: "Safety and techniques",
+          duration: "45 min",
+          icon: "Shield",
+        },
+        {
+          time: "10:00 AM",
+          title: "Equipment Setup",
+          description: "Learn equipment handling",
+          duration: "30 min",
+          icon: "Check",
+        },
+        {
+          time: "10:30 AM",
+          title: "First Session",
+          description: "Begin in shallow water",
+          duration: "90 min",
+          icon: "Waves",
+        },
+        {
+          time: "12:00 PM",
+          title: "Lunch",
+          description: "Rest and refreshments",
+          duration: "60 min",
+          icon: "Utensils",
+        },
+        {
+          time: "01:00 PM",
+          title: "Second Session",
+          description: "Continue practice",
+          duration: "90 min",
+          icon: "Wind",
+        },
+        {
+          time: "03:30 PM",
+          title: "Certificate",
+          description: "Review and certificate",
+          duration: "30 min",
+          icon: "Award",
+        },
+      ],
+      included: [
+        "IKO instructor",
+        "All equipment",
+        "Safety gear",
+        "Beach access",
+        "Refreshments",
+        "Certificate",
+        "Insurance",
+      ],
+      notIncluded: [
+        "Lunch",
+        "Transport",
+        "Wetsuit ($10)",
+        "GoPro rental",
+        "Personal equipment",
+      ],
+      activities: [
+        {
+          name: "Kitesurfing",
+          icon: "Wind",
+          description: "Learn from scratch",
+          difficulty: "Beginner",
+          duration: "Full day",
+        },
+        {
+          name: "Windsurfing",
+          icon: "Waves",
+          description: "Master techniques",
+          difficulty: "Beginner",
+          duration: "Full day",
+        },
+        {
+          name: "SUP Boarding",
+          icon: "Waves",
+          description: "Stand-up paddleboard",
+          difficulty: "Easy",
+          duration: "2h",
+        },
+        {
+          name: "Beach Relaxation",
+          icon: "Sun",
+          description: "Enjoy pristine beach",
+          difficulty: "Easy",
+          duration: "Anytime",
+        },
+      ],
+      highlights: [
+        "World-class spot",
+        "Shallow safe waters",
+        "IKO instructors",
+        "Latest equipment",
+        "Year-round winds",
+        "Beautiful setting",
+      ],
+      reviews: [
+        {
+          name: "Tom Anderson",
+          nationality: "USA",
+          rating: 5,
+          comment:
+            "Best kitesurf spot ever! Great instructors and perfect conditions!",
+          date: "Oct 2025",
+          verified: true,
+          helpful: 58,
+        },
+        {
+          name: "Nina Petrova",
+          nationality: "Russia",
+          rating: 5,
+          comment: "Learned to windsurf here. Perfect for beginners!",
+          date: "Sep 2025",
+          verified: true,
+          helpful: 44,
+        },
+      ],
+      practicalInfo: {
+        requirements: [
+          { text: "Swimming ability", icon: "Waves" },
+          { text: "No experience needed", icon: "Info" },
+          { text: "Min age 10 years", icon: "Info" },
+        ],
+        whatToBring: [
+          { text: "Swimwear", icon: "Backpack" },
+          { text: "Sunscreen", icon: "Sun" },
+          { text: "Water shoes (optional)", icon: "Info" },
+          { text: "Change of clothes", icon: "Backpack" },
+        ],
+        cancellation: "Free cancellation 24h before",
+      },
+    },
+
+    // 3. Three Pools Snorkeling
+    {
+      id: 3,
+      category: "Water Adventures",
+      title: "Three Pools Snorkeling",
+      description:
+        "Hidden gem featuring three natural lagoons with incredible coral gardens and abundant colorful marine life.",
+      longDescription:
+        "Three Pools is one of Dahab's best-kept secrets for snorkeling. These natural lagoons feature pristine coral reefs, crystal clear water, and an abundance of tropical fish. The three pools are formed by natural rock formations creating sheltered areas perfect for snorkeling. Accessible by a scenic coastal walk or boat, it's ideal for families and snorkeling enthusiasts.",
+      imageUrl:
+        "https://www.propertyfinder.eg/blog/wp-content/uploads/2019/10/blue-hole-dahab-800x600.jpg",
+      href: "/destinations/three-pools",
+      IdPage: "three-pools",
+      subtitle: "Hidden Snorkeling Paradise",
+      badge: "Snorkeling",
+      rating: "4.8",
+      location: "North Dahab",
+      price: "$35",
+      duration: "Half Day (4 hours)",
+      groupSize: "Max 12 people",
+      difficulty: "Easy",
+      bestTime: "Year-round",
+      galleryImages: [
+        {
+          src: "https://www.propertyfinder.eg/blog/wp-content/uploads/2019/10/blue-hole-dahab-800x600.jpg",
+          alt: "Three Pools",
+          title: "Natural Pools",
+          description: "Crystal clear lagoons",
+        },
+        {
+          src: "https://dynamic-media-cdn.tripadvisor.com/media/photo-o/1f/d8/3f/1c/blue-hole.jpg?w=1400&h=-1&s=1",
+          alt: "Coral",
+          title: "Vibrant Corals",
+          description: "Pristine reef gardens",
+        },
+        {
+          src: "https://www.arabtravelers.com/wp-content/uploads/2023/05/Tourism-in-dahab-10.jpg",
+          alt: "Fish",
+          title: "Tropical Fish",
+          description: "Abundant marine life",
+        },
+        {
+          src: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ6n29sm6e6Hgu-Yb_VLT1kWn8w1q1jRbJJXQ&s",
+          alt: "Snorkeling",
+          title: "Family Snorkeling",
+          description: "Perfect for all ages",
+        },
+        {
+          src: "https://cf.bstatic.com/xdata/images/hotel/max1024x768/511701167.jpg?k=c515cafbb679765be30f57f6da71539f014838d33a25dd29c45a0c1de534ec12&o=&hp=1",
+          alt: "Beach",
+          title: "Beautiful Beach",
+          description: "Relaxing setting",
+        },
+        {
+          src: "https://www.youregypttours.com/storage/1208/1681127279.jpg",
+          alt: "Underwater",
+          title: "Underwater World",
+          description: "Amazing visibility",
+        },
+      ],
+      locationDetails: {
+        address: "Three Pools, North Dahab, South Sinai, Egypt",
+        coordinates: { lat: 28.55, lng: 34.52 },
+        distance: "10 km north of Dahab",
+        access: "Coastal walk or boat transfer",
+        nearby: [
+          "Eel Garden (1km)",
+          "Napoleon Reef (2km)",
+          "Bedouin camps",
+          "Blue Lagoon (3km)",
+        ],
+      },
+      detailedItinerary: [
+        {
+          time: "09:00 AM",
+          title: "Pickup",
+          description: "Hotel pickup",
+          duration: "20 min",
+          icon: "Car",
+        },
+        {
+          time: "09:30 AM",
+          title: "Equipment",
+          description: "Snorkel gear fitting",
+          duration: "15 min",
+          icon: "Check",
+        },
+        {
+          time: "10:00 AM",
+          title: "First Pool",
+          description: "Snorkel in shallow lagoon",
+          duration: "45 min",
+          icon: "Fish",
+        },
+        {
+          time: "11:00 AM",
+          title: "Second Pool",
+          description: "Explore coral gardens",
+          duration: "45 min",
+          icon: "Waves",
+        },
+        {
+          time: "12:00 PM",
+          title: "Third Pool",
+          description: "Deep pool snorkeling",
+          duration: "45 min",
+          icon: "Fish",
+        },
+        {
+          time: "01:00 PM",
+          title: "Return",
+          description: "Transfer back to hotel",
+          duration: "30 min",
+          icon: "Car",
+        },
+      ],
+      included: [
+        "Snorkel guide",
+        "Equipment (mask, fins, snorkel)",
+        "Refreshments",
+        "Boat option",
+        "Insurance",
+        "Photos",
+      ],
+      notIncluded: ["Lunch", "Wetsuit rental", "Underwater camera", "Tips"],
+      activities: [
+        {
+          name: "Snorkeling",
+          icon: "Fish",
+          description: "Explore three coral pools",
+          difficulty: "Easy",
+          duration: "2h",
+        },
+        {
+          name: "Swimming",
+          icon: "Waves",
+          description: "Swim in natural lagoons",
+          difficulty: "Easy",
+          duration: "Flexible",
+        },
+        {
+          name: "Beach Relaxation",
+          icon: "Sun",
+          description: "Enjoy pristine beach",
+          difficulty: "Easy",
+          duration: "1h",
+        },
+        {
+          name: "Marine Life Spotting",
+          icon: "Camera",
+          description: "See colorful fish",
+          difficulty: "Easy",
+          duration: "Throughout",
+        },
+      ],
+      highlights: [
+        "Three natural lagoons",
+        "Pristine coral reefs",
+        "Abundant tropical fish",
+        "Family-friendly",
+        "Shallow safe waters",
+        "Hidden gem",
+      ],
+      reviews: [
+        {
+          name: "Anna Schmidt",
+          nationality: "Germany",
+          rating: 5,
+          comment: "Perfect snorkeling spot! Kids loved it and felt safe!",
+          date: "Oct 2025",
+          verified: true,
+          helpful: 52,
+        },
+        {
+          name: "Youssef Ahmed",
+          nationality: "Egypt",
+          rating: 5,
+          comment: "Best coral gardens in Dahab! Not crowded at all!",
+          date: "Sep 2025",
+          verified: true,
+          helpful: 47,
+        },
+      ],
+      practicalInfo: {
+        requirements: [
+          { text: "Swimming ability", icon: "Waves" },
+          { text: "Min age 6 years", icon: "Info" },
+          { text: "Basic fitness", icon: "Shield" },
+        ],
+        whatToBring: [
+          { text: "Swimwear", icon: "Backpack" },
+          { text: "Towel", icon: "Info" },
+          { text: "Reef-safe sunscreen", icon: "Sun" },
+          { text: "Waterproof camera", icon: "Camera" },
+        ],
+        cancellation: "Free cancellation 24h before",
+      },
+    },
+  ];
+
+  // Helper functions for fallback data
+  const getFallbackCategories = () => {
+    const cats = [...new Set(fallbackDestinations.map((d) => d.category))];
+    return ["All", ...cats];
+  };
+
+  const getFallbackDestinationsByCategory = (category) => {
+    return fallbackDestinations.filter((d) => d.category === category);
+  };
+
+  // Use fallback data if API fails, otherwise use API data
+  const destinations = apiDestinations || fallbackDestinations;
+
+  const getAllCategories = () => {
+    if (apiDestinations && apiGetAllCategories) {
+      return ["All", ...apiGetAllCategories()];
+    }
+    return getFallbackCategories();
+  };
+
+  const getDestinationsByCategory = (category) => {
+    if (apiDestinations && apiGetDestinationsByCategory) {
+      return apiGetDestinationsByCategory(category);
+    }
+    return getFallbackDestinationsByCategory(category);
+  };
+
   const categories = getAllCategories();
 
   // Filter destinations based on category, search, and price
@@ -68,37 +745,25 @@ export default function Destinations() {
 
   const filteredDestinations = getFilteredDestinations();
 
-  // Handle loading state
-  if (isLoading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-amber-500 mx-auto mb-4"></div>
-          <p className="text-lg text-muted-foreground">Loading destinations...</p>
-        </div>
-      </div>
-    );
+  // Show skeleton loading state only on initial load
+  if (isLoading && !apiDestinations) {
+    return <PageSkeleton />;
   }
 
-  // Handle error state
-  if (error) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="text-center">
-          <p className="text-lg text-red-500 mb-4">Error loading destinations: {error}</p>
-          <button
-            onClick={() => window.location.reload()}
-            className="px-6 py-3 bg-amber-500 text-white rounded-lg hover:bg-amber-600 transition-colors"
-          >
-            Retry
-          </button>
-        </div>
-      </div>
-    );
-  }
+  // Optional: Show a subtle warning banner if data failed to load but page is still functional
+  const showWarning = error && !isLoading && !apiDestinations;
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-background to-muted/20">
+       {/* Optional warning banner */}
+      {showWarning && (
+        <div className="bg-yellow-50 border-b border-yellow-200 px-4 py-3 text-center">
+          <p className="text-sm text-yellow-800">
+            Some content is currently unavailable. Showing cached information.
+          </p>
+        </div>
+      )}
+
       {/* Hero Section */}
       <HeroSection
         imageURL="https://images.unsplash.com/photo-1568322445389-f64ac2515020?q=80&w=2070&auto=format&fit=crop"
@@ -130,7 +795,7 @@ export default function Destinations() {
 
       <div className="container mx-auto px-4 py-12">
         {/* Search and Filters */}
-        <Suspense fallback={<div>Loading search & filters...</div>}>
+        <Suspense fallback={<SectionDestinationsLoading />}>
           <FilteringTool
             searchQuery={searchQuery}
             onSearchChange={setSearchQuery}
@@ -165,7 +830,7 @@ export default function Destinations() {
         </div>
 
         {/* Destinations Grid */}
-        <Suspense fallback={<div>Loading destinations...</div>}>
+        <Suspense fallback={<SectionDestinationsLoading />}>
           {filteredDestinations.length > 0 ? (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
               {filteredDestinations.map((destination) => (
@@ -196,23 +861,22 @@ export default function Destinations() {
               <p className="text-muted-foreground mb-6">
                 Try adjusting your search or filters
               </p>
-              <button
+              <PrimaryButton
                 onClick={() => {
                   setSearchQuery("");
                   setSelectedCategory("All");
                   setPriceFilter("all");
                 }}
-                className="px-6 py-3 bg-yellow-500 text-white rounded-lg hover:bg-yellow-600 transition-colors"
               >
                 Clear All Filters
-              </button>
+              </PrimaryButton>
             </div>
           )}
         </Suspense>
       </div>
 
       {/* SocialMediaSection */}
-      <Suspense fallback={<div>Loading social...</div>}>
+      <Suspense fallback={<SectionDestinationsLoading />}>
         <SocialMediaSection
           badge="Connect"
           header="Stay Connected"
