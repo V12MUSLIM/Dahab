@@ -91,6 +91,15 @@ function App() {
                     </Suspense>
                   }
                 />
+
+                <Route
+                  path="/cafes/:IdPage"
+                  element={
+                    <Suspense fallback={<PageSkeleton />}>
+                      <DineDetails />
+                    </Suspense>
+                  }
+                />
                 <Route
                   path="/plantrip"
                   element={
