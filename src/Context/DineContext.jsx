@@ -425,7 +425,7 @@ export const DineProvider = ({ children }) => {
       subtitle: "Lebanese & Syrian",
       description:
         "Famous for authentic Lebanese and Syrian mezze dishes, live music and friendly atmosphere.",
-      image: " ",
+      image: "Dine-Images/Beirut Nights.webp",
       badge: "Levantine Flavors",
       priceValue: 40,
       rating: "4.7",
@@ -477,7 +477,7 @@ export const DineProvider = ({ children }) => {
       subtitle: "Syrian Cuisine",
       description:
         "Popular shawarma and kebabs with authentic spices, loved across the region.",
-      image: " ",
+      image: "Dine-Images/Damascus Plaza.webp",
       badge: "Must Try",
       priceValue: 30,
       rating: "4.6",
@@ -528,7 +528,7 @@ export const DineProvider = ({ children }) => {
       category: "Syrian & Levantine",
       subtitle: "Levantine Desserts",
       description: "Specialty sweets and coffee with charming ambiance.",
-      image: " ",
+      image: "Dine-Images/Levantine Sweets Café.webp",
       badge: "Sweet Treats",
       priceValue: 18,
       rating: "4.5",
@@ -575,7 +575,7 @@ export const DineProvider = ({ children }) => {
       subtitle: "Scenic Coffee Spot",
       description:
         "Located on the seaside promenade with stunning views, best coffee and juices for relaxed long visits.",
-      image: " ",
+      image: "Dine-Images/Everyday Café.webp",
       badge: "Sea View",
       priceValue: 20,
       rating: "4.7",
@@ -620,7 +620,7 @@ export const DineProvider = ({ children }) => {
       subtitle: "Bakery & Breakfast",
       description:
         "Famous for breakfast and pastries, homely vibe with excellent coffee and sweets.",
-      image: " ",
+      image: "Dine-Images/Ralph's German Bakery.webp",
       badge: "Breakfast Spot",
       priceValue: 15,
       rating: "4.8",
@@ -665,7 +665,7 @@ export const DineProvider = ({ children }) => {
       subtitle: "Relaxed & Cozy",
       description:
         "A great café to relax with quality coffee, near the waterfront with cozy atmosphere.",
-      image: " ",
+      image: "Dine-Images/Flat White Café.webp",
       badge: "Cozy Setting",
       priceValue: 18,
       rating: "4.6",
