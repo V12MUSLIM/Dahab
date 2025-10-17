@@ -1,6 +1,6 @@
 import express,{Router} from 'express'
-import { allPackages } from './packages-handlers/get-packages';
-import { addPackage } from './packages-handlers/add-package';
+import { allPackages } from './packages-controller/get-packages';
+import { addPackage } from './packages-controller/add-package';
 
 
 

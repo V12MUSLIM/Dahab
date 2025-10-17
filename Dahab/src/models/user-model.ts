@@ -9,23 +9,29 @@ export interface IUser {
     name: string;
     email: string;
     password: string;
+    // confirmPassword: string;
     isVerified: boolean;
-    role: Role;
+    role?: Role;
 }
 const UserSchema = new Schema<IUser>({
     name: {
         type: String,
-        required: true
+        trim: true,
+        required: [true, "Name is required"]
     },
     email: {
         type: String,
-        required: true,
+        required: [true, "Email is required"],
         unique: true
     },
     password: {
         type: String,
-        required: true
+        required: [true, "Password is required"]
     },
+    // confirmPassword: {
+    //     type: String,
+    //     required: [true, "Confirm Password is required"]
+    // },
     isVerified: {
         type: Boolean,
         default: false
