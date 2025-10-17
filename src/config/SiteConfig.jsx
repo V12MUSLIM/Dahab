@@ -19,6 +19,14 @@ export const ROUTES = {
   groups: "/groups",
   contact: "/contact",
   login: "/login",
+  // Dashboard routes
+  dashboard: "/dashboard",
+  dashboardDestinations: "/dashboard/destinations",
+  dashboardActivities: "/dashboard/activities",
+  dashboardPackages: "/dashboard/packages",
+  dashboardBookings: "/dashboard/bookings",
+  dashboardUsers: "/dashboard/users",
+  dashboardAnalytics: "/dashboard/analytics",
   // Destination specific routes
   blueHole: "/destinations/blue-hole",
   mountSinai: "/destinations/mount-sinai",
@@ -100,7 +108,6 @@ export const UI_TEXT = {
     menu: "Menu",
   },
   buttons: {
-    
     login: "Login",
     viewAll: "View All",
   },

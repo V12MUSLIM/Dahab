@@ -18,6 +18,7 @@ const FLOAT_DURATION = 3;
 export default function HeroSection({
   image,
   title = "Your Hero Title",
+  highlight,
   subtitle = "Your subtitle goes here...",
   Icon,
   badge,
@@ -151,7 +152,10 @@ export default function HeroSection({
           variants={fadeInUp}
           transition={{ duration: FADE_DURATION, ease: "easeOut" }}
         >
-          {title}
+          <span>
+            {title}{" "}
+            {highlight && <span className="text-amber-500">{highlight}</span>}
+          </span>
         </motion.h1>
 
         {/* Subtitle */}

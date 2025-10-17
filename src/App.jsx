@@ -27,6 +27,11 @@ const DineDetails = lazy(() => import("./components/sections/DineDetails"));
 const NotFound = lazy(() => import("./pages/404"));
 const LoginPage = lazy(() => import("./pages/Login"));
 const SignupPage = lazy(() => import("./pages/SignUp"));
+const Dashboard = lazy(() => import("./pages/dashboard/Dashboard"));
+const DashboardDestinations = lazy(() =>
+  import("./pages/dashboard/DashboardDestinations")
+);
+
 function App() {
   return (
     <ThemeProvider
@@ -43,6 +48,24 @@ function App() {
             <div className="App">
               <Routes>
                 <Route path="/" element={<Home />} />
+
+                {/* Dashboard Routes */}
+                <Route
+                  path="/dashboard"
+                  element={
+                    <Suspense fallback={<PageSkeleton />}>
+                      <Dashboard />
+                    </Suspense>
+                  }
+                />
+                <Route
+                  path="/dashboard/destinations"
+                  element={
+                    <Suspense fallback={<PageSkeleton />}>
+                      <DashboardDestinations />
+                    </Suspense>
+                  }
+                />
 
                 <Route
                   path="/stay"
