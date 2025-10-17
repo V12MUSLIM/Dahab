@@ -29,7 +29,7 @@
     "mongoose": "^8.18.1",
     "morgan": "^1.10.1",
     "nodemailer": "^7.0.6",
-    "xss-clean": "^0.1.4"
+    "xss": "^1.0.15"
   },
   "devDependencies": {
     "@types/bcrypt": "^6.0.0",
