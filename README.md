@@ -1,12 +1,45 @@
-# React + Vite
+# Dahab - React Marketplace
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+## Project Overview
+Dahab is a modern marketplace web application built with React and Vite. It delivers a fast, efficient, and scalable shopping experience using the latest frontend technologies.
 
-Currently, two official plugins are available:
+## Features
+- Lightning-fast development with Vite and Hot Module Replacement (HMR)
+- Modern React components and hooks
+- Code quality enforced with ESLint
+- Flexible compilation: supports both Babel and SWC
+- Easy setup and developer-friendly tooling
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## Getting Started
 
-## Expanding the ESLint configuration
+### Prerequisites
+- Node.js (v14 or higher)
+- npm or yarn
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+### Installation
+
+1. **Clone the repository**
+    ```bash
+    git clone https://github.com/yourusername/Dahab-1.git
+    cd Dahab-1
+    ```
+
+2. **Install dependencies**
+    ```bash
+    npm install
+    ```
+
+3. **Start the development server**
+    ```bash
+    npm run dev
+    ```
+
+## Development Tools
+- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) — Babel-based React support
+- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) — SWC-based React support
+
+## Contributing
+Contributions are welcome! Please open an issue to discuss your ideas or submit a pull request for review.
+
+## License
+This project is licensed under the [MIT License](https://choosealicense.com/licenses/mit/).

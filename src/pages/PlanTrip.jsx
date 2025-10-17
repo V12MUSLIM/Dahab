@@ -135,11 +135,8 @@ export default function PlanTrip() {
     <>
       <HeroSection
         image="image1.webp"
-        title={
-          <span>
-            Plan Your <span className="text-amber-500">Dream Trip</span>
-          </span>
-        }
+        title="Plan Your"
+        highlight="Dream Trip"
         subtitle="From crystal-clear waters to golden deserts — craft your perfect Dahab journey with ease."
         Icon={Calendar}
         badge="Plan & Book"
