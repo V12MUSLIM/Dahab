@@ -1,15 +1,17 @@
-import { Badge } from "../ui/badge";
-import {
-  Carousel,
-  CarouselContent,
-  CarouselItem,
-  CarouselNext,
-  CarouselPrevious,
-} from "../ui/carousel";
-import { ImageCard } from "../customComponents/cardTemplates";
+import { Suspense, lazy } from "react";
 // eslint-disable-next-line no-unused-vars
 import { motion } from "framer-motion";
+import { Badge } from "../ui/badge";
 import { ArrowLeft, ArrowRight } from "lucide-react";
+
+// Lazy components
+const Carousel = lazy(() => import("../ui/carousel").then(m => ({ default: m.Carousel })));
+const CarouselContent = lazy(() => import("../ui/carousel").then(m => ({ default: m.CarouselContent })));
+const CarouselItem = lazy(() => import("../ui/carousel").then(m => ({ default: m.CarouselItem })));
+const CarouselNext = lazy(() => import("../ui/carousel").then(m => ({ default: m.CarouselNext })));
+const CarouselPrevious = lazy(() => import("../ui/carousel").then(m => ({ default: m.CarouselPrevious })));
+const ImageCard = lazy(() => import("../customComponents/cardTemplates").then(m => ({ default: m.ImageCard })));
+
 export default function FeaturedDestinationsSection({ id }) {
   const destinations = [
     {
@@ -17,8 +19,7 @@ export default function FeaturedDestinationsSection({ id }) {
       subtitle: "World Famous Dive Site",
       description:
         "Experience the world's most famous diving spot with crystal clear waters, incredible marine life, and depths that challenge even experienced divers.",
-      image:
-        "image1.webp",
+      image: "card2.webp",
       badge: "Must Visit",
       rating: "4.9",
       location: "Dahab Coast",
@@ -30,7 +31,7 @@ export default function FeaturedDestinationsSection({ id }) {
       subtitle: "Sacred Mountain",
       description:
         "Climb the legendary Mount Sinai and witness one of the world's most spectacular sunrises from this historically significant peak.",
-      image: `${import.meta.env.BASE_URL}image2.webp`,
+      image: "card3.webp",
       badge: "Spiritual Journey",
       rating: "4.8",
       location: "Sinai Peninsula",
@@ -42,8 +43,7 @@ export default function FeaturedDestinationsSection({ id }) {
       subtitle: "Natural Wonder",
       description:
         "Journey through stunning rock formations with vibrant colors created by millions of years of geological processes.",
-      image:
-        "image3.webp",
+      image: "card4.webp",
       badge: "Adventure",
       rating: "4.7",
       location: "Nuweiba Road",
@@ -55,11 +55,23 @@ export default function FeaturedDestinationsSection({ id }) {
       subtitle: "Snorkeling Paradise",
       description:
         "Discover natural rock pools teeming with marine life, perfect for snorkeling and underwater photography.",
-      image: "image4.webp",
+      image: "card5.webp",
       badge: "Family Friendly",
       rating: "4.6",
       location: "South Dahab",
       price: "$35",
+      buttonText: "Book Tour",
+    },
+    {
+      title: "Abu Galum",
+      subtitle: "Bedouin Beach Escape",
+      description:
+        "Visit the serene Abu Galum Reserve, surrounded by mountains and crystal-clear waters. Enjoy camel rides, snorkeling, and traditional Bedouin hospitality.",
+      image: "card1.webp",
+      badge: "Eco Adventure",
+      rating: "4.7",
+      location: "Between Blue Hole and Nuweiba",
+      price: "$40",
       buttonText: "Book Tour",
     },
   ];
@@ -86,40 +98,35 @@ export default function FeaturedDestinationsSection({ id }) {
             world-renowned destination
           </p>
         </div>
+
         <div className="flex items-center justify-center gap-3 mb-6 text-muted-foreground">
           <ArrowLeft className="w-5 h-5" />
           <h4 className="text-sm font-medium">Swipe</h4>
           <ArrowRight className="w-5 h-5" />
         </div>
 
-        <Carousel className="w-full">
-          <CarouselContent className="-ml-2 md:-ml-4">
-            {destinations.map((destination, index) => (
-              <CarouselItem
-                key={index}
-                className="pl-2 md:pl-4 md:basis-1/2 lg:basis-1/3"
-              >
-                <div className="h-full">
-                  <ImageCard
-                    title={destination.title}
-                    subtitle={destination.subtitle}
-                    description={destination.description}
-                    image={destination.image}
-                    badge={destination.badge}
-                    rating={destination.rating}
-                    location={destination.location}
-                    price={destination.price}
-                    buttonText={destination.buttonText}
-                  />
-                </div>
-              </CarouselItem>
-            ))}
-          </CarouselContent>
-          <div className="hidden md:block">
-            <CarouselPrevious className="left-2" />
-            <CarouselNext className="right-2" />
-          </div>
-        </Carousel>
+        <Suspense fallback={<div className="text-center">Loading...</div>}>
+          <Carousel className="w-full">
+            <CarouselContent className="-ml-2 md:-ml-4">
+              {destinations.map((destination, index) => (
+                <CarouselItem
+                  key={index}
+                  className="pl-2 md:pl-4 md:basis-1/2 lg:basis-1/3"
+                >
+                  <div className="h-full">
+                    <Suspense fallback={<div className="h-64 bg-muted animate-pulse" />}>
+                      <ImageCard {...destination} />
+                    </Suspense>
+                  </div>
+                </CarouselItem>
+              ))}
+            </CarouselContent>
+            <div className="hidden md:block">
+              <CarouselPrevious className="left-2" />
+              <CarouselNext className="right-2" />
+            </div>
+          </Carousel>
+        </Suspense>
       </div>
     </motion.div>
   );

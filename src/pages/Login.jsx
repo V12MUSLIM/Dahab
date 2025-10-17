@@ -38,8 +38,16 @@ const LoginPage = () => {
       // Simulate API call
       await new Promise((resolve) => setTimeout(resolve, 1000));
 
-      toast.success("Login successful!");
-       navigate("/");
+      // TEMPORARY: Check for admin credentials
+      if (data.email === "admin@dahab.com" && data.password === "admin123") {
+        localStorage.setItem("isAdmin", "true");
+        toast.success("Admin login successful!");
+        navigate("/dashboard");
+      } else {
+        // Regular user login
+        toast.success("Login successful!");
+        navigate("/");
+      }
     } catch (error) {
       console.error("Login error:", error);
       toast.error("Something went wrong while logging in. Please try again.");
