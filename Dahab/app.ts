@@ -10,8 +10,8 @@ import morgan from "morgan";
 import packagesRouter from './src/home/packages/package-router'
 import activitiesRouter from "./src/home/activities/activities-router";
 import destinationRouter from "./src/home/Destination/destination-router"
-import mongoSanitize from "express-mongo-sanitize";
-import xss from "xss-clean";
+import heroRouter from "./src/home/hero/hero-router";
+import { sanitizeInput } from "./src/middlewares/sanitize.middleware";
 
 dotenv.config();
 
@@ -38,11 +38,8 @@ app.use(
 );
 app.use(morgan("dev"));
 app.use(express.json());
-app.use(mongoSanitize());
-app.use(xss());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
-
 app.use(
     rateLimit({
         windowMs: 15 * 60 * 1000,
@@ -50,10 +47,12 @@ app.use(
         message: "Too many requests from this IP, try again later.",
     })
 );
+app.use(sanitizeInput);
 // routes
 app.use("/api/packages", packagesRouter);
 app.use("/api/activities", activitiesRouter);
 app.use("/api/destination", destinationRouter);
+app.use("/api/hero", heroRouter);
 
 app.use((err: any, req: Request, res: Response, next: NextFunction) => {
     console.error(err);
