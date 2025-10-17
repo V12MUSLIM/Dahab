@@ -39,7 +39,13 @@ import Logo from "@/icons/Logo";
 import { cn } from "@/lib/utils";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { NavLink } from "react-router-dom";
-import { CONTACT, ROUTES, DESTINATIONS, EXPERIENCES, UI_TEXT} from "@/config/SiteConfig"
+import {
+  CONTACT,
+  ROUTES,
+  DESTINATIONS,
+  EXPERIENCES,
+  UI_TEXT,
+} from "@/config/SiteConfig";
 
 // Icon mapping helper
 const iconMap = {
@@ -48,14 +54,19 @@ const iconMap = {
   Camera,
 };
 
+// TODO: Replace this with actual auth check
+const isAdmin = () => {
+  return localStorage.getItem("isAdmin") === "true";
+};
+
 // Map destinations with actual icon components
-const destinations = DESTINATIONS.map(dest => ({
+const destinations = DESTINATIONS.map((dest) => ({
   ...dest,
   icon: iconMap[dest.iconName],
 }));
 
 // Map experiences with actual icon components
-const experiences = EXPERIENCES.map(exp => ({
+const experiences = EXPERIENCES.map((exp) => ({
   ...exp,
   icon: iconMap[exp.iconName],
 }));
@@ -344,10 +355,7 @@ const DrawerContentComponent = React.memo(({ isMobile = false, onClose }) => {
               </Button>
             </NavLink>
 
-            <a
-              href={`mailto:${CONTACT.email}`}
-              className="block"
-            >
+            <a href={`mailto:${CONTACT.email}`} className="block">
               <Button
                 variant="ghost"
                 className="w-full justify-start h-10 text-sm hover:bg-amber-50 dark:hover:bg-amber-900/20 hover:text-amber-600 dark:hover:text-amber-400 transition-all duration-200"
@@ -546,8 +554,7 @@ export default function DahabTourismNavbar() {
       </header>
 
       {/* Mobile Bottom Navigation */}
-    <nav className="lg:hidden fixed bottom-0 left-0 right-0 z-50 border-t border-amber-400/20 dark:border-amber-500/30 bg-white/40 dark:bg-black/40 backdrop-blur-xl pb-safe shadow-lg">
-
+      <nav className="lg:hidden fixed bottom-0 left-0 right-0 z-50 border-t border-amber-400/20 dark:border-amber-500/30 bg-white/40 dark:bg-black/40 backdrop-blur-xl pb-safe shadow-lg">
         <div className="flex items-center justify-center h-16 px-2">
           <NavLink
             to={ROUTES.home}
@@ -562,7 +569,9 @@ export default function DahabTourismNavbar() {
             }
           >
             <HomeIcon className="h-5 w-5" />
-            <span className="text-xs font-medium">{UI_TEXT.navigation.home}</span>
+            <span className="text-xs font-medium">
+              {UI_TEXT.navigation.home}
+            </span>
           </NavLink>
 
           <NavLink
@@ -577,7 +586,9 @@ export default function DahabTourismNavbar() {
             }
           >
             <MapPin className="h-5 w-5" />
-            <span className="text-xs font-medium">{UI_TEXT.navigation.places}</span>
+            <span className="text-xs font-medium">
+              {UI_TEXT.navigation.places}
+            </span>
           </NavLink>
 
           <NavLink
@@ -592,7 +603,9 @@ export default function DahabTourismNavbar() {
             }
           >
             <Camera className="h-5 w-5" />
-            <span className="text-xs font-medium">{UI_TEXT.navigation.activities}</span>
+            <span className="text-xs font-medium">
+              {UI_TEXT.navigation.activities}
+            </span>
           </NavLink>
 
           <NavLink
@@ -607,7 +620,9 @@ export default function DahabTourismNavbar() {
             }
           >
             <Calendar className="h-5 w-5" />
-            <span className="text-xs font-medium">{UI_TEXT.navigation.plan}</span>
+            <span className="text-xs font-medium">
+              {UI_TEXT.navigation.plan}
+            </span>
           </NavLink>
 
           {/* Mobile Drawer */}
@@ -619,7 +634,9 @@ export default function DahabTourismNavbar() {
             <DrawerTrigger asChild>
               <button className="flex flex-col items-center justify-center flex-1 h-full space-y-1 transition-colors duration-200 text-foreground/60 hover:text-amber-600 dark:hover:text-amber-400">
                 <Menu className="h-5 w-5" />
-                <span className="text-xs font-medium">{UI_TEXT.navigation.more}</span>
+                <span className="text-xs font-medium">
+                  {UI_TEXT.navigation.more}
+                </span>
               </button>
             </DrawerTrigger>
             <DrawerContent
