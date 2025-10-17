@@ -23,6 +23,7 @@ const ExperiencesDetail = lazy(() =>
 const DestinationDetail = lazy(() =>
   import("./components/sections/DestinationsDetailsSections")
 );
+const DineDetails = lazy(() => import("./components/sections/DineDetails"));
 const NotFound = lazy(() => import("./pages/404"));
 const LoginPage = lazy(() => import("./pages/Login"));
 const SignupPage = lazy(() => import("./pages/SignUp"));
@@ -56,6 +57,14 @@ function App() {
                   element={
                     <Suspense fallback={<PageSkeleton />}>
                       <Dine />
+                    </Suspense>
+                  }
+                />
+                <Route
+                  path="/restaurants/:IdPage"
+                  element={
+                    <Suspense fallback={<PageSkeleton />}>
+                      <DineDetails />
                     </Suspense>
                   }
                 />

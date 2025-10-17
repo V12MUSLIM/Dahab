@@ -76,7 +76,7 @@ export default function Dine() {
     <div className="min-h-screen bg-gradient-to-b from-background to-muted/20">
       {/* Hero Section */}
       <HeroSection
-        imageURL="https://images.unsplash.com/photo-1414235077428-338989a2e8c0?q=80&w=2070&auto=format&fit=crop"
+        imageURL="Dine-Images/Hero.webp"
         title={
           <span>
             Discover Amazing <span className="text-amber-500">Dining</span>
