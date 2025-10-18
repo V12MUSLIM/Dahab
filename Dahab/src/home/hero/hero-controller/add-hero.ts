@@ -1,9 +1,19 @@
 import { RequestHandler } from "express";
-import { Hero } from "../hero-model";
+import { CTA, Hero, Stat } from "../hero-model";
 
-interface IRequest 
-{}
-
+interface IRequest {
+    section: string;
+    image: string;
+    title: string;
+    highlight?: string;
+    subtitle: string;
+    badge: string;
+    icon: string;
+    description?: string;
+    primaryCta: CTA;
+    secondaryCta: CTA;
+    stats: Stat[];
+}
 
 interface IResponse {
     message: string;
