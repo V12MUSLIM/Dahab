@@ -1,19 +1,79 @@
-import { Badge } from "../ui/badge";
-import { Link } from "react-router-dom";
-// eslint-disable-next-line no-unused-vars
-import {
-  // eslint-disable-next-line no-unused-vars
-  motion,
-  useReducedMotion,
-  useScroll,
-  useTransform,
-} from "framer-motion";
+// components/sections/HeroSection.jsx
 import { useState } from "react";
+import { Link } from "react-router-dom";
+import { Badge } from "../ui/badge";
+import { motion, useReducedMotion, useScroll, useTransform } from "framer-motion";
+import {
+  Sun, Anchor, Star, ArrowRight, Calendar, Waves, Camera, Mountain,
+  CheckCircle, MapPin, Plane,
+} from "lucide-react";
 
 const FADE_DURATION = 0.8;
-const SCALE_DURATION = 0.6;
 const STAGGER_DELAY = 0.15;
 const FLOAT_DURATION = 3;
+
+const iconMap = {
+  Sun, Anchor, Star, ArrowRight, Calendar, Waves, Camera, Mountain, CheckCircle, MapPin, Plane,
+};
+
+const resolveIcon = (icon) => {
+  if (!icon) return null;
+  if (typeof icon === "string") return iconMap[icon] || null;
+  return icon;
+};
+
+const CTAButton = ({ cta, Button, variants }) => {
+  if (!cta || !cta.label || !Button) return null;
+
+  const Icon = resolveIcon(cta.icon);
+
+  const handleClick = (e) => {
+    if (cta.href?.startsWith("#")) {
+      e.preventDefault();
+      const id = cta.href.slice(1);
+      document.getElementById(id)?.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+    cta.onClick?.(e);
+  };
+
+  // External link
+  if (/^https?:\/\//i.test(cta.href ?? "")) {
+    return (
+      <motion.div variants={variants}>
+        <Button asChild>
+          <a href={cta.href} target="_blank" rel="noopener noreferrer" aria-label={cta.label}>
+            {Icon && <Icon className="mr-2 h-4 w-4" aria-hidden="true" />}
+            {cta.label}
+          </a>
+        </Button>
+      </motion.div>
+    );
+  }
+
+  // Internal route
+  if (cta.href && !cta.href.startsWith("#")) {
+    return (
+      <motion.div variants={variants}>
+        <Button asChild>
+          <Link to={cta.href} aria-label={cta.label}>
+            {Icon && <Icon className="mr-2 h-4 w-4" aria-hidden="true" />}
+            {cta.label}
+          </Link>
+        </Button>
+      </motion.div>
+    );
+  }
+
+  // Hash or no href
+  return (
+    <motion.div variants={variants}>
+      <Button onClick={handleClick} aria-label={cta.label}>
+        {Icon && <Icon className="mr-2 h-4 w-4" aria-hidden="true" />}
+        {cta.label}
+      </Button>
+    </motion.div>
+  );
+};
 
 export default function HeroSection({
   image,
@@ -31,68 +91,34 @@ export default function HeroSection({
 }) {
   const [imageLoaded, setImageLoaded] = useState(false);
   const shouldReduceMotion = useReducedMotion();
+  const ResolvedIcon = resolveIcon(Icon);
 
-  // 👇 Parallax setup
   const { scrollY } = useScroll();
-  const yParallax = useTransform(scrollY, [0, 800], [0, 120], {
-    clamp: true, // prevents motion beyond the last value
-  }); // parallax range
+  const yParallax = useTransform(scrollY, [0, 800], [0, 120], { clamp: true });
 
-  // Animation variants
   const fadeInUp = {
     initial: { opacity: 0, y: shouldReduceMotion ? 0 : 60 },
     animate: { opacity: 1, y: 0 },
   };
-
   const staggerContainer = {
     initial: {},
-    animate: {
-      transition: { staggerChildren: STAGGER_DELAY },
-    },
+    animate: { transition: { staggerChildren: STAGGER_DELAY } },
   };
-
-  const scaleIn = {
-    initial: { scale: shouldReduceMotion ? 1 : 0.8, opacity: 0 },
-    animate: { scale: 1, opacity: 1 },
-  };
-
   const floatAnimation = shouldReduceMotion
     ? {}
     : {
         animate: {
           y: [0, -10, 0],
-          transition: {
-            duration: FLOAT_DURATION,
-            repeat: Infinity,
-            repeatType: "reverse",
-            ease: "easeInOut",
-          },
+          transition: { duration: FLOAT_DURATION, repeat: Infinity, repeatType: "reverse", ease: "easeInOut" },
         },
       };
-
   const imageAnimation = shouldReduceMotion
     ? { opacity: imageLoaded ? 1 : 0 }
-    : {
-        initial: { scale: 1.2, opacity: 0 },
-        animate: { scale: 1, opacity: imageLoaded ? 1 : 0 },
-      };
+    : { initial: { scale: 1.2, opacity: 0 }, animate: { scale: 1, opacity: imageLoaded ? 1 : 0 } };
 
-  // CTA Button helper
-  const CTAButton = ({ cta, Button, variants }) => {
-    if (!cta || !Button) return null;
-
-    const buttonContent = (
-      <Button icon={cta.icon} onClick={cta.onClick}>
-        {cta.label}
-      </Button>
-    );
-
-    return (
-      <motion.div variants={variants}>
-        {cta.href ? <Link to={cta.href}>{buttonContent}</Link> : buttonContent}
-      </motion.div>
-    );
-  };
+  const hasPrimary = !!(primaryCta && primaryCta.label);
+  const hasSecondary = !!(secondaryCta && secondaryCta.label);
+  const showCtas = hasPrimary || hasSecondary;
 
   return (
     <section className="relative w-full h-screen flex items-center justify-center overflow-hidden">
@@ -108,13 +134,13 @@ export default function HeroSection({
             imageURL
               ? imageURL
               : image
-              ? `${import.meta.env.BASE_URL}${image}`
-              : "https://lightwidget.com/wp-content/uploads/localhost-file-not-found.jpg"
+                ? `${import.meta.env.BASE_URL}${image}`
+                : "https://lightwidget.com/wp-content/uploads/localhost-file-not-found.jpg"
           }
           alt={`${title} background`}
           className="w-full h-full object-cover"
           onLoad={() => setImageLoaded(true)}
-          style={{ y: yParallax }} // 👈 Parallax movement
+          style={{ y: yParallax }}
           {...imageAnimation}
           transition={{ duration: 1.2, ease: "easeOut" }}
         />
@@ -137,10 +163,10 @@ export default function HeroSection({
         animate="animate"
       >
         {/* Floating Badge */}
-        {(Icon || badge) && (
+        {(ResolvedIcon || badge) && (
           <motion.div {...floatAnimation} className="inline-block mb-6">
             <Badge className="bg-yellow-600/90 dark:bg-yellow-700/90 text-white border-0 px-4 py-2 text-sm font-semibold backdrop-blur-sm flex items-center gap-2">
-              {Icon && <Icon className="w-4 h-4" aria-hidden="true" />}
+              {ResolvedIcon && <ResolvedIcon className="w-4 h-4" aria-hidden="true" />}
               {badge}
             </Badge>
           </motion.div>
@@ -153,8 +179,7 @@ export default function HeroSection({
           transition={{ duration: FADE_DURATION, ease: "easeOut" }}
         >
           <span>
-            {title}{" "}
-            {highlight && <span className="text-amber-500">{highlight}</span>}
+            {title} {highlight && <span className="text-amber-500">{highlight}</span>}
           </span>
         </motion.h1>
 
@@ -163,32 +188,22 @@ export default function HeroSection({
           <motion.p
             className="mt-4 text-lg sm:text-xl md:text-2xl text-gray-100 font-light tracking-wide leading-relaxed drop-shadow-lg max-w-3xl mx-auto px-4"
             variants={fadeInUp}
-            transition={{
-              duration: FADE_DURATION,
-              ease: "easeOut",
-              delay: 0.1,
-            }}
+            transition={{ duration: FADE_DURATION, ease: "easeOut", delay: 0.1 }}
           >
             {subtitle}
           </motion.p>
         )}
 
         {/* CTA Buttons */}
-        {(primaryCta || secondaryCta) && (
+        {showCtas && (
           <motion.div
-            className="mt-10 flex flex-col sm:flex-row items-center justify-center gap-4 px-4"
             variants={staggerContainer}
+            initial="initial"
+            animate="animate"
+            className="mt-8 flex flex-wrap gap-4 justify-center"
           >
-            <CTAButton
-              cta={primaryCta}
-              Button={PrimaryButton}
-              variants={scaleIn}
-            />
-            <CTAButton
-              cta={secondaryCta}
-              Button={SecondaryButton}
-              variants={scaleIn}
-            />
+            {hasPrimary && <CTAButton cta={primaryCta} Button={PrimaryButton} variants={fadeInUp} />}
+            {hasSecondary && <CTAButton cta={secondaryCta} Button={SecondaryButton} variants={fadeInUp} />}
           </motion.div>
         )}
 
@@ -197,23 +212,17 @@ export default function HeroSection({
           <motion.div
             className="mt-12 flex flex-wrap items-center justify-center gap-4 sm:gap-8 text-white/90 px-4"
             variants={fadeInUp}
-            transition={{
-              duration: FADE_DURATION,
-              ease: "easeOut",
-              delay: 0.2,
-            }}
+            transition={{ duration: FADE_DURATION, ease: "easeOut", delay: 0.2 }}
           >
-            {stats.map((stat, idx) => (
-              <div key={idx} className="flex items-center gap-2">
-                {stat.icon && (
-                  <stat.icon
-                    className="w-5 h-5 text-yellow-400"
-                    aria-hidden="true"
-                  />
-                )}
-                <span className="text-sm font-medium">{stat.text}</span>
-              </div>
-            ))}
+            {stats.map((stat, idx) => {
+              const StatIcon = resolveIcon(stat.icon);
+              return (
+                <div key={idx} className="flex items-center gap-2">
+                  {StatIcon && <StatIcon className="w-5 h-5 text-yellow-400" aria-hidden="true" />}
+                  <span className="text-sm font-medium">{stat.text}</span>
+                </div>
+              );
+            })}
           </motion.div>
         )}
       </motion.div>

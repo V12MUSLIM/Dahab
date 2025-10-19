@@ -144,20 +144,12 @@ export default function PlanTrip() {
         SecondaryButton={SecondaryButton}
         primaryCta={{
           label: "Start Planning",
-          onClick: () => {
-            document
-              .getElementById("custom")
-              ?.scrollIntoView({ behavior: "smooth", block: "start" });
-          },
+          href: "#custom", // ✅ Use href with hash
           icon: CheckCircle,
         }}
         secondaryCta={{
           label: "Discover Destinations",
-          onClick: () => {
-            document
-              .getElementById("discover")
-              ?.scrollIntoView({ behavior: "smooth", block: "start" });
-          },
+          href: "#discover", // ✅ Use href with hash
           icon: MapPin,
         }}
         stats={[
