@@ -18,7 +18,7 @@ export const addPackage: RequestHandler<{}, IResponse, IRequest | IRequest[]> = 
         if (Array.isArray(req.body)) {
             await Package.insertMany(req.body);
         } else {
-            await Package.create(req.body);
+            (await Package.create(req.body));
         }
 
         res.status(201).json({ message: "Package(s) added successfully" });

@@ -1,12 +1,12 @@
+// src/pages/Home.jsx
 import { lazy, Suspense } from "react";
 import { usePackages } from "../hooks/usePackages";
 import { useActivities } from "../hooks/useActivities";
+import { useHero } from "../hooks/useHero";
 
-// Eager load - Above the fold components
 import HeroSection from "../components/sections/HeroSection";
 import { PageSkeleton } from "@/components/skeletons/PageSkeleton";
 
-// Lazy load - Below the fold components
 const GallerySection = lazy(() =>
   import("../components/sections/GallerySection")
 );
@@ -46,7 +46,6 @@ import {
   SecondaryButton,
 } from "../components/customComponents/ButtonVarients";
 
-// Loading fallback component
 const SectionLoader = () => (
   <div className="w-full h-64 flex items-center justify-center">
     <div className="animate-pulse space-y-4 w-full max-w-4xl px-4">
@@ -56,32 +55,65 @@ const SectionLoader = () => (
     </div>
   </div>
 );
+
 const iconMap = {
-  Waves: Waves,
-  Camera: Camera,
-  Mountain: Mountain,
-  Sun: Sun,
-  Anchor: Anchor,
-  Star: Star,
-  ArrowRight: ArrowRight,
-  Calendar: Calendar,
+  Waves,
+  Camera,
+  Mountain,
+  Sun,
+  Anchor,
+  Star,
+  ArrowRight,
+  Calendar,
 };
+
 export default function Home() {
+  // Queries
   const {
     data: packages,
     isLoading: packagesLoading,
     error: packagesError,
   } = usePackages();
-
   const {
     data: activities,
     isLoading: activitiesLoading,
     error: activitiesError,
   } = useActivities();
+  const { data: hero, isLoading: heroLoading, error: heroError } = useHero();
 
-  const isLoading = packagesLoading || activitiesLoading;
+  // Normalize hero (endpoint returns array)
+  const heroObj = Array.isArray(hero) ? hero[0] : hero;
 
-  // Fallback data for packages
+  const isLoading = packagesLoading || activitiesLoading || heroLoading;
+
+  // Fallback hero
+  const fallbackHero = {
+    image: "hero.webp",
+    title: "Dahab",
+    subtitle:
+      "Red Sea Paradise – Where Adventure, Relaxation, and Culture Unite",
+    icon: "Sun",
+    badge: "Sunny Escape",
+    primaryCta: {
+      label: "Explore All",
+      icon: "ArrowRight",
+      href: "/experiences",
+    },
+    secondaryCta: {
+      label: "Plan Your Trip",
+      icon: "Calendar",
+      href: "/plantrip",
+    },
+    stats: [
+      { icon: "Sun", text: "330+ Sunny Days" },
+      { icon: "Anchor", text: "25+ Dive Sites" },
+      { icon: "Star", text: "4.9/5 Rating" },
+    ],
+  };
+
+  const displayHero = heroObj || fallbackHero;
+
+  // Fallback packages
   const fallbackPackages = [
     {
       title: "Adventure Seeker",
@@ -124,7 +156,7 @@ export default function Home() {
     },
   ];
 
-  // Fallback data for activities
+  // Fallback activities
   const fallbackActivities = [
     {
       title: "Scuba Diving",
@@ -168,22 +200,22 @@ export default function Home() {
     },
   ];
 
-  // Use fallback data if API fails, otherwise use API data
   const displayPackages = packages || fallbackPackages;
+
   const displayActivities = activities
-    ? activities.map((activity) => ({
-        ...activity,
-        icon: iconMap[activity.icon] || Waves, // fallback to Waves if icon not found
+    ? activities.map((a) => ({
+        ...a,
+        icon: iconMap[a.icon] || Waves,
       }))
     : fallbackActivities;
 
-  // Show skeleton loading state only on initial load
-  if (isLoading && !packages && !activities) {
+  // First load skeleton
+  if (isLoading && !packages && !activities && !hero) {
     return <PageSkeleton />;
   }
 
-  // Optional: Show a subtle warning banner if data failed to load but page is still functional
-  const showWarning = (packagesError || activitiesError) && !isLoading;
+  const showWarning =
+    (packagesError || activitiesError || heroError) && !isLoading;
 
   const galleryImages = [
     {
@@ -214,7 +246,6 @@ export default function Home() {
 
   return (
     <div className="min-h-screen bg-background overflow-x-hidden">
-      {/* Optional warning banner */}
       {showWarning && (
         <div className="bg-yellow-50 border-b border-yellow-200 px-4 py-3 text-center">
           <p className="text-sm text-yellow-800">
@@ -223,45 +254,33 @@ export default function Home() {
         </div>
       )}
 
-      {/* Hero Section - Loaded immediately (above the fold) */}
+      {/* Hero */}
       <HeroSection
-        image="hero.webp"
-        title="Dahab"
-        subtitle="Red Sea Paradise – Where Adventure, Relaxation, and Culture Unite"
-        Icon={Sun}
-        badge="Sunny Escape"
+        image={displayHero?.image}
+        title={displayHero?.title}
+        subtitle={displayHero?.subtitle}
+        Icon={displayHero?.icon}
+        badge={displayHero?.badge}
+        stats={displayHero?.stats ?? []}
+        primaryCta={displayHero?.primaryCta}
+        secondaryCta={displayHero?.secondaryCta}
         PrimaryButton={PrimaryButton}
         SecondaryButton={SecondaryButton}
-        primaryCta={{
-          label: "Explore All",
-          href: "/experiences",
-          icon: ArrowRight,
-        }}
-        secondaryCta={{
-          label: "Plan Your Trip",
-          href: "/plantrip",
-          icon: Calendar,
-        }}
-        stats={[
-          { icon: Sun, text: "330+ Sunny Days" },
-          { icon: Anchor, text: "25+ Dive Sites" },
-          { icon: Star, text: "4.9/5 Rating" },
-        ]}
       />
 
-      {/* Gallery Section - Lazy loaded */}
+      {/* Gallery */}
       <Suspense fallback={<SectionLoader />}>
         <GallerySection
           badge="Explore Dahab"
           header="Discover Paradise"
           paragraph="Experience the stunning beauty of Dahab through our curated gallery"
           images={galleryImages}
-          autoPlay={true}
+          autoPlay
           autoPlayInterval={2500}
         />
       </Suspense>
 
-      {/* Package Deals Section - Lazy loaded */}
+      {/* Packages */}
       <Suspense fallback={<SectionLoader />}>
         <PackageDealsSection
           packages={displayPackages}
@@ -271,12 +290,12 @@ export default function Home() {
         />
       </Suspense>
 
-      {/* Featured Destinations Section - Lazy loaded */}
+      {/* Featured */}
       <Suspense fallback={<SectionLoader />}>
         <FeaturedDestinationsSection />
       </Suspense>
 
-      {/* Activities Section - Lazy loaded */}
+      {/* Activities */}
       <Suspense fallback={<SectionLoader />}>
         <ActivitiesSection
           badge="Activities"
@@ -286,7 +305,7 @@ export default function Home() {
         />
       </Suspense>
 
-      {/* Group non-critical sections together in one Suspense boundary */}
+      {/* Grouped non-critical */}
       <Suspense fallback={<SectionLoader />}>
         <TestimonialsSection />
         <FAQSection />
