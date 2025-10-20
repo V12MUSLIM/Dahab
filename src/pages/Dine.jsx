@@ -76,7 +76,7 @@ export default function Dine() {
     <div className="min-h-screen bg-gradient-to-b from-background to-muted/20">
       {/* Hero Section */}
       <HeroSection
-        imageURL="Dine-Images/Hero.webp"
+        image="Dine-Images/Hero.webp"
         title={
           <span>
             Discover Amazing <span className="text-amber-500">Dining</span>
@@ -85,7 +85,6 @@ export default function Dine() {
         subtitle="From beachfront seafood to traditional Bedouin feasts, explore the best restaurants in Dahab"
         Icon={Utensils}
         badge="30+ Restaurants"
-        description="Experience authentic flavors, stunning views, and warm hospitality at Dahab's finest dining establishments."
         primaryCta={{
           label: "Explore Restaurants",
           href: "#restaurants",

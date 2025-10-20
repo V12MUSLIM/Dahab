@@ -200,7 +200,7 @@ export default function Home() {
     },
   ];
 
-  const displayPackages = packages || fallbackPackages;
+  const displayPackages = packages?.packages || fallbackPackages;
 
   const displayActivities = activities
     ? activities.map((a) => ({
