@@ -9,14 +9,14 @@ export const CONTACT = {
 export const SOCIAL_MEDIA = [
   {
     name: "Facebook",
-    icon: `${import.meta.env.BASE_URL}facebook.svg`,
+    icon: "facebook.svg",
     href: "https://www.facebook.com/zuck",
     label: "Follow us on Facebook",
     color: "hover:bg-blue-500",
   },
   {
     name: "Instagram",
-    icon: `${import.meta.env.BASE_URL}/instagram.svg`,
+    icon: "instagram.svg",
     href: "https://instagram.com/dahabtourism",
     label: "Follow us on Instagram",
     color:
@@ -24,14 +24,14 @@ export const SOCIAL_MEDIA = [
   },
   {
     name: "Twitter",
-    icon: `${import.meta.env.BASE_URL}x.svg`,
+    icon: "x.svg",
     href: "https://twitter.com/dahabtourism",
     label: "Follow us on Twitter",
     color: "hover:bg-gray-900",
   },
   {
     name: "YouTube",
-    icon: `${import.meta.env.BASE_URL}youtube.svg`,
+    icon: "youtube.svg",
     href: "https://youtube.com/dahabtourism",
     label: "Subscribe on YouTube",
     color: "hover:bg-red-500",
@@ -41,14 +41,14 @@ export const SOCIAL_MEDIA = [
     icon: "Mail",
     href: `mailto:${CONTACT.email}`,
     label: "Email us",
-    color: "hover:bg-amber-500",
+    color: "hover:bg-green-500",
   },
   {
     name: "Location",
     icon: "MapPin",
     href: "https://maps.google.com/?q=Dahab,Egypt",
     label: "Find us on map",
-    color: "hover:bg-emerald-500",
+    color: "hover:bg-purple-500",
   },
   {
     name: "Phone",

@@ -3,21 +3,26 @@
 import { motion } from "framer-motion";
 import { Mail, MapPin, Phone } from "lucide-react";
 import { Badge } from "../ui/badge";
-import { SOCIAL_MEDIA } from"@/config/SiteConfig"
+import { SOCIAL_MEDIA } from "@/config/SiteConfig";
 
-export default function SocialMediaSection({ badge = '', header, description, socialLinks = SOCIAL_MEDIA }) {
+export default function SocialMediaSection({
+  badge = "",
+  header,
+  description,
+  socialLinks = SOCIAL_MEDIA,
+}) {
   // Icon map for lucide-react icons
   const iconMap = {
     Mail,
     MapPin,
-    Phone
+    Phone,
   };
 
   return (
     <section className="py-20">
       <div className="max-w-6xl mx-auto px-4">
         {/* Header Section */}
-        <motion.div 
+        <motion.div
           className="text-center mb-16 space-y-4"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -46,55 +51,56 @@ export default function SocialMediaSection({ badge = '', header, description, so
                 aria-label={social.label}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="relative flex items-center justify-center w-14 h-14 rounded-full overflow-visible"
+                className="relative  flex items-center justify-center w-14 h-14 rounded-full overflow-visible"
                 initial={{ opacity: 0, scale: 0.5 }}
                 animate={{ opacity: 1, scale: 1 }}
-                transition={{ 
-                  duration: 0.3, 
+                transition={{
+                  duration: 0.3,
                   delay: index * 0.1,
                   type: "spring",
                   stiffness: 260,
-                  damping: 20
+                  damping: 20,
                 }}
-                whileHover={{ 
+                whileHover={{
                   scale: 1.2,
-                  transition: { 
-                    type: "spring", 
-                    stiffness: 400, 
-                    damping: 10 
-                  }
+                  transition: {
+                    type: "spring",
+                    stiffness: 400,
+                    damping: 10,
+                  },
                 }}
                 whileTap={{ scale: 0.95 }}
               >
                 {/* Animated Glow Ring */}
-                <motion.div 
-                  className="absolute inset-0 rounded-full"
+                <motion.div
+                  className="absolute inset-0 rounded-full pointer-events-none"
                   initial={{ opacity: 0 }}
                   whileHover={{ opacity: 1 }}
                   transition={{ duration: 0.3 }}
                 >
-                  <motion.div 
+                  <motion.div
                     className={`absolute inset-0 rounded-full bg-gradient-to-br ${social.color} opacity-30 blur-xl`}
-                    animate={{ 
+                    animate={{
                       scale: [1, 1.2, 1],
                     }}
                     transition={{
                       duration: 2,
                       repeat: Infinity,
-                      repeatType: "reverse"
+                      repeatType: "reverse",
                     }}
                   />
                 </motion.div>
 
-                {/* Icon Background */}
-                <motion.div 
-                  className={`relative h-14 w-14 flex items-center justify-center rounded-full bg-gradient-to-br ${social.color} shadow-lg`}
+                {/* Icon Background - Always has colored gradient */}
+                <motion.div
+                  className={`relative bg-amber-500 h-14 w-14 flex items-center justify-center rounded-full bg-gradient-to-br ${social.color} shadow-lg`}
                 >
                   {typeof Icon === "string" ? (
                     <motion.img
                       src={Icon}
                       alt={social.name}
-                      className="h-6 w-6 object-contain brightness-0 invert"
+                      className="h-6 w-6 object-contain filter brightness-0 invert"
+                      style={{ filter: "brightness(0) invert(1)" }}
                       whileHover={{ scale: 1.1, rotate: 5 }}
                       transition={{ type: "spring", stiffness: 300 }}
                     />
@@ -103,7 +109,7 @@ export default function SocialMediaSection({ badge = '', header, description, so
                       whileHover={{ scale: 1.1, rotate: 5 }}
                       transition={{ type: "spring", stiffness: 300 }}
                     >
-                      <Icon className="h-6 w-6 text-white drop-shadow-lg" />
+                      <Icon className="h-6 w-6 text-white  dark:text-white drop-shadow-lg" />
                     </motion.div>
                   )}
                 </motion.div>
