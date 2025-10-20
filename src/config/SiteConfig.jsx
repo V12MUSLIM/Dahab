@@ -2,7 +2,7 @@
 
 // Contact Information
 export const CONTACT = {
-  phone: "+20 123 456 789",
+  phone: "+20 10000000000",
   email: "info@dahabtourism.com",
 };
 // Social Media Links
