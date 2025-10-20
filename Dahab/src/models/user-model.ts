@@ -1,18 +1,20 @@
 import mongoose, { Schema } from "mongoose";
 
-
 export enum Role {
     User = "user",
     Admin = "admin",
 }
+
 export interface IUser {
     name: string;
     email: string;
-    password: string;
-    // confirmPassword: string;
+    password?: string;
     isVerified: boolean;
-    role?: Role;
+    role: Role;
+    googleId?: string;
+    picture?: string; 
 }
+
 const UserSchema = new Schema<IUser>({
     name: {
         type: String,
@@ -26,12 +28,10 @@ const UserSchema = new Schema<IUser>({
     },
     password: {
         type: String,
-        required: [true, "Password is required"]
+        required: function(this: IUser) {
+            return !this.googleId;
+        }
     },
-    // confirmPassword: {
-    //     type: String,
-    //     required: [true, "Confirm Password is required"]
-    // },
     isVerified: {
         type: Boolean,
         default: false
@@ -41,6 +41,16 @@ const UserSchema = new Schema<IUser>({
         enum: [Role.Admin, Role.User],
         default: Role.User
     },
+    googleId: {
+        type: String,
+        sparse: true, 
+        unique: true
+    },
+    picture: {
+        type: String
+    }
+}, {
+    timestamps: true 
 });
 
 export const User = mongoose.model<IUser>("User", UserSchema, "users");

@@ -10,13 +10,12 @@ export const loginHandler: RequestHandler = async (req, res, next) => {
         if (!email || !password) return res.status(400).json({ message: "Missing credentials" });
 
         const user = await User.findOne({ email }).select("+password").exec();
-        if (!user) return res.status(400).json({ message: "Invalid email or password" });
+        if (!user || !user.password) return res.status(400).json({ message: "Invalid email or password" });
 
-        const vaidPassword = await bcrypt.compare(password, user.password);
-        if (!vaidPassword) return res.status(400).json({ message: "Invalid email or password" });
+        const validPassword = await bcrypt.compare(password, user.password);
+        if (!validPassword) return res.status(400).json({ message: "Invalid email or password" });
 
-        const token = jwtService.createToken({ id: user._id, email: user.email, role: user.role },
-            { expiresIn: "2h" });
+        const token = jwtService.createToken({ id: user._id, email: user.email, role: user.role }, { expiresIn: "2h" });
 
         res.cookie("token", token, {
             httpOnly: true,

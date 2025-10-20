@@ -78,7 +78,7 @@ const experiencesByCategory = [
         description:
           "Start your day with a rejuvenating yoga session on the beach, facing the beautiful sunrise.",
         imageUrl:
-          "https://images.pexels.com/photos/3094215/pexels-photo-3094215.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
+          "https://st3.depositphotos.com/1035122/34939/i/450/depositphotos_349395388-stock-photo-old-man-with-grey-beard.jpg",
         href: "/experiences/sunrise-yoga",
       },
       {
@@ -87,7 +87,7 @@ const experiencesByCategory = [
         description:
           "Find your inner peace with guided meditation and indulge in our relaxing spa packages.",
         imageUrl:
-          "https://images.pexels.com/photos/3768916/pexels-photo-3768916.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
+          "https://media.istockphoto.com/id/1215733691/photo/calm-man-meditating-in-sunny-summer-day.jpg?s=612x612&w=0&k=20&c=DVpQcX0Pa1mmz97sr31C80eju-5v3BVkCdirR0_T_0c=",
         href: "/experiences/meditation-spa",
       },
     ],

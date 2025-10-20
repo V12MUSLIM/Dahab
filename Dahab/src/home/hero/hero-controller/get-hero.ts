@@ -2,8 +2,8 @@ import { RequestHandler } from "express";
 import { Hero, IHero } from "../hero-model";
 
 interface IResponse{
-    message?:string
     hero?:IHero|IHero[]
+    message?:string
 }
 
 export const getHero:RequestHandler<{section:string},IResponse,{}>=async(req,res)=>{
@@ -11,5 +11,6 @@ export const getHero:RequestHandler<{section:string},IResponse,{}>=async(req,res
     select("__id image title subtitle badge primaryCta secondaryCta stats").exec();
     if (!hero) 
         return res.status(404).json({ message: "Section not found" });
-    res.json({message:"success",hero});
+    // res.json({hero});
+    return res.status(200).json({hero});
 }
