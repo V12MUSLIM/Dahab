@@ -2,6 +2,7 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { Badge } from "../ui/badge";
+// eslint-disable-next-line no-unused-vars
 import { motion, useReducedMotion, useScroll, useTransform } from "framer-motion";
 import {
   Sun, Anchor, Star, ArrowRight, Calendar, Waves, Camera, Mountain,
@@ -87,7 +88,6 @@ export default function HeroSection({
   PrimaryButton,
   SecondaryButton,
   stats = [],
-  imageURL,
 }) {
   const [imageLoaded, setImageLoaded] = useState(false);
   const shouldReduceMotion = useReducedMotion();
@@ -131,11 +131,9 @@ export default function HeroSection({
       >
         <motion.img
           src={
-            imageURL
-              ? imageURL
-              : image
-                ? `${import.meta.env.BASE_URL}${image}`
-                : "https://lightwidget.com/wp-content/uploads/localhost-file-not-found.jpg"
+            image
+              ? `${import.meta.env.BASE_URL}${image}`
+              : "https://lightwidget.com/wp-content/uploads/localhost-file-not-found.jpg"
           }
           alt={`${title} background`}
           className="w-full h-full object-cover"

@@ -111,3 +111,41 @@
     "skipLibCheck": true                                 /* Skip type checking all .d.ts files. */
   }
 }
+
+// {
+//   "compilerOptions": {
+//     /* === Basic Setup === */
+//     "target": "ES2020",
+//     "module": "commonjs",
+//     "rootDir": "./src",
+//     "outDir": "./dist",
+
+//     /* === Module Resolution === */
+//     "moduleResolution": "node",
+//     "esModuleInterop": true,
+//     "resolveJsonModule": true,
+//     "forceConsistentCasingInFileNames": true,
+
+//     /* === Strict Type Checking === */
+//     "strict": true,
+//     "noImplicitAny": true,
+//     "strictNullChecks": true,
+//     "strictPropertyInitialization": false,
+
+//     /* === Decorators (if you use Mongoose classes or TypeORM later) === */
+//     "experimentalDecorators": true,
+//     "emitDecoratorMetadata": true,
+
+//     /* === Source Maps for Debugging === */
+//     "sourceMap": true,
+
+//     /* === Include Global Types (like our Express augmentation) === */
+//     "typeRoots": ["./src/types", "./node_modules/@types"],
+
+//     /* === Compatibility === */
+//     "skipLibCheck": true
+//   },
+
+//   "include": ["src/**/*"],
+//   "exclude": ["node_modules", "dist"]
+// }
