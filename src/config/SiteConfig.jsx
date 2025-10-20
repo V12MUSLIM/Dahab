@@ -5,6 +5,59 @@ export const CONTACT = {
   phone: "+20 123 456 789",
   email: "info@dahabtourism.com",
 };
+// Social Media Links
+export const SOCIAL_MEDIA = [
+  {
+    name: "Facebook",
+    icon: `${import.meta.env.BASE_URL}facebook.svg`,
+    href: "https://www.facebook.com/zuck",
+    label: "Follow us on Facebook",
+    color: "hover:bg-blue-500",
+  },
+  {
+    name: "Instagram",
+    icon: `${import.meta.env.BASE_URL}/instagram.svg`,
+    href: "https://instagram.com/dahabtourism",
+    label: "Follow us on Instagram",
+    color:
+      "hover:bg-gradient-to-br hover:from-pink-500 hover:via-purple-500 hover:to-orange-500",
+  },
+  {
+    name: "Twitter",
+    icon: `${import.meta.env.BASE_URL}x.svg`,
+    href: "https://twitter.com/dahabtourism",
+    label: "Follow us on Twitter",
+    color: "hover:bg-gray-900",
+  },
+  {
+    name: "YouTube",
+    icon: `${import.meta.env.BASE_URL}youtube.svg`,
+    href: "https://youtube.com/dahabtourism",
+    label: "Subscribe on YouTube",
+    color: "hover:bg-red-500",
+  },
+  {
+    name: "Email",
+    icon: "Mail",
+    href: `mailto:${CONTACT.email}`,
+    label: "Email us",
+    color: "hover:bg-amber-500",
+  },
+  {
+    name: "Location",
+    icon: "MapPin",
+    href: "https://maps.google.com/?q=Dahab,Egypt",
+    label: "Find us on map",
+    color: "hover:bg-emerald-500",
+  },
+  {
+    name: "Phone",
+    icon: "Phone",
+    href: `tel:${CONTACT.phone}`,
+    label: "Call us",
+    color: "hover:bg-cyan-500",
+  },
+];
 
 // Route definitions
 export const ROUTES = {
@@ -108,7 +161,7 @@ export const UI_TEXT = {
     menu: "Menu",
   },
   buttons: {
-    login: "Login",
+    login: "login",
     viewAll: "View All",
   },
   sections: {

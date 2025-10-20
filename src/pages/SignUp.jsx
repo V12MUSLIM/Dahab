@@ -138,7 +138,7 @@ export default function SignupPage() {
 
   return (
     <div
-      className="min-h-screen bg-cover bg-center bg-no-repeat flex items-center justify-center p-3 sm:p-4 relative"
+      className="min-h-screen lg:mt-15 bg-cover bg-center bg-no-repeat flex items-center justify-center p-3 sm:p-4 relative"
       style={{
         backgroundImage: `url('image4.webp')`,
       }}
@@ -306,7 +306,7 @@ export default function SignupPage() {
                     fill="#EA4335"
                   />
                 </svg>
-                <span className="text-xs sm:text-sm">Google</span>
+                <span className="text-xs sm:text-sm"> sign up with Google</span>
               </FormSecondaryButton>
             </form>
 

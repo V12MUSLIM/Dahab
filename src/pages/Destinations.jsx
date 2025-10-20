@@ -766,7 +766,7 @@ export default function Destinations() {
 
       {/* Hero Section */}
       <HeroSection
-        imageURL="https://images.unsplash.com/photo-1568322445389-f64ac2515020?q=80&w=2070&auto=format&fit=crop"
+        image="destHero.webp"
         title={
           <span>
             Explore Our <span className="text-amber-500">Destinations</span>
@@ -775,7 +775,6 @@ export default function Destinations() {
         subtitle="Discover your next adventure with our curated travel destinations in Dahab and Sinai Peninsula"
         Icon={Compass}
         badge="25+ Destinations"
-        description="From serene beaches to majestic mountains, find the perfect spot for your next getaway."
         primaryCta={{
           label: "Start Exploring",
           href: "#destinations",

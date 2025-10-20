@@ -20,6 +20,9 @@ import {
   Bed,
   Utensils,
   Phone,
+  User,
+  Settings,
+  LogOut,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -35,6 +38,16 @@ import {
   CollapsibleTrigger,
 } from "@/components/ui/collapsible";
 import { Separator } from "@/components/ui/separator";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuGroup,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import Logo from "@/icons/Logo";
 import { cn } from "@/lib/utils";
 import { ThemeToggle } from "@/components/theme-toggle";
@@ -59,6 +72,20 @@ const isAdmin = () => {
   return localStorage.getItem("isAdmin") === "true";
 };
 
+// Get user data from localStorage
+const getUserData = () => {
+  if (typeof window === "undefined") return null;
+  
+  const isLoggedIn = localStorage.getItem("isAdmin") === "true";
+  if (!isLoggedIn) return null;
+  
+  return {
+    name: localStorage.getItem("userName") || "User",
+    email: localStorage.getItem("userEmail") || "user@example.com",
+    image: localStorage.getItem("userImage") || undefined,
+  };
+};
+
 // Map destinations with actual icon components
 const destinations = DESTINATIONS.map((dest) => ({
   ...dest,
@@ -71,8 +98,77 @@ const experiences = EXPERIENCES.map((exp) => ({
   icon: iconMap[exp.iconName],
 }));
 
+// UserNav Component
+const UserNav = React.memo(({ email, name, userImage }) => {
+  const handleLogout = () => {
+    localStorage.removeItem("isAdmin");
+    localStorage.removeItem("userEmail");
+    localStorage.removeItem("userName");
+    localStorage.removeItem("userImage");
+    window.location.href = ROUTES.login;
+  };
+
+  return (
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>
+        <Button
+          variant="ghost"
+          className="relative h-10 w-10 rounded-full hover:bg-amber-50 dark:hover:bg-amber-900/20 transition-all duration-200"
+        >
+          <Avatar className="h-10 w-10 border-2 border-amber-400/40 dark:border-amber-500/50">
+            <AvatarImage 
+              src={userImage || `https://avatar.vercel.sh/${name}`} 
+              alt={name} 
+            />
+            <AvatarFallback className="bg-gradient-to-br from-amber-500 to-orange-500 text-white font-semibold">
+              {name[0]?.toUpperCase() || "U"}
+            </AvatarFallback>
+          </Avatar>
+        </Button>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent 
+        align="end" 
+        className="w-64 bg-white/95 dark:bg-black/95 backdrop-blur-md border-amber-400/20 dark:border-amber-500/30"
+        forceMount
+      >
+        <DropdownMenuLabel className="font-normal">
+          <div className="flex flex-col space-y-1">
+            <p className="text-sm font-semibold text-amber-600 dark:text-amber-400">
+              {name}
+            </p>
+            <p className="text-xs leading-none text-muted-foreground">
+              {email}
+            </p>
+          </div>
+        </DropdownMenuLabel>
+        <DropdownMenuSeparator className="bg-amber-400/20 dark:bg-amber-500/30" />
+        <DropdownMenuGroup>
+          <DropdownMenuItem className="hover:bg-amber-50 dark:hover:bg-amber-900/20 cursor-pointer">
+            <User className="mr-2 h-4 w-4 text-amber-600 dark:text-amber-400" />
+            <span>Profile</span>
+          </DropdownMenuItem>
+          <DropdownMenuItem className="hover:bg-amber-50 dark:hover:bg-amber-900/20 cursor-pointer">
+            <Settings className="mr-2 h-4 w-4 text-amber-600 dark:text-amber-400" />
+            <span>Settings</span>
+          </DropdownMenuItem>
+        </DropdownMenuGroup>
+        <DropdownMenuSeparator className="bg-amber-400/20 dark:bg-amber-500/30" />
+        <DropdownMenuItem 
+          onClick={handleLogout}
+          className="hover:bg-amber-50 dark:hover:bg-amber-900/20 text-red-600 dark:text-red-400 cursor-pointer"
+        >
+          <LogOut className="mr-2 h-4 w-4" />
+          <span>Log out</span>
+        </DropdownMenuItem>
+      </DropdownMenuContent>
+    </DropdownMenu>
+  );
+});
+
+UserNav.displayName = "UserNav";
+
 // Memoized drawer content component
-const DrawerContentComponent = React.memo(({ isMobile = false, onClose }) => {
+const DrawerContentComponent = React.memo(({ isMobile = false, onClose, user }) => {
   const [searchQuery, setSearchQuery] = React.useState("");
   const [destinationsOpen, setDestinationsOpen] = React.useState(false);
   const [experiencesOpen, setExperiencesOpen] = React.useState(false);
@@ -119,25 +215,47 @@ const DrawerContentComponent = React.memo(({ isMobile = false, onClose }) => {
 
         {isMobile && (
           <div className="space-y-3 pb-4 border-b border-amber-400/20 dark:border-amber-500/30">
-            <NavLink
-              to={ROUTES.login}
-              className={({ isActive }) =>
-                cn(
-                  "flex flex-col items-center justify-center flex-1 h-full space-y-1 transition-colors duration-200",
-                  isActive
-                    ? "text-amber-600 dark:text-amber-400"
-                    : "text-foreground/60"
-                )
-              }
-            >
-              <Button
-                size="sm"
-                className="w-full bg-gradient-to-r from-amber-600 to-orange-500 text-white hover:from-amber-700 hover:to-orange-600 transition-all duration-200 shadow-lg shadow-amber-500/25"
-                onClick={handleNavLinkClick}
+            {user ? (
+              <div className="flex items-center space-x-3 p-3 rounded-lg bg-amber-50 dark:bg-amber-900/20">
+                <Avatar className="h-12 w-12 border-2 border-amber-400/40 dark:border-amber-500/50">
+                  <AvatarImage 
+                    src={user.image || `https://avatar.vercel.sh/${user.name}`} 
+                    alt={user.name} 
+                  />
+                  <AvatarFallback className="bg-gradient-to-br from-amber-500 to-orange-500 text-white font-semibold">
+                    {user.name[0]?.toUpperCase() || "U"}
+                  </AvatarFallback>
+                </Avatar>
+                <div className="flex-1 min-w-0">
+                  <p className="text-sm font-semibold text-amber-600 dark:text-amber-400 truncate">
+                    {user.name}
+                  </p>
+                  <p className="text-xs text-muted-foreground truncate">
+                    {user.email}
+                  </p>
+                </div>
+              </div>
+            ) : (
+              <NavLink
+                to={ROUTES.login}
+                className={({ isActive }) =>
+                  cn(
+                    "flex flex-col items-center justify-center flex-1 h-full space-y-1 transition-colors duration-200",
+                    isActive
+                      ? "text-amber-600 dark:text-amber-400"
+                      : "text-foreground/60"
+                  )
+                }
               >
-                {UI_TEXT.buttons.login}
-              </Button>
-            </NavLink>
+                <Button
+                  size="sm"
+                  className="w-full bg-gradient-to-r from-amber-600 to-orange-500 text-white hover:from-amber-700 hover:to-orange-600 transition-all duration-200 shadow-lg shadow-amber-500/25"
+                  onClick={handleNavLinkClick}
+                >
+                  {UI_TEXT.buttons.login}
+                </Button>
+              </NavLink>
+            )}
             <div className="flex justify-center">
               <ThemeToggle />
             </div>
@@ -378,6 +496,11 @@ export default function DahabTourismNavbar() {
   const [isMobileDrawerOpen, setIsMobileDrawerOpen] = React.useState(false);
   const [desktopSearchQuery, setDesktopSearchQuery] = React.useState("");
   const [isSearchFocused, setIsSearchFocused] = React.useState(false);
+  const [user, setUser] = React.useState(null);
+
+  React.useEffect(() => {
+    setUser(getUserData());
+  }, []);
 
   const handleDesktopSearch = React.useCallback(
     (e) => {
@@ -390,7 +513,7 @@ export default function DahabTourismNavbar() {
   return (
     <>
       {/* Desktop Header */}
-      <header className="hidden lg:block sticky top-0 z-50 w-full border-b border-amber-400/20 dark:border-amber-500/30 bg-white/80 dark:bg-black/40 backdrop-blur-xl shadow-sm">
+      <header className="hidden lg:block fixed top-0 z-50 w-full border-b border-amber-400/20 dark:border-amber-500/30 bg-white/30 dark:bg-black/40 backdrop-blur-xl shadow-sm ">
         <div className="container flex h-16 max-w-screen-2xl items-center justify-between px-4">
           <NavLink to={ROUTES.home} className="flex items-center space-x-2">
             <Logo />
@@ -505,24 +628,32 @@ export default function DahabTourismNavbar() {
 
           <div className="flex items-center space-x-3">
             <ThemeToggle />
-            <NavLink
-              to={ROUTES.login}
-              className={({ isActive }) =>
-                cn(
-                  "flex flex-col items-center justify-center flex-1 h-full space-y-1 transition-colors duration-200",
-                  isActive
-                    ? "text-amber-600 dark:text-amber-400"
-                    : "text-foreground/60"
-                )
-              }
-            >
-              <Button
-                size="sm"
-                className="bg-gradient-to-r from-amber-600 to-orange-500 text-white hover:from-amber-700 hover:to-orange-600 transition-all duration-200 shadow-lg shadow-amber-500/25 cursor-pointer"
+            {user ? (
+              <UserNav 
+                name={user.name}
+                email={user.email}
+                userImage={user.image}
+              />
+            ) : (
+              <NavLink
+                to={ROUTES.login}
+                className={({ isActive }) =>
+                  cn(
+                    "flex flex-col items-center justify-center flex-1 h-full space-y-1 transition-colors duration-200",
+                    isActive
+                      ? "text-amber-600 dark:text-amber-400"
+                      : "text-foreground/60"
+                  )
+                }
               >
-                {UI_TEXT.buttons.login}
-              </Button>
-            </NavLink>
+                <Button
+                  size="sm"
+                  className="bg-gradient-to-r from-amber-600 to-orange-500 text-white hover:from-amber-700 hover:to-orange-600 transition-all duration-200 shadow-lg shadow-amber-500/25 cursor-pointer"
+                >
+                  {UI_TEXT.buttons.login}
+                </Button>
+              </NavLink>
+            )}
             {/* Desktop Drawer */}
             <Drawer
               open={isDesktopDrawerOpen}
@@ -545,6 +676,7 @@ export default function DahabTourismNavbar() {
               >
                 <DrawerContentComponent
                   isMobile={false}
+                  user={user}
                   onClose={() => setIsDesktopDrawerOpen(false)}
                 />
               </DrawerContent>
@@ -645,6 +777,7 @@ export default function DahabTourismNavbar() {
             >
               <DrawerContentComponent
                 isMobile={true}
+                user={user}
                 onClose={() => setIsMobileDrawerOpen(false)}
               />
             </DrawerContent>
