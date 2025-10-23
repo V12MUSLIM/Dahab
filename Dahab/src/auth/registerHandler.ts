@@ -7,8 +7,8 @@ import { jwtService } from "../services/jwt.service";
 
 export const registerHandler: RequestHandler = async (req, res, next) => {
     try {
-        const { email, password, username } = req.body as { email: string; password: string; username: string; };
-        if (!email || !password || !username) {
+        const { email, password, name } = req.body as { email: string; password: string; name: string; };
+        if (!email || !password || !name) {
             return res.status(400).json({ message: "Missing required fields" });
         }
         if (password.length < 6) return res.status(400).json({ message: "Password too short" });
@@ -17,7 +17,7 @@ export const registerHandler: RequestHandler = async (req, res, next) => {
         if (user) return res.status(409).json({ message: "Email already registered" });
 
         const hashed = await bcrypt.hash(password, 10);
-        const newUser = new User({ email, password: hashed, username });
+        const newUser = new User({ email, password: hashed, name });
         await newUser.save();
 
         const token = jwtService.createToken({ id: newUser._id, email: newUser.email }, { expiresIn: "3d" });
