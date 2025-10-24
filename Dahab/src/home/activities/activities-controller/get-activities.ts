@@ -1,10 +1,10 @@
 import { RequestHandler } from "express";
-import { Activities, Iactivities } from "../activities-model";
+import { Activities, IActivities } from "../activities-model";
 
 
 interface IResponse {
     message?:string;
-    activities?:Iactivities|Iactivities[];
+    activities?:IActivities|IActivities[];
 }
 
 export const getActivities: RequestHandler<{}, IResponse, {}> = async (req, res) => {
