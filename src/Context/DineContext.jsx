@@ -13,7 +13,7 @@ export const DineProvider = ({ children }) => {
     "Asian & Sushi",
   ];
 
-  const restaurants = [
+  const resturants = [
     // ==================== Seafood Restaurants ====================
     {
       id: 1,
@@ -565,10 +565,12 @@ export const DineProvider = ({ children }) => {
       gallery: [],
       reviews: [],
     },
-
+   ]; 
+  
     // ==================== Cafés & Bakeries ====================
+    const cafes = [
     {
-      id: 10,
+      id: 1,
       IdPage: "everyday-cafe",
       title: "Everyday Café",
       category: "Cafés & Bakeries",
@@ -613,7 +615,7 @@ export const DineProvider = ({ children }) => {
       reviews: [],
     },
     {
-      id: 11,
+      id: 2,
       IdPage: "ralphs-german-bakery",
       title: "Ralph's German Bakery",
       category: "Cafés & Bakeries",
@@ -658,7 +660,7 @@ export const DineProvider = ({ children }) => {
       reviews: [],
     },
     {
-      id: 12,
+      id: 3,
       IdPage: "flat-white-cafe",
       title: "Flat White Café",
       category: "Cafés & Bakeries",
@@ -705,7 +707,7 @@ export const DineProvider = ({ children }) => {
   ];
 
   return (
-    <DineContext.Provider value={{ restaurants, categories }}>
+    <DineContext.Provider value={{ resturants, categories, cafes }}>
       {children}
     </DineContext.Provider>
   );
