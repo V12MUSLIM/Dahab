@@ -1,5 +1,5 @@
 import { RequestHandler } from "express";
-import { Activities, Iactivities } from "../activities-model";
+import { Activities, IActivities } from "../activities-model";
 
 
 interface IRequest {
@@ -13,7 +13,7 @@ interface IRequest {
 }
 interface IResponse {
     massage: string;
-    response: Iactivities | Iactivities[];
+    response: IActivities | IActivities[];
 }
 
 

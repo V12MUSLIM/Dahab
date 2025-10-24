@@ -65,7 +65,6 @@ interface IRequest {
 }
 
 
-
 export const addDestination: RequestHandler<{}, {}, IRequest | IRequest[]> = async (req, res) => {
     try {
         if (Array.isArray(req.body)) {
