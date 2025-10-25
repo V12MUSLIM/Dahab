@@ -12,7 +12,7 @@ export const allPackages: RequestHandler<{}, IResponse, {}> = async (req, res) =
     if (!packages) {
         return res.status(404).json({ message: "Packages not found" });
     }
-    res.json({packages });
+    res.status(200).json({packages});
 }
 
 

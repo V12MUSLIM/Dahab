@@ -8,8 +8,8 @@ interface IResponse {
 }
 
 export const getActivities: RequestHandler<{}, IResponse, {}> = async (req, res) => {
-    const activities = await Activities.find().
-    select("title description icon duration groupSize difficulty price").exec();
+    const activities = await Activities.find().select("-_id -__v").exec(); /* test it later */
+    // select("title description icon duration groupSize difficulty price").exec();
     if (!activities) {
         return res.status(404).json({ message: "Activities not found" });
     }
