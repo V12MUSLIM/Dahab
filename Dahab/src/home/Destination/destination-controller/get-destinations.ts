@@ -14,5 +14,5 @@ export const getDestination:RequestHandler<{},IResponse,{}> =async(req,res)=>{
     if(!destinations){
         return res.status(404).json({message:"Destination not found"});
     }
-    res.json({destinations});
+    res.status(200).json({destinations});
 }
