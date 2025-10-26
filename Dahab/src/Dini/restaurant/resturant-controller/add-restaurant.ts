@@ -1,6 +1,6 @@
 
 import { RequestHandler } from "express";
-import { Restaurant } from "../restuarant-model";
+import { Restaurant } from "../restaurant-model";
 
 interface IRequest {
     IdPage: string;
@@ -49,10 +49,10 @@ interface IRequest {
 }
 
 interface IResponse {
-    massege: string ;
+    massege: string;
 }
 
-export const addResturant: RequestHandler<{}, IResponse, IRequest | IRequest[]> = async (req, res) => {
+export const addRestaurant: RequestHandler<{}, IResponse, IRequest | IRequest[]> = async (req, res) => {
     try {
         if (Array.isArray(req.body)) {
             await Restaurant.insertMany(req.body);
@@ -60,8 +60,8 @@ export const addResturant: RequestHandler<{}, IResponse, IRequest | IRequest[]> 
             await Restaurant.create(req.body);
         }
 
-        res.status(201).json({ massege: "Resturant(s) added successfully" });
+        res.status(201).json({ massege: "Restaurant(s) added successfully" });
     } catch (error: any) {
-        res.status(500).json({ massege: error.message || "Error adding Resturant" });
+        res.status(500).json({ massege: error.message || "Error adding Restaurant" });
     }
 }
