@@ -1,12 +1,24 @@
 import api from "@/api/axios";
 
-export const getDine = async () => {
+export const getRestaurants = async () => {
   try {
     const response = await api.get("/resturant");
-    return response.data.restaurants || response.data.data || [];
+    const data = response.data.restaurants || response.data.data || response.data;
+    return Array.isArray(data) ? data : [];
   } catch (error) {
     console.error("Error fetching restaurants:", error);
-    throw error;
+    return [];
+  }
+};
+
+export const getCafes = async () => {
+  try {
+    const response = await api.get("/cafe");
+    const data = response.data.cafes || response.data.data || response.data;
+    return Array.isArray(data) ? data : [];
+  } catch (error) {
+    console.error("Error fetching cafes:", error);
+    return [];
   }
 };
 
@@ -15,9 +27,12 @@ export const getDineById = async (id) => {
     const response = await api.get(`/resturant/${id}`);
     return response.data.data || response.data;
   } catch (error) {
-    console.error("Error fetching restaurant:", error);
-    throw error;
+    try {
+      const response = await api.get(`/cafe/${id}`);
+      return response.data.data || response.data;
+    } catch (err) {
+      console.error("Error:", err);
+      return null;
+    }
   }
 };
-
-

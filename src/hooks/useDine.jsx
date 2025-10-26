@@ -1,37 +1,46 @@
 import { useQuery } from "@tanstack/react-query";
-import { getDine } from "@/services/Dine";
+import { getRestaurants, getCafes } from "@/services/Dine";
 import { useState, useMemo } from "react";
 
 export const useDine = () => {
-  const {
-    data: restaurants = [],
-    error,
-    isLoading,
-    isError,
-  } = useQuery({
-    queryKey: ["dine"],
-    queryFn: getDine,
+  const { data: restaurants = [], isLoading: loadingRestaurants } = useQuery({
+    queryKey: ["restaurants"],
+    queryFn: getRestaurants,
     staleTime: 5 * 60 * 1000,
-    retry: 2,
+  });
+
+  const { data: cafes = [], isLoading: loadingCafes } = useQuery({
+    queryKey: ["cafes"],
+    queryFn: getCafes,
+    staleTime: 5 * 60 * 1000,
   });
 
   const [favorites, setFavorites] = useState([]);
 
+  const allDining = useMemo(() => {
+      console.log("Restaurants from API:", restaurants);
+  console.log("Cafes from API:", cafes);
+
+    return [...(restaurants || []), ...(cafes || [])];
+  }, [restaurants, cafes]);
+
+  const isLoading = loadingRestaurants || loadingCafes;
+
   const getAllCategories = useMemo(() => {
-    if (!restaurants || restaurants.length === 0) return [];
-    return [...new Set(restaurants.map((r) => r.category))];
-  }, [restaurants]);
+    if (!allDining || allDining.length === 0) return [];
+    return [...new Set(allDining.map((d) => d.category).filter(Boolean))];
+  }, [allDining]);
 
   const getDineByCategory = (category) => {
-    if (!restaurants) return [];
-    if (category === "All") return restaurants;
-    return restaurants.filter((r) => r.category === category);
+    if (!allDining) return [];
+    if (category === "All") return allDining;
+    return allDining.filter((d) => d.category === category);
   };
 
   const getDineById = (idPage) => {
-    if (!restaurants) return null;
-    return restaurants.find(
-      (r) => String(r.IdPage).toLowerCase() === String(idPage).toLowerCase()
+    if (!allDining) return null;
+    return allDining.find(
+      (d) => String(d.IdPage).toLowerCase() === String(idPage).toLowerCase()
     );
   };
 
@@ -45,6 +54,8 @@ export const useDine = () => {
 
   return {
     restaurants,
+    cafes,
+    allDining,
     getAllCategories,
     getDineByCategory,
     getDineById,
@@ -52,7 +63,5 @@ export const useDine = () => {
     isFavorite,
     favorites,
     isLoading,
-    error,
-    isError,
   };
 };

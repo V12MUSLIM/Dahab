@@ -135,7 +135,7 @@ export default function DestinationDetail() {
     <div className="min-h-screen bg-white dark:bg-black text-gray-900 dark:text-gray-100 pb-12">
       <Suspense fallback={<SectionSkeleton />}>
         <HeroSection
-          imageURL={destination.imageUrl}
+          image={destination?.image}
           title={destination.title}
           subtitle={destination.subtitle}
           Icon={Sun}

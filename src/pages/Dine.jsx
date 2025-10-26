@@ -1,6 +1,6 @@
 "use client";
 import { lazy, Suspense, useMemo } from "react";
-import { Utensils, Phone, Star, Users, Search } from "lucide-react";
+import { Utensils, Star, Users, Search } from "lucide-react";
 import { useState } from "react";
 
 import HeroSection from "@/components/sections/HeroSection";
@@ -37,12 +37,11 @@ export default function Dine() {
   const [priceFilter, setPriceFilter] = useState("all");
 
   const {
-    restaurants = [],
+    allDining,
     getAllCategories,
     toggleFavorite,
     isFavorite,
     isLoading,
-    error,
   } = useDine();
 
   const categories = useMemo(() => {
@@ -50,10 +49,12 @@ export default function Dine() {
   }, [getAllCategories]);
 
   const filteredRestaurants = useMemo(() => {
+    if (!allDining || allDining.length === 0) return [];
+
     let filtered =
       selectedCategory === "All"
-        ? restaurants
-        : restaurants.filter((r) => r.category === selectedCategory);
+        ? allDining
+        : allDining.filter((r) => r.category === selectedCategory);
 
     if (searchQuery) {
       const searchLower = searchQuery.toLowerCase();
@@ -77,7 +78,7 @@ export default function Dine() {
     }
 
     return filtered;
-  }, [restaurants, selectedCategory, searchQuery, priceFilter]);
+  }, [allDining, selectedCategory, searchQuery, priceFilter]);
 
   if (isLoading) {
     return (
@@ -100,26 +101,6 @@ export default function Dine() {
     );
   }
 
-  if (error) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="text-center">
-          <Utensils className="w-24 h-24 text-red-500 mx-auto mb-4" />
-          <h2 className="text-2xl font-bold mb-2">Error Loading Restaurants</h2>
-          <p className="text-muted-foreground mb-4">
-            {error.message || "Something went wrong"}
-          </p>
-          <button
-            onClick={() => window.location.reload()}
-            className="px-6 py-3 bg-yellow-500 text-white rounded-lg hover:bg-yellow-600"
-          >
-            Try Again
-          </button>
-        </div>
-      </div>
-    );
-  }
-
   return (
     <div className="min-h-screen bg-gradient-to-b from-background to-muted/20">
       <HeroSection
@@ -133,7 +114,7 @@ export default function Dine() {
         Icon={Utensils}
         badge="30+ Restaurants"
         stats={[
-          { icon: Utensils, text: `${restaurants.length}+ Restaurants` },
+          { icon: Utensils, text: `${allDining.length}+ Places` },
           { icon: Users, text: "10k+ Diners" },
           { icon: Star, text: "4.8/5 Rating" },
         ]}
@@ -158,7 +139,7 @@ export default function Dine() {
           <p className="text-muted-foreground">
             Showing{" "}
             <span className="font-semibold">{filteredRestaurants.length}</span>{" "}
-            restaurants
+            {filteredRestaurants.length === 1 ? "place" : "places"}
           </p>
         </div>
 
@@ -175,7 +156,7 @@ export default function Dine() {
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
               {filteredRestaurants.map((restaurant) => (
                 <ImageCard
-                  key={restaurant._id || restaurant.id}
+                  key={ restaurant.IdPage}
                   title={restaurant.title}
                   subtitle={restaurant.subtitle}
                   description={restaurant.description}
@@ -194,7 +175,7 @@ export default function Dine() {
           ) : (
             <div className="text-center py-20">
               <Search className="w-24 h-24 text-muted-foreground mx-auto mb-4" />
-              <h3 className="text-2xl font-semibold mb-2">No restaurants found</h3>
+              <h3 className="text-2xl font-semibold mb-2">No places found</h3>
               <p className="text-muted-foreground mb-6">
                 Try adjusting your filters
               </p>
