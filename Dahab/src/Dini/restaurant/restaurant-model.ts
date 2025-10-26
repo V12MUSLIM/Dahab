@@ -1,6 +1,4 @@
 
-import mongoose from "mongoose";
-
 export interface IRestaurant {
     IdPage: string;
     title: string;
@@ -47,108 +45,62 @@ export interface IRestaurant {
     }[];
 }
 
+import mongoose from "mongoose";
 
-
-const RestaurantSchema = new mongoose.Schema<IRestaurant>(
-    {
-        IdPage: {
-            type: String,
-            required: true
-        },
-        title: {
-            type: String,required: true
-        },
-        category: {
-            type: String,
-            required: true
-        },
-        subtitle: {
-            type: String,
-            required: true
-        },
-        description: {
-            type: String,
-            required: true
-        },
-        image: {
-            type: String,
-            required: true
-        },
-        badge: {
-            type: String,
-            required: true
-        },
-        priceValue: {
-            type: Number,
-            required: true
-        },
-        rating: {
-            type: String,
-            required: true
-        },
-        location: {
-            type: String,
-            required: true
-        },
-        price: {
-            type: String,
-            required: true
-        },
-        buttonText: {
-            type: String,
-            required: true
-        },
-        href: {
-            type: String,
-            required: true 
-        },
-        phone: {
-            type: String,
-            required: true
-        },
-        email: {
-            type: String,
-            required: true
-        },
-        website: {
-            type: String,
-            required: true
-        },
-        openingHours: {
-            monday: String,
-            tuesday: String,
-            wednesday: String,
-            thursday: String,
-            friday: String,
-            saturday: String,
-            sunday: String,
-        },
-        menu: [
-            {
-                name: String,
-                price: String,
-                description: String,
-            },
-        ],
-        features: [String],
-        gallery: [
-            {
-                src: String,
-                alt: String,
-                title: String,
-                description: String,
-            },
-        ],
-        reviews: [
-            {
-                name: String,
-                rating: Number,
-                comment: String,
-                date: String,
-            },
-        ],
+const RestaurantSchema = new mongoose.Schema<IRestaurant>({
+    IdPage: { type: String, required: true, unique: true },
+    title: { type: String, required: true },
+    category: { type: String, required: true },
+    subtitle: String,
+    description: String,
+    image: String,
+    badge: String,
+    priceValue: Number,
+    rating: String,
+    location: String,
+    price: String,
+    buttonText: String,
+    href: String,
+    phone: String,
+    email: String,
+    website: String,
+    openingHours: {
+        monday: String,
+        tuesday: String,
+        wednesday: String,
+        thursday: String,
+        friday: String,
+        saturday: String,
+        sunday: String,
     },
-    { timestamps: true }
-);
+    menu: [
+        {
+            name: { type: String, required: true },
+            price: { type: String, required: true },
+            description: { type: String, required: true },
+        },
+    ],
+    features: [String],
+    gallery: [
+        {
+            src: String,
+            alt: String,
+            title: String,
+            description: String,
+        },
+    ],
+    reviews: [
+        {
+            name: String,
+            rating: Number,
+            comment: String,
+            date: String,
+        },
+    ],
+});
 
-export const Restaurant = mongoose.model<IRestaurant>("Restaurant",RestaurantSchema,"restaurants");
+export const Restaurant = mongoose.model<IRestaurant>(
+    "Restaurant",
+    RestaurantSchema,
+    "restaurants"
+);
