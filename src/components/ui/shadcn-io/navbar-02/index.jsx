@@ -75,10 +75,10 @@ const isAdmin = () => {
 // Get user data from localStorage
 const getUserData = () => {
   if (typeof window === "undefined") return null;
-  
+
   const isLoggedIn = localStorage.getItem("isAdmin") === "true";
   if (!isLoggedIn) return null;
-  
+
   return {
     name: localStorage.getItem("userName") || "User",
     email: localStorage.getItem("userEmail") || "user@example.com",
@@ -116,9 +116,9 @@ const UserNav = React.memo(({ email, name, userImage }) => {
           className="relative h-10 w-10 rounded-full hover:bg-amber-50 dark:hover:bg-amber-900/20 transition-all duration-200"
         >
           <Avatar className="h-10 w-10 border-2 border-amber-400/40 dark:border-amber-500/50">
-            <AvatarImage 
-              src={userImage || `https://avatar.vercel.sh/${name}`} 
-              alt={name} 
+            <AvatarImage
+              src={userImage || `https://avatar.vercel.sh/${name}`}
+              alt={name}
             />
             <AvatarFallback className="bg-gradient-to-br from-amber-500 to-orange-500 text-white font-semibold">
               {name[0]?.toUpperCase() || "U"}
@@ -126,8 +126,8 @@ const UserNav = React.memo(({ email, name, userImage }) => {
           </Avatar>
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent 
-        align="end" 
+      <DropdownMenuContent
+        align="end"
         className="w-64 bg-white/95 dark:bg-black/95 backdrop-blur-md border-amber-400/20 dark:border-amber-500/30"
         forceMount
       >
@@ -153,7 +153,7 @@ const UserNav = React.memo(({ email, name, userImage }) => {
           </DropdownMenuItem>
         </DropdownMenuGroup>
         <DropdownMenuSeparator className="bg-amber-400/20 dark:bg-amber-500/30" />
-        <DropdownMenuItem 
+        <DropdownMenuItem
           onClick={handleLogout}
           className="hover:bg-amber-50 dark:hover:bg-amber-900/20 text-red-600 dark:text-red-400 cursor-pointer"
         >
@@ -168,326 +168,333 @@ const UserNav = React.memo(({ email, name, userImage }) => {
 UserNav.displayName = "UserNav";
 
 // Memoized drawer content component
-const DrawerContentComponent = React.memo(({ isMobile = false, onClose, user }) => {
-  const [searchQuery, setSearchQuery] = React.useState("");
-  const [destinationsOpen, setDestinationsOpen] = React.useState(false);
-  const [experiencesOpen, setExperiencesOpen] = React.useState(false);
+const DrawerContentComponent = React.memo(
+  ({ isMobile = false, onClose, user }) => {
+    const [searchQuery, setSearchQuery] = React.useState("");
+    const [destinationsOpen, setDestinationsOpen] = React.useState(false);
+    const [experiencesOpen, setExperiencesOpen] = React.useState(false);
 
-  const handleNavLinkClick = React.useCallback(() => {
-    onClose();
-    setDestinationsOpen(false);
-    setExperiencesOpen(false);
-  }, [onClose]);
-
-  const handleSearch = React.useCallback(
-    (e) => {
-      e.preventDefault();
-      console.log("Searching for:", searchQuery);
+    const handleNavLinkClick = React.useCallback(() => {
       onClose();
-    },
-    [searchQuery, onClose]
-  );
+      setDestinationsOpen(false);
+      setExperiencesOpen(false);
+    }, [onClose]);
 
-  return (
-    <div className="relative flex flex-col h-full">
-      {/* Optimized glass background with will-change */}
-      <div
-        className="absolute inset-0 backdrop-blur-md bg-white/95 dark:bg-black/95 pointer-events-none"
-        style={{ willChange: "transform" }}
-      />
+    const handleSearch = React.useCallback(
+      (e) => {
+        e.preventDefault();
+        console.log("Searching for:", searchQuery);
+        onClose();
+      },
+      [searchQuery, onClose]
+    );
 
-      <div className="relative flex-1 overflow-y-auto overscroll-contain px-6 py-6 space-y-4">
-        {/* Header with close button */}
-        <div className="flex items-center justify-between mb-4">
-          <h2 className="text-lg font-semibold text-amber-600 dark:text-amber-400">
-            {UI_TEXT.navigation.menu}
-          </h2>
-          <DrawerClose asChild>
-            <Button
-              variant="ghost"
-              size="icon"
-              className="h-8 w-8 rounded-full hover:bg-amber-100 dark:hover:bg-amber-900/20"
-            >
-              <X className="h-4 w-4" />
-            </Button>
-          </DrawerClose>
-        </div>
+    return (
+      <div className="relative flex flex-col h-full">
+        {/* Optimized glass background with will-change */}
+        <div
+          className="absolute inset-0 backdrop-blur-md bg-white/95 dark:bg-black/95 pointer-events-none"
+          style={{ willChange: "transform" }}
+        />
 
-        {isMobile && (
-          <div className="space-y-3 pb-4 border-b border-amber-400/20 dark:border-amber-500/30">
-            {user ? (
-              <div className="flex items-center space-x-3 p-3 rounded-lg bg-amber-50 dark:bg-amber-900/20">
-                <Avatar className="h-12 w-12 border-2 border-amber-400/40 dark:border-amber-500/50">
-                  <AvatarImage 
-                    src={user.image || `https://avatar.vercel.sh/${user.name}`} 
-                    alt={user.name} 
-                  />
-                  <AvatarFallback className="bg-gradient-to-br from-amber-500 to-orange-500 text-white font-semibold">
-                    {user.name[0]?.toUpperCase() || "U"}
-                  </AvatarFallback>
-                </Avatar>
-                <div className="flex-1 min-w-0">
-                  <p className="text-sm font-semibold text-amber-600 dark:text-amber-400 truncate">
-                    {user.name}
-                  </p>
-                  <p className="text-xs text-muted-foreground truncate">
-                    {user.email}
-                  </p>
+        <div className="relative flex-1 overflow-y-auto overscroll-contain px-6 py-6 space-y-4">
+          {/* Header with close button */}
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="text-lg font-semibold text-amber-600 dark:text-amber-400">
+              {UI_TEXT.navigation.menu}
+            </h2>
+            <DrawerClose asChild>
+              <Button
+                variant="ghost"
+                size="icon"
+                className="h-8 w-8 rounded-full hover:bg-amber-100 dark:hover:bg-amber-900/20"
+              >
+                <X className="h-4 w-4" />
+              </Button>
+            </DrawerClose>
+          </div>
+
+          {isMobile && (
+            <div className="space-y-3 pb-4 border-b border-amber-400/20 dark:border-amber-500/30">
+              {user ? (
+                <div className="flex items-center space-x-3 p-3 rounded-lg bg-amber-50 dark:bg-amber-900/20">
+                  <Avatar className="h-12 w-12 border-2 border-amber-400/40 dark:border-amber-500/50">
+                    <AvatarImage
+                      src={
+                        user.image || `https://avatar.vercel.sh/${user.name}`
+                      }
+                      alt={user.name}
+                    />
+                    <AvatarFallback className="bg-gradient-to-br from-amber-500 to-orange-500 text-white font-semibold">
+                      {user.name[0]?.toUpperCase() || "U"}
+                    </AvatarFallback>
+                  </Avatar>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-sm font-semibold text-amber-600 dark:text-amber-400 truncate">
+                      {user.name}
+                    </p>
+                    <p className="text-xs text-muted-foreground truncate">
+                      {user.email}
+                    </p>
+                  </div>
                 </div>
+              ) : (
+                <NavLink
+                  to={ROUTES.login}
+                  className={({ isActive }) =>
+                    cn(
+                      "flex flex-col items-center justify-center flex-1 h-full space-y-1 transition-colors duration-200",
+                      isActive
+                        ? "text-amber-600 dark:text-amber-400"
+                        : "text-foreground/60"
+                    )
+                  }
+                >
+                  <Button
+                    size="sm"
+                    className="w-full bg-gradient-to-r from-amber-600 to-orange-500 text-white hover:from-amber-700 hover:to-orange-600 transition-all duration-200 shadow-lg shadow-amber-500/25"
+                    onClick={handleNavLinkClick}
+                  >
+                    {UI_TEXT.buttons.login}
+                  </Button>
+                </NavLink>
+              )}
+              <div className="flex justify-center">
+                <ThemeToggle />
               </div>
-            ) : (
-              <NavLink
-                to={ROUTES.login}
-                className={({ isActive }) =>
-                  cn(
-                    "flex flex-col items-center justify-center flex-1 h-full space-y-1 transition-colors duration-200",
-                    isActive
-                      ? "text-amber-600 dark:text-amber-400"
-                      : "text-foreground/60"
-                  )
-                }
-              >
-                <Button
-                  size="sm"
-                  className="w-full bg-gradient-to-r from-amber-600 to-orange-500 text-white hover:from-amber-700 hover:to-orange-600 transition-all duration-200 shadow-lg shadow-amber-500/25"
-                  onClick={handleNavLinkClick}
-                >
-                  {UI_TEXT.buttons.login}
-                </Button>
-              </NavLink>
-            )}
-            <div className="flex justify-center">
-              <ThemeToggle />
             </div>
-          </div>
-        )}
+          )}
 
-        {/* Search with optimized transitions */}
-        <form onSubmit={handleSearch}>
-          <div className="relative">
-            <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-amber-600 dark:text-amber-400" />
-            <Input
-              placeholder={UI_TEXT.search.placeholder}
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="pl-10 pr-4 bg-white/50 dark:bg-black/20 border border-amber-400/40 dark:border-amber-500/50 focus:border-amber-500 focus:ring-2 focus:ring-amber-400/30 transition-all duration-200"
-            />
-          </div>
-        </form>
+          {/* Search with optimized transitions */}
+          <form onSubmit={handleSearch}>
+            <div className="relative">
+              <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-amber-600 dark:text-amber-400" />
+              <Input
+                placeholder={UI_TEXT.search.placeholder}
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="pl-10 pr-4 bg-white/50 dark:bg-black/20 border border-amber-400/40 dark:border-amber-500/50 focus:border-amber-500 focus:ring-2 focus:ring-amber-400/30 transition-all duration-200"
+              />
+            </div>
+          </form>
 
-        {/* Navigation with optimized hover states */}
-        <nav className="space-y-2">
-          <NavLink to={ROUTES.home} onClick={handleNavLinkClick}>
-            <Button
-              variant="ghost"
-              className="w-full justify-start h-12 text-base hover:bg-amber-50 dark:hover:bg-amber-900/20 hover:text-amber-600 dark:hover:text-amber-400 transition-all duration-200"
-            >
-              <HomeIcon className="mr-3 h-5 w-5" />
-              {UI_TEXT.navigation.home}
-            </Button>
-          </NavLink>
-
-          {/* Destinations with smooth collapse */}
-          <Collapsible
-            open={destinationsOpen}
-            onOpenChange={setDestinationsOpen}
-          >
-            <CollapsibleTrigger asChild>
+          {/* Navigation with optimized hover states */}
+          <nav className="space-y-2">
+            <NavLink to={ROUTES.home} onClick={handleNavLinkClick}>
               <Button
                 variant="ghost"
-                className="w-full justify-between h-12 text-base hover:bg-amber-50 dark:hover:bg-amber-900/20 hover:text-amber-600 dark:hover:text-amber-400 transition-all duration-200"
+                className="w-full justify-start h-12 text-base hover:bg-amber-50 dark:hover:bg-amber-900/20 hover:text-amber-600 dark:hover:text-amber-400 transition-all duration-200"
               >
-                <div className="flex items-center">
-                  <MapPin className="mr-3 h-5 w-5" />
-                  {UI_TEXT.navigation.destinations}
-                </div>
-                <ChevronDown
-                  className={cn(
-                    "h-4 w-4 transition-transform duration-200 text-amber-600 dark:text-amber-400",
-                    destinationsOpen && "rotate-180"
-                  )}
-                />
+                <HomeIcon className="mr-3 h-5 w-5" />
+                {UI_TEXT.navigation.home}
               </Button>
-            </CollapsibleTrigger>
-            <CollapsibleContent className="ml-4 pl-4 border-l border-amber-400/20 dark:border-amber-500/30 space-y-1 mt-1 transition-all duration-200">
-              {destinations.map(({ name, description, icon: Icon, href }) => (
-                <NavLink key={name} to={href} onClick={handleNavLinkClick}>
-                  <Button
-                    variant="ghost"
-                    className="w-full justify-start h-auto py-2 text-sm text-muted-foreground hover:bg-amber-50 dark:hover:bg-amber-900/20 hover:text-amber-600 dark:hover:text-amber-400 transition-all duration-200"
-                  >
-                    <Icon className="mr-3 h-4 w-4 flex-shrink-0" />
-                    <div className="text-left">
-                      <div className="font-medium">{name}</div>
-                      <div className="text-xs text-muted-foreground/70">
-                        {description}
-                      </div>
-                    </div>
-                  </Button>
-                </NavLink>
-              ))}
-              <NavLink to={ROUTES.destinations} onClick={handleNavLinkClick}>
+            </NavLink>
+
+            {/* Destinations with smooth collapse */}
+            <Collapsible
+              open={destinationsOpen}
+              onOpenChange={setDestinationsOpen}
+            >
+              <CollapsibleTrigger asChild>
                 <Button
                   variant="ghost"
-                  className="text-amber-600 dark:text-amber-400 hover:bg-amber-50 dark:hover:bg-amber-900/20 transform hover:scale-105 transition-all duration-200 group w-full justify-start"
+                  className="w-full justify-between h-12 text-base hover:bg-amber-50 dark:hover:bg-amber-900/20 hover:text-amber-600 dark:hover:text-amber-400 transition-all duration-200"
                 >
-                  {UI_TEXT.buttons.viewAll}
-                  <ArrowRight className="ml-2 w-4 h-4 group-hover:translate-x-1 transition-transform duration-200" />
+                  <div className="flex items-center">
+                    <MapPin className="mr-3 h-5 w-5" />
+                    {UI_TEXT.navigation.destinations}
+                  </div>
+                  <ChevronDown
+                    className={cn(
+                      "h-4 w-4 transition-transform duration-200 text-amber-600 dark:text-amber-400",
+                      destinationsOpen && "rotate-180"
+                    )}
+                  />
                 </Button>
-              </NavLink>
-            </CollapsibleContent>
-          </Collapsible>
-
-          {/* Experiences with smooth collapse */}
-          <Collapsible open={experiencesOpen} onOpenChange={setExperiencesOpen}>
-            <CollapsibleTrigger asChild>
-              <Button
-                variant="ghost"
-                className="w-full justify-between h-12 text-base hover:bg-amber-50 dark:hover:bg-amber-900/20 hover:text-amber-600 dark:hover:text-amber-400 transition-all duration-200"
-              >
-                <div className="flex items-center">
-                  <Camera className="mr-3 h-5 w-5" />
-                  {UI_TEXT.navigation.experiences}
-                </div>
-                <ChevronDown
-                  className={cn(
-                    "h-4 w-4 transition-transform duration-200 text-amber-600 dark:text-amber-400",
-                    experiencesOpen && "rotate-180"
-                  )}
-                />
-              </Button>
-            </CollapsibleTrigger>
-            <CollapsibleContent className="ml-4 pl-4 border-l border-amber-400/20 dark:border-amber-500/30 space-y-1 mt-1 transition-all duration-200">
-              {experiences.map(({ name, description, icon: Icon, href }) => (
-                <NavLink key={name} to={href} onClick={handleNavLinkClick}>
+              </CollapsibleTrigger>
+              <CollapsibleContent className="ml-4 pl-4 border-l border-amber-400/20 dark:border-amber-500/30 space-y-1 mt-1 transition-all duration-200">
+                {destinations.map(({ name, description, icon: Icon, href }) => (
+                  <NavLink key={name} to={href} onClick={handleNavLinkClick}>
+                    <Button
+                      variant="ghost"
+                      className="w-full justify-start h-auto py-2 text-sm text-muted-foreground hover:bg-amber-50 dark:hover:bg-amber-900/20 hover:text-amber-600 dark:hover:text-amber-400 transition-all duration-200"
+                    >
+                      <Icon className="mr-3 h-4 w-4 flex-shrink-0" />
+                      <div className="text-left">
+                        <div className="font-medium">{name}</div>
+                        <div className="text-xs text-muted-foreground/70">
+                          {description}
+                        </div>
+                      </div>
+                    </Button>
+                  </NavLink>
+                ))}
+                <NavLink to={ROUTES.destinations} onClick={handleNavLinkClick}>
                   <Button
                     variant="ghost"
-                    className="w-full justify-start h-auto py-2 text-sm text-muted-foreground hover:bg-amber-50 dark:hover:bg-amber-900/20 hover:text-amber-600 dark:hover:text-amber-400 transition-all duration-200"
+                    className="text-amber-600 dark:text-amber-400 hover:bg-amber-50 dark:hover:bg-amber-900/20 transform hover:scale-105 transition-all duration-200 group w-full justify-start"
                   >
-                    <Icon className="mr-3 h-4 w-4 flex-shrink-0" />
-                    <div className="text-left">
-                      <div className="font-medium">{name}</div>
-                      <div className="text-xs text-muted-foreground/70">
-                        {description}
-                      </div>
-                    </div>
+                    {UI_TEXT.buttons.viewAll}
+                    <ArrowRight className="ml-2 w-4 h-4 group-hover:translate-x-1 transition-transform duration-200" />
                   </Button>
                 </NavLink>
-              ))}
-              <NavLink to={ROUTES.experiences} onClick={handleNavLinkClick}>
+              </CollapsibleContent>
+            </Collapsible>
+
+            {/* Experiences with smooth collapse */}
+            <Collapsible
+              open={experiencesOpen}
+              onOpenChange={setExperiencesOpen}
+            >
+              <CollapsibleTrigger asChild>
                 <Button
                   variant="ghost"
-                  className="text-amber-600 dark:text-amber-400 hover:bg-amber-50 dark:hover:bg-amber-900/20 transform hover:scale-105 transition-all duration-200 group w-full justify-start"
+                  className="w-full justify-between h-12 text-base hover:bg-amber-50 dark:hover:bg-amber-900/20 hover:text-amber-600 dark:hover:text-amber-400 transition-all duration-200"
                 >
-                  {UI_TEXT.buttons.viewAll}
-                  <ArrowRight className="ml-2 w-4 h-4 group-hover:translate-x-1 transition-transform duration-200" />
+                  <div className="flex items-center">
+                    <Camera className="mr-3 h-5 w-5" />
+                    {UI_TEXT.navigation.experiences}
+                  </div>
+                  <ChevronDown
+                    className={cn(
+                      "h-4 w-4 transition-transform duration-200 text-amber-600 dark:text-amber-400",
+                      experiencesOpen && "rotate-180"
+                    )}
+                  />
+                </Button>
+              </CollapsibleTrigger>
+              <CollapsibleContent className="ml-4 pl-4 border-l border-amber-400/20 dark:border-amber-500/30 space-y-1 mt-1 transition-all duration-200">
+                {experiences.map(({ name, description, icon: Icon, href }) => (
+                  <NavLink key={name} to={href} onClick={handleNavLinkClick}>
+                    <Button
+                      variant="ghost"
+                      className="w-full justify-start h-auto py-2 text-sm text-muted-foreground hover:bg-amber-50 dark:hover:bg-amber-900/20 hover:text-amber-600 dark:hover:text-amber-400 transition-all duration-200"
+                    >
+                      <Icon className="mr-3 h-4 w-4 flex-shrink-0" />
+                      <div className="text-left">
+                        <div className="font-medium">{name}</div>
+                        <div className="text-xs text-muted-foreground/70">
+                          {description}
+                        </div>
+                      </div>
+                    </Button>
+                  </NavLink>
+                ))}
+                <NavLink to={ROUTES.experiences} onClick={handleNavLinkClick}>
+                  <Button
+                    variant="ghost"
+                    className="text-amber-600 dark:text-amber-400 hover:bg-amber-50 dark:hover:bg-amber-900/20 transform hover:scale-105 transition-all duration-200 group w-full justify-start"
+                  >
+                    {UI_TEXT.buttons.viewAll}
+                    <ArrowRight className="ml-2 w-4 h-4 group-hover:translate-x-1 transition-transform duration-200" />
+                  </Button>
+                </NavLink>
+              </CollapsibleContent>
+            </Collapsible>
+
+            <NavLink to={ROUTES.stay} onClick={handleNavLinkClick}>
+              <Button
+                variant="ghost"
+                className="w-full justify-start h-12 text-base hover:bg-amber-50 dark:hover:bg-amber-900/20 hover:text-amber-600 dark:hover:text-amber-400 transition-all duration-200"
+              >
+                <Bed className="mr-3 h-5 w-5" />
+                {UI_TEXT.navigation.stay}
+              </Button>
+            </NavLink>
+
+            <NavLink to={ROUTES.dine} onClick={handleNavLinkClick}>
+              <Button
+                variant="ghost"
+                className="w-full justify-start h-12 text-base hover:bg-amber-50 dark:hover:bg-amber-900/20 hover:text-amber-600 dark:hover:text-amber-400 transition-all duration-200"
+              >
+                <Utensils className="mr-3 h-5 w-5" />
+                {UI_TEXT.navigation.dine}
+              </Button>
+            </NavLink>
+
+            <NavLink to={ROUTES.planTrip} onClick={handleNavLinkClick}>
+              <Button
+                variant="ghost"
+                className="w-full justify-start h-12 text-base hover:bg-amber-50 dark:hover:bg-amber-900/20 hover:text-amber-600 dark:hover:text-amber-400 transition-all duration-200"
+              >
+                <Calendar className="mr-3 h-5 w-5" />
+                {UI_TEXT.navigation.planTrip}
+              </Button>
+            </NavLink>
+
+            <Separator className="my-4 border-amber-400/20 dark:border-amber-500/30" />
+
+            {/* More Section */}
+            <div className="space-y-1">
+              <h3 className="font-semibold text-xs text-amber-600 dark:text-amber-400 uppercase tracking-wider px-3 mb-2">
+                {UI_TEXT.sections.more}
+              </h3>
+
+              <NavLink to={ROUTES.about} onClick={handleNavLinkClick}>
+                <Button
+                  variant="ghost"
+                  className="w-full justify-start h-10 text-sm hover:bg-amber-50 dark:hover:bg-amber-900/20 hover:text-amber-600 dark:hover:text-amber-400 transition-all duration-200"
+                >
+                  <Info className="mr-3 h-4 w-4" />
+                  {UI_TEXT.menu.aboutDahab}
                 </Button>
               </NavLink>
-            </CollapsibleContent>
-          </Collapsible>
 
-          <NavLink to={ROUTES.stay} onClick={handleNavLinkClick}>
-            <Button
-              variant="ghost"
-              className="w-full justify-start h-12 text-base hover:bg-amber-50 dark:hover:bg-amber-900/20 hover:text-amber-600 dark:hover:text-amber-400 transition-all duration-200"
-            >
-              <Bed className="mr-3 h-5 w-5" />
-              {UI_TEXT.navigation.stay}
-            </Button>
-          </NavLink>
+              <NavLink to={ROUTES.reviews} onClick={handleNavLinkClick}>
+                <Button
+                  variant="ghost"
+                  className="w-full justify-start h-10 text-sm hover:bg-amber-50 dark:hover:bg-amber-900/20 hover:text-amber-600 dark:hover:text-amber-400 transition-all duration-200"
+                >
+                  <Star className="mr-3 h-4 w-4" />
+                  {UI_TEXT.menu.reviews}
+                </Button>
+              </NavLink>
 
-          <NavLink to={ROUTES.dine} onClick={handleNavLinkClick}>
-            <Button
-              variant="ghost"
-              className="w-full justify-start h-12 text-base hover:bg-amber-50 dark:hover:bg-amber-900/20 hover:text-amber-600 dark:hover:text-amber-400 transition-all duration-200"
-            >
-              <Utensils className="mr-3 h-5 w-5" />
-              {UI_TEXT.navigation.dine}
-            </Button>
-          </NavLink>
+              <NavLink to={ROUTES.groups} onClick={handleNavLinkClick}>
+                <Button
+                  variant="ghost"
+                  className="w-full justify-start h-10 text-sm hover:bg-amber-50 dark:hover:bg-amber-900/20 hover:text-amber-600 dark:hover:text-amber-400 transition-all duration-200"
+                >
+                  <Users className="mr-3 h-4 w-4" />
+                  {UI_TEXT.menu.groupTours}
+                </Button>
+              </NavLink>
+            </div>
 
-          <NavLink to={ROUTES.planTrip} onClick={handleNavLinkClick}>
-            <Button
-              variant="ghost"
-              className="w-full justify-start h-12 text-base hover:bg-amber-50 dark:hover:bg-amber-900/20 hover:text-amber-600 dark:hover:text-amber-400 transition-all duration-200"
-            >
-              <Calendar className="mr-3 h-5 w-5" />
-              {UI_TEXT.navigation.planTrip}
-            </Button>
-          </NavLink>
+            <Separator className="my-4 border-amber-400/20 dark:border-amber-500/30" />
 
-          <Separator className="my-4 border-amber-400/20 dark:border-amber-500/30" />
+            {/* Contact Section */}
+            <div className="space-y-1">
+              <h3 className="font-semibold text-xs text-amber-600 dark:text-amber-400 uppercase tracking-wider px-3 mb-2">
+                {UI_TEXT.sections.getInTouch}
+              </h3>
 
-          {/* More Section */}
-          <div className="space-y-1">
-            <h3 className="font-semibold text-xs text-amber-600 dark:text-amber-400 uppercase tracking-wider px-3 mb-2">
-              {UI_TEXT.sections.more}
-            </h3>
+              <NavLink to={ROUTES.contact} onClick={handleNavLinkClick}>
+                <Button
+                  variant="ghost"
+                  className="w-full justify-start h-10 text-sm hover:bg-amber-50 dark:hover:bg-amber-900/20 hover:text-amber-600 dark:hover:text-amber-400 transition-all duration-200"
+                >
+                  <Phone className="mr-3 h-4 w-4" />
+                  {CONTACT.phone}
+                </Button>
+              </NavLink>
 
-            <NavLink to={ROUTES.about} onClick={handleNavLinkClick}>
-              <Button
-                variant="ghost"
-                className="w-full justify-start h-10 text-sm hover:bg-amber-50 dark:hover:bg-amber-900/20 hover:text-amber-600 dark:hover:text-amber-400 transition-all duration-200"
-              >
-                <Info className="mr-3 h-4 w-4" />
-                {UI_TEXT.menu.aboutDahab}
-              </Button>
-            </NavLink>
-
-            <NavLink to={ROUTES.reviews} onClick={handleNavLinkClick}>
-              <Button
-                variant="ghost"
-                className="w-full justify-start h-10 text-sm hover:bg-amber-50 dark:hover:bg-amber-900/20 hover:text-amber-600 dark:hover:text-amber-400 transition-all duration-200"
-              >
-                <Star className="mr-3 h-4 w-4" />
-                {UI_TEXT.menu.reviews}
-              </Button>
-            </NavLink>
-
-            <NavLink to={ROUTES.groups} onClick={handleNavLinkClick}>
-              <Button
-                variant="ghost"
-                className="w-full justify-start h-10 text-sm hover:bg-amber-50 dark:hover:bg-amber-900/20 hover:text-amber-600 dark:hover:text-amber-400 transition-all duration-200"
-              >
-                <Users className="mr-3 h-4 w-4" />
-                {UI_TEXT.menu.groupTours}
-              </Button>
-            </NavLink>
-          </div>
-
-          <Separator className="my-4 border-amber-400/20 dark:border-amber-500/30" />
-
-          {/* Contact Section */}
-          <div className="space-y-1">
-            <h3 className="font-semibold text-xs text-amber-600 dark:text-amber-400 uppercase tracking-wider px-3 mb-2">
-              {UI_TEXT.sections.getInTouch}
-            </h3>
-
-            <NavLink to={ROUTES.contact} onClick={handleNavLinkClick}>
-              <Button
-                variant="ghost"
-                className="w-full justify-start h-10 text-sm hover:bg-amber-50 dark:hover:bg-amber-900/20 hover:text-amber-600 dark:hover:text-amber-400 transition-all duration-200"
-              >
-                <Phone className="mr-3 h-4 w-4" />
-                {CONTACT.phone}
-              </Button>
-            </NavLink>
-
-            <a href={`mailto:${CONTACT.email}`} className="block">
-              <Button
-                variant="ghost"
-                className="w-full justify-start h-10 text-sm hover:bg-amber-50 dark:hover:bg-amber-900/20 hover:text-amber-600 dark:hover:text-amber-400 transition-all duration-200"
-              >
-                <Mail className="mr-3 h-4 w-4" />
-                {CONTACT.email}
-              </Button>
-            </a>
-          </div>
-        </nav>
+              <a href={`mailto:${CONTACT.email}`} className="block">
+                <Button
+                  variant="ghost"
+                  className="w-full justify-start h-10 text-sm hover:bg-amber-50 dark:hover:bg-amber-900/20 hover:text-amber-600 dark:hover:text-amber-400 transition-all duration-200"
+                >
+                  <Mail className="mr-3 h-4 w-4" />
+                  {CONTACT.email}
+                </Button>
+              </a>
+            </div>
+          </nav>
+        </div>
       </div>
-    </div>
-  );
-});
+    );
+  }
+);
 
 DrawerContentComponent.displayName = "DrawerContentComponent";
 
@@ -513,7 +520,7 @@ export default function DahabTourismNavbar() {
   return (
     <>
       {/* Desktop Header */}
-      <header className="hidden lg:block fixed top-0 z-50 w-full border-b border-amber-400/20 dark:border-amber-500/30 bg-white/30 dark:bg-black/40 backdrop-blur-xl shadow-sm ">
+    <header className="hidden lg:block fixed top-0 z-50 w-full border-b border-amber-400/20 dark:border-amber-500/30 bg-white/30 dark:bg-black/40 backdrop-blur-xl shadow-sm">
         <div className="container flex h-16 max-w-screen-2xl items-center justify-between px-4">
           <NavLink to={ROUTES.home} className="flex items-center space-x-2">
             <Logo />
@@ -629,7 +636,7 @@ export default function DahabTourismNavbar() {
           <div className="flex items-center space-x-3">
             <ThemeToggle />
             {user ? (
-              <UserNav 
+              <UserNav
                 name={user.name}
                 email={user.email}
                 userImage={user.image}

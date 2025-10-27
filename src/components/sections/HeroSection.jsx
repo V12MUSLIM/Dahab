@@ -3,10 +3,24 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 import { Badge } from "../ui/badge";
 // eslint-disable-next-line no-unused-vars
-import { motion, useReducedMotion, useScroll, useTransform } from "framer-motion";
 import {
-  Sun, Anchor, Star, ArrowRight, Calendar, Waves, Camera, Mountain,
-  CheckCircle, MapPin, Plane,
+  motion,
+  useReducedMotion,
+  useScroll,
+  useTransform,
+} from "framer-motion";
+import {
+  Sun,
+  Anchor,
+  Star,
+  ArrowRight,
+  Calendar,
+  Waves,
+  Camera,
+  Mountain,
+  CheckCircle,
+  MapPin,
+  Plane,
 } from "lucide-react";
 
 const FADE_DURATION = 0.8;
@@ -14,7 +28,17 @@ const STAGGER_DELAY = 0.15;
 const FLOAT_DURATION = 3;
 
 const iconMap = {
-  Sun, Anchor, Star, ArrowRight, Calendar, Waves, Camera, Mountain, CheckCircle, MapPin, Plane,
+  Sun,
+  Anchor,
+  Star,
+  ArrowRight,
+  Calendar,
+  Waves,
+  Camera,
+  Mountain,
+  CheckCircle,
+  MapPin,
+  Plane,
 };
 
 const resolveIcon = (icon) => {
@@ -32,7 +56,9 @@ const CTAButton = ({ cta, Button, variants }) => {
     if (cta.href?.startsWith("#")) {
       e.preventDefault();
       const id = cta.href.slice(1);
-      document.getElementById(id)?.scrollIntoView({ behavior: "smooth", block: "start" });
+      document
+        .getElementById(id)
+        ?.scrollIntoView({ behavior: "smooth", block: "start" });
     }
     cta.onClick?.(e);
   };
@@ -42,7 +68,12 @@ const CTAButton = ({ cta, Button, variants }) => {
     return (
       <motion.div variants={variants}>
         <Button asChild>
-          <a href={cta.href} target="_blank" rel="noopener noreferrer" aria-label={cta.label}>
+          <a
+            href={cta.href}
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label={cta.label}
+          >
             {Icon && <Icon className="mr-2 h-4 w-4" aria-hidden="true" />}
             {cta.label}
           </a>
@@ -77,7 +108,9 @@ const CTAButton = ({ cta, Button, variants }) => {
 };
 
 export default function HeroSection({
-  image,
+  image, // default desktop image
+  imageMd, // tablet image
+  imageSm, // mobile image
   title = "Your Hero Title",
   highlight,
   subtitle = "Your subtitle goes here...",
@@ -109,12 +142,20 @@ export default function HeroSection({
     : {
         animate: {
           y: [0, -10, 0],
-          transition: { duration: FLOAT_DURATION, repeat: Infinity, repeatType: "reverse", ease: "easeInOut" },
+          transition: {
+            duration: FLOAT_DURATION,
+            repeat: Infinity,
+            repeatType: "reverse",
+            ease: "easeInOut",
+          },
         },
       };
   const imageAnimation = shouldReduceMotion
     ? { opacity: imageLoaded ? 1 : 0 }
-    : { initial: { scale: 1.2, opacity: 0 }, animate: { scale: 1, opacity: imageLoaded ? 1 : 0 } };
+    : {
+        initial: { scale: 1.2, opacity: 0 },
+        animate: { scale: 1, opacity: imageLoaded ? 1 : 0 },
+      };
 
   const hasPrimary = !!(primaryCta && primaryCta.label);
   const hasSecondary = !!(secondaryCta && secondaryCta.label);
@@ -129,19 +170,27 @@ export default function HeroSection({
         animate={{ opacity: 1 }}
         transition={{ duration: 1.2, ease: "easeOut" }}
       >
-        <motion.img
-          src={
-            image
-              ? `${import.meta.env.BASE_URL}${image}`
-              : "https://lightwidget.com/wp-content/uploads/localhost-file-not-found.jpg"
-          }
-          alt={`${title} background`}
-          className="w-full h-full object-cover"
-          onLoad={() => setImageLoaded(true)}
-          style={{ y: yParallax }}
-          {...imageAnimation}
+        <motion.picture
+          className="absolute inset-0 w-full h-full z-0"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: imageLoaded ? 1 : 0 }}
           transition={{ duration: 1.2, ease: "easeOut" }}
-        />
+        >
+          {/* Mobile (≤768px) */}
+          <source srcSet={imageSm} media="(max-width: 768px)" />
+
+          {/* Tablet (769–1280px) */}
+          <source srcSet={imageMd} media="(max-width: 1280px)" />
+
+          {/* Default PC image */}
+          <img
+            src={image}
+            alt={`${title} background`}
+            className="w-full h-full object-cover"
+            onLoad={() => setImageLoaded(true)}
+            style={{ y: yParallax }}
+          />
+        </motion.picture>
       </motion.div>
 
       {/* Overlay */}
@@ -164,7 +213,9 @@ export default function HeroSection({
         {(ResolvedIcon || badge) && (
           <motion.div {...floatAnimation} className="inline-block mb-6">
             <Badge className="bg-yellow-600/90 dark:bg-yellow-700/90 text-white border-0 px-4 py-2 text-sm font-semibold backdrop-blur-sm flex items-center gap-2">
-              {ResolvedIcon && <ResolvedIcon className="w-4 h-4" aria-hidden="true" />}
+              {ResolvedIcon && (
+                <ResolvedIcon className="w-4 h-4" aria-hidden="true" />
+              )}
               {badge}
             </Badge>
           </motion.div>
@@ -172,12 +223,13 @@ export default function HeroSection({
 
         {/* Title */}
         <motion.h1
-          className="text-4xl sm:text-6xl md:text-7xl lg:text-8xl xl:text-9xl font-black tracking-tight mb-6 bg-gradient-to-b from-white via-gray-100 to-gray-300 bg-clip-text text-transparent drop-shadow-2xl"
+          className="text-8xl sm:text-8xl md:text-8xl lg:text-8xl xl:text-9xl font-black tracking-tight mb-6 bg-gradient-to-b from-white via-gray-100 to-gray-300 bg-clip-text text-transparent drop-shadow-2xl"
           variants={fadeInUp}
           transition={{ duration: FADE_DURATION, ease: "easeOut" }}
         >
           <span>
-            {title} {highlight && <span className="text-amber-500">{highlight}</span>}
+            {title}{" "}
+            {highlight && <span className="text-amber-500">{highlight}</span>}
           </span>
         </motion.h1>
 
@@ -186,7 +238,11 @@ export default function HeroSection({
           <motion.p
             className="mt-4 text-lg sm:text-xl md:text-2xl text-gray-100 font-light tracking-wide leading-relaxed drop-shadow-lg max-w-3xl mx-auto px-4"
             variants={fadeInUp}
-            transition={{ duration: FADE_DURATION, ease: "easeOut", delay: 0.1 }}
+            transition={{
+              duration: FADE_DURATION,
+              ease: "easeOut",
+              delay: 0.1,
+            }}
           >
             {subtitle}
           </motion.p>
@@ -200,8 +256,20 @@ export default function HeroSection({
             animate="animate"
             className="mt-8 flex flex-wrap gap-4 justify-center"
           >
-            {hasPrimary && <CTAButton cta={primaryCta} Button={PrimaryButton} variants={fadeInUp} />}
-            {hasSecondary && <CTAButton cta={secondaryCta} Button={SecondaryButton} variants={fadeInUp} />}
+            {hasPrimary && (
+              <CTAButton
+                cta={primaryCta}
+                Button={PrimaryButton}
+                variants={fadeInUp}
+              />
+            )}
+            {hasSecondary && (
+              <CTAButton
+                cta={secondaryCta}
+                Button={SecondaryButton}
+                variants={fadeInUp}
+              />
+            )}
           </motion.div>
         )}
 
@@ -210,13 +278,22 @@ export default function HeroSection({
           <motion.div
             className="mt-12 flex flex-wrap items-center justify-center gap-4 sm:gap-8 text-white/90 px-4"
             variants={fadeInUp}
-            transition={{ duration: FADE_DURATION, ease: "easeOut", delay: 0.2 }}
+            transition={{
+              duration: FADE_DURATION,
+              ease: "easeOut",
+              delay: 0.2,
+            }}
           >
             {stats.map((stat, idx) => {
               const StatIcon = resolveIcon(stat.icon);
               return (
                 <div key={idx} className="flex items-center gap-2">
-                  {StatIcon && <StatIcon className="w-5 h-5 text-yellow-400" aria-hidden="true" />}
+                  {StatIcon && (
+                    <StatIcon
+                      className="w-5 h-5 text-yellow-400"
+                      aria-hidden="true"
+                    />
+                  )}
                   <span className="text-sm font-medium">{stat.text}</span>
                 </div>
               );
