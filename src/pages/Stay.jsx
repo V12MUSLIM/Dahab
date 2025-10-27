@@ -286,9 +286,9 @@ export default function StayPage() {
       {/* Hero Section */}
       <Suspense fallback={<SectionSkeleton />}>
         <HeroSection
-          image="/images/dahab-hotels-hero.webp"
-          imageMd="/images/dahab-hotels-hero-md.webp"
-          imageSm="/images/dahab-hotels-hero-sm.webp"
+          image="stay.webp"
+          imageMd="stay.webp"
+          imageSm="stay-small.webp"
           title="Find Your Perfect"
           highlight="Stay in Dahab"
           subtitle="From luxury resorts to cozy boutique hotels, discover the ideal accommodation for your Red Sea adventure"
