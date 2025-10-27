@@ -1,14 +1,12 @@
 "use client";
-import { lazy, Suspense, useMemo } from "react";
-import { Utensils, Star, Users, Search } from "lucide-react";
-import { useState } from "react";
 
+import { lazy, Suspense, useMemo, useState, useDeferredValue, useEffect } from "react";
+import { Utensils, Star, Users, Search } from "lucide-react";
 import HeroSection from "@/components/sections/HeroSection";
 import { useDine } from "@/hooks/useDine";
+import { PrimaryButton } from "@/components/customComponents/ButtonVarients";
+import Filters from "@/components/customComponents/FilteringTool";
 
-const FilteringTool = lazy(() =>
-  import("@/components/customComponents/FilteringTool")
-);
 const ImageCard = lazy(() =>
   import("@/components/customComponents/cardTemplates").then((module) => ({
     default: module.ImageCard,
@@ -19,7 +17,7 @@ const SocialMediaSection = lazy(() =>
 );
 
 const FilterSkeleton = () => (
-  <div className="animate-pulse space-y-4 mb-8">
+  <div className="animate-pulse space-y-4 mb-8" role="status" aria-label="Loading filters">
     <div className="h-12 bg-gray-200 dark:bg-gray-800 rounded-lg w-full" />
   </div>
 );
@@ -28,6 +26,15 @@ const CardSkeleton = () => (
   <div className="animate-pulse">
     <div className="bg-gray-200 dark:bg-gray-800 h-80 rounded-2xl mb-4" />
     <div className="h-6 bg-gray-200 dark:bg-gray-800 rounded w-3/4 mb-2" />
+  </div>
+);
+
+const PageSkeleton = () => (
+  <div className="min-h-screen flex items-center justify-center" role="status" aria-label="Loading page">
+    <div className="text-center">
+      <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-amber-500 mx-auto mb-4" />
+      <p className="text-lg text-muted-foreground">Loading restaurants...</p>
+    </div>
   </div>
 );
 
@@ -48,6 +55,31 @@ export default function Dine() {
     return ["All", ...getAllCategories];
   }, [getAllCategories]);
 
+  const categoryOptions = useMemo(() => {
+    return categories.map(cat => ({
+      value: cat,
+      label: cat
+    }));
+  }, [categories]);
+
+  const normalizePrice = (val) => {
+    if (val == null) return NaN;
+    if (typeof val === "number") return val;
+    const m = String(val).match(/\d+(\.\d+)?/);
+    return m ? parseFloat(m[0]) : NaN;
+  };
+
+  const deferredSearch = useDeferredValue(searchQuery);
+  const [debouncedSearch, setDebouncedSearch] = useState("");
+  
+  useEffect(() => {
+    const timer = setTimeout(
+      () => setDebouncedSearch(deferredSearch.trim().toLowerCase()),
+      200
+    );
+    return () => clearTimeout(timer);
+  }, [deferredSearch]);
+
   const filteredRestaurants = useMemo(() => {
     if (!allDining || allDining.length === 0) return [];
 
@@ -56,50 +88,30 @@ export default function Dine() {
         ? allDining
         : allDining.filter((r) => r.category === selectedCategory);
 
-    if (searchQuery) {
-      const searchLower = searchQuery.toLowerCase();
+    if (debouncedSearch) {
       filtered = filtered.filter(
         (r) =>
-          r.title?.toLowerCase().includes(searchLower) ||
-          r.description?.toLowerCase().includes(searchLower) ||
-          r.location?.toLowerCase().includes(searchLower)
+          r.title?.toLowerCase().includes(debouncedSearch) ||
+          r.description?.toLowerCase().includes(debouncedSearch) ||
+          r.location?.toLowerCase().includes(debouncedSearch)
       );
     }
 
     if (priceFilter !== "all") {
       filtered = filtered.filter((r) => {
-        const priceValue = r.priceValue || 0;
-        if (priceFilter === "low") return priceValue < 50;
-        if (priceFilter === "medium")
-          return priceValue >= 50 && priceValue < 80;
-        if (priceFilter === "high") return priceValue >= 80;
+        const price = normalizePrice(r.price || r.priceValue);
+        if (Number.isNaN(price)) return false;
+        if (priceFilter === "low") return price < 50;
+        if (priceFilter === "medium") return price >= 50 && price < 80;
+        if (priceFilter === "high") return price >= 80;
         return true;
       });
     }
 
     return filtered;
-  }, [allDining, selectedCategory, searchQuery, priceFilter]);
+  }, [allDining, selectedCategory, debouncedSearch, priceFilter]);
 
-  if (isLoading) {
-    return (
-      <div className="min-h-screen bg-gradient-to-b from-background to-muted/20">
-        <HeroSection
-          image="Dine-Images/Hero.webp"
-          title="Loading Restaurants..."
-          subtitle="Please wait"
-          Icon={Utensils}
-        />
-        <div className="container mx-auto px-4 py-12">
-          <FilterSkeleton />
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {[1, 2, 3, 4, 5, 6].map((i) => (
-              <CardSkeleton key={i} />
-            ))}
-          </div>
-        </div>
-      </div>
-    );
-  }
+  if (isLoading) return <PageSkeleton />;
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-background to-muted/20">
@@ -114,32 +126,46 @@ export default function Dine() {
         Icon={Utensils}
         badge="30+ Restaurants"
         stats={[
-          { icon: Utensils, text: `${allDining.length}+ Places` },
+          { icon: Utensils, text: `${allDining?.length || 0}+ Places` },
           { icon: Users, text: "10k+ Diners" },
           { icon: Star, text: "4.8/5 Rating" },
         ]}
+        priority
+        fetchPriority="high"
       />
 
-      <div className="container mx-auto px-4 py-12">
+      <div className="container mx-auto px-4 py-12" id="dining">
         <Suspense fallback={<FilterSkeleton />}>
-          <FilteringTool
+          <Filters
             searchQuery={searchQuery}
             onSearchChange={setSearchQuery}
             selectedCategory={selectedCategory}
             onCategoryChange={setSelectedCategory}
-            categories={categories}
+            categories={categoryOptions}
             priceFilter={priceFilter}
             onPriceChange={setPriceFilter}
-            searchPlaceholder="Search restaurants..."
             showPriceFilter={true}
+            showCategoryFilter={true}
+            showSearchBar={true}
           />
         </Suspense>
 
         <div className="mb-6 text-center">
           <p className="text-muted-foreground">
             Showing{" "}
-            <span className="font-semibold">{filteredRestaurants.length}</span>{" "}
+            <span className="font-semibold text-foreground">
+              {filteredRestaurants.length}
+            </span>{" "}
             {filteredRestaurants.length === 1 ? "place" : "places"}
+            {selectedCategory !== "All" && (
+              <span>
+                {" "}
+                in{" "}
+                <span className="font-semibold text-yellow-600">
+                  {selectedCategory}
+                </span>
+              </span>
+            )}
           </p>
         </div>
 
@@ -174,21 +200,22 @@ export default function Dine() {
             </div>
           ) : (
             <div className="text-center py-20">
-              <Search className="w-24 h-24 text-muted-foreground mx-auto mb-4" />
+              <div className="flex justify-center mb-4" aria-hidden>
+                <Search className="w-24 h-24 text-muted-foreground" />
+              </div>
               <h3 className="text-2xl font-semibold mb-2">No places found</h3>
               <p className="text-muted-foreground mb-6">
-                Try adjusting your filters
+                Try adjusting your search or filters
               </p>
-              <button
+              <PrimaryButton
                 onClick={() => {
                   setSearchQuery("");
                   setSelectedCategory("All");
                   setPriceFilter("all");
                 }}
-                className="px-6 py-3 bg-yellow-500 text-white rounded-lg hover:bg-yellow-600"
               >
-                Clear Filters
-              </button>
+                Clear All Filters
+              </PrimaryButton>
             </div>
           )}
         </Suspense>
