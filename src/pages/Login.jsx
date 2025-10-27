@@ -12,7 +12,15 @@ import {
 } from "@/components/customComponents/FormButtons";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
-
+function triggerToastError() {
+  toast.error("This an error message");
+}
+function triggerToastSucsees() {
+  toast.success("This a success message");
+}
+function triggerToastWarning() {
+  toast.warning("This a warning message");
+}
 const LoginPage = () => {
   const navigate = useNavigate();
 
@@ -56,7 +64,7 @@ const LoginPage = () => {
 
   return (
     <div
-      className="min-h-screen lg:mt-15 bg-cover bg-center bg-no-repeat flex items-center justify-center p-4 relative"
+      className="min-h-screen  bg-cover bg-center bg-no-repeat flex items-center justify-center p-4 relative"
       style={{
         backgroundImage: `url('image3.webp')`,
       }}
@@ -143,7 +151,11 @@ const LoginPage = () => {
                   "Login"
                 )}
               </FormPrimaryButton>
-
+              <div className="flex flex-col ">
+              <button className="text-green-600" onClick={() => triggerToastSucsees()}>click</button>
+              <button className="text-red-600" onClick={() => triggerToastError()}>click</button>
+              <button className="text-yellow-600" onClick={() => triggerToastWarning()}>click</button>
+              </div>
               <div className="relative my-8">
                 <div className="absolute inset-0 flex items-center">
                   <div className="w-full border-t border-gray-300 dark:border-gray-600"></div>

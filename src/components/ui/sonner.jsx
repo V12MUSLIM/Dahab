@@ -17,31 +17,29 @@ export const Toaster = (props) => {
 
   const baseStyle = isDark
     ? {
-        background: "rgba(35, 30, 20, 0.95)",
-        backdropFilter: "blur(14px)",
-        WebkitBackdropFilter: "blur(14px)", // Safari support
-        border: "1px solid rgba(255, 200, 0, 0.5)",
+        background: "rgba(35, 30, 20, 0.75)",
+        backdropFilter: "blur(16px)",
+        WebkitBackdropFilter: "blur(16px)", // Safari support
+        border: "1px solid rgba(255, 200, 0, 0.3)",
         color: "#fff7d1",
         fontWeight: 500,
-        borderRadius: "14px",
-        boxShadow: "0 8px 24px rgba(255, 200, 0, 0.18)",
-        padding: "12px 18px",
+        borderRadius: "8px",
+        padding: "14px 20px",
       }
     : {
-        background: "rgba(255, 248, 231, 0.95)", // Increased opacity
-        backdropFilter: "blur(14px)",
-        WebkitBackdropFilter: "blur(14px)",
-        border: "1px solid rgba(255, 200, 0, 0.4)",
-        color: "#3b2f10",
+        background: "rgba(255, 255, 255, 0.65)",
+        backdropFilter: "blur(16px)",
+        WebkitBackdropFilter: "blur(16px)",
+        border: "1px solid rgba(200, 200, 200, 0.4)",
+        color: "#1f2937",
         fontWeight: 500,
-        borderRadius: "14px",
-        boxShadow: "0 8px 24px rgba(255, 200, 0, 0.25)",
-        padding: "12px 18px",
+        borderRadius: "8px",
+        padding: "14px 20px",
       };
 
   return (
     <Sonner
-      position="top-center"
+      position="bottom-right"
       expand
       closeButton
       richColors
@@ -54,70 +52,60 @@ export const Toaster = (props) => {
           style: isDark
             ? {
                 ...baseStyle,
-                background: "rgba(20, 83, 45, 0.95)",
-                border: "1px solid rgba(34, 197, 94, 0.5)",
+                background: "rgba(20, 83, 45, 0.75)",
+                border: "1px solid rgba(34, 197, 94, 0.4)",
                 color: "#bbf7d0",
-                boxShadow: "0 8px 24px rgba(34, 197, 94, 0.15)",
-               
               }
             : {
                 ...baseStyle,
-                background: "rgba(240, 253, 244, 0.95)",
-                border: "1px solid rgba(34, 197, 94, 0.4)",
+                background: "rgba(240, 253, 244, 0.65)",
+                border: "1px solid rgba(34, 197, 94, 0.5)",
                 color: "#14532d",
-                boxShadow: "0 8px 24px rgba(34, 197, 94, 0.25)",
-               
               },
         },
         error: {
           style: isDark
             ? {
                 ...baseStyle,
-                background: "rgba(127, 29, 29, 0.95)",
-                border: "1px solid rgba(239, 68, 68, 0.5)",
+                background: "rgba(127, 29, 29, 0.75)",
+                border: "1px solid rgba(239, 68, 68, 0.4)",
                 color: "#fecaca",
-                boxShadow: "0 8px 24px rgba(239, 68, 68, 0.15)",
               }
             : {
                 ...baseStyle,
-                background: "rgba(254, 242, 242, 0.95)",
-                border: "1px solid rgba(239, 68, 68, 0.4)",
+                background: "rgba(254, 242, 242, 0.65)",
+                border: "1px solid rgba(239, 68, 68, 0.5)",
                 color: "#7f1d1d",
-                boxShadow: "0 8px 24px rgba(239, 68, 68, 0.25)",
               },
         },
         warning: {
           style: isDark
             ? {
                 ...baseStyle,
-                background: "rgba(113, 63, 18, 0.95)",
-                border: "1px solid rgba(234, 179, 8, 0.5)",
+                background: "rgba(113, 63, 18, 0.75)",
+                border: "1px solid rgba(234, 179, 8, 0.4)",
                 color: "#fef08a",
-                boxShadow: "0 8px 24px rgba(234, 179, 8, 0.15)",
               }
             : {
                 ...baseStyle,
-                background: "rgba(254, 249, 195, 0.95)",
-                border: "1px solid rgba(234, 179, 8, 0.4)",
+                background: "rgba(254, 249, 195, 0.65)",
+                border: "1px solid rgba(234, 179, 8, 0.5)",
                 color: "#713f12",
-                boxShadow: "0 8px 24px rgba(234, 179, 8, 0.25)",
               },
         },
         info: {
           style: isDark
             ? {
                 ...baseStyle,
-                background: "rgba(30, 58, 138, 0.95)",
-                border: "1px solid rgba(59, 130, 246, 0.5)",
+                background: "rgba(30, 58, 138, 0.75)",
+                border: "1px solid rgba(59, 130, 246, 0.4)",
                 color: "#bfdbfe",
-                boxShadow: "0 8px 24px rgba(59, 130, 246, 0.15)",
               }
             : {
                 ...baseStyle,
-                background: "rgba(239, 246, 255, 0.95)",
-                border: "1px solid rgba(59, 130, 246, 0.4)",
+                background: "rgba(239, 246, 255, 0.65)",
+                border: "1px solid rgba(59, 130, 246, 0.5)",
                 color: "#1e3a8a",
-                boxShadow: "0 8px 24px rgba(59, 130, 246, 0.25)",
               },
         },
       }}

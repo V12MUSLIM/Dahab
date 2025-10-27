@@ -257,6 +257,8 @@ export default function Home() {
       {/* Hero */}
       <HeroSection
         image={displayHero?.image}
+        imageSm="hero-small.webp"
+        imageMd="hero-medium.webp"
         title={displayHero?.title}
         subtitle={displayHero?.subtitle}
         Icon={displayHero?.icon}

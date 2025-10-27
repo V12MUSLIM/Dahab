@@ -93,7 +93,7 @@ export default function SocialMediaSection({
 
                 {/* Icon Background - Always has colored gradient */}
                 <motion.div
-                  className={`relative bg-amber-500 h-14 w-14 flex items-center justify-center rounded-full bg-gradient-to-br ${social.color} shadow-lg`}
+                  className={`relative from-yellow-600 to-yellow-700  h-14 w-14 flex items-center justify-center rounded-full bg-gradient-to-br ${social.color} shadow-lg`}
                 >
                   {typeof Icon === "string" ? (
                     <motion.img

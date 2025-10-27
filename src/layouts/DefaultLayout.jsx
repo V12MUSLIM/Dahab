@@ -7,20 +7,15 @@ import { motion } from "framer-motion";
 export default function DefaultLayout({ children }) {
   return (
     <>
-      {/* Navbar */}
-      <motion.div
-        className="relative w-full"
-        initial={{ opacity: 0, y: -20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.6 }}
-      >
+      <motion.div className="relative w-full" initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }}>
         <Navbar02 />
       </motion.div>
+  
       <UpButton />
-      {/* Page Content */}
-      <main className="min-h-screen">{children}</main>
+ 
+      {/* Offset fixed desktop header (h-16) and clear space for a fixed mobile bottom bar */}
+      <main className="min-h-screen lg:pt-16 pb-20 lg:pb-0">{children}</main>
 
-      {/* Footer */}
       <Footer />
     </>
   );
