@@ -8,12 +8,16 @@ import dotenv from "dotenv";
 import helmet from "helmet";
 import cors from "cors";
 import morgan from "morgan";
+//       start imports
 import packagesRouter from './src/home/packages/package-router'
 import activitiesRouter from "./src/home/activities/activities-router";
-import destinationRouter from "./src/home/Destination/destination-router"
-import heroRouter from "./src/home/hero/hero-router";
+import destinationRouter from "./src/home/Destinations/destination-router"
+import heroRouter from "./src/home/heros/hero-router";
+import cafeRouter from "./src/Dini/cafes/cafe-router";
+//       end imports
 import { sanitizeInput } from "./src/middlewares/sanitize.middleware";
 import session from "express-session";
+import restaurantRouter from "./src/Dini/restaurant/restaurant-router";
 
 dotenv.config();
 
@@ -22,9 +26,10 @@ const URI = process.env.DB_URL;
 const DB_NAME = process.env.DB_NAME;
 
 mongoose.connect(`${URI}/${DB_NAME}`)
-    .then(() => console.log("MongoDB connected"))
+    .then(() => console.log("MongoDB connected",`${URI}/${DB_NAME}`))
     .catch((err) => {
         console.error("MongoDB connection error:", err);
+        
         process.exit(1);
     });
 
@@ -78,6 +83,8 @@ app.use("/api/packages", packagesRouter);
 app.use("/api/activities", activitiesRouter);
 app.use("/api/destination", destinationRouter);
 app.use("/api/hero", heroRouter);
+app.use("/api/restaurant", restaurantRouter);
+app.use("/api/cafe",cafeRouter);
 
 app.use((err: any, req: Request, res: Response, next: NextFunction) => {
     console.error(err);

@@ -1,7 +1,7 @@
 import mongoose, { Schema } from "mongoose";
 
 
-export interface Iactivities {
+export interface IActivities {
     title: string;
     description: string;
     icon: string;
@@ -11,7 +11,7 @@ export interface Iactivities {
     price: number;
 }
 
-const activitiesSchema = new Schema<Iactivities>({
+const activitiesSchema = new Schema<IActivities>({
     title: {
         type: String,
         required: true
@@ -46,4 +46,4 @@ const activitiesSchema = new Schema<Iactivities>({
 )
 
 
-export const Activities = mongoose.model<Iactivities>("activities", activitiesSchema, "activities")
+export const Activities = mongoose.model<IActivities>("activities", activitiesSchema, "activities")
