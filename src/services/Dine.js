@@ -2,7 +2,8 @@ import api from "@/api/axios";
 
 export const getRestaurants = async () => {
   try {
-    const response = await api.get("/resturant");
+    const response = await api.get("/restaurant"); // ✅ تصحيح الـ spelling
+    console.log("Restaurant Response:", response);
     const data = response.data.restaurants || response.data.data || response.data;
     return Array.isArray(data) ? data : [];
   } catch (error) {
@@ -14,6 +15,7 @@ export const getRestaurants = async () => {
 export const getCafes = async () => {
   try {
     const response = await api.get("/cafe");
+    console.log("Cafe Response:", response);
     const data = response.data.cafes || response.data.data || response.data;
     return Array.isArray(data) ? data : [];
   } catch (error) {
@@ -24,7 +26,7 @@ export const getCafes = async () => {
 
 export const getDineById = async (id) => {
   try {
-    const response = await api.get(`/resturant/${id}`);
+    const response = await api.get(`/restaurant/${id}`); // ✅ تصحيح
     return response.data.data || response.data;
   } catch (error) {
     try {
