@@ -156,7 +156,7 @@ export default function Dine() {
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
               {filteredRestaurants.map((restaurant) => (
                 <ImageCard
-                  key={ restaurant.IdPage}
+                  key={restaurant._id || restaurant.id || restaurant.IdPage}
                   title={restaurant.title}
                   subtitle={restaurant.subtitle}
                   description={restaurant.description}
@@ -167,8 +167,8 @@ export default function Dine() {
                   price={restaurant.price}
                   buttonText="View Details"
                   href={`/restaurants/${restaurant.IdPage}`}
-                  onFavoriteClick={() => toggleFavorite(restaurant._id)}
-                  isFavorite={isFavorite(restaurant._id)}
+                  onFavoriteClick={() => toggleFavorite(restaurant._id || restaurant.id)}
+                  isFavorite={isFavorite(restaurant._id || restaurant.id)}
                 />
               ))}
             </div>

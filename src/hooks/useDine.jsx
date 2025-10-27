@@ -18,9 +18,6 @@ export const useDine = () => {
   const [favorites, setFavorites] = useState([]);
 
   const allDining = useMemo(() => {
-      console.log("Restaurants from API:", restaurants);
-  console.log("Cafes from API:", cafes);
-
     return [...(restaurants || []), ...(cafes || [])];
   }, [restaurants, cafes]);
 
