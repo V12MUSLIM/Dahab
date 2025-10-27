@@ -50,7 +50,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 
-import { useDine } from "@/Context/DineContext";
+import { useDine } from "@/hooks/useDine";
 
 const PrimaryButton = lazy(() =>
   import("@/components/customComponents/ButtonVarients").then((module) => ({
@@ -282,9 +282,12 @@ const WHY_BOOK_ITEMS = [
 export default function DineDetails() {
   const { IdPage } = useParams();
   const [favorites, setFavorites] = useState([]);
-  const { restaurants } = useDine();
   
-  const restaurant = restaurants.find((r) => r.IdPage === IdPage);
+  const { allDining, isLoading } = useDine();
+  
+  const restaurant = allDining?.find(
+    (r) => String(r.IdPage).toLowerCase() === String(IdPage).toLowerCase()
+  );
 
   const toggleFavorite = (id) => {
     setFavorites((prev) =>
@@ -294,13 +297,21 @@ export default function DineDetails() {
 
   const isFavorite = (id) => favorites.includes(id);
 
+  if (isLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="animate-spin rounded-full h-16 w-16 border-t-2 border-b-2 border-yellow-600"></div>
+      </div>
+    );
+  }
+
   if (!restaurant) return <NotFoundState />;
 
   return (
     <div className="min-h-screen bg-white dark:bg-black text-gray-900 dark:text-gray-100 pb-12">
       <Suspense fallback={<SectionSkeleton />}>
         <HeroSection
-          imageURL={restaurant.image}
+          image={restaurant.image}
           title={restaurant.title}
           subtitle={restaurant.subtitle}
           Icon={Utensils}
@@ -371,39 +382,41 @@ export default function DineDetails() {
               ))}
             </motion.div>
 
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.6, duration: 0.4 }}
-            >
-              <Card className="bg-gradient-to-r from-yellow-600/10 to-yellow-700/10 dark:from-yellow-600/20 dark:to-yellow-700/20 border-yellow-600/20 transition-all duration-300 hover:scale-[1.02] hover:shadow-2xl">
-                <CardHeader>
-                  <Award className="w-8 h-8 text-yellow-600 dark:text-yellow-500 mb-4" aria-hidden="true" />
-                  <CardTitle>Features & Amenities</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="grid grid-cols-2 gap-4 mb-6">
-                    {AMENITIES.map((amenity, index) => (
-                      <div
-                        key={index}
-                        className="flex items-center gap-3 p-3 rounded-lg bg-white dark:bg-gray-900 transition-all hover:scale-105"
-                      >
-                        <amenity.icon className="w-6 h-6 text-yellow-600 dark:text-yellow-500" aria-hidden="true" />
-                        <span className="font-medium">{amenity.label}</span>
-                      </div>
-                    ))}
-                  </div>
-                  <ul className="space-y-3">
-                    {restaurant.features.map((feature, index) => (
-                      <li key={index} className="flex items-start gap-3">
-                        <Check className="w-5 h-5 text-yellow-600 dark:text-yellow-500 flex-shrink-0 mt-0.5" aria-hidden="true" />
-                        <span className="text-muted-foreground">{feature}</span>
-                      </li>
-                    ))}
-                  </ul>
-                </CardContent>
-              </Card>
-            </motion.div>
+            {restaurant.features && restaurant.features.length > 0 && (
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.6, duration: 0.4 }}
+              >
+                <Card className="bg-gradient-to-r from-yellow-600/10 to-yellow-700/10 dark:from-yellow-600/20 dark:to-yellow-700/20 border-yellow-600/20 transition-all duration-300 hover:scale-[1.02] hover:shadow-2xl">
+                  <CardHeader>
+                    <Award className="w-8 h-8 text-yellow-600 dark:text-yellow-500 mb-4" aria-hidden="true" />
+                    <CardTitle>Features & Amenities</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="grid grid-cols-2 gap-4 mb-6">
+                      {AMENITIES.map((amenity, index) => (
+                        <div
+                          key={index}
+                          className="flex items-center gap-3 p-3 rounded-lg bg-white dark:bg-gray-900 transition-all hover:scale-105"
+                        >
+                          <amenity.icon className="w-6 h-6 text-yellow-600 dark:text-yellow-500" aria-hidden="true" />
+                          <span className="font-medium">{amenity.label}</span>
+                        </div>
+                      ))}
+                    </div>
+                    <ul className="space-y-3">
+                      {restaurant.features.map((feature, index) => (
+                        <li key={index} className="flex items-start gap-3">
+                          <Check className="w-5 h-5 text-yellow-600 dark:text-yellow-500 flex-shrink-0 mt-0.5" aria-hidden="true" />
+                          <span className="text-muted-foreground">{feature}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </CardContent>
+                </Card>
+              </motion.div>
+            )}
 
             {restaurant.menu?.length > 0 && (
               <motion.div
@@ -482,15 +495,15 @@ export default function DineDetails() {
 
                     <Suspense fallback={<ButtonSkeleton />}>
                       <SecondaryButton
-                        onClick={() => toggleFavorite(restaurant.id)}
+                        onClick={() => toggleFavorite(restaurant._id || restaurant.id)}
                         className="w-full"
-                        aria-label={isFavorite(restaurant.id) ? "Remove from favorites" : "Add to favorites"}
+                        aria-label={isFavorite(restaurant._id || restaurant.id) ? "Remove from favorites" : "Add to favorites"}
                       >
                         <Heart
-                          className={`w-5 h-5 mr-2 ${isFavorite(restaurant.id) ? "fill-current text-red-500" : ""}`}
+                          className={`w-5 h-5 mr-2 ${isFavorite(restaurant._id || restaurant.id) ? "fill-current text-red-500" : ""}`}
                           aria-hidden="true"
                         />
-                        {isFavorite(restaurant.id) ? "Remove from Favorites" : "Add to Favorites"}
+                        {isFavorite(restaurant._id || restaurant.id) ? "Remove from Favorites" : "Add to Favorites"}
                       </SecondaryButton>
                     </Suspense>
                   </div>
