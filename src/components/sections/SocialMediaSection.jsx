@@ -1,5 +1,6 @@
 "use client";
 
+// eslint-disable-next-line no-unused-vars
 import { motion } from "framer-motion";
 import { Mail, MapPin, Phone } from "lucide-react";
 import { Badge } from "../ui/badge";
@@ -19,7 +20,7 @@ export default function SocialMediaSection({
   };
 
   return (
-    <section className="py-20">
+    <section className="py-20 bg-muted/30 dark:bg-muted/20">
       <div className="max-w-6xl mx-auto px-4">
         {/* Header Section */}
         <motion.div

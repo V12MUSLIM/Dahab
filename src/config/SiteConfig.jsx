@@ -66,6 +66,8 @@ export const ROUTES = {
   stay: "/stay",
   dine: "/dine",
   planTrip: "/plantrip",
+  authCallback: "/auth/callback",
+  settings: "/settings",
   about: "/about",
   reviews: "/reviews",
   groups: "/groups",
@@ -160,7 +162,7 @@ export const UI_TEXT = {
     menu: "Menu",
   },
   buttons: {
-    login: "login",
+    login: "Login",
     viewAll: "View All",
   },
   sections: {
