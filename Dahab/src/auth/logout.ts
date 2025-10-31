@@ -1,28 +1,34 @@
 import { RequestHandler } from "express";
 
-interface IResponse{
-    message:string
-} 
-
+interface IResponse {
+    message: string;
+}
 
 export const logoutHandler: RequestHandler<{}, IResponse, {}> = async (req, res) => {
     try {
-        // Passport logout (does not destroy session cookie by itself)
-        if (typeof (req as any).logout === "function") {
-            (req as any).logout(() => {});
+        if (req.isAuthenticated && req.isAuthenticated()) {
+            if (typeof (req as any).logout === "function") {
+                await new Promise<void>((resolve, reject) => {
+                    (req as any).logout((err: any) => {
+                        if (err) return reject(err);
+                        resolve();
+                    });
+                });
+            }
+
+            if (req.session) {
+                req.session.destroy(() => { });
+            }
+
+            res.clearCookie("connect.sid");
+            return res.json({ message: "Logout successful (session)" });
         }
 
-        // Destroy express-session session
-        if (req.session) {
-            req.session.destroy(() => {});
-        }
-
-        // Clear common cookies (session + any custom token)
-        res.clearCookie("connect.sid");
+        // لو المستخدم داخل بـ JWT
         res.clearCookie("token");
-
-        res.json({ message: "Logout successful" });
-    } catch {
-        res.json({ message: "Logout successful" });
+        return res.json({ message: "Logout successful (JWT)" });
+    } catch (err) {
+        console.error("Logout error:", err);
+        res.status(500).json({ message: "Logout failed" });
     }
 };
