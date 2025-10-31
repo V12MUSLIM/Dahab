@@ -33,9 +33,9 @@ export const ExperienceProvider = ({ children }) => {
                     images: ["Experience/scuba-divingHero.webp"],
                     
                     galleryImages: [
-                        "Experience/scuba-diving (1).webp",
-                        "Experience/scuba-diving (2).webp",
-                        "Experience/scuba-diving (3).webp",
+                        "Experience/scuba-diving1.webp",
+                        "Experience/scuba-diving2.webp",
+                        "Experience/scuba-diving3.webp",
                     ],
 
                     // Badges & Rating
@@ -95,12 +95,12 @@ export const ExperienceProvider = ({ children }) => {
                     fullDescription: "Explore the stunning underwater world of Dahab without the need for diving certification! Our snorkeling tours take you to the best shallow reef sites where you can swim among vibrant coral gardens and colorful tropical fish. Perfect for families and beginners.",
 
                     // Images
-                    images: ["https://images.pexels.com/photos/847393/pexels-photo-847393.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1"],
+                    images: ["Experience/snorkeling-toursHero.webp"],
                    
                     galleryImages: [
-                        "https://images.unsplash.com/photo-1583212292454-1fe6229603b7?w=600",
-                        "https://images.unsplash.com/photo-1530053969600-caed2596d242?w=600",
-                        "https://images.unsplash.com/photo-1559827260-dc66d52bef19?w=600",
+                        "Experience/snorkeling-tours1.webp",
+                        "Experience/snorkeling-tours2.webp",
+                        "Experience/snorkeling-tours3.webp",
                     ],
 
                     // Badges & Rating
@@ -160,16 +160,12 @@ export const ExperienceProvider = ({ children }) => {
                     fullDescription: "Experience the ultimate adrenaline rush with windsurfing and kitesurfing at Dahab Lagoon, one of the world's premier wind sports destinations. With consistent winds, shallow flat water, and year-round perfect conditions, Dahab is a paradise for both beginners and advanced riders.",
 
                     // Images
-                    images: ["https://www.iksurfmag.com/wp-content/uploads/2023/04/DSC6405.jpg.jpg"],
-                    heroImages: [
-                        "https://www.iksurfmag.com/wp-content/uploads/2023/04/DSC6405.jpg.jpg",
-                        "https://images.unsplash.com/photo-1502933691298-84fc14542831?w=800",
-                        "https://images.unsplash.com/photo-1537519769971-fc55f2a656b4?w=800",
-                    ],
+                    images: ["Experience/windsurfing-kitesurfingHero.webp"],
+                    
                     galleryImages: [
-                        "https://images.unsplash.com/photo-1502933691298-84fc14542831?w=600",
-                        "https://images.unsplash.com/photo-1537519769971-fc55f2a656b4?w=600",
-                        "https://images.unsplash.com/photo-1583212292454-1fe6229603b7?w=600",
+                        "Experience/windsurfing-kitesurfing1.webp",
+                        "Experience/windsurfing-kitesurfing2.webp",
+                        "Experience/windsurfing-kitesurfingHero.webp",
                     ],
 
                     // Badges & Rating
@@ -236,16 +232,12 @@ export const ExperienceProvider = ({ children }) => {
                     fullDescription: "Embark on an unforgettable desert safari adventure through the stunning Sinai Peninsula. Ride powerful quad bikes across golden dunes and rugged terrain, visit authentic Bedouin camps, and experience traditional hospitality with mint tea and local cuisine. Watch the spectacular desert sunset paint the mountains in shades of gold and purple.",
 
                     // Images
-                    images: ["https://desert-safari-egypte.com/wp-content/uploads/2022/11/home-gallery-01.jpg"],
-                    heroImages: [
-                        "https://desert-safari-egypte.com/wp-content/uploads/2022/11/home-gallery-01.jpg",
-                        "https://images.unsplash.com/photo-1509411624844-36c5bcee33f4?w=800",
-                        "https://images.unsplash.com/photo-1551632811-561732d1e306?w=800",
-                    ],
+                    images: ["Experience/desert-safariHero.webp"],
+                    
                     galleryImages: [
-                        "https://images.unsplash.com/photo-1509411624844-36c5bcee33f4?w=600",
-                        "https://images.unsplash.com/photo-1551632811-561732d1e306?w=600",
-                        "https://images.unsplash.com/photo-1473186578172-c141e6798cf4?w=600",
+                        "Experience/desert-safari1.webp",
+                        "Experience/desert-safari2.webp",
+                        "Experience/desert-safariHero.webp",
                     ],
 
                     // Badges & Rating
@@ -307,16 +299,12 @@ export const ExperienceProvider = ({ children }) => {
                     fullDescription: "Immerse yourself in authentic Bedouin culture with an enchanting evening in the Sinai Desert. Travel to a traditional Bedouin camp where you'll be welcomed with warm hospitality and sweet mint tea. Watch the sunset paint the desert in golden hues, then enjoy a delicious traditional dinner prepared using ancient Bedouin cooking methods.",
 
                     // Images
-                    images: ["https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ2huN2dfdeQXp7pYTXEf4RpuOqQi2-jYsQWg&s"],
-                    heroImages: [
-                        "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ2huN2dfdeQXp7pYTXEf4RpuOqQi2-jYsQWg&s",
-                        "https://images.unsplash.com/photo-1536431311719-398b6704d4cc?w=800",
-                        "https://images.unsplash.com/photo-1451337516015-6b6e9a44a8a3?w=800",
-                    ],
+                    images: ["Experience/bedouin-dinnerHero.webp"],
+                   
                     galleryImages: [
-                        "https://images.unsplash.com/photo-1536431311719-398b6704d4cc?w=600",
-                        "https://images.unsplash.com/photo-1451337516015-6b6e9a44a8a3?w=600",
-                        "https://images.unsplash.com/photo-1542401886-65d6c61db217?w=600",
+                        "Experience/bedouin-dinner1.webp",
+                        "Experience/bedouin-dinner2.webp",
+                        "Experience/bedouin-dinner3.webp",
                     ],
 
                     // Badges & Rating
@@ -377,16 +365,12 @@ export const ExperienceProvider = ({ children }) => {
                     fullDescription: "Push your limits with an exhilarating rock climbing and hiking adventure in the majestic Sinai Mountains. Whether you're a beginner or experienced climber, our certified guides will lead you through stunning routes with breathtaking views of desert and sea. The unique granite and limestone formations offer diverse climbing challenges.",
 
                     // Images
-                    images: ["https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSurCLHN9L4X1TIXGtAxDF8JwJzhS5rjgC0WQ&s"],
-                    heroImages: [
-                        "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSurCLHN9L4X1TIXGtAxDF8JwJzhS5rjgC0WQ&s",
-                        "https://images.unsplash.com/photo-1522163182402-834f871fd851?w=800",
-                        "https://images.unsplash.com/photo-1551632811-561732d1e306?w=800",
-                    ],
+                    images: ["Experience/rock-climbing-hikingHero.webp"],
+                    
                     galleryImages: [
-                        "https://images.unsplash.com/photo-1522163182402-834f871fd851?w=600",
-                        "https://images.unsplash.com/photo-1551632811-561732d1e306?w=600",
-                        "https://images.unsplash.com/photo-1473186578172-c141e6798cf4?w=600",
+                        "Experience/rock-climbing-hiking1.webp",
+                        "Experience/rock-climbing-hiking2.webp",
+                        "Experience/rock-climbing-hiking3.webp",
                     ],
 
                     // Badges & Rating
@@ -454,16 +438,12 @@ export const ExperienceProvider = ({ children }) => {
                     fullDescription: "Begin your day in the most peaceful way possible with sunrise yoga on Dahab's pristine beach. As the sun rises over the Red Sea, practice gentle yoga flows, breathing exercises, and meditation guided by experienced instructors. The combination of soft morning light, ocean sounds, and fresh sea air creates the perfect environment for mindfulness and rejuvenation.",
 
                     // Images
-                    images: ["https://st3.depositphotos.com/1035122/34939/i/450/depositphotos_349395388-stock-photo-old-man-with-grey-beard.jpg"],
-                    heroImages: [
-                        "https://st3.depositphotos.com/1035122/34939/i/450/depositphotos_349395388-stock-photo-old-man-with-grey-beard.jpg",
-                        "https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?w=800",
-                        "https://images.unsplash.com/photo-1506126613408-eca07ce68773?w=800",
-                    ],
+                    images: ["Experience/sunrise-yogaHero.webp"],
+                   
                     galleryImages: [
-                        "https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?w=600",
-                        "https://images.unsplash.com/photo-1506126613408-eca07ce68773?w=600",
-                        "https://images.unsplash.com/photo-1545389336-cf090694435e?w=600",
+                        "Experience/sunrise-yoga1.webp",
+                        "Experience/sunrise-yoga2.webp",
+                        "Experience/sunrise-yoga3.webp",
                     ],
 
                     // Badges & Rating
@@ -523,16 +503,12 @@ export const ExperienceProvider = ({ children }) => {
                     fullDescription: "Escape the stresses of daily life with a luxurious combination of guided meditation and therapeutic spa treatments. Begin with a tranquil meditation session that calms the mind and reduces stress, followed by your choice of professional spa services including massage, aromatherapy, and body treatments.",
 
                     // Images
-                    images: ["https://media.istockphoto.com/id/1215733691/photo/calm-man-meditating-in-sunny-summer-day.jpg?s=612x612&w=0&k=20&c=DVpQcX0Pa1mmz97sr31C80eju-5v3BVkCdirR0_T_0c="],
-                    heroImages: [
-                        "https://media.istockphoto.com/id/1215733691/photo/calm-man-meditating-in-sunny-summer-day.jpg?s=612x612&w=0&k=20&c=DVpQcX0Pa1mmz97sr31C80eju-5v3BVkCdirR0_T_0c=",
-                        "https://images.unsplash.com/photo-1540555700478-4be289fbecef?w=800",
-                        "https://images.unsplash.com/photo-1544161515-4ab6ce6db874?w=800",
-                    ],
+                    images: ["Experience/meditation-spaHero.webp"],
+                    
                     galleryImages: [
-                        "https://images.unsplash.com/photo-1540555700478-4be289fbecef?w=600",
-                        "https://images.unsplash.com/photo-1544161515-4ab6ce6db874?w=600",
-                        "https://images.unsplash.com/photo-1570172619644-dfd03ed5d881?w=600",
+                        "Experience/meditation-spa1.webp",
+                        "Experience/meditation-spa2.webp",
+                        "Experience/meditation-spa3.webp",
                     ],
 
                     // Badges & Rating
