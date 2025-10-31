@@ -6,7 +6,8 @@ import {
   CardHeader,
   CardTitle,
 } from "../ui/card";
-import { Phone, Mail, MapPin } from "lucide-react";
+import { Badge } from "../ui/badge";
+import { Phone, Check,DollarSign } from "lucide-react";
 // eslint-disable-next-line no-unused-vars
 import { motion } from "framer-motion";
 
@@ -21,54 +22,69 @@ export default function ContactSection() {
     >
       <div className="w-full px-4">
         <div className="max-w-7xl mx-auto">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8 mb-12">
-            {/* Contact Info */}
-            <Card className="hover:shadow-lg transition-shadow">
-              <CardHeader>
-                <Phone className="w-8 h-8 text-yellow-600 dark:text-yellow-500 mb-4" />
-                <CardTitle>Call Us</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <p className="text-muted-foreground mb-2">
-                  Available 24/7 for support
-                </p>
-                <p className="font-semibold text-lg">+20 123 456 7890</p>
-                <p className="font-semibold text-lg">+20 987 654 3210</p>
-              </CardContent>
-            </Card>
+         <section className="py-20 px-4">
+        <div className="max-w-7xl mx-auto">
+          <motion.div
+            className="text-center mb-12"
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6 }}
+          >
+            <Badge className="mb-4 bg-yellow-100 dark:bg-yellow-900/30 text-yellow-800 dark:text-yellow-400 border-yellow-300 dark:border-yellow-700">
+              Why Choose Us
+            </Badge>
+            <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-foreground mb-4">
+              Book With Confidence
+            </h2>
+          </motion.div>
 
-            <Card className="hover:shadow-lg transition-shadow">
-              <CardHeader>
-                <Mail className="w-8 h-8 text-yellow-600 dark:text-yellow-500 mb-4" />
-                <CardTitle>Email Us</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <p className="text-muted-foreground mb-2">
-                  Get a response within 24 hours
-                </p>
-                <p className="font-semibold text-lg break-all">
-                  info@dahabadventures.com
-                </p>
-                <p className="font-semibold text-lg break-all">
-                  bookings@dahabadventures.com
-                </p>
-              </CardContent>
-            </Card>
-
-            <Card className="hover:shadow-lg transition-shadow">
-              <CardHeader>
-                <MapPin className="w-8 h-8 text-yellow-600 dark:text-yellow-500 mb-4" />
-                <CardTitle>Visit Us</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <p className="text-muted-foreground mb-2">
-                  Find us in the heart of Dahab
-                </p>
-                <p className="font-semibold">Mashraba Street, Dahab</p>
-                <p className="font-semibold">South Sinai, Egypt</p>
-              </CardContent>
-            </Card>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            {[
+              {
+                icon: DollarSign,
+                title: "Best Price Guarantee",
+                description:
+                  "We offer the most competitive rates for all accommodations in Dahab",
+              },
+              {
+                icon: Phone,
+                title: "24/7 Support",
+                description:
+                  "Our team is always available to assist you before, during, and after your stay",
+              },
+              {
+                icon: Check,
+                title: "Verified Reviews",
+                description:
+                  "All reviews are from real guests who have stayed at our properties",
+              },
+            ].map((benefit, index) => (
+              <motion.div
+                key={index}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.6, delay: index * 0.1 }}
+              >
+                <Card className="text-center h-full hover:shadow-lg transition-shadow">
+                  <CardHeader>
+                    <div className="w-16 h-16 mx-auto mb-4 bg-gradient-to-r from-yellow-600/10 to-yellow-700/10 dark:from-yellow-600/20 dark:to-yellow-700/20 rounded-full flex items-center justify-center">
+                      <benefit.icon className="w-8 h-8 text-yellow-600 dark:text-yellow-500" />
+                    </div>
+                    <CardTitle className="text-xl mb-2">
+                      {benefit.title}
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <CardDescription>{benefit.description}</CardDescription>
+                  </CardContent>
+                </Card>
+              </motion.div>
+            ))}
           </div>
+        </div>
+      </section>
 
           {/* Newsletter */}
           <Card className="bg-gradient-to-r from-yellow-600/10 to-yellow-700/10 dark:from-yellow-600/20 dark:to-yellow-700/20 border-yellow-600/20">

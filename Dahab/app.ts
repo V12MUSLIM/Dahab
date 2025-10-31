@@ -36,21 +36,7 @@ mongoose.connect(`${URI}/${DB_NAME}`)
 const app = express();
 
 
-app.use(helmet());
-// app.use(
-//     cors({
-//         origin: process.env.CORS_ORIGIN?.split(",") ?? ["http://localhost:5173"],
-//         credentials: true,
-//     })
-// );
-app.use(cors({origin: process.env.FRONTEND_URL, credentials: true}));
-// app.use(
-//     session({
-//         secret: process.env.SESSION_SECRET || "supersecret",
-//         resave: false,
-//         saveUninitialized: false,
-//     })
-// )
+
 app.use(
     session({
         secret: process.env.SESSION_SECRET || "supersecret",
@@ -63,12 +49,23 @@ app.use(
         },
     })
 );
+app.use(passport.initialize());
+app.use(passport.session());
+
+app.use(helmet());
+// app.use(
+//     cors({
+//         origin: process.env.CORS_ORIGIN?.split(",") ?? ["http://localhost:5173"],
+//         credentials: true,
+//     })
+// );
+app.use(cors({origin: process.env.FRONTEND_URL, credentials: true}));
+
 app.use(morgan("dev"));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
-app.use(passport.initialize());
-app.use(passport.session());
+app.use(sanitizeInput);
 app.use(
     rateLimit({
         windowMs: 15 * 60 * 1000,
@@ -76,7 +73,6 @@ app.use(
         message: "Too many requests from this IP, try again later.",
     })
 );
-app.use(sanitizeInput);
 // routes
 app.use("/api/auth", authRouter);
 app.use("/api/packages", packagesRouter);
