@@ -22,7 +22,7 @@ passport.use(
                         googleId: profile.id,
                         name: profile.displayName,
                         email: profile.emails?.[0].value,
-                        avatar: profile.photos?.[0].value,
+                        picture: profile.photos?.[0].value,
                         isVerified: true,
                     });
                 }
@@ -40,12 +40,15 @@ passport.serializeUser((user: any, done) => {
 });
 
 passport.deserializeUser(async (id: string, done) => {
-    try {
-        const user = await User.findById(id);
-        done(null, user);
-    } catch (err) {
-        done(err, null);
-    }
+    // try {
+    //     const user = await User.findById(id);
+    //     done(null, user);
+    // } catch (err) {
+    //     done(err, null);
+    // }
+    User.findById(id)
+    .then(user => done(null, user))
+    .catch(err => done(err, null));
 });
 
 export default passport;
