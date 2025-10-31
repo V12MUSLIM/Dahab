@@ -10,10 +10,10 @@ import { Toaster } from "@/components/ui/sonner";
 import AuthCallback from "./pages/AuthCallback";
 import { useAuthStore } from "./store/authStore";
 import { Spinner } from "@/components/ui/spinner";
-
+import { useSyncUserToQuery } from "@/hooks/useSyncUserToQuery";
 // EAGER LOAD
 import Home from "./pages/Home";
-
+import Settings from "./pages/ProfileSettings";
 // LAZY LOAD
 const Stay = lazy(() => import("./pages/Stay"));
 const Dine = lazy(() => import("./pages/Dine"));
@@ -60,18 +60,20 @@ const AuthInitializer = ({ children }) => {
 };
 
 function App() {
+  useSyncUserToQuery();
   return (
-    <ThemeProvider
-      attribute="class"
-      defaultTheme="system"
-      enableSystem
-      disableTransitionOnChange
-    >
-      <HashRouter>
+    <AuthInitializer>
+      <ThemeProvider
+        attribute="class"
+        defaultTheme="system"
+        enableSystem
+        disableTransitionOnChange
+      >
+        <HashRouter>
         <ScrollToTop />
         <Toaster />
         <DefaultLayout>
-          <DineProvider>
+          <ExperienceProvider>
             <div className="App">
               <Routes>
                 <Route path="/" element={<Home />} />
@@ -119,84 +121,86 @@ function App() {
                     }
                   />
 
-                <Route
-                  path="/cafes/:IdPage"
-                  element={
-                    <Suspense fallback={<PageSkeleton />}>
-                      <DineDetails />
-                    </Suspense>
-                  }
-                />
-                <Route
-                  path="/plantrip"
-                  element={
-                    <Suspense fallback={<PageSkeleton />}>
-                      <PlanTrip />
-                    </Suspense>
-                  }
-                />
-                <Route
-                  path="/destinations"
-                  element={
-                    <Suspense fallback={<PageSkeleton />}>
-                      <Destinations />
-                    </Suspense>
-                  }
-                />
-                <Route
-                  path="/destinations/:IdPage"
-                  element={
-                    <Suspense fallback={<PageSkeleton />}>
-                      <DestinationDetail />
-                    </Suspense>
-                  }
-                />
-                <Route
-                  path="/experiences"
-                  element={
-                    <Suspense fallback={<PageSkeleton />}>
-                      <Experiences />
-                    </Suspense>
-                  }
-                />
-                <Route
-                  path="/experiences/:IdPage"
-                  element={
-                    <Suspense fallback={<PageSkeleton />}>
-                      <ExperiencesDetail />
-                    </Suspense>
-                  }
-                />
-                <Route
-                  path="*"
-                  element={
-                    <Suspense fallback={<PageSkeleton />}>
-                      <NotFound />
-                    </Suspense>
-                  }
-                />
-                <Route
-                  path="/login"
-                  element={
-                    <Suspense fallback={<PageSkeleton />}>
-                      <LoginPage />
-                    </Suspense>
-                  }
-                />
-                <Route
-                  path="/signup"
-                  element={
-                    <Suspense fallback={<PageSkeleton />}>
-                      <SignupPage />
-                    </Suspense>
-                  }
-                />
-              </Routes>
-            </div>
-          </DineProvider>
-        </DefaultLayout>
-      </HashRouter>
-    </ThemeProvider>
+                  <Route
+                    path="/cafes/:IdPage"
+                    element={
+                      <Suspense fallback={<PageSkeleton />}>
+                        <DineDetails />
+                      </Suspense>
+                    }
+                  />
+                  <Route
+                    path="/plantrip"
+                    element={
+                      <Suspense fallback={<PageSkeleton />}>
+                        <PlanTrip />
+                      </Suspense>
+                    }
+                  />
+                  <Route
+                    path="/destinations"
+                    element={
+                      <Suspense fallback={<PageSkeleton />}>
+                        <Destinations />
+                      </Suspense>
+                    }
+                  />
+                  <Route
+                    path="/destinations/:IdPage"
+                    element={
+                      <Suspense fallback={<PageSkeleton />}>
+                        <DestinationDetail />
+                      </Suspense>
+                    }
+                  />
+                  <Route
+                    path="/experiences"
+                    element={
+                      <Suspense fallback={<PageSkeleton />}>
+                        <Experiences />
+                      </Suspense>
+                    }
+                  />
+                  <Route
+                    path="/experiences/:IdPage"
+                    element={
+                      <Suspense fallback={<PageSkeleton />}>
+                        <ExperiencesDetail />
+                      </Suspense>
+                    }
+                  />
+                  <Route
+                    path="*"
+                    element={
+                      <Suspense fallback={<PageSkeleton />}>
+                        <NotFound />
+                      </Suspense>
+                    }
+                  />
+                  <Route
+                    path="/login"
+                    element={
+                      <Suspense fallback={<PageSkeleton />}>
+                        <LoginPage />
+                      </Suspense>
+                    }
+                  />
+                  <Route
+                    path="/signup"
+                    element={
+                      <Suspense fallback={<PageSkeleton />}>
+                        <SignupPage />
+                      </Suspense>
+                    }
+                  />
+                  <Route path="/auth/callback" element={<AuthCallback />} />
+                </Routes>
+              </div>
+            </ExperienceProvider>
+          </DefaultLayout>
+        </HashRouter>
+      </ThemeProvider>
+    </AuthInitializer>
   );
 }
 
