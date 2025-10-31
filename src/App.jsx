@@ -2,7 +2,7 @@ import "./App.css";
 import { HashRouter, Routes, Route } from "react-router-dom";
 import { lazy, Suspense } from "react";
 import DefaultLayout from "./layouts/DefaultLayout";
-import { DineProvider } from "./Context/DineContext";
+import { ExperienceProvider } from "./Context/ExperiencesContext";
 import { ThemeProvider } from "./components/theme-provider";
 import ScrollToTop from "./components/ScrollToTop";
 import { PageSkeleton } from "@/components/skeletons/PageSkeleton";
@@ -44,7 +44,7 @@ function App() {
         <ScrollToTop />
         <Toaster />
         <DefaultLayout>
-          <DineProvider>
+          <ExperienceProvider>
             <div className="App">
               <Routes>
                 <Route path="/" element={<Home />} />
@@ -166,7 +166,7 @@ function App() {
                 />
               </Routes>
             </div>
-          </DineProvider>
+          </ExperienceProvider>
         </DefaultLayout>
       </HashRouter>
     </ThemeProvider>
