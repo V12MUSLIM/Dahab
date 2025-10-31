@@ -118,7 +118,13 @@ export default function SignupPage() {
   });
 
   const agreedToTerms = watch("agreedToTerms");
-
+//google signup foraward
+  //////////////////////////////////////////////////////////////////
+  const handleGoogleSignup = () => {
+    const apiUrl = import.meta.env.VITE_API_URL;
+    window.open(`${apiUrl}/auth/google`, "_self");
+  };
+  /////////////////////////////////////////////////////////////////
   const onSubmit = async (data) => {
     try {
       console.log("Signup data:", data);
@@ -282,7 +288,7 @@ export default function SignupPage() {
               {/* Google Sign Up Button */}
               <FormSecondaryButton
                 type="button"
-                onClick={() => console.log("Google Sign Up")}
+                onClick={() => handleGoogleSignup()}
               >
                 <svg
                   className="w-4 h-4 sm:w-5 sm:h-5 mr-2 shrink-0"
