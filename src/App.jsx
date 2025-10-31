@@ -10,10 +10,10 @@ import { Toaster } from "@/components/ui/sonner";
 import AuthCallback from "./pages/AuthCallback";
 import { useAuthStore } from "./store/authStore";
 import { Spinner } from "@/components/ui/spinner";
-
+import { useSyncUserToQuery } from "@/hooks/useSyncUserToQuery";
 // EAGER LOAD
 import Home from "./pages/Home";
-
+import Settings from "./pages/ProfileSettings";
 // LAZY LOAD
 const Stay = lazy(() => import("./pages/Stay"));
 const Dine = lazy(() => import("./pages/Dine"));
@@ -60,7 +60,9 @@ const AuthInitializer = ({ children }) => {
 };
 
 function App() {
+  useSyncUserToQuery();
   return (
+    
     <ThemeProvider
       attribute="class"
       defaultTheme="system"
@@ -192,6 +194,15 @@ function App() {
                       </Suspense>
                     }
                   />
+                  <Route
+                    path="/settings"
+                    element={
+                      <Suspense fallback={<PageSkeleton />}>
+                        <Settings />
+                      </Suspense>
+                    }
+                  />
+                 
                   <Route path="/auth/callback" element={<AuthCallback />} />
                 </Routes>
               </div>
