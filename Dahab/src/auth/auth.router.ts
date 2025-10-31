@@ -29,7 +29,7 @@ router.get(
         failureMessage: true,
     }),
     (req: Request, res: Response) => {
-        res.redirect(`${process.env.FRONTEND_URL}/home`);
+        res.redirect(`${process.env.FRONTEND_URL}/#/auth/callback`);
     }
 );
 

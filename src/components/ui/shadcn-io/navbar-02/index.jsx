@@ -1,6 +1,7 @@
 "use client";
 
 import * as React from "react";
+import { useAuthStore } from "@/store/authStore";
 import {
   Search,
   Mail,
@@ -59,7 +60,8 @@ import {
   EXPERIENCES,
   UI_TEXT,
 } from "@/config/SiteConfig";
-
+import { toast } from "sonner";
+import { useNavigate } from "react-router-dom";
 // Icon mapping helper
 const iconMap = {
   Waves,
@@ -67,24 +69,6 @@ const iconMap = {
   Camera,
 };
 
-// TODO: Replace this with actual auth check
-const isAdmin = () => {
-  return localStorage.getItem("isAdmin") === "true";
-};
-
-// Get user data from localStorage
-const getUserData = () => {
-  if (typeof window === "undefined") return null;
-
-  const isLoggedIn = localStorage.getItem("isAdmin") === "true";
-  if (!isLoggedIn) return null;
-
-  return {
-    name: localStorage.getItem("userName") || "User",
-    email: localStorage.getItem("userEmail") || "user@example.com",
-    image: localStorage.getItem("userImage") || undefined,
-  };
-};
 
 // Map destinations with actual icon components
 const destinations = DESTINATIONS.map((dest) => ({
@@ -100,12 +84,17 @@ const experiences = EXPERIENCES.map((exp) => ({
 
 // UserNav Component
 const UserNav = React.memo(({ email, name, userImage }) => {
-  const handleLogout = () => {
-    localStorage.removeItem("isAdmin");
-    localStorage.removeItem("userEmail");
-    localStorage.removeItem("userName");
-    localStorage.removeItem("userImage");
-    window.location.href = ROUTES.login;
+  const navigate = useNavigate();
+  const handleLogout = async () => {
+    try {
+      const { logout } = useAuthStore.getState();
+      await logout();
+      toast.success("Logged out successfully");
+      navigate("/login");
+    } catch (error) {
+      toast.error("Logout failed");
+      console.error("Logout error:", error);
+    }
   };
 
   return (
@@ -503,11 +492,10 @@ export default function DahabTourismNavbar() {
   const [isMobileDrawerOpen, setIsMobileDrawerOpen] = React.useState(false);
   const [desktopSearchQuery, setDesktopSearchQuery] = React.useState("");
   const [isSearchFocused, setIsSearchFocused] = React.useState(false);
-  const [user, setUser] = React.useState(null);
+  const { user, isAuthenticated } = useAuthStore();
 
-  React.useEffect(() => {
-    setUser(getUserData());
-  }, []);
+
+
 
   const handleDesktopSearch = React.useCallback(
     (e) => {
@@ -520,7 +508,7 @@ export default function DahabTourismNavbar() {
   return (
     <>
       {/* Desktop Header */}
-    <header className="hidden lg:block fixed top-0 z-50 w-full border-b border-amber-400/20 dark:border-amber-500/30 bg-white/30 dark:bg-black/40 backdrop-blur-xl shadow-sm">
+      <header className="hidden lg:block fixed top-0 z-50 w-full border-b border-amber-400/20 dark:border-amber-500/30 bg-white/30 dark:bg-black/40 backdrop-blur-xl shadow-sm">
         <div className="container flex h-16 max-w-screen-2xl items-center justify-between px-4">
           <NavLink to={ROUTES.home} className="flex items-center space-x-2">
             <Logo />
