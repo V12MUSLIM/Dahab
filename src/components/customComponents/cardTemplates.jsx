@@ -717,15 +717,15 @@ const ExperienceCard = ({
 
               {/* Info Pills */}
               <div className="flex flex-wrap gap-2">
-                <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-400 text-xs font-medium">
+                <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-blue-50 dark:bg-blue-900/20 text-yellow-500 dark:text-yellow-400 text-xs font-medium">
                   <Clock className="h-3.5 w-3.5" />
                   {duration}
                 </div>
-                <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-purple-50 dark:bg-purple-900/20 text-purple-700 dark:text-purple-400 text-xs font-medium">
+                <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-purple-50 dark:bg-purple-900/20 text-yellow-500 dark:text-yellow-400 text-xs font-medium">
                   <Users className="h-3.5 w-3.5" />
                   {groupSize}
                 </div>
-                <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-green-50 dark:bg-green-900/20 text-green-700 dark:text-green-400 text-xs font-medium">
+                <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-green-50 dark:bg-green-900/20 text-yellow-500 dark:text-yellow-400 text-xs font-medium">
                   {difficulty}
                 </div>
               </div>
