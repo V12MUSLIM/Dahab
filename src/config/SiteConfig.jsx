@@ -1,5 +1,7 @@
 // Configuration file for Dahab Tourism app
 
+import Settings from "@/pages/ProfileSettings";
+
 // Contact Information
 export const CONTACT = {
   phone: "+20 10000000000",
