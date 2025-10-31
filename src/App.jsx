@@ -1,12 +1,15 @@
 import "./App.css";
 import { HashRouter, Routes, Route } from "react-router-dom";
-import { lazy, Suspense } from "react";
+import { lazy, Suspense, useEffect } from "react";
 import DefaultLayout from "./layouts/DefaultLayout";
 import { ExperienceProvider } from "./Context/ExperiencesContext";
 import { ThemeProvider } from "./components/theme-provider";
 import ScrollToTop from "./components/ScrollToTop";
 import { PageSkeleton } from "@/components/skeletons/PageSkeleton";
 import { Toaster } from "@/components/ui/sonner";
+import AuthCallback from "./pages/AuthCallback";
+import { useAuthStore } from "./store/authStore";
+import { Spinner } from "@/components/ui/spinner";
 
 // EAGER LOAD
 import Home from "./pages/Home";
@@ -32,6 +35,30 @@ const DashboardDestinations = lazy(() =>
   import("./pages/dashboard/DashboardDestinations")
 );
 
+// Auth initialization component
+const AuthInitializer = ({ children }) => {
+  const { checkAuthStatus, isLoading } = useAuthStore();
+
+  useEffect(() => {
+    // Check auth status on app load
+    checkAuthStatus();
+  }, [checkAuthStatus]);
+
+  // Show spinner while checking auth
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center h-screen bg-background">
+        <div className="text-center space-y-4">
+          <Spinner className="w-8 h-8 mx-auto" />
+          <p className="text-muted-foreground">Thinking...</p>
+        </div>
+      </div>
+    );
+  }
+
+  return children;
+};
+
 function App() {
   return (
     <ThemeProvider
@@ -44,53 +71,53 @@ function App() {
         <ScrollToTop />
         <Toaster />
         <DefaultLayout>
-          <ExperienceProvider>
+          <DineProvider>
             <div className="App">
               <Routes>
                 <Route path="/" element={<Home />} />
 
-                {/* Dashboard Routes */}
-                <Route
-                  path="/dashboard"
-                  element={
-                    <Suspense fallback={<PageSkeleton />}>
-                      <Dashboard />
-                    </Suspense>
-                  }
-                />
-                <Route
-                  path="/dashboard/destinations"
-                  element={
-                    <Suspense fallback={<PageSkeleton />}>
-                      <DashboardDestinations />
-                    </Suspense>
-                  }
-                />
+                  {/* Dashboard Routes */}
+                  <Route
+                    path="/dashboard"
+                    element={
+                      <Suspense fallback={<PageSkeleton />}>
+                        <Dashboard />
+                      </Suspense>
+                    }
+                  />
+                  <Route
+                    path="/dashboard/destinations"
+                    element={
+                      <Suspense fallback={<PageSkeleton />}>
+                        <DashboardDestinations />
+                      </Suspense>
+                    }
+                  />
 
-                <Route
-                  path="/stay"
-                  element={
-                    <Suspense fallback={<PageSkeleton />}>
-                      <Stay />
-                    </Suspense>
-                  }
-                />
-                <Route
-                  path="/dine"
-                  element={
-                    <Suspense fallback={<PageSkeleton />}>
-                      <Dine />
-                    </Suspense>
-                  }
-                />
-                <Route
-                  path="/restaurants/:IdPage"
-                  element={
-                    <Suspense fallback={<PageSkeleton />}>
-                      <DineDetails />
-                    </Suspense>
-                  }
-                />
+                  <Route
+                    path="/stay"
+                    element={
+                      <Suspense fallback={<PageSkeleton />}>
+                        <Stay />
+                      </Suspense>
+                    }
+                  />
+                  <Route
+                    path="/dine"
+                    element={
+                      <Suspense fallback={<PageSkeleton />}>
+                        <Dine />
+                      </Suspense>
+                    }
+                  />
+                  <Route
+                    path="/restaurants/:IdPage"
+                    element={
+                      <Suspense fallback={<PageSkeleton />}>
+                        <DineDetails />
+                      </Suspense>
+                    }
+                  />
 
                 <Route
                   path="/cafes/:IdPage"
@@ -166,7 +193,7 @@ function App() {
                 />
               </Routes>
             </div>
-          </ExperienceProvider>
+          </DineProvider>
         </DefaultLayout>
       </HashRouter>
     </ThemeProvider>
