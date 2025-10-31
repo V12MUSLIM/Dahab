@@ -1,4 +1,4 @@
-import Navbar02 from "../components/ui/shadcn-io/navbar-02";
+import Navbar02 from "../components/ui/shadcn-io/navbar";
 import Footer from "../components/sections/Footer";
 import UpButton from "@/components/UpButton";
 // eslint-disable-next-line no-unused-vars
