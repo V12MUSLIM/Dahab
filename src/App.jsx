@@ -2,7 +2,7 @@ import "./App.css";
 import { HashRouter, Routes, Route } from "react-router-dom";
 import { lazy, Suspense, useEffect } from "react";
 import DefaultLayout from "./layouts/DefaultLayout";
-import { DineProvider } from "./Context/DineContext";
+import { ExperienceProvider } from "./Context/ExperiencesContext";
 import { ThemeProvider } from "./components/theme-provider";
 import ScrollToTop from "./components/ScrollToTop";
 import { PageSkeleton } from "@/components/skeletons/PageSkeleton";
@@ -62,22 +62,21 @@ const AuthInitializer = ({ children }) => {
 function App() {
   useSyncUserToQuery();
   return (
-    
-    <ThemeProvider
-      attribute="class"
-      defaultTheme="system"
-      enableSystem
-      disableTransitionOnChange
-    >
-      <AuthInitializer>
+    <AuthInitializer>
+      <ThemeProvider
+        attribute="class"
+        defaultTheme="system"
+        enableSystem
+        disableTransitionOnChange
+      >
         <HashRouter>
-          <ScrollToTop />
-          <Toaster />
-          <DefaultLayout>
-            <DineProvider>
-              <div className="App">
-                <Routes>
-                  <Route path="/" element={<Home />} />
+        <ScrollToTop />
+        <Toaster />
+        <DefaultLayout>
+          <ExperienceProvider>
+            <div className="App">
+              <Routes>
+                <Route path="/" element={<Home />} />
 
                   {/* Dashboard Routes */}
                   <Route
@@ -194,23 +193,14 @@ function App() {
                       </Suspense>
                     }
                   />
-                  <Route
-                    path="/settings"
-                    element={
-                      <Suspense fallback={<PageSkeleton />}>
-                        <Settings />
-                      </Suspense>
-                    }
-                  />
-                 
                   <Route path="/auth/callback" element={<AuthCallback />} />
                 </Routes>
               </div>
-            </DineProvider>
+            </ExperienceProvider>
           </DefaultLayout>
         </HashRouter>
-      </AuthInitializer>
-    </ThemeProvider>
+      </ThemeProvider>
+    </AuthInitializer>
   );
 }
 
