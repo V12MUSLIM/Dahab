@@ -33,9 +33,9 @@ export const ExperienceProvider = ({ children }) => {
                     images: ["Experience/scuba-divingHero.webp"],
                     
                     galleryImages: [
-                        "Experience/scuba-diving1.webp",
-                        "Experience/scuba-diving2.webp",
-                        "Experience/scuba-diving3.webp",
+                        "/Experience/scuba-diving1.webp",
+                        "/Experience/scuba-diving2.webp",
+                        "/Experience/scuba-diving3.webp",
                     ],
 
                     // Badges & Rating

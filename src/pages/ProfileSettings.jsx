@@ -126,26 +126,8 @@ export default function Settings() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-black via-black to-amber-950/20">
-      {/* Header */}
-      <div className="sticky top-0 z-40 border-b border-yellow-500/30 bg-gradient-to-r from-black via-black to-black/95 backdrop-blur-md">
-        <div className="container mx-auto px-4 py-6 flex items-center gap-4">
-          <button
-            onClick={() => navigate(-1)}
-            className="p-2 rounded-lg hover:bg-yellow-500/20 transition-all duration-200"
-          >
-            <ArrowLeft className="h-5 w-5 text-yellow-500" />
-          </button>
-          <div>
-            <h1 className="text-3xl font-bold bg-gradient-to-r from-yellow-400 to-amber-500 bg-clip-text text-transparent">
-              Settings
-            </h1>
-            <p className="text-sm text-yellow-600/80">
-              Manage your profile and preferences
-            </p>
-          </div>
-        </div>
-      </div>
+    <div className="min-h-screen">
+ 
 
       {/* Main Content */}
       <div className="container mx-auto px-4 py-8 max-w-4xl pb-20 md:pb-8">
@@ -184,11 +166,8 @@ export default function Settings() {
                   <div>
                     <h3 className="text-lg font-semibold text-yellow-400 mb-2 flex items-center gap-2">
                       <Camera className="h-5 w-5" />
-                      Profile Picture
+                      Profile Details
                     </h3>
-                    <p className="text-sm text-yellow-600/60">
-                      Update your profile photo
-                    </p>
                   </div>
 
                   <div className="flex flex-col md:flex-row items-center gap-8 bg-gradient-to-r from-yellow-500/5 to-amber-500/5 p-6 rounded-xl border border-yellow-500/10">
@@ -226,13 +205,15 @@ export default function Settings() {
                       </AvatarFallback>
                     </Avatar>
 
-                    <div className="flex-1 space-y-3">
-                      <Button className="w-full md:w-auto bg-gradient-to-r from-yellow-500 to-amber-600 hover:from-yellow-600 hover:to-amber-700 text-black font-semibold border border-yellow-400/50 transition-all duration-200 shadow-lg shadow-yellow-500/20">
-                        <Camera className="h-4 w-4 mr-2" />
-                        Upload New Photo
-                      </Button>
-                      <p className="text-xs text-yellow-600/60">
-                        JPG, PNG or GIF • Max 5MB
+                    <div className="flex flex-col gap-2">
+                      <h3 className="font-bold text-3xl bg-gradient-to-r from-yellow-600 to-yellow-400 bg-clip-text text-transparent">
+                        Welcome
+                      </h3>
+                      <h4 className="text-xl font-semibold text-white">
+                        {user.name}
+                      </h4>
+                      <p className="text-sm text-amber-200/80">
+                        Update your personal information and profile settings
                       </p>
                     </div>
                   </div>

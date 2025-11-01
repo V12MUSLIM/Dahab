@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuthStore } from "@/store/authStore";
-import { Spinner } from "@/components/ui/spinner";
+import Loading from "@/components/Loading";
 import { toast } from "sonner";
 
 const AuthCallback = () => {
@@ -36,10 +36,7 @@ const AuthCallback = () => {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-background">
-      <div className="text-center space-y-4">
-        <Spinner className="w-8 h-8 mx-auto" />
-        <p className="text-muted-foreground">Completing sign in...</p>
-      </div>
+      <Loading loadingMessage="Completing sign in.." />
     </div>
   );
 };

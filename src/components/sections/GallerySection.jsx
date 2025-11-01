@@ -123,12 +123,7 @@ export default function GallerySection({
                       transition={{ duration: 0.5 }}
                       className="relative w-full h-full"
                     >
-                      <img
-                        src={image.src}
-                        alt={image.alt}
-                        className="w-full h-full object-cover"
-                        loading="lazy"
-                      />
+                      <img src={typeof image === "string" ? image : image.src} alt={image.alt || `Slide ${index + 1}`} className="w-full h-full object-cover" loading="lazy" />
                       {/* Gradient overlay (non-blocking) */}
                       <div className="absolute inset-0 bg-gradient-to-t from-transparent via-transparent to-transparent dark:from-black/95 dark:via-black/60 dark:to-transparent transition-colors duration-300 pointer-events-none" />
 
