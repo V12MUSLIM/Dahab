@@ -6,7 +6,7 @@ import HeroSection from "@/components/sections/HeroSection";
 import { useDine } from "@/hooks/useDine";
 import { PrimaryButton } from "@/components/customComponents/ButtonVarients";
 import Filters from "@/components/customComponents/FilteringTool";
-
+import DahabLoader from "@/components/Loading";
 const ImageCard = lazy(() =>
   import("@/components/customComponents/cardTemplates").then((module) => ({
     default: module.ImageCard,
@@ -29,14 +29,7 @@ const CardSkeleton = () => (
   </div>
 );
 
-const PageSkeleton = () => (
-  <div className="min-h-screen flex items-center justify-center" role="status" aria-label="Loading page">
-    <div className="text-center">
-      <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-amber-500 mx-auto mb-4" />
-      <p className="text-lg text-muted-foreground">Loading restaurants...</p>
-    </div>
-  </div>
-);
+
 
 export default function Dine() {
   const [selectedCategory, setSelectedCategory] = useState("All");
@@ -111,7 +104,7 @@ export default function Dine() {
     return filtered;
   }, [allDining, selectedCategory, debouncedSearch, priceFilter]);
 
-  if (isLoading) return <PageSkeleton />;
+  if (isLoading) return <DahabLoader />;
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-background to-muted/20">

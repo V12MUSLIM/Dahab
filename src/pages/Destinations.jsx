@@ -6,7 +6,7 @@ import { Search, MapPin, Compass, Star, Users } from "lucide-react";
 import HeroSection from "@/components/sections/HeroSection";
 import { PrimaryButton } from "@/components/customComponents/ButtonVarients";
 import Filters from "@/components/customComponents/FilteringTool";
-
+import DahabLoader from "@/components/Loading";
 const DestinationCard = lazy(() =>
   import("@/components/customComponents/cardTemplates").then((m) => ({
     default: m.DestinationCard,
@@ -26,14 +26,7 @@ const SectionDestinationsLoading = () => (
   </div>
 );
 
-const PageSkeleton = () => (
-  <div className="min-h-screen flex items-center justify-center" role="status" aria-label="Loading page">
-    <div className="text-center">
-      <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-amber-500 mx-auto mb-4" />
-      <p className="text-lg text-muted-foreground">Loading destinations...</p>
-    </div>
-  </div>
-);
+
 
 export default function Destinations() {
   const [selectedCategory, setSelectedCategory] = useState("All");
@@ -176,9 +169,9 @@ export default function Destinations() {
     return list;
   }, [destinations, selectedCategory, debouncedSearch, priceFilter]);
 
-  if (isLoading && !apiDestinations) return <PageSkeleton />;
+  if (DahabLoader && !apiDestinations) return <DahabLoader loadingMessage="Loading Destinations" />;
 
-  const showWarning = error && !isLoading && !apiDestinations;
+  const showWarning = error && !DahabLoader && !apiDestinations;
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-background to-muted/20">
