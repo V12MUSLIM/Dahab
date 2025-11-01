@@ -1,6 +1,12 @@
 import * as React from "react";
 import { NavLink } from "react-router-dom";
-import { Menu } from "lucide-react";
+import {
+  Menu,
+  Languages,
+  BadgeDollarSign,
+  DollarSign,
+  Euro,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Drawer, DrawerContent, DrawerTrigger } from "@/components/ui/drawer";
 import { ThemeToggle } from "@/components/theme-toggle";
@@ -11,6 +17,93 @@ import UserNav from "./UserNav";
 import SearchBar from "./SearchBar";
 import NavLinks from "./NavLinks";
 import DrawerMenu from "./DrawerMenu";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+const ChangeLanguage = () => {
+  return (
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>
+        <Button
+          variant="ghost"
+          size="icon"
+          className="hover:text-amber-600 dark:hover:text-amber-400"
+        >
+          <Languages className="h-5 w-5" />
+          <span className="sr-only">Change language</span>
+        </Button>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent align="end" className="w-48">
+        <DropdownMenuItem className="flex items-center justify-between">
+          <span>Russian</span>
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="20"
+            height="14"
+            viewBox="0 0 600 400"
+            className="rounded-sm"
+          >
+            <rect width="600" height="133.33" y="0" fill="#ffffff" />
+            <rect width="600" height="133.33" y="133.33" fill="#0033a0" />
+            <rect width="600" height="133.34" y="266.66" fill="#d52b1e" />
+          </svg>
+        </DropdownMenuItem>
+        <DropdownMenuItem className="flex items-center justify-between">
+          <span>English</span>
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="20"
+            height="14"
+            viewBox="0 0 60 30"
+            className="rounded-sm"
+          >
+            <rect width="60" height="30" fill="#012169" />
+            <path
+              fill="#FFF"
+              d="M0 0l60 30M60 0L0 30"
+              stroke="#FFF"
+              strokeWidth="6"
+            />
+            <path
+              fill="#C8102E"
+              d="M0 0l60 30M60 0L0 30"
+              stroke="#C8102E"
+              strokeWidth="3"
+            />
+            <path fill="#FFF" d="M25 0h10v30H25zM0 10h60v10H0z" />
+            <path fill="#C8102E" d="M27 0h6v30h-6zM0 12h60v6H0z" />
+          </svg>
+        </DropdownMenuItem>
+      </DropdownMenuContent>
+    </DropdownMenu>
+  );
+};
+
+/* 💵 Currency Dropdown */
+const ChangeCurrency = () => (
+  <DropdownMenu>
+    <DropdownMenuTrigger asChild>
+      <Button
+        variant="ghost"
+        size="icon"
+        className="hover:text-amber-600 dark:hover:text-amber-400"
+      >
+        <BadgeDollarSign className="h-5 w-5" />
+      </Button>
+    </DropdownMenuTrigger>
+    <DropdownMenuContent align="end">
+      <DropdownMenuItem>
+        USD <DollarSign className="ml-auto h-4 w-4" />
+      </DropdownMenuItem>
+      <DropdownMenuItem>
+        EUR <Euro className="ml-auto h-4 w-4" />
+      </DropdownMenuItem>
+    </DropdownMenuContent>
+  </DropdownMenu>
+);
 
 const NavbarDesktop = React.memo(({ user, isDrawerOpen, setIsDrawerOpen }) => {
   const [searchQuery, setSearchQuery] = React.useState("");
@@ -46,6 +139,8 @@ const NavbarDesktop = React.memo(({ user, isDrawerOpen, setIsDrawerOpen }) => {
         </div>
 
         <div className="flex items-center space-x-3">
+          <ChangeCurrency />
+          <ChangeLanguage />
           <ThemeToggle />
           {user ? (
             <UserNav

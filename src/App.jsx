@@ -13,7 +13,7 @@ import { Spinner } from "@/components/ui/spinner";
 import { useSyncUserToQuery } from "@/hooks/useSyncUserToQuery";
 // EAGER LOAD
 import Home from "./pages/Home";
-import Settings from "./pages/ProfileSettings";
+
 // LAZY LOAD
 const Stay = lazy(() => import("./pages/Stay"));
 const Dine = lazy(() => import("./pages/Dine"));
@@ -34,7 +34,8 @@ const Dashboard = lazy(() => import("./pages/dashboard/Dashboard"));
 const DashboardDestinations = lazy(() =>
   import("./pages/dashboard/DashboardDestinations")
 );
-
+const Settings = lazy(() => import("./pages/ProfileSettings"));
+const Loading = lazy(() => import("@/components/Loading"));
 // Auth initialization component
 const AuthInitializer = ({ children }) => {
   const { checkAuthStatus, isLoading } = useAuthStore();
@@ -48,10 +49,7 @@ const AuthInitializer = ({ children }) => {
   if (isLoading) {
     return (
       <div className="flex items-center justify-center h-screen bg-background">
-        <div className="text-center space-y-4">
-          <Spinner className="w-8 h-8 mx-auto" />
-          <p className="text-muted-foreground">Thinking...</p>
-        </div>
+        <Loading loadingMessage="Please wait..." />
       </div>
     );
   }
@@ -70,13 +68,14 @@ function App() {
         disableTransitionOnChange
       >
         <HashRouter>
-        <ScrollToTop />
-        <Toaster />
-        <DefaultLayout>
+          <ScrollToTop />
+          <Toaster />
           <ExperienceProvider>
-            <div className="App">
-              <Routes>
-                <Route path="/" element={<Home />} />
+          <DefaultLayout>
+            
+              <div className="App">
+                <Routes>
+                  <Route path="/" element={<Home />} />
 
                   {/* Dashboard Routes */}
                   <Route
@@ -193,11 +192,20 @@ function App() {
                       </Suspense>
                     }
                   />
+                  <Route
+                    path="/settings"
+                    element={
+                      <Suspense fallback={<PageSkeleton />}>
+                        <Settings />
+                      </Suspense>
+                    }
+                  />
                   <Route path="/auth/callback" element={<AuthCallback />} />
                 </Routes>
               </div>
-            </ExperienceProvider>
+            
           </DefaultLayout>
+          </ExperienceProvider>
         </HashRouter>
       </ThemeProvider>
     </AuthInitializer>
