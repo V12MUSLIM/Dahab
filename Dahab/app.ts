@@ -14,6 +14,7 @@ import activitiesRouter from "./src/home/activities/activities-router";
 import destinationRouter from "./src/home/Destinations/destination-router"
 import heroRouter from "./src/home/heros/hero-router";
 import cafeRouter from "./src/Dini/cafes/cafe-router";
+import experienceRouter  from "./src/experiences/experience-router";
 //       end imports
 import { sanitizeInput } from "./src/middlewares/sanitize.middleware";
 import session from "express-session";
@@ -81,6 +82,7 @@ app.use("/api/destination", destinationRouter);
 app.use("/api/hero", heroRouter);
 app.use("/api/restaurant", restaurantRouter);
 app.use("/api/cafe",cafeRouter);
+app.use("/api/experience", experienceRouter)
 
 app.use((err: any, req: Request, res: Response, next: NextFunction) => {
     console.error(err);
