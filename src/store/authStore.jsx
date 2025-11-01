@@ -227,7 +227,7 @@ export const useAuthStore = create(
 
       try {
         await secureFetch(`${API_CONFIG.baseUrl}/auth/logout`, {
-          method: "POST",
+          method: "DELETE",
         });
 
         set({
