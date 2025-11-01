@@ -1,54 +1,10 @@
 import { RequestHandler } from "express";
-import { Experience } from "../experience-model";
+import { Experience, IExperience } from "../experience-model";
 
-interface IRequest {
-    IdPage: string;
-    title: string;
-    category: string;
-    subtitle: string;
-    description: string;
-    image: string;
-    badge: string;
-    priceValue: number;
-    rating: string;
-    location: string;
-    price: string;
-    buttonText: string;
-    href: string;
-    phone: string;
-    email: string;
-    website: string;
-    openingHours: {
-        monday: string;
-        tuesday: string;
-        wednesday: string;
-        thursday: string;
-        friday: string;
-        saturday: string;
-        sunday: string;
-    };
-    menu: {
-        name: string;
-        price: string;
-        description: string;
-    }[];
-    features: string[];
-    gallery: {
-        src: string;
-        alt: string;
-        title: string;
-        description: string;
-    }[];
-    reviews: {
-        name: string;
-        rating: number;
-        comment: string;
-        date: string;
-    }[];
-}
+interface IRequest extends IExperience {}
 
 interface IResponse{
-    massege : string ;
+    message : string ;
 }
 
 export const addExperience: RequestHandler<{}, IResponse, IRequest | IRequest[]> = async (req , res) => {
@@ -59,8 +15,8 @@ export const addExperience: RequestHandler<{}, IResponse, IRequest | IRequest[]>
             await Experience.create(req.body);
         }
 
-        res.status(201).json({ massege: "Experience(s) added successfully"});
+        res.status(201).json({ message: "Experience(s) added successfully"});
     } catch (error: any) {
-        res.status(500).json({massege: error.massege || "Error adding Experience"})
+        res.status(500).json({message: error.message || "Error adding Experience"})
     }
 }

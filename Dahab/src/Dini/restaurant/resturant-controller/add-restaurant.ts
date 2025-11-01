@@ -1,9 +1,30 @@
 
 import { RequestHandler } from "express";
-import { Restaurant } from "../restaurant-model";
+import { IRestaurant, Restaurant } from "../restaurant-model";
 
-interface IRequest {
-    IdPage: string;
+interface IRequest extends IRestaurant {
+    
+}
+
+interface IResponse {
+    message: string;
+}
+
+export const addRestaurant: RequestHandler<{}, IResponse, IRequest | IRequest[]> = async (req, res) => {
+    try {
+        if (Array.isArray(req.body)) {
+            await Restaurant.insertMany(req.body);
+        } else {
+            await Restaurant.create(req.body);
+        }
+
+        res.status(201).json({ message: "Restaurant(s) added successfully" });
+    } catch (error: any) {
+        res.status(500).json({ message: error.message || "Error adding Restaurant" });
+    }
+}
+
+/*IdPage: string;
     title: string;
     category: string;
     subtitle: string;
@@ -45,23 +66,4 @@ interface IRequest {
         rating: number;
         comment: string;
         date: string;
-    }[];
-}
-
-interface IResponse {
-    massege: string;
-}
-
-export const addRestaurant: RequestHandler<{}, IResponse, IRequest | IRequest[]> = async (req, res) => {
-    try {
-        if (Array.isArray(req.body)) {
-            await Restaurant.insertMany(req.body);
-        } else {
-            await Restaurant.create(req.body);
-        }
-
-        res.status(201).json({ massege: "Restaurant(s) added successfully" });
-    } catch (error: any) {
-        res.status(500).json({ massege: error.message || "Error adding Restaurant" });
-    }
-}
+    }[];*/

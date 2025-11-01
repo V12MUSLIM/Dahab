@@ -3,14 +3,11 @@ import { Cafe, ICafe } from "../cafe-model";
 
 
 interface IResponse {
-    massege: string;
+    message: string;
 }
 
 interface IRequest extends ICafe { 
 }
-
-
-
 
 
 
@@ -22,8 +19,8 @@ export const addCafe: RequestHandler<{}, IResponse, IRequest | IRequest[]> = asy
             await Cafe.create(req.body);
         }
 
-        res.status(201).json({ massege: "Cafe(s) added successfully" });
+        res.status(201).json({ message: "Cafe(s) added successfully" });
     } catch (error: any) {
-        res.status(500).json({ massege: error.message || "Error adding Cafe" });
+        res.status(500).json({ message: error.message || "Error adding Cafe" });
     }
 }

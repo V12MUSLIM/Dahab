@@ -12,9 +12,4 @@ router.get('/', getExperience)
 
 
 
-
-
-
-
-
 export default router

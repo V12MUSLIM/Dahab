@@ -1,18 +1,7 @@
 import { RequestHandler } from "express";
-import { CTA, Hero, Stat } from "../hero-model";
+import { CTA, Hero, IHero, Stat } from "../hero-model";
 
-interface IRequest {
-    section: string;
-    image: string;
-    title: string;
-    highlight?: string;
-    subtitle: string;
-    badge: string;
-    icon: string;
-    description?: string;
-    primaryCta: CTA;
-    secondaryCta: CTA;
-    stats: Stat[];
+interface IRequest extends IHero {
 }
 
 interface IResponse {
@@ -32,3 +21,15 @@ export const addHero: RequestHandler<{}, IResponse, IRequest | IRequest[]> = asy
         res.status(500).json({ message: error.message || "Error adding Heros" });
     }
 };
+
+// section: string;
+//     image: string;
+//     title: string;
+//     highlight?: string;
+//     subtitle: string;
+//     badge: string;
+//     icon: string;
+//     description?: string;
+//     primaryCta: CTA;
+//     secondaryCta: CTA;
+//     stats: Stat[];
