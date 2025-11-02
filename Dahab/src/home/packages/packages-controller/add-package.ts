@@ -1,12 +1,7 @@
 import { RequestHandler } from "express";
-import { Package } from "../packages-model";
+import { IPackage, Package } from "../packages-model";
 
-interface IRequest {
-    title: string;
-    price: number;
-    duration: string;
-    features: string[];
-    popular: boolean;
+interface IRequest extends IPackage {
 }
 
 interface IResponse {
@@ -26,3 +21,8 @@ export const addPackage: RequestHandler<{}, IResponse, IRequest | IRequest[]> = 
         res.status(500).json({ message: error.message || "Error adding packages" });
     }
 };
+//   title: string;
+//     price: number;
+//     duration: string;
+//     features: string[];
+//     popular: boolean;

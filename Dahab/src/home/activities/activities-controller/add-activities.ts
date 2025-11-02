@@ -2,17 +2,11 @@ import { RequestHandler } from "express";
 import { Activities, IActivities } from "../activities-model";
 
 
-interface IRequest {
-    title: string;
-    description: string;
-    icon: string;
-    duration: string;
-    groupSize: number;
-    difficulty: string
-    price: number;
+interface IRequest extends IActivities {
 }
+
 interface IResponse {
-    massage: string;
+    message: string;
     response: IActivities | IActivities[];
 }
 
@@ -30,7 +24,7 @@ export const addActivities: RequestHandler<{}, IResponse, IRequest | IRequest[]>
             difficulty: ac.difficulty,
             price: ac.price,
         }));
-        return res.status(201).json({ massage: "activities added successfully", response })
+        return res.status(201).json({ message: "activities added successfully", response })
     }
     const response = {
         title: activities.title,
@@ -41,6 +35,13 @@ export const addActivities: RequestHandler<{}, IResponse, IRequest | IRequest[]>
         difficulty: activities.difficulty,
         price: activities.price
     }
-    res.status(201).json({ massage: "activities added successfully", response })
+    res.status(201).json({ message: "activities added successfully", response })
 }
 
+/*title: string;
+    description: string;
+    icon: string;
+    duration: string;
+    groupSize: number;
+    difficulty: string
+    price: number; */

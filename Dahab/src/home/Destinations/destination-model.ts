@@ -1,4 +1,4 @@
-import mongoose, { Schema, Document } from "mongoose";
+import mongoose from "mongoose";
 
 export interface IDestination  {
     category: string;
@@ -63,7 +63,7 @@ export interface IDestination  {
     };
 }
 
-const destinationSchema = new Schema<IDestination>(
+const destinationSchema = new  mongoose.Schema<IDestination>(
     {
         category: { type: String, required: true },
         title: { type: String, required: true },
