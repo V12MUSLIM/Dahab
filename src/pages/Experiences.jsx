@@ -3,7 +3,8 @@ import { lazy, Suspense, useState, useMemo, useDeferredValue, useEffect } from "
 import { Compass, Search } from "lucide-react";
 import Filters from "@/components/customComponents/FilteringTool";
 import { PrimaryButton } from "@/components/customComponents/ButtonVarients";
-import { useExperience } from "@/context/ExperiencesContext";
+import { useExperiences } from "@/hooks/useExperience";
+import DahabLoader from "@/components/Loading";
 
 const ExperienceCard = lazy(() =>
   import("@/components/customComponents/cardTemplates").then((module) => ({
@@ -39,19 +40,39 @@ const SectionSkeleton = () => (
 );
 
 export default function Experiences() {
-  const { experiencesByCategory, getAllExperiences } = useExperience();
-  
+  const {
+    experiences: apiExperiences,
+    getAllCategories,
+    getExperiencesByCategory,
+    error,
+  } = useExperiences();
+
   const [selectedCategory, setSelectedCategory] = useState("All");
   const [searchQuery, setSearchQuery] = useState("");
   const [priceFilter, setPriceFilter] = useState("all");
 
+  const experiencesByCategory = useMemo(() => {
+    return apiExperiences || [];
+  }, [apiExperiences]);
+
   const allExperiences = useMemo(() => {
-    return getAllExperiences();
-  }, [getAllExperiences]);
+    return experiencesByCategory.flatMap(cat =>
+      (cat.experiences || []).map(exp => ({
+        ...exp,
+        category: cat.category
+      }))
+    );
+  }, [experiencesByCategory]);
 
   const categories = useMemo(() => {
-    return ["All", ...experiencesByCategory.map((cat) => cat.category)];
-  }, [experiencesByCategory]);
+    if (typeof getAllCategories === "function") {
+      const apiCats = getAllCategories();
+      if (Array.isArray(apiCats) && apiCats.length > 0) {
+        return ["All", ...apiCats];
+      }
+    }
+    return ["All", ...experiencesByCategory.map(cat => cat.category)];
+  }, [experiencesByCategory, getAllCategories]);
 
   const categoryOptions = useMemo(() => {
     return categories.map(cat => ({
@@ -69,7 +90,7 @@ export default function Experiences() {
 
   const deferredSearch = useDeferredValue(searchQuery);
   const [debouncedSearch, setDebouncedSearch] = useState("");
-  
+
   useEffect(() => {
     const timer = setTimeout(
       () => setDebouncedSearch(deferredSearch.trim().toLowerCase()),
@@ -108,6 +129,10 @@ export default function Experiences() {
 
     return filtered;
   }, [allExperiences, selectedCategory, debouncedSearch, priceFilter]);
+
+  if (DahabLoader && !apiExperiences) {
+    return <DahabLoader />;
+  }
 
   return (
     <div className="min-h-screen bg-white dark:bg-black">
@@ -166,7 +191,7 @@ export default function Experiences() {
 
           <div className="space-y-16">
             {experiencesByCategory.map((categorySection) => {
-              const categoryExperiences = categorySection.experiences.filter((exp) => {
+              const categoryExperiences = (categorySection.experiences || []).filter((exp) => {
                 let passes = true;
 
                 if (selectedCategory !== "All" && categorySection.category !== selectedCategory) {
@@ -174,12 +199,11 @@ export default function Experiences() {
                 }
 
                 if (passes && debouncedSearch) {
-                  const searchLower = debouncedSearch;
-                  passes = 
-                    exp.title?.toLowerCase().includes(searchLower) ||
-                    exp.description?.toLowerCase().includes(searchLower) ||
-                    exp.location?.toLowerCase().includes(searchLower) ||
-                    exp.difficulty?.toLowerCase().includes(searchLower);
+                  passes =
+                    exp.title?.toLowerCase().includes(debouncedSearch) ||
+                    exp.description?.toLowerCase().includes(debouncedSearch) ||
+                    exp.location?.toLowerCase().includes(debouncedSearch) ||
+                    exp.difficulty?.toLowerCase().includes(debouncedSearch);
                 }
 
                 if (passes && priceFilter !== "all") {
@@ -205,7 +229,7 @@ export default function Experiences() {
                       {categorySection.category}
                     </h2>
                   </div>
-                  
+
                   <Suspense fallback={<SectionSkeleton />}>
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
                       {categoryExperiences.map((experience) => (
