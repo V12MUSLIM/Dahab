@@ -27,7 +27,7 @@ const URI = process.env.DB_URL;
 const DB_NAME = process.env.DB_NAME;
 
 mongoose.connect(`${URI}/${DB_NAME}`)
-    .then(() => console.log("MongoDB connected",`${URI}/${DB_NAME}`))
+    .then(() => console.log("MongoDB connected"))
     .catch((err) => {
         console.error("MongoDB connection error:", err);
         

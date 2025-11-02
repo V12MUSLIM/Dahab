@@ -1,8 +1,27 @@
 import { RequestHandler } from "express";
-import { Destination } from "../destination-model";
+import { Destination, IDestination } from "../destination-model";
 
-interface IRequest {
-    category: string;
+interface IRequest extends IDestination {
+    
+}
+
+export const addDestination: RequestHandler<{}, {}, IRequest | IRequest[]> = async (req, res) => {
+    try {
+        if (Array.isArray(req.body)) {
+            await Destination.insertMany(req.body);
+        } else {
+            await Destination.create(req.body);
+        }
+
+        res.status(201).json({ message: "Destination(s) added successfully" });
+    } catch (error: any) {
+        res.status(500).json({ message: error.message || "Error adding Destination" });
+    }
+}
+
+
+/*
+category: string;
     title: string;
     subtitle: string;
     badge: string;
@@ -62,19 +81,4 @@ interface IRequest {
         whatToBring: { text: string; icon: string }[];
         cancellation: string;
     };
-}
-
-
-export const addDestination: RequestHandler<{}, {}, IRequest | IRequest[]> = async (req, res) => {
-    try {
-        if (Array.isArray(req.body)) {
-            await Destination.insertMany(req.body);
-        } else {
-            await Destination.create(req.body);
-        }
-
-        res.status(201).json({ message: "Destination(s) added successfully" });
-    } catch (error: any) {
-        res.status(500).json({ message: error.message || "Error adding Destination" });
-    }
-}
+*/
