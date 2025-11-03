@@ -118,7 +118,7 @@ export default function Settings() {
     try {
       await logout();
       toast.success("Logged out successfully");
-      navigate(ROUTES.login);
+     setTimeout(() => navigate(ROUTES.login, { replace: true }), 300);
     } catch (error) {
       toast.error("Logout failed");
       console.error("Logout error:", error);
@@ -127,8 +127,6 @@ export default function Settings() {
 
   return (
     <div className="min-h-screen">
- 
-
       {/* Main Content */}
       <div className="container mx-auto px-4 py-8 max-w-4xl pb-20 md:pb-8">
         <div className="space-y-0 rounded-2xl border border-yellow-500/20 overflow-hidden shadow-2xl shadow-yellow-500/10">
@@ -210,8 +208,9 @@ export default function Settings() {
                         Welcome
                       </h3>
                       <h4 className="text-xl font-semibold text-white">
-                        {user.name}
+                        {user?.name || "Guest User"}
                       </h4>
+
                       <p className="text-sm text-amber-200/80">
                         Update your personal information and profile settings
                       </p>

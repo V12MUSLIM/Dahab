@@ -2,6 +2,7 @@ import "./App.css";
 import { HashRouter, Routes, Route } from "react-router-dom";
 import { lazy, Suspense, useEffect } from "react";
 import DefaultLayout from "./layouts/DefaultLayout";
+import ProtectedLayout from "./layouts/ProtectedLayout";
 import { ExperienceProvider } from "./Context/ExperiencesContext";
 import { ThemeProvider } from "./components/theme-provider";
 import ScrollToTop from "./components/ScrollToTop";
@@ -9,8 +10,9 @@ import { PageSkeleton } from "@/components/skeletons/PageSkeleton";
 import { Toaster } from "@/components/ui/sonner";
 import AuthCallback from "./pages/AuthCallback";
 import { useAuthStore } from "./store/authStore";
-import { Spinner } from "@/components/ui/spinner";
+import Loading from "@/components/Loading";
 import { useSyncUserToQuery } from "@/hooks/useSyncUserToQuery";
+
 // EAGER LOAD
 import Home from "./pages/Home";
 
@@ -26,7 +28,9 @@ const ExperiencesDetail = lazy(() =>
 const DestinationDetail = lazy(() =>
   import("./components/sections/DestinationsDetailsSections")
 );
-const DineDetails = lazy(() => import("./components/sections/DineDetails"));
+const DineDetails = lazy(() =>
+  import("./components/sections/DineDetails")
+);
 const NotFound = lazy(() => import("./pages/404"));
 const LoginPage = lazy(() => import("./pages/Login"));
 const SignupPage = lazy(() => import("./pages/SignUp"));
@@ -35,17 +39,15 @@ const DashboardDestinations = lazy(() =>
   import("./pages/dashboard/DashboardDestinations")
 );
 const Settings = lazy(() => import("./pages/ProfileSettings"));
-const Loading = lazy(() => import("@/components/Loading"));
-// Auth initialization component
+
+// --- Auth initialization ---
 const AuthInitializer = ({ children }) => {
   const { checkAuthStatus, isLoading } = useAuthStore();
 
   useEffect(() => {
-    // Check auth status on app load
-    checkAuthStatus();
+    checkAuthStatus(); // check user auth state once app loads
   }, [checkAuthStatus]);
 
-  // Show spinner while checking auth
   if (isLoading) {
     return (
       <div className="flex items-center justify-center h-screen bg-background">
@@ -59,6 +61,7 @@ const AuthInitializer = ({ children }) => {
 
 function App() {
   useSyncUserToQuery();
+
   return (
     <AuthInitializer>
       <ThemeProvider
@@ -71,30 +74,11 @@ function App() {
           <ScrollToTop />
           <Toaster />
           <ExperienceProvider>
-          <DefaultLayout>
-            
-              <div className="App">
-                <Routes>
+            <div className="App">
+              <Routes>
+                {/* Public Routes - wrapped in DefaultLayout */}
+                <Route element={<DefaultLayout />}>
                   <Route path="/" element={<Home />} />
-
-                  {/* Dashboard Routes */}
-                  <Route
-                    path="/dashboard"
-                    element={
-                      <Suspense fallback={<PageSkeleton />}>
-                        <Dashboard />
-                      </Suspense>
-                    }
-                  />
-                  <Route
-                    path="/dashboard/destinations"
-                    element={
-                      <Suspense fallback={<PageSkeleton />}>
-                        <DashboardDestinations />
-                      </Suspense>
-                    }
-                  />
-
                   <Route
                     path="/stay"
                     element={
@@ -108,23 +92,6 @@ function App() {
                     element={
                       <Suspense fallback={<PageSkeleton />}>
                         <Dine />
-                      </Suspense>
-                    }
-                  />
-                  <Route
-                    path="/restaurants/:IdPage"
-                    element={
-                      <Suspense fallback={<PageSkeleton />}>
-                        <DineDetails />
-                      </Suspense>
-                    }
-                  />
-
-                  <Route
-                    path="/cafes/:IdPage"
-                    element={
-                      <Suspense fallback={<PageSkeleton />}>
-                        <DineDetails />
                       </Suspense>
                     }
                   />
@@ -153,6 +120,22 @@ function App() {
                     }
                   />
                   <Route
+                    path="/restaurants/:IdPage"
+                    element={
+                      <Suspense fallback={<PageSkeleton />}>
+                        <DineDetails />
+                      </Suspense>
+                    }
+                  />
+                  <Route
+                    path="/cafes/:IdPage"
+                    element={
+                      <Suspense fallback={<PageSkeleton />}>
+                        <DineDetails />
+                      </Suspense>
+                    }
+                  />
+                  <Route
                     path="/experiences"
                     element={
                       <Suspense fallback={<PageSkeleton />}>
@@ -165,14 +148,6 @@ function App() {
                     element={
                       <Suspense fallback={<PageSkeleton />}>
                         <ExperiencesDetail />
-                      </Suspense>
-                    }
-                  />
-                  <Route
-                    path="*"
-                    element={
-                      <Suspense fallback={<PageSkeleton />}>
-                        <NotFound />
                       </Suspense>
                     }
                   />
@@ -193,6 +168,18 @@ function App() {
                     }
                   />
                   <Route
+                    path="*"
+                    element={
+                      <Suspense fallback={<PageSkeleton />}>
+                        <NotFound />
+                      </Suspense>
+                    }
+                  />
+                </Route>
+
+                {/* Protected Routes - wrapped in ProtectedLayout */}
+                <Route element={<ProtectedLayout />}>
+                  <Route
                     path="/settings"
                     element={
                       <Suspense fallback={<PageSkeleton />}>
@@ -200,11 +187,28 @@ function App() {
                       </Suspense>
                     }
                   />
-                  <Route path="/auth/callback" element={<AuthCallback />} />
-                </Routes>
-              </div>
-            
-          </DefaultLayout>
+                  <Route
+                    path="/dashboard"
+                    element={
+                      <Suspense fallback={<PageSkeleton />}>
+                        <Dashboard />
+                      </Suspense>
+                    }
+                  />
+                  <Route
+                    path="/dashboard/destinations"
+                    element={
+                      <Suspense fallback={<PageSkeleton />}>
+                        <DashboardDestinations />
+                      </Suspense>
+                    }
+                  />
+                </Route>
+
+                {/* OAuth callback - no layout */}
+                <Route path="/auth/callback" element={<AuthCallback />} />
+              </Routes>
+            </div>
           </ExperienceProvider>
         </HashRouter>
       </ThemeProvider>

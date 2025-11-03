@@ -10,10 +10,12 @@ const isValidUser = (user) => {
     return false;
   }
 
-  const hasId = 
-    (typeof user.id === "string" || typeof user.id === "number") ||
-    (typeof user._id === "string" || typeof user._id === "number");
-  
+  const hasId =
+    typeof user.id === "string" ||
+    typeof user.id === "number" ||
+    typeof user._id === "string" ||
+    typeof user._id === "number";
+
   const hasEmail = typeof user.email === "string" && user.email.length > 0;
 
   return hasId && hasEmail;
@@ -158,20 +160,15 @@ export const useAuthStore = create(
     checkAuthStatus: async () => {
       const state = get();
 
-      if (state.isCheckingAuth) {
-        return;
-      }
-
+      if (state.isCheckingAuth) return state.user;
       if (state.lastAuthCheck && Date.now() - state.lastAuthCheck < 30000) {
-        return;
+        return state.user;
       }
 
       try {
         set({ isLoading: true, isCheckingAuth: true, error: null });
 
-        const response = await secureFetch(
-          `${API_CONFIG.baseUrl}/auth/status`
-        );
+        const response = await secureFetch(`${API_CONFIG.baseUrl}/auth/status`);
         const data = await response.json();
 
         if (typeof data.authenticated !== "boolean") {
@@ -183,12 +180,16 @@ export const useAuthStore = create(
             throw new Error("Invalid user data received from server");
           }
 
+          const user = data.user;
+
           set({
-            user: data.user,
+            user,
             isAuthenticated: true,
             error: null,
             lastAuthCheck: Date.now(),
           });
+
+          return user; // ✅ <---- RETURN user here
         } else {
           set({
             user: null,
@@ -196,6 +197,8 @@ export const useAuthStore = create(
             error: null,
             lastAuthCheck: Date.now(),
           });
+
+          return null; // ✅ <---- Return null for not authenticated
         }
       } catch (error) {
         console.error("Auth check failed:", error);
@@ -206,6 +209,8 @@ export const useAuthStore = create(
           error: error.message || "Failed to verify authentication",
           lastAuthCheck: Date.now(),
         });
+
+        return null; // ✅ <---- Always return something
       } finally {
         set({ isLoading: false, isCheckingAuth: false });
       }
