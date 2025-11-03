@@ -1,6 +1,6 @@
 import * as React from "react";
 import { NavLink } from "react-router-dom";
-import { X } from "lucide-react";
+import { X, Settings } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { DrawerClose } from "@/components/ui/drawer";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -57,9 +57,9 @@ const DrawerMenu = React.memo(({ isMobile = false, onClose, user }) => {
                 <Avatar className="h-12 w-12 border-2 border-amber-400/40 dark:border-amber-500/50">
                   <AvatarImage
                     src={
-                      user.image || `https://avatar.vercel.sh/${user.name}`
+                      user.picture || `https://avatar.vercel.sh/${user.name}`
                     }
-                    alt={user.name}
+                    alt={user?.name || "User avatar"}
                   />
                   <AvatarFallback className="bg-gradient-to-br from-amber-500 to-orange-500 text-white font-semibold">
                     {user.name[0]?.toUpperCase() || "U"}
@@ -72,6 +72,15 @@ const DrawerMenu = React.memo(({ isMobile = false, onClose, user }) => {
                   <p className="text-xs text-muted-foreground truncate">
                     {user.email}
                   </p>
+                </div>
+                <div className="ml-auto text-amber-600 dark:text-amber-400">
+                  <NavLink
+                    to={ROUTES.settings}
+                    onClick={handleNavLinkClick}
+                    aria-label="User settings"
+                  >
+                    <Settings className="w-5 h-5" />
+                  </NavLink>
                 </div>
               </div>
             ) : (

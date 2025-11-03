@@ -6,24 +6,30 @@ import { toast } from "sonner";
 
 const AuthCallback = () => {
   const navigate = useNavigate();
-  const { checkAuthStatus, setUser } = useAuthStore();
+  const { checkAuthStatus } = useAuthStore();
 
   useEffect(() => {
+    let isMounted = true;
+
     const handleCallback = async () => {
       try {
-        console.log("Auth callback page loaded");
-
-        // Wait a moment for cookies to be set by browser
+        // Give browser time to store auth cookies
         await new Promise((resolve) => setTimeout(resolve, 800));
 
-        // Check auth status after Google redirects back
-        await checkAuthStatus();
+        // Check if user is authenticated
+        const user = await checkAuthStatus();
 
-        // Wait a bit for state to update
-        await new Promise((resolve) => setTimeout(resolve, 500));
+        // Only proceed if the component is still mounted
+        if (!isMounted) return;
 
-        // Navigate to home
-        navigate("/", { replace: true });
+        if (user) {
+          const displayName =
+            user.name || user.fullName || user.email || "there";
+          toast.success(`Logged in successfully! Welcome ${displayName}`);
+          navigate("/", { replace: true });
+        } else {
+          throw new Error("User not authenticated");
+        }
       } catch (error) {
         console.error("Auth callback error:", error);
         toast.error("Authentication failed. Please try again.");
@@ -32,11 +38,15 @@ const AuthCallback = () => {
     };
 
     handleCallback();
-  }, [checkAuthStatus, navigate, setUser]);
+
+    return () => {
+      isMounted = false;
+    };
+  }, [checkAuthStatus, navigate]);
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-background">
-      <Loading loadingMessage="Completing sign in.." />
+      <Loading loadingMessage="Completing sign in..." />
     </div>
   );
 };
