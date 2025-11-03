@@ -44,8 +44,23 @@ async function sendEmailVerificationLink(email: string, token: string) {
         html: emailTemplate,
     });
 }
+async function sendGoogleWelcomeEmail(email: string, name: string) {
+    let emailTemplate = await fs.readFile(
+        "./src/auth/register.html",
+        "utf-8"
+    );
+
+    emailTemplate = emailTemplate.replace("{name}", name);
+
+    await sendEmail({
+        to: email,
+        subject: "Welcome to Dahab 🌴",
+        html: emailTemplate,
+    });
+}
 
 export const emailService = {
     sendEmail,
     sendEmailVerificationLink,
+    sendGoogleWelcomeEmail
 };
