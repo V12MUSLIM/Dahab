@@ -3,6 +3,18 @@ import { RequestHandler } from "express";
 import { User } from "../models/user-model";
 import bcrypt from "bcrypt";
 import { jwtService } from "../services/jwt.service";
+import { body } from "express-validator";
+
+
+export const loginValidation = [
+    body("email")
+        .trim()
+        .notEmpty().withMessage("Email is required")
+        .isEmail().withMessage("Invalid email format"),
+
+    body("password")
+        .notEmpty().withMessage("Password is required"),
+];
 
 export const loginHandler: RequestHandler = async (req, res, next) => {
     try {

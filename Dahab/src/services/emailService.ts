@@ -31,7 +31,8 @@ async function sendEmailVerificationLink(email: string, token: string) {
     const url = `http://localhost:3000/api/auth/verify/${email}/${token}`;
 
     let emailTemplate = await fs.readFile(
-        "./src/templates/email.template.html",
+        // "./src/templates/email.template.html",
+        "./src/auth/register.html",
         "utf-8"
     );
 

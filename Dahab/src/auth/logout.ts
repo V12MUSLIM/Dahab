@@ -24,7 +24,6 @@ export const logoutHandler: RequestHandler<{}, IResponse, {}> = async (req, res)
             return res.json({ message: "Logout successful (session)" });
         }
 
-        // لو المستخدم داخل بـ JWT
         res.clearCookie("token");
         return res.json({ message: "Logout successful (JWT)" });
     } catch (err) {
