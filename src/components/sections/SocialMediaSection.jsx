@@ -11,6 +11,7 @@ export default function SocialMediaSection({
   header,
   description,
   socialLinks = SOCIAL_MEDIA,
+  id
 }) {
   // Icon map for lucide-react icons
   const iconMap = {
@@ -20,7 +21,7 @@ export default function SocialMediaSection({
   };
 
   return (
-    <section className="py-20 bg-muted/30 dark:bg-muted/20">
+    <section id={id} className="py-20 bg-muted/30 dark:bg-muted/20">
       <div className="max-w-6xl mx-auto px-4">
         {/* Header Section */}
         <motion.div

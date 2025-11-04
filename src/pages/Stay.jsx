@@ -1,5 +1,5 @@
 // pages/Stay.jsx
-import { useState, lazy, Suspense } from "react";
+import { useState, lazy, Suspense, useMemo } from "react";
 import { motion } from "framer-motion";
 import {
   Hotel,
@@ -17,6 +17,8 @@ import Filters from "@/components/customComponents/FilteringTool";
 import { StayCard } from "@/components/customComponents/cardTemplates";
 import ContactSection from "@/components/sections/ContactSection";
 import SocialMediaSection from "@/components/sections/SocialMediaSection";
+import { useStay } from "@/Context/StayContext";
+
 // Lazy load sections
 const HeroSection = lazy(() => import("@/components/sections/HeroSection"));
 const GallerySection = lazy(() =>
@@ -45,216 +47,6 @@ const SectionSkeleton = () => (
   <div className="w-full h-64 bg-gray-200 dark:bg-gray-800 animate-pulse rounded-lg" />
 );
 
-// Updated accommodation data - all items now have images array and href
-const accommodations = [
-  {
-    id: 1,
-    name: "Swiss Inn Resort Dahab",
-    type: "Luxury Resort",
-    category: "resort",
-    location: "Lighthouse Beach",
-    rating: 4.8,
-    reviews: 342,
-    pricePerNight: 138,
-    images: [
-      "https://images.trvl-media.com/lodging/2000000/1160000/1160000/1159956/8df09f6f.jpg?impolicy=resizecrop&rw=575&rh=575&ra=fill",
-      "https://cf.bstatic.com/xdata/images/hotel/max1024x768/117899327.jpg?k=3d3275fd064810dcefad18bf8a334c069d167a7ab5fb7e6efe34a58586d72fd9&o=&hp=1",
-      "https://cf.bstatic.com/xdata/images/hotel/max1024x768/643830382.jpg?k=0bd267adbac803b591c00fe08bedb970c992b0a8b3b077f1457fb605c4294ced&o=&hp=1",
-    ],
-    amenities: ["Wifi", "Coffee", "Utensils", "Car", "Waves"],
-    description:
-      "Luxury beachfront resort with direct beach access, multiple dining options, and family-friendly facilities.",
-    popular: true,
-    features: [
-      "Private Beach",
-      "Water Sports",
-      "Kids Pool",
-      "Spa & Wellness",
-      "Free Parking",
-    ],
-    href: "/stay/swiss-inn",
-  },
-  {
-    id: 2,
-    name: "Tropitel Dahab Oasis",
-    type: "Resort & Dive Center",
-    category: "resort",
-    location: "Near Blue Hole",
-    rating: 4.6,
-    reviews: 278,
-    pricePerNight: 94,
-    images: [
-      "https://cf.bstatic.com/xdata/images/hotel/max1024x768/117899327.jpg?k=3d3275fd064810dcefad18bf8a334c069d167a7ab5fb7e6efe34a58586d72fd9&o=&hp=1",
-      "https://cf.bstatic.com/xdata/images/hotel/max1024x768/643830382.jpg?k=0bd267adbac803b591c00fe08bedb970c992b0a8b3b077f1457fb605c4294ced&o=&hp=1",
-      "https://cf.bstatic.com/xdata/images/hotel/max1024x768/517391655.jpg?k=6fef52b18def2f5488893c9c2814be1e1819f6d25ea5872f0aa7bcae465a1b5d&o=&hp=1",
-    ],
-    amenities: ["Wifi", "Utensils", "Waves", "Car"],
-    description:
-      "Perfect for diving enthusiasts with direct reef access and professional dive center on-site.",
-    popular: false,
-    features: [
-      "Dive Center",
-      "Coral Reef Access",
-      "Free Parking",
-      "Restaurant",
-      "Beach Bar",
-    ],
-    href: "/stay/tropitel",
-  },
-  {
-    id: 3,
-    name: "Dahab Paradise",
-    type: "Beachfront Resort",
-    category: "resort",
-    location: "Laguna Beach",
-    rating: 4.9,
-    reviews: 412,
-    pricePerNight: 108,
-    images: [
-      "https://images.trvl-media.com/lodging/22000000/21580000/21574400/21574375/db301f11.jpg?impolicy=resizecrop&rw=575&rh=575&ra=fill",
-      "https://dynamic-media-cdn.tripadvisor.com/media/photo-o/2d/f2/f0/98/caption.jpg?w=900&h=500&s=1",
-      "https://q-xx.bstatic.com/xdata/images/hotel/max500/641041752.jpg?k=938bb97b637769064436891dc717d16c295f42467ce18c7e0dd6af8f1253c142&o=",
-    ],
-    amenities: ["Wifi", "Coffee", "Utensils", "Waves", "Car"],
-    description:
-      "Serene beachfront property with pristine Red Sea views and premium amenities.",
-    popular: true,
-    features: [
-      "Beachfront Location",
-      "Red Sea Views",
-      "Restaurant & Bar",
-      "Free WiFi",
-      "Airport Shuttle",
-    ],
-    href: "/stay/dahab-paradise",
-  },
-  {
-    id: 4,
-    name: "Sheikh Ali Resort",
-    type: "Boutique Hotel",
-    category: "boutique",
-    location: "Dahab City Center",
-    rating: 4.5,
-    reviews: 156,
-    pricePerNight: 45,
-    images: [
-      "https://cf.bstatic.com/xdata/images/hotel/max1024x768/643830382.jpg?k=0bd267adbac803b591c00fe08bedb970c992b0a8b3b077f1457fb605c4294ced&o=&hp=1",
-    ],
-    amenities: ["Wifi", "Coffee", "Utensils"],
-    description:
-      "Charming boutique hotel in the heart of Dahab with apartment-style rooms and central location.",
-    popular: false,
-    features: [
-      "Kitchenettes",
-      "Central Location",
-      "Pool & Terrace",
-      "Walking Distance to Beach",
-      "Budget Friendly",
-    ],
-    href: "/stay/sheikh-ali",
-  },
-  {
-    id: 5,
-    name: "Bedouin Moon Hotel",
-    type: "Sea View Hotel",
-    category: "hotel",
-    location: "Mashraba",
-    rating: 4.7,
-    reviews: 189,
-    pricePerNight: 67,
-    images: [
-      "https://cf.bstatic.com/xdata/images/hotel/max1024x768/517391655.jpg?k=6fef52b18def2f5488893c9c2814be1e1819f6d25ea5872f0aa7bcae465a1b5d&o=&hp=1",
-    ],
-    amenities: ["Wifi", "Utensils", "Waves", "Mountain"],
-    description:
-      "Stunning views between mountains and sea with direct beach access and excellent diving facilities.",
-    popular: false,
-    features: [
-      "Mountain & Sea Views",
-      "Private Beach",
-      "Diving Center",
-      "Panoramic Pool",
-      "Coral Reef Snorkeling",
-    ],
-    href: "/stay/bedouin-moon",
-  },
-  {
-    id: 6,
-    name: "Acacia Dahab Hotel",
-    type: "Mid-Range Hotel",
-    category: "hotel",
-    location: "Lighthouse",
-    rating: 4.4,
-    reviews: 203,
-    pricePerNight: 52,
-    images: [
-      "https://dynamic-media-cdn.tripadvisor.com/media/photo-o/2d/f2/f0/98/caption.jpg?w=900&h=500&s=1",
-    ],
-    amenities: ["Wifi", "Coffee", "Utensils"],
-    description:
-      "Relaxed atmosphere with poolside bar, perfect for socializing and close to beach and nightlife.",
-    popular: false,
-    features: [
-      "Poolside Bar",
-      "Social Atmosphere",
-      "Close to Beach",
-      "Air Conditioned Rooms",
-      "Balconies",
-    ],
-    href: "/stay/acacia",
-  },
-  {
-    id: 7,
-    name: "Coral Coast Hotel",
-    type: "Budget Hotel",
-    category: "hotel",
-    location: "Dahab City",
-    rating: 4.3,
-    reviews: 124,
-    pricePerNight: 35,
-    images: [
-      "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTaQ21QJJtHkcfGLFBiFLtFGV81e9qxV5wGOg&s",
-    ],
-    amenities: ["Wifi", "Coffee"],
-    description:
-      "Affordable accommodation with friendly staff and convenient location near the beach.",
-    popular: false,
-    features: [
-      "Budget Friendly",
-      "Free WiFi",
-      "Rooftop Terrace",
-      "Near Beach",
-      "Breakfast Included",
-    ],
-    href: "/stay/coral-coast",
-  },
-  {
-    id: 8,
-    name: "Blue Beach Club",
-    type: "Boutique Resort",
-    category: "boutique",
-    location: "Blue Lagoon",
-    rating: 4.6,
-    reviews: 198,
-    pricePerNight: 78,
-    images: [
-      "https://q-xx.bstatic.com/xdata/images/hotel/max500/641041752.jpg?k=938bb97b637769064436891dc717d16c295f42467ce18c7e0dd6af8f1253c142&o=",
-    ],
-    amenities: ["Wifi", "Coffee", "Utensils", "Waves"],
-    description:
-      "Stylish boutique resort with modern design, beachfront access, and personalized service.",
-    popular: false,
-    features: [
-      "Beachfront",
-      "Modern Design",
-      "Restaurant",
-      "Beach Bar",
-      "Yoga Classes",
-    ],
-    href: "/stay/blue-beach",
-  },
-];
-
 const categories = [
   { value: "all", label: "All Types" },
   { value: "resort", label: "Resorts" },
@@ -271,11 +63,55 @@ const amenityIcons = {
   Mountain,
 };
 
+// Helper function to get amenity names from stay
+const getAmenityNames = (stay) => {
+  const amenities = [];
+  if (stay.amenities) {
+    Object.values(stay.amenities).forEach(categoryAmenities => {
+      if (Array.isArray(categoryAmenities)) {
+        categoryAmenities.slice(0, 2).forEach(amenity => {
+          // Map common amenities to icon names
+          if (amenity.toLowerCase().includes('wifi')) amenities.push('Wifi');
+          else if (amenity.toLowerCase().includes('coffee') || amenity.toLowerCase().includes('bar')) amenities.push('Coffee');
+          else if (amenity.toLowerCase().includes('restaurant') || amenity.toLowerCase().includes('dining')) amenities.push('Utensils');
+          else if (amenity.toLowerCase().includes('parking') || amenity.toLowerCase().includes('car')) amenities.push('Car');
+          else if (amenity.toLowerCase().includes('beach') || amenity.toLowerCase().includes('sea')) amenities.push('Waves');
+          else if (amenity.toLowerCase().includes('mountain')) amenities.push('Mountain');
+        });
+      }
+    });
+  }
+  return [...new Set(amenities)].slice(0, 5); // Remove duplicates and limit to 5
+};
+
 export default function StayPage() {
+  const { getAllStays } = useStay();
   const [favorites, setFavorites] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("all");
   const [priceFilter, setPriceFilter] = useState("all");
+
+  // Get all stays from context
+  const accommodations = useMemo(() => {
+    const allStays = getAllStays();
+    console.log('All stays from context:', allStays); // Debug log
+    return allStays.map(stay => ({
+      id: stay.id,
+      name: stay.name,
+      type: stay.subtitle,
+      category: stay.type,
+      location: stay.location,
+      rating: parseFloat(stay.rating),
+      reviews: stay.totalReviews,
+      pricePerNight: stay.pricePerNight,
+      images: stay.images,
+      amenities: getAmenityNames(stay),
+      description: stay.description,
+      popular: stay.badge === "Popular" || stay.badge === "Top Rated",
+      features: stay.features,
+      href: `/stay/${stay.IdPage}`,
+    }));
+  }, [getAllStays]);
 
   const toggleFavorite = (id) => {
     setFavorites((prev) =>
@@ -329,7 +165,7 @@ export default function StayPage() {
           PrimaryButton={PrimaryButton}
           SecondaryButton={SecondaryButton}
           stats={[
-            { icon: Hotel, text: "50+ Properties" },
+            { icon: Hotel, text: `${accommodations.length}+ Properties` },
             { icon: Star, text: "4.7 Avg Rating" },
             { icon: CheckCircle, text: "Best Prices" },
           ]}
@@ -380,7 +216,7 @@ export default function StayPage() {
                   pricePerNight={hotel.pricePerNight}
                   amenities={hotel.amenities}
                   features={hotel.features}
-                  buttonText="Book Now"
+                  buttonText="View Details"
                   href={hotel.href}
                 />
               </motion.div>
@@ -471,7 +307,7 @@ export default function StayPage() {
                   pricePerNight={hotel.pricePerNight}
                   amenities={hotel.amenities}
                   features={hotel.features}
-                  buttonText="Book Now"
+                  buttonText="View Details"
                   href={hotel.href}
                 />
               </motion.div>
@@ -501,6 +337,7 @@ export default function StayPage() {
       <Suspense fallback={<SectionSkeleton />}>
         <ContactSection />
       </Suspense>
+      
       {/* Gallery Section */}
       <Suspense fallback={<SectionSkeleton />}>
         <GallerySection
@@ -526,12 +363,14 @@ export default function StayPage() {
       <Suspense fallback={<SectionSkeleton />}>
         <FAQSection />
       </Suspense>
+      
       {/*Social Media Section */}
       <Suspense fallback={<SectionSkeleton />}>
         <SocialMediaSection
           badge="Connect"
           header="Stay Connected"
           description="Follow our journey and stay updated with the latest from Dahab"
+          id="contact"
         />
       </Suspense>
     </div>

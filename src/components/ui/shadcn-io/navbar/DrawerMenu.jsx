@@ -60,6 +60,7 @@ const DrawerMenu = React.memo(({ isMobile = false, onClose, user }) => {
                       user.picture || `https://avatar.vercel.sh/${user.name}`
                     }
                     alt={user?.name || "User avatar"}
+                    
                   />
                   <AvatarFallback className="bg-gradient-to-br from-amber-500 to-orange-500 text-white font-semibold">
                     {user.name[0]?.toUpperCase() || "U"}

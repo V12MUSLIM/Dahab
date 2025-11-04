@@ -1330,60 +1330,14 @@ const ActivityCard = ({
   );
 };
 
-// Stats Card
 
-// Testimonial Card
-const TestimonialCard = ({
-  name,
-  location,
-  rating,
-  comment,
-  avatar,
-  className,
-}) => (
-  <DahabCard className={className}>
-    <CardContent className="p-6">
-      <div className="flex items-center gap-1 mb-4">
-        {[...Array(5)].map((_, i) => (
-          <Star
-            key={i}
-            className={cn(
-              "h-4 w-4",
-              i < rating
-                ? "fill-yellow-400 text-yellow-400"
-                : "text-gray-300 dark:text-gray-600"
-            )}
-          />
-        ))}
-      </div>
-
-      <CardDescription className="text-base text-foreground mb-4 italic">
-        "{comment}"
-      </CardDescription>
-
-      <div className="flex items-center gap-3">
-        {avatar && (
-          <img
-            src={avatar}
-            alt={name}
-            className="w-10 h-10 rounded-full object-cover"
-          />
-        )}
-        <div>
-          <p className="font-semibold text-foreground">{name}</p>
-          <p className="text-sm text-muted-foreground">{location}</p>
-        </div>
-      </div>
-    </CardContent>
-  </DahabCard>
-);
 
 export {
   DahabCard,
   StayCard,
   ImageCard,
   ActivityCard,
-  TestimonialCard,
+
   DestinationCard,
   ExperienceCard,
 };
