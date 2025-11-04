@@ -1,9 +1,10 @@
     import express, { Request, Response } from "express";
     import passport from "../config/passport";
 
-    import { registerHandler } from "./registerHandler";
-    import { loginHandler } from "./login.handler";
-    import { logoutHandler } from "./logout";
+    import { registerHandler } from "./register-controller";
+    import { loginHandler } from "./login-controller";
+    import { logoutHandler } from "./logout-controller";
+import { refreshTokenHandler } from "./refresh-controller";
 
     const router = express.Router();
 
@@ -12,6 +13,7 @@
 
     router.post("/login", loginHandler);
 
+    router.post("/refresh", refreshTokenHandler);
 
     router.delete("/logout", logoutHandler);
 

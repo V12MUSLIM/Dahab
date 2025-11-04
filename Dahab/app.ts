@@ -8,6 +8,7 @@ import dotenv from "dotenv";
 import helmet from "helmet";
 import cors from "cors";
 import morgan from "morgan";
+import compression from "compression";
 //       start imports
 import packagesRouter from './src/home/packages/package-router'
 import activitiesRouter from "./src/home/activities/activities-router";
@@ -53,27 +54,45 @@ app.use(
 app.use(passport.initialize());
 app.use(passport.session());
 
-app.use(helmet());
-// app.use(
-//     cors({
-//         origin: process.env.CORS_ORIGIN?.split(",") ?? ["http://localhost:5173"],
-//         credentials: true,
-//     })
-// );
-app.use(cors({origin: process.env.FRONTEND_URL, credentials: true}));
-
 app.use(morgan("dev"));
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
+app.use(helmet());
+
+const corsOptions = {
+    origin:
+    process.env.FRONTEND_URL||
+    "http://localhost:5173"||
+    "http://localhost:3000",
+    credentials: true, 
+    methods: ["GET", "POST", "PUT", "DELETE"],
+};
+app.use(cors(corsOptions));
+
+app.use(express.json({ limit: "10kb" }));
+app.use(express.static("public"));
 app.use(cookieParser());
-app.use(sanitizeInput);
 app.use(
     rateLimit({
         windowMs: 15 * 60 * 1000,
         max: 100,
         message: "Too many requests from this IP, try again later.",
+        standardHeaders: true,
+        legacyHeaders: false,
     })
 );
+app.use(express.urlencoded({ extended: true }));
+app.use(sanitizeInput);
+app.use(compression(    
+    {
+        level: 6,
+        threshold: 1000,
+        filter: (req, res) => {
+            if (req.headers["x-no-compression"]) {
+                return false;
+            }
+            return compression.filter(req, res);
+        },
+    }   
+));
 // routes
 app.use("/api/auth", authRouter);
 app.use("/api/packages", packagesRouter);
