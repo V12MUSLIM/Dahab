@@ -32,7 +32,7 @@ async function sendEmailVerificationLink(email: string, token: string) {
 
     let emailTemplate = await fs.readFile(
         // "./src/templates/email.template.html",
-        "./src/auth/register.html",
+        "./src/services/templates/register.html",
         "utf-8"
     );
 
@@ -46,7 +46,7 @@ async function sendEmailVerificationLink(email: string, token: string) {
 }
 async function sendGoogleWelcomeEmail(email: string, name: string) {
     let emailTemplate = await fs.readFile(
-        "./src/auth/register.html",
+        "./src/services/templates/continue-W-google.html",
         "utf-8"
     );
 

@@ -1,31 +1,26 @@
-    // jwt.service.ts simple wrapper
-    import jwt from "jsonwebtoken";
+// jwt.service.ts 
+import jwt from "jsonwebtoken";
 
-    const SECRET = process.env.secretKey!;
-    if (!SECRET) throw new Error("JWT_SECRET not set");
+const SECRET = process.env.secretKey!;
+if (!SECRET) throw new Error("JWT_SECRET not set");
 
-    export const jwtService = {
+export const jwtService = {
     createToken(payload: object, opts?: jwt.SignOptions) {
-        return jwt.sign(payload, SECRET, { ...(opts ?? { expiresIn: "2h" }) });
+        return jwt.sign(payload, SECRET, { expiresIn: "2h", ...opts });
     },
+
     verifyToken<T = any>(token: string) {
+    try {
         return jwt.verify(token, SECRET) as T;
+    } catch (err) {
+        return null; 
+    }
     },
-    };
-    export default jwtService;
 
-//     import jwt, { SignOptions } from "jsonwebtoken";
-// function createToken(
-//     payload: Record<string, unknown>,
-//     options: SignOptions = { expiresIn: "1d" }
-// )
-// {
-//     const token = jwt.sign(payload, process.env.secretKey!, options);
-//     return token;
-// }
+    decodeToken(token: string) {
+        return jwt.decode(token);
+    },
+};
 
-// export const jwtService = {
-//     createToken,
-// };
+export default jwtService;
 
-// export default jwtService;

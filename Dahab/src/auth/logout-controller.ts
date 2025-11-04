@@ -1,3 +1,4 @@
+// logoutController
 import { RequestHandler } from "express";
 
 interface IResponse {
@@ -21,11 +22,12 @@ export const logoutHandler: RequestHandler<{}, IResponse, {}> = async (req, res)
             }
 
             res.clearCookie("connect.sid");
-            return res.json({ message: "Logout successful (session)" });
+            return res.json({ message: "Logout successful google account" });
         }
 
         res.clearCookie("token");
-        return res.json({ message: "Logout successful (JWT)" });
+        res.clearCookie("refreshToken");
+        return res.json({ message: "Logout successful with email account" });
     } catch (err) {
         console.error("Logout error:", err);
         res.status(500).json({ message: "Logout failed" });

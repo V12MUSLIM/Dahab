@@ -1,9 +1,12 @@
 
+//loginHandler
+
 import { RequestHandler } from "express";
 import { User } from "../models/user-model";
 import bcrypt from "bcrypt";
 import { jwtService } from "../services/jwt.service";
 import { body } from "express-validator";
+import { log } from "console";
 
 
 export const loginValidation = [
@@ -28,11 +31,23 @@ export const loginHandler: RequestHandler = async (req, res, next) => {
         if (!validPassword) return res.status(400).json({ message: "Invalid email or password" });
 
         const token = jwtService.createToken({ id: user._id, email: user.email, role: user.role }, { expiresIn: "2h" });
+        const refreshToken = jwtService.createToken(
+            { id: user._id },
+            { expiresIn: "7d" }
+);
 
         res.cookie("token", token, {
             httpOnly: true,
+            sameSite: "strict",
+            secure: process.env.NODE_ENV === "production",
             maxAge: 2 * 60 * 60 * 1000,
         });
+        res.cookie("refreshToken", refreshToken, {
+            httpOnly: true,
+            sameSite: "strict",
+            secure: process.env.NODE_ENV === "production",
+            maxAge: 7 * 24 * 60 * 60 * 1000, 
+});
         return res.json({ message: "Logged in successfully" });
     } catch (err) {
         next(err);
