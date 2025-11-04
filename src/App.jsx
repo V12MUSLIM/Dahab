@@ -4,6 +4,7 @@ import { lazy, Suspense, useEffect } from "react";
 import DefaultLayout from "./layouts/DefaultLayout";
 import ProtectedLayout from "./layouts/ProtectedLayout";
 import { ExperienceProvider } from "./Context/ExperiencesContext";
+import { StayProvider } from "./Context/StayContext"; // Import StayProvider
 import { ThemeProvider } from "./components/theme-provider";
 import ScrollToTop from "./components/ScrollToTop";
 import { PageSkeleton } from "@/components/skeletons/PageSkeleton";
@@ -18,6 +19,7 @@ import Home from "./pages/Home";
 
 // LAZY LOAD
 const Stay = lazy(() => import("./pages/Stay"));
+const StayDetails = lazy(() => import("./components/sections/StayDetails")); // Add this
 const Dine = lazy(() => import("./pages/Dine"));
 const PlanTrip = lazy(() => import("./pages/PlanTrip"));
 const Destinations = lazy(() => import("./pages/Destinations"));
@@ -74,141 +76,152 @@ function App() {
           <ScrollToTop />
           <Toaster />
           <ExperienceProvider>
-            <div className="App">
-              <Routes>
-                {/* Public Routes - wrapped in DefaultLayout */}
-                <Route element={<DefaultLayout />}>
-                  <Route path="/" element={<Home />} />
-                  <Route
-                    path="/stay"
-                    element={
-                      <Suspense fallback={<PageSkeleton />}>
-                        <Stay />
-                      </Suspense>
-                    }
-                  />
-                  <Route
-                    path="/dine"
-                    element={
-                      <Suspense fallback={<PageSkeleton />}>
-                        <Dine />
-                      </Suspense>
-                    }
-                  />
-                  <Route
-                    path="/plantrip"
-                    element={
-                      <Suspense fallback={<PageSkeleton />}>
-                        <PlanTrip />
-                      </Suspense>
-                    }
-                  />
-                  <Route
-                    path="/destinations"
-                    element={
-                      <Suspense fallback={<PageSkeleton />}>
-                        <Destinations />
-                      </Suspense>
-                    }
-                  />
-                  <Route
-                    path="/destinations/:IdPage"
-                    element={
-                      <Suspense fallback={<PageSkeleton />}>
-                        <DestinationDetail />
-                      </Suspense>
-                    }
-                  />
-                  <Route
-                    path="/restaurants/:IdPage"
-                    element={
-                      <Suspense fallback={<PageSkeleton />}>
-                        <DineDetails />
-                      </Suspense>
-                    }
-                  />
-                  <Route
-                    path="/cafes/:IdPage"
-                    element={
-                      <Suspense fallback={<PageSkeleton />}>
-                        <DineDetails />
-                      </Suspense>
-                    }
-                  />
-                  <Route
-                    path="/experiences"
-                    element={
-                      <Suspense fallback={<PageSkeleton />}>
-                        <Experiences />
-                      </Suspense>
-                    }
-                  />
-                  <Route
-                    path="/experiences/:IdPage"
-                    element={
-                      <Suspense fallback={<PageSkeleton />}>
-                        <ExperiencesDetail />
-                      </Suspense>
-                    }
-                  />
-                  <Route
-                    path="/login"
-                    element={
-                      <Suspense fallback={<PageSkeleton />}>
-                        <LoginPage />
-                      </Suspense>
-                    }
-                  />
-                  <Route
-                    path="/signup"
-                    element={
-                      <Suspense fallback={<PageSkeleton />}>
-                        <SignupPage />
-                      </Suspense>
-                    }
-                  />
-                  <Route
-                    path="*"
-                    element={
-                      <Suspense fallback={<PageSkeleton />}>
-                        <NotFound />
-                      </Suspense>
-                    }
-                  />
-                </Route>
+            <StayProvider> {/* Wrap StayProvider here */}
+              <div className="App">
+                <Routes>
+                  {/* Public Routes - wrapped in DefaultLayout */}
+                  <Route element={<DefaultLayout />}>
+                    <Route path="/" element={<Home />} />
+                    <Route
+                      path="/stay"
+                      element={
+                        <Suspense fallback={<PageSkeleton />}>
+                          <Stay />
+                        </Suspense>
+                      }
+                    />
+                    {/* Add Stay Details Route */}
+                    <Route
+                      path="/stay/:id"
+                      element={
+                        <Suspense fallback={<PageSkeleton />}>
+                          <StayDetails />
+                        </Suspense>
+                      }
+                    />
+                    <Route
+                      path="/dine"
+                      element={
+                        <Suspense fallback={<PageSkeleton />}>
+                          <Dine />
+                        </Suspense>
+                      }
+                    />
+                    <Route
+                      path="/plantrip"
+                      element={
+                        <Suspense fallback={<PageSkeleton />}>
+                          <PlanTrip />
+                        </Suspense>
+                      }
+                    />
+                    <Route
+                      path="/destinations"
+                      element={
+                        <Suspense fallback={<PageSkeleton />}>
+                          <Destinations />
+                        </Suspense>
+                      }
+                    />
+                    <Route
+                      path="/destinations/:IdPage"
+                      element={
+                        <Suspense fallback={<PageSkeleton />}>
+                          <DestinationDetail />
+                        </Suspense>
+                      }
+                    />
+                    <Route
+                      path="/restaurants/:IdPage"
+                      element={
+                        <Suspense fallback={<PageSkeleton />}>
+                          <DineDetails />
+                        </Suspense>
+                      }
+                    />
+                    <Route
+                      path="/cafes/:IdPage"
+                      element={
+                        <Suspense fallback={<PageSkeleton />}>
+                          <DineDetails />
+                        </Suspense>
+                      }
+                    />
+                    <Route
+                      path="/experiences"
+                      element={
+                        <Suspense fallback={<PageSkeleton />}>
+                          <Experiences />
+                        </Suspense>
+                      }
+                    />
+                    <Route
+                      path="/experiences/:IdPage"
+                      element={
+                        <Suspense fallback={<PageSkeleton />}>
+                          <ExperiencesDetail />
+                        </Suspense>
+                      }
+                    />
+                    <Route
+                      path="/login"
+                      element={
+                        <Suspense fallback={<PageSkeleton />}>
+                          <LoginPage />
+                        </Suspense>
+                      }
+                    />
+                    <Route
+                      path="/signup"
+                      element={
+                        <Suspense fallback={<PageSkeleton />}>
+                          <SignupPage />
+                        </Suspense>
+                      }
+                    />
+                    <Route
+                      path="*"
+                      element={
+                        <Suspense fallback={<PageSkeleton />}>
+                          <NotFound />
+                        </Suspense>
+                      }
+                    />
+                  </Route>
 
-                {/* Protected Routes - wrapped in ProtectedLayout */}
-                <Route element={<ProtectedLayout />}>
-                  <Route
-                    path="/settings"
-                    element={
-                      <Suspense fallback={<PageSkeleton />}>
-                        <Settings />
-                      </Suspense>
-                    }
-                  />
-                  <Route
-                    path="/dashboard"
-                    element={
-                      <Suspense fallback={<PageSkeleton />}>
-                        <Dashboard />
-                      </Suspense>
-                    }
-                  />
-                  <Route
-                    path="/dashboard/destinations"
-                    element={
-                      <Suspense fallback={<PageSkeleton />}>
-                        <DashboardDestinations />
-                      </Suspense>
-                    }
-                  />
-                </Route>
+                  {/* Protected Routes - wrapped in ProtectedLayout */}
+                  <Route element={<ProtectedLayout />}>
+                    <Route
+                      path="/settings"
+                      element={
+                        <Suspense fallback={<PageSkeleton />}>
+                          <Settings />
+                        </Suspense>
+                      }
+                    />
+                    <Route
+                      path="/dashboard"
+                      element={
+                        <Suspense fallback={<PageSkeleton />}>
+                          <Dashboard />
+                        </Suspense>
+                      }
+                    />
+                    <Route
+                      path="/dashboard/destinations"
+                      element={
+                        <Suspense fallback={<PageSkeleton />}>
+                          <DashboardDestinations />
+                        </Suspense>
+                      }
+                    />
+                  </Route>
 
-                {/* OAuth callback - no layout */}
-                <Route path="/auth/callback" element={<AuthCallback />} />
-              </Routes>
-            </div>
+                  {/* OAuth callback - no layout */}
+                  <Route path="/auth/callback" element={<AuthCallback />} />
+                </Routes>
+              </div>
+            </StayProvider> {/* Close StayProvider here */}
           </ExperienceProvider>
         </HashRouter>
       </ThemeProvider>
