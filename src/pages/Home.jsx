@@ -6,9 +6,11 @@ import { useHero } from "../hooks/useHero";
 
 import HeroSection from "../components/sections/HeroSection";
 import { PageSkeleton } from "@/components/skeletons/PageSkeleton";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Package, Compass, MapPin } from "lucide-react";
 
-const GallerySection = lazy(() =>
-  import("../components/sections/GallerySection")
+const DahabExperience = lazy(() =>
+  import("../components/sections/DahabExperience")
 );
 const PackageDealsSection = lazy(() =>
   import("../components/sections/PackageDealsSection")
@@ -30,7 +32,7 @@ const ContactSection = lazy(() =>
 const SocialMediaSection = lazy(() =>
   import("@/components/sections/SocialMediaSection")
 );
-
+const IntroSection = lazy(() => import("@/components/sections/IntroSection"));
 import {
   Sun,
   Anchor,
@@ -272,40 +274,77 @@ export default function Home() {
 
       {/* Gallery */}
       <Suspense fallback={<SectionLoader />}>
-        <GallerySection
-          badge="Explore Dahab"
-          header="Discover Paradise"
-          paragraph="Experience the stunning beauty of Dahab through our curated gallery"
+        <IntroSection
+          badge="Timeless History"
+          smText="Endless Blue Horizons"
+          subtitle="Journey across continents, cultures, and landscapes—because every path leads to new discoveries."
           images={galleryImages}
-          autoPlay
-          autoPlayInterval={2500}
+          autoPlay={true}
+          autoPlayInterval={3000}
         />
       </Suspense>
-
-      {/* Packages */}
       <Suspense fallback={<SectionLoader />}>
-        <PackageDealsSection
-          packages={displayPackages}
-          badge="Special Offers"
-          header="Exclusive Packages Deals"
-          description="Choose from our carefully curated packages for an unforgettable Dahab experience"
-        />
+        <DahabExperience />
       </Suspense>
 
-      {/* Featured */}
-      <Suspense fallback={<SectionLoader />}>
-        <FeaturedDestinationsSection />
-      </Suspense>
+      {/* Tabbed Section: Packages, Activities, Featured */}
+      <section className="py-16 md:py-24 bg-gradient-to-b from-background to-muted/20">
+        <div className="container mx-auto px-4">
+          <Tabs defaultValue="packages" className="w-full">
+            <TabsList className="grid w-full max-w-2xl mx-auto grid-cols-3 mb-12 h-auto p-1 bg-muted/50">
+              <TabsTrigger 
+                value="packages" 
+                className="flex items-center gap-2 py-3 data-[state=active]:bg-amber-500/10 data-[state=active]:text-amber-600 data-[state=active]:border-amber-500"
+              >
+                <Package className="h-4 w-4" />
+                <span className="hidden sm:inline">Packages</span>
+              </TabsTrigger>
+              <TabsTrigger 
+                value="activities"
+                className="flex items-center gap-2 py-3 data-[state=active]:bg-amber-500/10 data-[state=active]:text-amber-600 data-[state=active]:border-amber-500"
+              >
+                <Compass className="h-4 w-4" />
+                <span className="hidden sm:inline">Activities</span>
+              </TabsTrigger>
+              <TabsTrigger 
+                value="featured"
+                className="flex items-center gap-2 py-3 data-[state=active]:bg-amber-500/10 data-[state=active]:text-amber-600 data-[state=active]:border-amber-500"
+              >
+                <MapPin className="h-4 w-4" />
+                <span className="hidden sm:inline">Featured</span>
+              </TabsTrigger>
+            </TabsList>
 
-      {/* Activities */}
-      <Suspense fallback={<SectionLoader />}>
-        <ActivitiesSection
-          badge="Activities"
-          header="Adventures Await"
-          description="From underwater exploration to desert adventures, discover the activities that make Dahab special"
-          activities={displayActivities}
-        />
-      </Suspense>
+            <TabsContent value="packages" className="mt-0">
+              <Suspense fallback={<SectionLoader />}>
+                <PackageDealsSection
+                  packages={displayPackages}
+                  badge="Special Offers"
+                  header="Exclusive Package Deals"
+                  description="Choose from our carefully curated packages for an unforgettable Dahab experience"
+                />
+              </Suspense>
+            </TabsContent>
+
+            <TabsContent value="activities" className="mt-0">
+              <Suspense fallback={<SectionLoader />}>
+                <ActivitiesSection
+                  badge="Activities"
+                  header="Adventures Await"
+                  description="From underwater exploration to desert adventures, discover the activities that make Dahab special"
+                  activities={displayActivities}
+                />
+              </Suspense>
+            </TabsContent>
+
+            <TabsContent value="featured" className="mt-0">
+              <Suspense fallback={<SectionLoader />}>
+                <FeaturedDestinationsSection />
+              </Suspense>
+            </TabsContent>
+          </Tabs>
+        </div>
+      </section>
 
       {/* Grouped non-critical */}
       <Suspense fallback={<SectionLoader />}>

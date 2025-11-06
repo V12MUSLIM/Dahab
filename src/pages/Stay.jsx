@@ -17,7 +17,8 @@ import Filters from "@/components/customComponents/FilteringTool";
 import { StayCard } from "@/components/customComponents/cardTemplates";
 import ContactSection from "@/components/sections/ContactSection";
 import SocialMediaSection from "@/components/sections/SocialMediaSection";
-import { useStay } from "@/Context/StayContext";
+import { useStay } from "@/hooks/useStay";
+import DahabLoader from "@/components/Loading";
 
 // Lazy load sections
 const HeroSection = lazy(() => import("@/components/sections/HeroSection"));
@@ -54,29 +55,37 @@ const categories = [
   { value: "boutique", label: "Boutique" },
 ];
 
-const amenityIcons = {
-  Wifi,
-  Coffee,
-  Utensils,
-  Car,
-  Waves,
-  Mountain,
-};
-
 // Helper function to get amenity names from stay
 const getAmenityNames = (stay) => {
   const amenities = [];
   if (stay.amenities) {
-    Object.values(stay.amenities).forEach(categoryAmenities => {
+    Object.values(stay.amenities).forEach((categoryAmenities) => {
       if (Array.isArray(categoryAmenities)) {
-        categoryAmenities.slice(0, 2).forEach(amenity => {
+        categoryAmenities.slice(0, 2).forEach((amenity) => {
           // Map common amenities to icon names
-          if (amenity.toLowerCase().includes('wifi')) amenities.push('Wifi');
-          else if (amenity.toLowerCase().includes('coffee') || amenity.toLowerCase().includes('bar')) amenities.push('Coffee');
-          else if (amenity.toLowerCase().includes('restaurant') || amenity.toLowerCase().includes('dining')) amenities.push('Utensils');
-          else if (amenity.toLowerCase().includes('parking') || amenity.toLowerCase().includes('car')) amenities.push('Car');
-          else if (amenity.toLowerCase().includes('beach') || amenity.toLowerCase().includes('sea')) amenities.push('Waves');
-          else if (amenity.toLowerCase().includes('mountain')) amenities.push('Mountain');
+          if (amenity.toLowerCase().includes("wifi")) amenities.push("Wifi");
+          else if (
+            amenity.toLowerCase().includes("coffee") ||
+            amenity.toLowerCase().includes("bar")
+          )
+            amenities.push("Coffee");
+          else if (
+            amenity.toLowerCase().includes("restaurant") ||
+            amenity.toLowerCase().includes("dining")
+          )
+            amenities.push("Utensils");
+          else if (
+            amenity.toLowerCase().includes("parking") ||
+            amenity.toLowerCase().includes("car")
+          )
+            amenities.push("Car");
+          else if (
+            amenity.toLowerCase().includes("beach") ||
+            amenity.toLowerCase().includes("sea")
+          )
+            amenities.push("Waves");
+          else if (amenity.toLowerCase().includes("mountain"))
+            amenities.push("Mountain");
         });
       }
     });
@@ -85,7 +94,7 @@ const getAmenityNames = (stay) => {
 };
 
 export default function StayPage() {
-  const { getAllStays } = useStay();
+  const { data: stays, isLoading, error } = useStay();
   const [favorites, setFavorites] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("all");
@@ -93,9 +102,8 @@ export default function StayPage() {
 
   // Get all stays from context
   const accommodations = useMemo(() => {
-    const allStays = getAllStays();
-    console.log('All stays from context:', allStays); // Debug log
-    return allStays.map(stay => ({
+    if (!stays) return [];
+    return stays.map((stay) => ({
       id: stay.id,
       name: stay.name,
       type: stay.subtitle,
@@ -104,21 +112,31 @@ export default function StayPage() {
       rating: parseFloat(stay.rating),
       reviews: stay.totalReviews,
       pricePerNight: stay.pricePerNight,
-      images: stay.images,
+      images: stay.galleryImages,
       amenities: getAmenityNames(stay),
       description: stay.description,
       popular: stay.badge === "Popular" || stay.badge === "Top Rated",
       features: stay.features,
       href: `/stay/${stay.IdPage}`,
     }));
-  }, [getAllStays]);
+  }, [stays]);
 
   const toggleFavorite = (id) => {
     setFavorites((prev) =>
       prev.includes(id) ? prev.filter((fav) => fav !== id) : [...prev, id]
     );
   };
-
+  if (isLoading) {
+    return (
+      <div className="min-h-screen flex justify-center items-center">
+        {" "}
+        <DahabLoader />;
+      </div>
+    );
+  }
+  if (error) {
+    return <div>Error loading accommodations: {error.message} </div>;
+  }
   // Filter accommodations
   const filteredAccommodations = accommodations.filter((acc) => {
     const matchesSearch = acc.name
@@ -337,7 +355,7 @@ export default function StayPage() {
       <Suspense fallback={<SectionSkeleton />}>
         <ContactSection />
       </Suspense>
-      
+
       {/* Gallery Section */}
       <Suspense fallback={<SectionSkeleton />}>
         <GallerySection
@@ -363,7 +381,7 @@ export default function StayPage() {
       <Suspense fallback={<SectionSkeleton />}>
         <FAQSection />
       </Suspense>
-      
+
       {/*Social Media Section */}
       <Suspense fallback={<SectionSkeleton />}>
         <SocialMediaSection

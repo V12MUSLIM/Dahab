@@ -104,7 +104,9 @@ export default function Dine() {
     return filtered;
   }, [allDining, selectedCategory, debouncedSearch, priceFilter]);
 
-  if (isLoading) return <DahabLoader />;
+  if (isLoading) return  <div className="min-h-screen flex justify-center items-center">
+        <DahabLoader loadingMessage="Loading restaurants"/>
+      </div>
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-background to-muted/20">

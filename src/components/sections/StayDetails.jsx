@@ -1,14 +1,33 @@
 // sections/StayDetailsSection.jsx
 "use client";
-import { lazy, Suspense, useState, memo } from 'react';
-import { useParams, Link, useNavigate } from 'react-router-dom';
+import { lazy, Suspense, useState, memo } from "react";
+import { useParams, Link, useNavigate } from "react-router-dom";
+// eslint-disable-next-line no-unused-vars
 import { motion } from "framer-motion";
 import {
-  MapPin, Clock, Users, Star, Calendar, Check, ChevronLeft,
-  Shield, Award, Phone, Mail, Share2, Heart, 
-  Bed, Home, Wifi, Coffee, Wind, Info, ExternalLink, Hotel
+  MapPin,
+  Clock,
+  Users,
+  Star,
+  Calendar,
+  Check,
+  ChevronLeft,
+  Shield,
+  Award,
+  Phone,
+  Mail,
+  Share2,
+  Heart,
+  Bed,
+  Home,
+  Wifi,
+  Coffee,
+  Wind,
+  Info,
+  ExternalLink,
+  Hotel,
 } from "lucide-react";
-import { useStay } from "@/Context/StayContext";
+import { useStay } from "@/hooks/useStay";
 import {
   Card,
   CardContent,
@@ -17,7 +36,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-
+import DahabLoader from "../Loading";
 // Lazy load components
 const PrimaryButton = lazy(() =>
   import("@/components/customComponents/ButtonVarients").then((module) => ({
@@ -31,11 +50,17 @@ const SecondaryButton = lazy(() =>
   }))
 );
 
-const GallerySection = lazy(() => import("@/components/sections/GallerySection"));
+const GallerySection = lazy(() =>
+  import("@/components/sections/GallerySection")
+);
 const HeroSection = lazy(() => import("@/components/sections/HeroSection"));
-const TestimonialsSection = lazy(() => import("@/components/sections/TestimonialsSection"));
+const TestimonialsSection = lazy(() =>
+  import("@/components/sections/TestimonialsSection")
+);
 const FAQSection = lazy(() => import("@/components/sections/FAQSection"));
-const SocialMediaSection = lazy(() => import("@/components/sections/SocialMediaSection"));
+const SocialMediaSection = lazy(() =>
+  import("@/components/sections/SocialMediaSection")
+);
 
 // Constants
 const WHY_BOOK_ITEMS = [
@@ -48,7 +73,11 @@ const WHY_BOOK_ITEMS = [
 
 // Skeleton Components
 const SectionSkeleton = memo(() => (
-  <div className="w-full h-32 flex items-center justify-center" role="status" aria-label="Loading">
+  <div
+    className="w-full h-32 flex items-center justify-center"
+    role="status"
+    aria-label="Loading"
+  >
     <div className="animate-pulse space-y-4 w-full max-w-4xl px-4">
       <div className="h-8 bg-gray-200 dark:bg-gray-800 rounded w-1/4 mx-auto" />
       <div className="h-4 bg-gray-200 dark:bg-gray-800 rounded w-1/2 mx-auto" />
@@ -58,22 +87,22 @@ const SectionSkeleton = memo(() => (
 ));
 
 const ButtonSkeleton = memo(() => (
-  <div className="w-full h-12 bg-gray-200 dark:bg-gray-800 rounded-lg animate-pulse" role="status" aria-label="Loading button" />
+  <div
+    className="w-full h-12 bg-gray-200 dark:bg-gray-800 rounded-lg animate-pulse"
+    role="status"
+    aria-label="Loading button"
+  />
 ));
 
 const NotFoundState = memo(() => (
   <div className="min-h-screen flex flex-col items-center justify-center dark:bg-black">
-    <h1 className="text-3xl font-bold dark:text-white mb-4">
-      Stay not found
-    </h1>
+    <h1 className="text-3xl font-bold dark:text-white mb-4">Stay not found</h1>
     <p className="text-muted-foreground mb-6">
       The accommodation you're looking for doesn't exist.
     </p>
     <Link to="/stay">
       <Suspense fallback={<ButtonSkeleton />}>
-        <PrimaryButton icon={ChevronLeft}>
-          Back to All Stays
-        </PrimaryButton>
+        <PrimaryButton icon={ChevronLeft}>Back to All Stays</PrimaryButton>
       </Suspense>
     </Link>
   </div>
@@ -82,15 +111,27 @@ const NotFoundState = memo(() => (
 export default function StayDetailsSection() {
   const { id } = useParams();
   const navigate = useNavigate();
-  const { getStayById } = useStay();
+  const { data: stays, isLoading, error } = useStay();
   const [isLiked, setIsLiked] = useState(false);
   const [selectedRoom, setSelectedRoom] = useState(0);
   const [checkIn, setCheckIn] = useState("");
   const [checkOut, setCheckOut] = useState("");
   const [guests, setGuests] = useState(2);
 
-  const stay = getStayById(id);
+  const stay = stays?.find((s) => s.IdPage === id);
 
+  if (isLoading)
+    return (
+      <div className="min-h-screen flex justify-center items-center">
+        <DahabLoader loadingMessage="Loading stay details..." />
+      </div>
+    );
+  if (error)
+    return (
+      <div className="min-h-screen flex justify-center items-center text-3xl text-red-600">
+        Error loading stay details
+      </div>
+    );
   if (!stay) return <NotFoundState />;
 
   const googleMapsLink = stay.locationDetails
@@ -100,8 +141,8 @@ export default function StayDetailsSection() {
   const amenityIcons = {
     "Free WiFi": Wifi,
     "Air Conditioning": Wind,
-    "Restaurant": Coffee,
-    "Bar": Coffee,
+    Restaurant: Coffee,
+    Bar: Coffee,
     "Fitness Center": Award,
     "Private Beach": Home,
   };
@@ -172,16 +213,31 @@ export default function StayDetailsSection() {
             >
               {[
                 { icon: Star, title: "Rating", value: `${stay.rating}/5.0` },
-                { icon: Bed, title: "Rooms", value: `${stay.totalRooms} Available` },
-                { icon: Users, title: "Capacity", value: `Up to ${stay.maxGuests}` },
-                { icon: Award, title: "Category", value: `${stay.starRating} Star` },
+                {
+                  icon: Bed,
+                  title: "Rooms",
+                  value: `${stay.totalRooms} Available`,
+                },
+                {
+                  icon: Users,
+                  title: "Capacity",
+                  value: `Up to ${stay.maxGuests}`,
+                },
+                {
+                  icon: Award,
+                  title: "Category",
+                  value: `${stay.starRating} Star`,
+                },
               ].map((item, index) => (
                 <Card
                   key={index}
                   className="transition-all duration-300 hover:scale-105 hover:shadow-2xl cursor-pointer"
                 >
                   <CardHeader>
-                    <item.icon className="w-8 h-8 text-amber-600 dark:text-amber-500 mb-4" aria-hidden="true" />
+                    <item.icon
+                      className="w-8 h-8 text-amber-600 dark:text-amber-500 mb-4"
+                      aria-hidden="true"
+                    />
                     <CardTitle>{item.title}</CardTitle>
                   </CardHeader>
                   <CardContent>
@@ -199,9 +255,14 @@ export default function StayDetailsSection() {
             >
               <Card className="transition-all duration-300 hover:scale-[1.02] hover:shadow-2xl">
                 <CardHeader>
-                  <Bed className="w-8 h-8 text-amber-600 dark:text-amber-500 mb-4" aria-hidden="true" />
+                  <Bed
+                    className="w-8 h-8 text-amber-600 dark:text-amber-500 mb-4"
+                    aria-hidden="true"
+                  />
                   <CardTitle>Available Room Types</CardTitle>
-                  <CardDescription>Choose your perfect accommodation</CardDescription>
+                  <CardDescription>
+                    Choose your perfect accommodation
+                  </CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-4">
                   {stay.roomTypes.map((room, index) => (
@@ -238,7 +299,9 @@ export default function StayDetailsSection() {
                           <div className="text-2xl font-bold text-amber-600 dark:text-amber-500">
                             ${room.price}
                           </div>
-                          <div className="text-xs text-muted-foreground">per night</div>
+                          <div className="text-xs text-muted-foreground">
+                            per night
+                          </div>
                         </div>
                       </div>
                       <div className="flex flex-wrap gap-2">
@@ -264,7 +327,10 @@ export default function StayDetailsSection() {
               >
                 <Card className="transition-all duration-300 hover:scale-[1.02] hover:shadow-2xl">
                   <CardHeader>
-                    <MapPin className="w-8 h-8 text-amber-600 dark:text-amber-500 mb-4" aria-hidden="true" />
+                    <MapPin
+                      className="w-8 h-8 text-amber-600 dark:text-amber-500 mb-4"
+                      aria-hidden="true"
+                    />
                     <CardTitle>Location & Nearby Attractions</CardTitle>
                   </CardHeader>
                   <CardContent>
@@ -291,7 +357,8 @@ export default function StayDetailsSection() {
                           {stay.locationDetails.address}
                         </p>
                         <p className="text-muted-foreground">
-                          {stay.locationDetails.city}, {stay.locationDetails.region}
+                          {stay.locationDetails.city},{" "}
+                          {stay.locationDetails.region}
                         </p>
                       </div>
 
@@ -300,14 +367,21 @@ export default function StayDetailsSection() {
                           <strong>Nearby Attractions:</strong>
                         </p>
                         <div className="space-y-2">
-                          {stay.locationDetails.nearbyAttractions.map((attraction, index) => (
-                            <div key={index} className="flex justify-between items-center">
-                              <span className="text-muted-foreground">{attraction.name}</span>
-                              <span className="text-amber-600 dark:text-amber-500 font-medium">
-                                {attraction.distance}
-                              </span>
-                            </div>
-                          ))}
+                          {stay.locationDetails.nearbyAttractions.map(
+                            (attraction, index) => (
+                              <div
+                                key={index}
+                                className="flex justify-between items-center"
+                              >
+                                <span className="text-muted-foreground">
+                                  {attraction.name}
+                                </span>
+                                <span className="text-amber-600 dark:text-amber-500 font-medium">
+                                  {attraction.distance}
+                                </span>
+                              </div>
+                            )
+                          )}
                         </div>
                       </div>
 
@@ -335,7 +409,10 @@ export default function StayDetailsSection() {
             >
               <Card className="transition-all duration-300 hover:scale-[1.02] hover:shadow-2xl">
                 <CardHeader>
-                  <Award className="w-8 h-8 text-amber-600 dark:text-amber-500 mb-4" aria-hidden="true" />
+                  <Award
+                    className="w-8 h-8 text-amber-600 dark:text-amber-500 mb-4"
+                    aria-hidden="true"
+                  />
                   <CardTitle>Property Amenities</CardTitle>
                 </CardHeader>
                 <CardContent>
@@ -348,16 +425,25 @@ export default function StayDetailsSection() {
                         {items.map((item, index) => {
                           const IconComponent = amenityIcons[item] || Check;
                           return (
-                            <div key={index} className="flex items-center gap-3">
-                              <IconComponent className="w-5 h-5 text-amber-600 dark:text-amber-500 flex-shrink-0" aria-hidden="true" />
-                              <span className="text-muted-foreground">{item}</span>
+                            <div
+                              key={index}
+                              className="flex items-center gap-3"
+                            >
+                              <IconComponent
+                                className="w-5 h-5 text-amber-600 dark:text-amber-500 flex-shrink-0"
+                                aria-hidden="true"
+                              />
+                              <span className="text-muted-foreground">
+                                {item}
+                              </span>
                             </div>
                           );
                         })}
                       </div>
-                      {category !== Object.keys(stay.amenities)[Object.keys(stay.amenities).length - 1] && (
-                        <div className="border-t mt-6" />
-                      )}
+                      {category !==
+                        Object.keys(stay.amenities)[
+                          Object.keys(stay.amenities).length - 1
+                        ] && <div className="border-t mt-6" />}
                     </div>
                   ))}
                 </CardContent>
@@ -373,14 +459,20 @@ export default function StayDetailsSection() {
               >
                 <Card className="bg-gradient-to-r from-amber-600/10 to-amber-700/10 dark:from-amber-600/20 dark:to-amber-700/20 border-amber-600/20 transition-all duration-300 hover:scale-[1.02] hover:shadow-2xl">
                   <CardHeader>
-                    <Check className="w-8 h-8 text-amber-600 dark:text-amber-500 mb-4" aria-hidden="true" />
+                    <Check
+                      className="w-8 h-8 text-amber-600 dark:text-amber-500 mb-4"
+                      aria-hidden="true"
+                    />
                     <CardTitle>What's Included in Your Stay</CardTitle>
                   </CardHeader>
                   <CardContent>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                       {stay.priceIncludes.map((item, index) => (
                         <div key={index} className="flex items-center gap-3">
-                          <div className="w-2 h-2 bg-amber-600 dark:bg-amber-500 rounded-full" aria-hidden="true" />
+                          <div
+                            className="w-2 h-2 bg-amber-600 dark:bg-amber-500 rounded-full"
+                            aria-hidden="true"
+                          />
                           <span className="text-muted-foreground">{item}</span>
                         </div>
                       ))}
@@ -398,32 +490,52 @@ export default function StayDetailsSection() {
             >
               <Card className="transition-all duration-300 hover:scale-[1.02] hover:shadow-2xl">
                 <CardHeader>
-                  <Info className="w-8 h-8 text-amber-600 dark:text-amber-500 mb-4" aria-hidden="true" />
+                  <Info
+                    className="w-8 h-8 text-amber-600 dark:text-amber-500 mb-4"
+                    aria-hidden="true"
+                  />
                   <CardTitle>Property Policies</CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-4">
                   <div className="flex gap-3">
-                    <Clock className="w-5 h-5 text-amber-600 dark:text-amber-500 flex-shrink-0 mt-0.5" aria-hidden="true" />
+                    <Clock
+                      className="w-5 h-5 text-amber-600 dark:text-amber-500 flex-shrink-0 mt-0.5"
+                      aria-hidden="true"
+                    />
                     <div className="flex-1">
-                      <p className="font-medium text-sm">Check-in / Check-out</p>
+                      <p className="font-medium text-sm">
+                        Check-in / Check-out
+                      </p>
                       <p className="text-muted-foreground text-sm">
                         From {stay.checkInTime} / Until {stay.checkOutTime}
                       </p>
                     </div>
                   </div>
                   <div className="flex gap-3">
-                    <Info className="w-5 h-5 text-amber-600 dark:text-amber-500 flex-shrink-0 mt-0.5" aria-hidden="true" />
+                    <Info
+                      className="w-5 h-5 text-amber-600 dark:text-amber-500 flex-shrink-0 mt-0.5"
+                      aria-hidden="true"
+                    />
                     <div className="flex-1">
                       <p className="font-medium text-sm">Cancellation</p>
-                      <p className="text-muted-foreground text-sm">{stay.policies.cancellation}</p>
+                      <p className="text-muted-foreground text-sm">
+                        {stay.policies.cancellation}
+                      </p>
                     </div>
                   </div>
                   <div className="flex gap-3">
-                    <Users className="w-5 h-5 text-amber-600 dark:text-amber-500 flex-shrink-0 mt-0.5" aria-hidden="true" />
+                    <Users
+                      className="w-5 h-5 text-amber-600 dark:text-amber-500 flex-shrink-0 mt-0.5"
+                      aria-hidden="true"
+                    />
                     <div className="flex-1">
                       <p className="font-medium text-sm">Children & Pets</p>
-                      <p className="text-muted-foreground text-sm">{stay.policies.children}</p>
-                      <p className="text-muted-foreground text-sm">{stay.policies.pets}</p>
+                      <p className="text-muted-foreground text-sm">
+                        {stay.policies.children}
+                      </p>
+                      <p className="text-muted-foreground text-sm">
+                        {stay.policies.pets}
+                      </p>
                     </div>
                   </div>
                 </CardContent>
@@ -442,13 +554,20 @@ export default function StayDetailsSection() {
             >
               <Card className="bg-gradient-to-r from-amber-600/10 to-amber-700/10 dark:from-amber-600/20 dark:to-amber-700/20 border-amber-600/20 transition-all duration-300 hover:scale-[1.02] hover:shadow-2xl">
                 <CardHeader className="text-center">
-                  <CardDescription className="text-sm">Starting from</CardDescription>
+                  <CardDescription className="text-sm">
+                    Starting from
+                  </CardDescription>
                   <CardTitle className="text-4xl md:text-5xl font-black text-amber-600 dark:text-amber-500">
                     ${stay.roomTypes[selectedRoom].price}
-                    <span className="text-xl font-normal text-muted-foreground">/night</span>
+                    <span className="text-xl font-normal text-muted-foreground">
+                      /night
+                    </span>
                   </CardTitle>
                   <div className="flex items-center justify-center gap-1 mt-3">
-                    <Star className="w-5 h-5 fill-amber-600 text-amber-600 dark:fill-amber-500 dark:text-amber-500" aria-hidden="true" />
+                    <Star
+                      className="w-5 h-5 fill-amber-600 text-amber-600 dark:fill-amber-500 dark:text-amber-500"
+                      aria-hidden="true"
+                    />
                     <span className="font-bold text-lg">{stay.rating}</span>
                     <span className="text-muted-foreground text-sm ml-1">
                       ({stay.totalReviews} reviews)
@@ -459,7 +578,9 @@ export default function StayDetailsSection() {
                 <CardContent className="space-y-4">
                   <div className="space-y-3">
                     <div className="p-4 bg-white dark:bg-gray-900 rounded-lg">
-                      <p className="text-muted-foreground text-sm mb-2">Check-in Date</p>
+                      <p className="text-muted-foreground text-sm mb-2">
+                        Check-in Date
+                      </p>
                       <input
                         type="date"
                         value={checkIn}
@@ -469,7 +590,9 @@ export default function StayDetailsSection() {
                     </div>
 
                     <div className="p-4 bg-white dark:bg-gray-900 rounded-lg">
-                      <p className="text-muted-foreground text-sm mb-2">Check-out Date</p>
+                      <p className="text-muted-foreground text-sm mb-2">
+                        Check-out Date
+                      </p>
                       <input
                         type="date"
                         value={checkOut}
@@ -479,7 +602,9 @@ export default function StayDetailsSection() {
                     </div>
 
                     <div className="p-4 bg-white dark:bg-gray-900 rounded-lg">
-                      <p className="text-muted-foreground text-sm mb-2">Number of Guests</p>
+                      <p className="text-muted-foreground text-sm mb-2">
+                        Number of Guests
+                      </p>
                       <select
                         value={guests}
                         onChange={(e) => setGuests(Number(e.target.value))}
@@ -498,7 +623,9 @@ export default function StayDetailsSection() {
                     <Suspense fallback={<ButtonSkeleton />}>
                       <PrimaryButton
                         className="w-full"
-                        onClick={() => navigate(stay.bookingUrl || `/book/${stay.IdPage}`)}
+                        onClick={() =>
+                          navigate(stay.bookingUrl || `/book/${stay.IdPage}`)
+                        }
                       >
                         Reserve Now
                       </PrimaryButton>
@@ -508,10 +635,14 @@ export default function StayDetailsSection() {
                       <SecondaryButton
                         onClick={() => setIsLiked(!isLiked)}
                         className="w-full"
-                        aria-label={isLiked ? "Remove from wishlist" : "Add to wishlist"}
+                        aria-label={
+                          isLiked ? "Remove from wishlist" : "Add to wishlist"
+                        }
                       >
                         <Heart
-                          className={`w-5 h-5 mr-2 ${isLiked ? "fill-current text-red-500" : ""}`}
+                          className={`w-5 h-5 mr-2 ${
+                            isLiked ? "fill-current text-red-500" : ""
+                          }`}
                           aria-hidden="true"
                         />
                         {isLiked ? "Remove from Wishlist" : "Add to Wishlist"}
@@ -525,7 +656,10 @@ export default function StayDetailsSection() {
                       className="flex items-center gap-3 px-5 py-3 rounded-2xl border border-amber-500/50 shadow-sm bg-transparent dark:bg-transparent transition-all duration-300 hover:scale-[1.02] w-full"
                       aria-label="Email Dahab Stay"
                     >
-                      <Mail className="h-6 w-6 text-amber-600 dark:text-amber-400" aria-hidden="true" />
+                      <Mail
+                        className="h-6 w-6 text-amber-600 dark:text-amber-400"
+                        aria-hidden="true"
+                      />
                       <span className="text-sm font-medium text-gray-900 dark:text-gray-100 hover:text-amber-600 dark:hover:text-amber-400 transition-colors truncate">
                         stay@dahab.com
                       </span>
@@ -536,7 +670,10 @@ export default function StayDetailsSection() {
                       className="flex items-center gap-3 px-5 py-3 rounded-2xl border border-amber-500/50 shadow-sm bg-transparent dark:bg-transparent transition-all duration-300 hover:scale-[1.02] w-full"
                       aria-label="Call Dahab Stay"
                     >
-                      <Phone className="h-6 w-6 text-amber-600 dark:text-amber-400" aria-hidden="true" />
+                      <Phone
+                        className="h-6 w-6 text-amber-600 dark:text-amber-400"
+                        aria-hidden="true"
+                      />
                       <span className="text-sm font-medium text-gray-900 dark:text-gray-100 hover:text-amber-600 dark:hover:text-amber-400 transition-colors">
                         +123 456 7890
                       </span>
@@ -545,7 +682,10 @@ export default function StayDetailsSection() {
 
                   <div className="pt-6 border-t">
                     <div className="flex items-center justify-center gap-2 text-sm">
-                      <Shield className="w-5 h-5 text-amber-600 dark:text-amber-500" aria-hidden="true" />
+                      <Shield
+                        className="w-5 h-5 text-amber-600 dark:text-amber-500"
+                        aria-hidden="true"
+                      />
                       <span>100% Secure Booking</span>
                     </div>
                   </div>
@@ -561,7 +701,10 @@ export default function StayDetailsSection() {
                   <ul className="space-y-3 text-sm">
                     {WHY_BOOK_ITEMS.map((item, index) => (
                       <li key={index} className="flex items-start gap-3">
-                        <Check className="w-5 h-5 text-green-600 flex-shrink-0 mt-0.5" aria-hidden="true" />
+                        <Check
+                          className="w-5 h-5 text-green-600 flex-shrink-0 mt-0.5"
+                          aria-hidden="true"
+                        />
                         <span className="text-muted-foreground">{item}</span>
                       </li>
                     ))}
