@@ -9,7 +9,7 @@ export default function IntroSection({
   subtitle,
   images = [],
   autoPlay = true,
-  autoPlayInterval = 3000,
+  autoPlayInterval = 2000,
 }) {
   // Autoplay plugin
   const autoplayPlugin = useRef(

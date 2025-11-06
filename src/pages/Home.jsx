@@ -280,7 +280,7 @@ export default function Home() {
           subtitle="Journey across continents, cultures, and landscapes—because every path leads to new discoveries."
           images={galleryImages}
           autoPlay={true}
-          autoPlayInterval={3000}
+          autoPlayInterval={2000}
         />
       </Suspense>
       <Suspense fallback={<SectionLoader />}>
