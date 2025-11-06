@@ -1,10 +1,8 @@
 import { Badge } from "../ui/badge";
 import { ActivityCard } from "../customComponents/cardTemplates";
 import { motion } from "framer-motion";
-import {
-  PrimaryButton,
-} from "../customComponents/ButtonVarients";
-import {ROUTES} from "@/config/SiteConfig"
+import { FormPrimaryButton } from "../customComponents/FormButtons";
+import { ROUTES } from "@/config/SiteConfig";
 import { NavLink } from "react-router-dom";
 export default function ActivitiesSection({
   badge,
@@ -74,9 +72,13 @@ export default function ActivitiesSection({
           </div>
         </div>
       </motion.section>
-      <NavLink className="self-center" to={ROUTES.experiences}>
-      <PrimaryButton >View all</PrimaryButton>
-      </NavLink>
+      <div className="w-full flex justify-center items-center py-16">
+        <NavLink to={ROUTES.experiences}>
+          <FormPrimaryButton className="px-24 py-6 text-lg sm:text-xl rounded-xl shadow-md">
+            View all
+          </FormPrimaryButton>
+        </NavLink>
+      </div>
     </div>
   );
 }
