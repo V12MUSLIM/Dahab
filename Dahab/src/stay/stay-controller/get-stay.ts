@@ -3,13 +3,13 @@ import { Stay, IStay } from "../stay-model";
 
 interface IResponse {
     message?: string;
-    stays?: IStay | IStay[] ;
+    stay?: IStay | IStay[] ;
 }
 
 export const getStay: RequestHandler<{}, IResponse, {}> = async (req, res) => {
-    const stays = await Stay.find().select("-_id-__v");
-    if (!stays) {
+    const stay = await Stay.find().select("-_id-__v");
+    if (!stay) {
         return res.status(404).json({ message: "Stay not found" });
     }
-    res.json({ stays });
+    res.json({ stay });
 };
