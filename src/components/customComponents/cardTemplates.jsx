@@ -1255,80 +1255,94 @@ const ExperienceCard = ({
 const ActivityCard = ({
   title,
   description,
-  icon: Icon, // Now expects a component, not a string
+  icon: Icon,
   duration,
   groupSize,
   difficulty,
   price,
   onBookClick,
+  image,
   className,
 }) => {
   return (
     <DahabCard
-      className={`transition-shadow duration-200 hover:shadow-lg ${className}`}
+      className={`relative overflow-hidden rounded-2xl border border-white/10 bg-white/5 backdrop-blur-md transition-all duration-300 hover:shadow-2xl hover:shadow-yellow-500/10 ${className}`}
     >
-      <CardHeader className="text-center pb-3">
-        <div className="mx-auto mb-3 p-3 rounded-full bg-yellow-50 dark:bg-yellow-900/20 w-fit">
-          {Icon && (
-            <Icon className="h-7 w-7 text-yellow-600 dark:text-yellow-500" />
-          )}
+      {/* Background Image */}
+      {image && (
+        <div className="absolute inset-0">
+          <img
+            src={image}
+            alt={title}
+            className="w-full h-full object-cover scale-105 blur-[2px]"
+          />
+          <div className="absolute inset-0 bg-gradient-to-b from-black/30 via-black/50 to-black/70" />
         </div>
-        <CardTitle className="text-lg font-semibold text-gray-900 dark:text-white">
-          {title}
-        </CardTitle>
-      </CardHeader>
+      )}
 
-      <CardContent className="space-y-4">
-        <CardDescription className="text-center text-sm text-gray-600 dark:text-gray-400">
+      {/* Content Wrapper */}
+      <div className="relative z-10 flex flex-col h-full justify-between p-6 md:p-7">
+        {/* Header */}
+        <div className="text-center mb-4">
+          <div className="mx-auto mb-4 w-12 h-12 flex items-center justify-center rounded-full bg-yellow-500/20 border border-yellow-400/30 backdrop-blur-sm">
+            {Icon && (
+              <Icon className="w-6 h-6 text-yellow-400 drop-shadow-md" />
+            )}
+          </div>
+          <h3 className="text-xl font-semibold text-white tracking-wide">
+            {title}
+          </h3>
+        </div>
+
+        {/* Description */}
+        <p className="text-sm text-gray-200/90 leading-relaxed text-center line-clamp-4 mb-5">
           {description}
-        </CardDescription>
+        </p>
 
-        <div className="grid grid-cols-3 gap-2 text-xs">
+        {/* Details Section */}
+        <div className="flex justify-between text-xs md:text-sm text-gray-100/90 bg-white/10 backdrop-blur-sm rounded-xl p-3 mb-5">
           {duration && (
-            <div className="flex flex-col items-center p-2 rounded-lg bg-gray-50 dark:bg-yellow-900/10">
-              <Clock className="h-4 w-4 text-gray-500 dark:text-yellow-600 mb-1" />
-              <span className="font-medium text-gray-700 dark:text-gray-300">
-                {duration}
-              </span>
+            <div className="flex flex-col items-center flex-1 border-r border-white/10">
+              <Clock className="h-4 w-4 text-yellow-300 mb-1" />
+              <span>{duration}</span>
             </div>
           )}
           {groupSize && (
-            <div className="flex flex-col items-center p-2 rounded-lg bg-gray-50 dark:bg-yellow-900/10">
-              <Users className="h-4 w-4 text-gray-500 dark:text-yellow-600 mb-1" />
-              <span className="font-medium text-gray-700 dark:text-gray-300">
-                {groupSize}
-              </span>
+            <div className="flex flex-col items-center flex-1 border-r border-white/10">
+              <Users className="h-4 w-4 text-yellow-300 mb-1" />
+              <span>{groupSize}</span>
             </div>
           )}
           {difficulty && (
-            <div className="flex flex-col items-center p-2 rounded-lg bg-gray-50 dark:bg-yellow-900/10">
-              <span className="text-gray-500 dark:text-yellow-600 mb-1 text-xs">
+            <div className="flex flex-col items-center flex-1">
+              <span className="text-yellow-300 mb-1 text-xs uppercase">
                 Level
               </span>
-              <span className="font-medium text-gray-700 dark:text-gray-300">
-                {difficulty}
-              </span>
+              <span>{difficulty}</span>
             </div>
           )}
         </div>
-      </CardContent>
 
-      <CardFooter className="flex flex-col gap-3">
-        {price && (
-          <div className="text-center">
-            <span className="text-2xl font-bold text-yellow-600 dark:text-yellow-500">
+        {/* Footer */}
+        <div className="text-center mt-auto">
+          <div className="mb-4">
+            <span className="text-2xl font-bold text-yellow-400">
               ${price}
             </span>
-            <span className="text-sm text-gray-500 dark:text-gray-400 ml-1">
-              per person
-            </span>
+            <span className="text-sm text-gray-300 ml-1">per person</span>
           </div>
-        )}
-        <PrimaryButton onClick={onBookClick}>Book now</PrimaryButton>
-      </CardFooter>
+          <PrimaryButton
+            onClick={onBookClick}
+            className="w-full md:w-48 mx-auto font-medium text-base hover:scale-[1.03] transition-transform"
+          >
+            Book Now
+          </PrimaryButton>
+        </div>
+      </div>
     </DahabCard>
   );
 };
+
 
 
 
@@ -1337,7 +1351,6 @@ export {
   StayCard,
   ImageCard,
   ActivityCard,
-
   DestinationCard,
   ExperienceCard,
 };

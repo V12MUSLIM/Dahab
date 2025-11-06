@@ -1,39 +1,28 @@
 import { create } from "zustand";
 import { devtools } from "zustand/middleware";
 
-/**
- * Validates user object structure
- * Supports both MongoDB (_id) and standard (id) formats
- */
+/** Validate user structure */
 const isValidUser = (user) => {
-  if (!user || typeof user !== "object") {
-    return false;
-  }
-
+  if (!user || typeof user !== "object") return false;
   const hasId =
     typeof user.id === "string" ||
     typeof user.id === "number" ||
     typeof user._id === "string" ||
     typeof user._id === "number";
-
   const hasEmail = typeof user.email === "string" && user.email.length > 0;
-
   return hasId && hasEmail;
 };
 
-/**
- * API configuration with validation
- */
+/** API config */
 const getApiConfig = () => {
   const baseUrl = import.meta.env.VITE_API_URL;
   const isDevelopment = import.meta.env.DEV;
 
   if (!baseUrl) {
-    console.error("VITE_API_URL environment variable is not set");
+    console.error("VITE_API_URL is not set");
     return { baseUrl: "", timeout: 10000, isValid: false };
   }
 
-  /* Validate URL format */
   try {
     new URL(baseUrl);
   } catch {
@@ -41,7 +30,6 @@ const getApiConfig = () => {
     return { baseUrl, timeout: 10000, isValid: false };
   }
 
-  /* HTTPS required in production */
   if (!isDevelopment && !baseUrl.startsWith("https://")) {
     console.error("API URL must use HTTPS in production");
     return { baseUrl, timeout: 10000, isValid: false };
@@ -52,13 +40,9 @@ const getApiConfig = () => {
 
 const API_CONFIG = getApiConfig();
 
-/**
- * Secure fetch wrapper with timeout and error handling
- */
+/** Secure fetch */
 const secureFetch = async (url, options = {}) => {
-  if (!API_CONFIG.isValid) {
-    throw new Error("Invalid API configuration");
-  }
+  if (!API_CONFIG.isValid) throw new Error("Invalid API configuration");
 
   const controller = new AbortController();
   const timeoutId = setTimeout(() => controller.abort(), API_CONFIG.timeout);
@@ -73,47 +57,30 @@ const secureFetch = async (url, options = {}) => {
         ...options.headers,
       },
     });
-
     clearTimeout(timeoutId);
-
-    if (!response.ok) {
-      const errorData = await response.json().catch(() => ({}));
-      throw new Error(
-        errorData.message || `HTTP ${response.status}: ${response.statusText}`
-      );
-    }
 
     return response;
   } catch (error) {
     clearTimeout(timeoutId);
-    if (error.name === "AbortError") {
-      throw new Error("Request timeout");
-    }
+    if (error.name === "AbortError") throw new Error("Request timeout");
     throw error;
   }
 };
 
-/**
- * Sanitize user data for devtools (remove sensitive fields)
- */
+/** Clean user for devtools */
 const sanitizeUserForDevtools = (user) => {
   if (!user) return null;
   const { password, token, refreshToken, ...safeData } = user;
   return safeData;
 };
 
-/**
- * Only enable devtools in development
- */
 const middleware = (f) =>
   import.meta.env.DEV
     ? devtools(f, {
         name: "AuthStore",
         serialize: {
           replacer: (key, value) => {
-            if (key === "user") {
-              return sanitizeUserForDevtools(value);
-            }
+            if (key === "user") return sanitizeUserForDevtools(value);
             return value;
           },
         },
@@ -123,6 +90,7 @@ const middleware = (f) =>
 export const useAuthStore = create(
   middleware((set, get) => ({
     user: null,
+    accessToken: null, // 🔒 في الذاكرة فقط
     isLoading: false,
     error: null,
     isAuthenticated: false,
@@ -134,7 +102,6 @@ export const useAuthStore = create(
         console.error("Invalid user data structure:", user);
         return;
       }
-
       set({
         user,
         isAuthenticated: !!user,
@@ -143,20 +110,39 @@ export const useAuthStore = create(
       });
     },
 
+    setAccessToken: (token) => set({ accessToken: token }),
+
     setLoading: (isLoading) => set({ isLoading }),
 
     setError: (error) => {
-      const errorMessage =
+      const message =
         typeof error === "string"
           ? error
           : error?.message || "An unknown error occurred";
-
-      set({
-        error: errorMessage,
-        isLoading: false,
-      });
+      set({ error: message, isLoading: false });
     },
 
+    /** 🔄 Refresh token securely using cookie */
+    refreshAccessToken: async () => {
+      try {
+        const res = await secureFetch(`${API_CONFIG.baseUrl}/auth/refresh`, {
+          method: "POST",
+        });
+        if (!res.ok) throw new Error("Failed to refresh token");
+        const data = await res.json();
+        if (data.accessToken) {
+          get().setAccessToken(data.accessToken);
+          return data.accessToken;
+        }
+        return null;
+      } catch (error) {
+        console.error("Refresh token failed:", error);
+        get().clearAuth();
+        return null;
+      }
+    },
+
+    /** ✅ Auth status checker with auto-refresh */
     checkAuthStatus: async () => {
       const state = get();
 
@@ -169,48 +155,49 @@ export const useAuthStore = create(
         set({ isLoading: true, isCheckingAuth: true, error: null });
 
         const response = await secureFetch(`${API_CONFIG.baseUrl}/auth/status`);
-        const data = await response.json();
-
-        if (typeof data.authenticated !== "boolean") {
-          throw new Error("Invalid authentication response format");
-        }
-
-        if (data.authenticated) {
-          if (!isValidUser(data.user)) {
-            throw new Error("Invalid user data received from server");
+        if (response.status === 401) {
+          const newToken = await get().refreshAccessToken();
+          if (newToken) {
+            const retry = await secureFetch(`${API_CONFIG.baseUrl}/auth/status`, {
+              headers: { Authorization: `Bearer ${newToken}` },
+            });
+            const retryData = await retry.json();
+            if (retryData.authenticated && isValidUser(retryData.user)) {
+              set({
+                user: retryData.user,
+                isAuthenticated: true,
+                lastAuthCheck: Date.now(),
+              });
+              return retryData.user;
+            }
           }
-
-          const user = data.user;
-
-          set({
-            user,
-            isAuthenticated: true,
-            error: null,
-            lastAuthCheck: Date.now(),
-          });
-
-          return user; // ✅ <---- RETURN user here
-        } else {
-          set({
-            user: null,
-            isAuthenticated: false,
-            error: null,
-            lastAuthCheck: Date.now(),
-          });
-
-          return null; // ✅ <---- Return null for not authenticated
         }
+
+        const data = await response.json();
+        if (data.authenticated && isValidUser(data.user)) {
+          set({
+            user: data.user,
+            isAuthenticated: true,
+            lastAuthCheck: Date.now(),
+          });
+          return data.user;
+        }
+
+        set({
+          user: null,
+          isAuthenticated: false,
+          lastAuthCheck: Date.now(),
+        });
+        return null;
       } catch (error) {
         console.error("Auth check failed:", error);
-
         set({
           user: null,
           isAuthenticated: false,
           error: error.message || "Failed to verify authentication",
           lastAuthCheck: Date.now(),
         });
-
-        return null; // ✅ <---- Always return something
+        return null;
       } finally {
         set({ isLoading: false, isCheckingAuth: false });
       }
@@ -218,25 +205,16 @@ export const useAuthStore = create(
 
     logout: async () => {
       const state = get();
-
-      if (state.isLoading) {
-        return;
-      }
-
-      const previousState = {
-        user: state.user,
-        isAuthenticated: state.isAuthenticated,
-      };
+      if (state.isLoading) return;
 
       set({ isLoading: true, error: null });
-
       try {
         await secureFetch(`${API_CONFIG.baseUrl}/auth/logout`, {
           method: "DELETE",
         });
-
         set({
           user: null,
+          accessToken: null,
           isAuthenticated: false,
           error: null,
           isLoading: false,
@@ -244,21 +222,17 @@ export const useAuthStore = create(
         });
       } catch (error) {
         console.error("Logout error:", error);
-
         set({
-          user: previousState.user,
-          isAuthenticated: previousState.isAuthenticated,
-          error: error.message || "Logout failed. Please try again.",
+          error: error.message || "Logout failed",
           isLoading: false,
         });
-
-        throw error;
       }
     },
 
     clearAuth: () => {
       set({
         user: null,
+        accessToken: null,
         isAuthenticated: false,
         error: null,
         isLoading: false,

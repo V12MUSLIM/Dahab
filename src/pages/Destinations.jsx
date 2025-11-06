@@ -1,6 +1,13 @@
 "use client";
 
-import { useState, lazy, Suspense, useMemo, useDeferredValue, useEffect } from "react";
+import {
+  useState,
+  lazy,
+  Suspense,
+  useMemo,
+  useDeferredValue,
+  useEffect,
+} from "react";
 import { useDestinations } from "@/hooks/useDestination";
 import { Search, MapPin, Compass, Star, Users } from "lucide-react";
 import HeroSection from "@/components/sections/HeroSection";
@@ -17,7 +24,11 @@ const SocialMediaSection = lazy(() =>
 );
 
 const SectionDestinationsLoading = () => (
-  <div className="w-full h-32 flex items-center justify-center" role="status" aria-label="Loading destinations">
+  <div
+    className="w-full h-32 flex items-center justify-center"
+    role="status"
+    aria-label="Loading destinations"
+  >
     <div className="animate-pulse space-y-4 w-full max-w-4xl px-4">
       <div className="h-8 bg-gray-200 dark:bg-gray-800 rounded w-1/4 mx-auto" />
       <div className="h-4 bg-gray-200 dark:bg-gray-800 rounded w-1/2 mx-auto" />
@@ -25,8 +36,6 @@ const SectionDestinationsLoading = () => (
     </div>
   </div>
 );
-
-
 
 export default function Destinations() {
   const [selectedCategory, setSelectedCategory] = useState("All");
@@ -46,7 +55,8 @@ export default function Destinations() {
       id: 1,
       category: "Water Adventures",
       title: "Blue Hole",
-      description: "World-famous diving spot with crystal clear water and vibrant marine life.",
+      description:
+        "World-famous diving spot with crystal clear water and vibrant marine life.",
       imageUrl: "/Dahab/blue-hole.webp",
       href: "/destinations/blue-hole",
       IdPage: "blue-hole",
@@ -61,7 +71,8 @@ export default function Destinations() {
       id: 2,
       category: "Water Adventures",
       title: "Dahab Lagoon",
-      description: "Perfect spot for windsurfing and kitesurfing with shallow calm waters.",
+      description:
+        "Perfect spot for windsurfing and kitesurfing with shallow calm waters.",
       imageUrl: "/Dahab/dahab-lagoon.webp",
       href: "/destinations/dahab-lagoon",
       IdPage: "dahab-lagoon",
@@ -76,7 +87,8 @@ export default function Destinations() {
       id: 3,
       category: "Water Adventures",
       title: "Three Pools Snorkeling",
-      description: "Three natural lagoons with incredible coral gardens and marine life.",
+      description:
+        "Three natural lagoons with incredible coral gardens and marine life.",
       imageUrl: "/Dahab/three-pools.webp",
       href: "/destinations/three-pools",
       IdPage: "three-pools",
@@ -103,14 +115,18 @@ export default function Destinations() {
     const finalCats =
       apiCats && Array.isArray(apiCats) && apiCats.length > 0
         ? apiCats
-        : [...new Set(fallbackDestinations.map((d) => d.category).filter(Boolean))];
+        : [
+            ...new Set(
+              fallbackDestinations.map((d) => d.category).filter(Boolean)
+            ),
+          ];
     return ["All", ...finalCats];
   }, [apiDestinations, apiGetAllCategories]);
 
   const categoryOptions = useMemo(() => {
-    return categories.map(cat => ({
+    return categories.map((cat) => ({
       value: cat,
-      label: cat
+      label: cat,
     }));
   }, [categories]);
 
@@ -132,7 +148,7 @@ export default function Destinations() {
 
   const deferredSearch = useDeferredValue(searchQuery);
   const [debouncedSearch, setDebouncedSearch] = useState("");
-  
+
   useEffect(() => {
     const timer = setTimeout(
       () => setDebouncedSearch(deferredSearch.trim().toLowerCase()),
@@ -143,7 +159,9 @@ export default function Destinations() {
 
   const filteredDestinations = useMemo(() => {
     let list =
-      selectedCategory === "All" ? destinations : getByCategory(selectedCategory);
+      selectedCategory === "All"
+        ? destinations
+        : getByCategory(selectedCategory);
 
     if (debouncedSearch) {
       const q = debouncedSearch;
@@ -169,7 +187,12 @@ export default function Destinations() {
     return list;
   }, [destinations, selectedCategory, debouncedSearch, priceFilter]);
 
-  if (DahabLoader && !apiDestinations) return <DahabLoader loadingMessage="Loading Destinations" />;
+  if (DahabLoader && !apiDestinations)
+    return (
+      <div className="min-h-screen flex justify-center items-center">
+         <DahabLoader loadingMessage="Loading Destinations" />
+      </div>
+    );
 
   const showWarning = error && !DahabLoader && !apiDestinations;
 
@@ -193,7 +216,11 @@ export default function Destinations() {
         subtitle="Discover your next adventure with our curated travel destinations in Dahab and Sinai Peninsula"
         Icon={Compass}
         badge="25+ Destinations"
-        primaryCta={{ label: "Start Exploring", href: "#destinations", icon: MapPin }}
+        primaryCta={{
+          label: "Start Exploring",
+          href: "#destinations",
+          icon: MapPin,
+        }}
         secondaryCta={{ label: "View Map", href: "/map", icon: Compass }}
         stats={[
           { icon: MapPin, text: "25+ Locations" },
@@ -248,7 +275,9 @@ export default function Destinations() {
                   title={destination.title}
                   subtitle={destination.subtitle}
                   description={destination.description}
-                  images={(destination.galleryImages || []).map((img) => img.src)}
+                  images={(destination.galleryImages || []).map(
+                    (img) => img.src
+                  )}
                   badge={destination.badge}
                   rating={destination.rating}
                   location={destination.location}
@@ -264,7 +293,9 @@ export default function Destinations() {
               <div className="flex justify-center mb-4" aria-hidden>
                 <Search className="w-24 h-24 text-muted-foreground" />
               </div>
-              <h3 className="text-2xl font-semibold mb-2">No destinations found</h3>
+              <h3 className="text-2xl font-semibold mb-2">
+                No destinations found
+              </h3>
               <p className="text-muted-foreground mb-6">
                 Try adjusting your search or filters
               </p>

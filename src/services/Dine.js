@@ -28,7 +28,7 @@ export const getDineById = async (id) => {
   try {
     const response = await api.get(`/restaurant/${id}`); 
     return response.data.data || response.data;
-  } catch (error) {
+  } catch (eroor) {
     try {
       const response = await api.get(`/cafe/${id}`);
       return response.data.data || response.data;

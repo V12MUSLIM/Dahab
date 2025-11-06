@@ -1,5 +1,12 @@
 "use client";
-import { lazy, Suspense, useState, useMemo, useDeferredValue, useEffect } from "react";
+import {
+  lazy,
+  Suspense,
+  useState,
+  useMemo,
+  useDeferredValue,
+  useEffect,
+} from "react";
 import { Compass, Search } from "lucide-react";
 import Filters from "@/components/customComponents/FilteringTool";
 import { PrimaryButton } from "@/components/customComponents/ButtonVarients";
@@ -56,10 +63,10 @@ export default function Experiences() {
   }, [apiExperiences]);
 
   const allExperiences = useMemo(() => {
-    return experiencesByCategory.flatMap(cat =>
-      (cat.experiences || []).map(exp => ({
+    return experiencesByCategory.flatMap((cat) =>
+      (cat.experiences || []).map((exp) => ({
         ...exp,
-        category: cat.category
+        category: cat.category,
       }))
     );
   }, [experiencesByCategory]);
@@ -71,13 +78,13 @@ export default function Experiences() {
         return ["All", ...apiCats];
       }
     }
-    return ["All", ...experiencesByCategory.map(cat => cat.category)];
+    return ["All", ...experiencesByCategory.map((cat) => cat.category)];
   }, [experiencesByCategory, getAllCategories]);
 
   const categoryOptions = useMemo(() => {
-    return categories.map(cat => ({
+    return categories.map((cat) => ({
       value: cat,
-      label: cat
+      label: cat,
     }));
   }, [categories]);
 
@@ -131,12 +138,20 @@ export default function Experiences() {
   }, [allExperiences, selectedCategory, debouncedSearch, priceFilter]);
 
   if (DahabLoader && !apiExperiences) {
-    return <DahabLoader />;
+    return (
+      <div className="min-h-screen flex justify-center items-center">
+        <DahabLoader loadingMessage="Loading Experiences" />
+      </div>
+    );
   }
 
   return (
     <div className="min-h-screen bg-white dark:bg-black">
-      <Suspense fallback={<div className="h-96 bg-gray-200 dark:bg-gray-800 animate-pulse" />}>
+      <Suspense
+        fallback={
+          <div className="h-96 bg-gray-200 dark:bg-gray-800 animate-pulse" />
+        }
+      >
         <HeroSection
           image="https://images.unsplash.com/photo-1682687220742-aba13b6e50ba?w=1600"
           title="Unforgettable Experiences"
@@ -151,7 +166,11 @@ export default function Experiences() {
         />
       </Suspense>
 
-      <Suspense fallback={<div className="h-20 bg-gray-200 dark:bg-gray-800 animate-pulse mx-4 my-8 rounded-lg" />}>
+      <Suspense
+        fallback={
+          <div className="h-20 bg-gray-200 dark:bg-gray-800 animate-pulse mx-4 my-8 rounded-lg" />
+        }
+      >
         <div className="max-w-7xl mx-auto px-4 py-8">
           <Filters
             searchQuery={searchQuery}
@@ -191,10 +210,15 @@ export default function Experiences() {
 
           <div className="space-y-16">
             {experiencesByCategory.map((categorySection) => {
-              const categoryExperiences = (categorySection.experiences || []).filter((exp) => {
+              const categoryExperiences = (
+                categorySection.experiences || []
+              ).filter((exp) => {
                 let passes = true;
 
-                if (selectedCategory !== "All" && categorySection.category !== selectedCategory) {
+                if (
+                  selectedCategory !== "All" &&
+                  categorySection.category !== selectedCategory
+                ) {
                   passes = false;
                 }
 
@@ -212,7 +236,8 @@ export default function Experiences() {
                     passes = false;
                   } else {
                     if (priceFilter === "low") passes = price < 50;
-                    if (priceFilter === "medium") passes = price >= 50 && price < 80;
+                    if (priceFilter === "medium")
+                      passes = price >= 50 && price < 80;
                     if (priceFilter === "high") passes = price >= 80;
                   }
                 }
@@ -248,7 +273,9 @@ export default function Experiences() {
                           price={experience.price}
                           href={experience.href}
                           buttonText="Book Now"
-                          onButtonClick={() => console.log("Booking:", experience.title)}
+                          onButtonClick={() =>
+                            console.log("Booking:", experience.title)
+                          }
                         />
                       ))}
                     </div>
@@ -262,7 +289,9 @@ export default function Experiences() {
                 <div className="flex justify-center mb-4" aria-hidden>
                   <Search className="w-24 h-24 text-muted-foreground" />
                 </div>
-                <h3 className="text-2xl font-semibold mb-2">No experiences found</h3>
+                <h3 className="text-2xl font-semibold mb-2">
+                  No experiences found
+                </h3>
                 <p className="text-muted-foreground mb-6">
                   Try adjusting your search or filters
                 </p>
