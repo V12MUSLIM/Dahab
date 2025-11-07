@@ -13,16 +13,26 @@ import {
   EyeOff,
   Save,
   LogOut,
-  ArrowLeft,
-  Camera,
   Check,
+  Shield,
+  Cog,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Switch } from "@/components/ui/switch";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
 import { useNavigate } from "react-router-dom";
@@ -31,6 +41,8 @@ import { ROUTES } from "@/config/SiteConfig";
 export default function Settings() {
   const navigate = useNavigate();
   const { user, logout, updateProfile } = useAuthStore();
+
+  const [activeTab, setActiveTab] = React.useState("profile");
 
   // Form state
   const [formData, setFormData] = React.useState({
@@ -118,125 +130,200 @@ export default function Settings() {
     try {
       await logout();
       toast.success("Logged out successfully");
-     setTimeout(() => navigate(ROUTES.login, { replace: true }), 300);
+      setTimeout(() => navigate(ROUTES.login, { replace: true }), 300);
     } catch (error) {
       toast.error("Logout failed");
       console.error("Logout error:", error);
     }
   };
 
+  const userImageUrl = user?.picture
+    ? encodeURI(user.picture.replace("=s96-c", "=s256-c"))
+    : user?.image
+    ? encodeURI(user.image)
+    : `https://avatar.vercel.sh/${encodeURIComponent(user?.name || "U")}`;
+
+  const userInitials =
+    user?.name
+      ?.split(" ")
+      .map((n) => n[0])
+      .join("")
+      .toUpperCase() || "U";
+
   return (
-    <div className="min-h-screen">
-      {/* Main Content */}
-      <div className="container mx-auto px-4 py-8 max-w-4xl pb-20 md:pb-8">
-        <div className="space-y-0 rounded-2xl border border-yellow-500/20 overflow-hidden shadow-2xl shadow-yellow-500/10">
-          {/* Tabs Navigation - Connected at top */}
-          <div className="flex bg-black/60 border-b border-yellow-500/20">
-            <Tabs defaultValue="profile" className="w-full">
-              <TabsList className="w-full flex gap-0 bg-transparent border-b border-yellow-500/20 justify-start rounded-none">
-                <TabsTrigger
-                  value="profile"
-                  className="flex-1 rounded-none border-r border-yellow-500/10 data-[state=active]:bg-gradient-to-r data-[state=active]:from-yellow-600/40 data-[state=active]:to-amber-600/40 data-[state=active]:text-yellow-300 data-[state=active]:border-b-2 data-[state=active]:border-yellow-500 text-yellow-600/60 hover:text-yellow-500 transition-all duration-200"
-                >
-                  <User className="h-4 w-4 mr-2" />
-                  Profile
-                </TabsTrigger>
-                <TabsTrigger
-                  value="security"
-                  className="flex-1 rounded-none border-r border-yellow-500/10 data-[state=active]:bg-gradient-to-r data-[state=active]:from-yellow-600/40 data-[state=active]:to-amber-600/40 data-[state=active]:text-yellow-300 data-[state=active]:border-b-2 data-[state=active]:border-yellow-500 text-yellow-600/60 hover:text-yellow-500 transition-all duration-200"
-                >
-                  <Lock className="h-4 w-4 mr-2" />
-                  Security
-                </TabsTrigger>
-                <TabsTrigger
-                  value="preferences"
-                  className="flex-1 rounded-none data-[state=active]:bg-gradient-to-r data-[state=active]:from-yellow-600/40 data-[state=active]:to-amber-600/40 data-[state=active]:text-yellow-300 data-[state=active]:border-b-2 data-[state=active]:border-yellow-500 text-yellow-600/60 hover:text-yellow-500 transition-all duration-200"
-                >
-                  <Bell className="h-4 w-4 mr-2" />
-                  Preferences
-                </TabsTrigger>
-              </TabsList>
+    <div className="min-h-screen ">
+      <div className="container mx-auto px-4 py-8 max-w-7xl pb-20 md:pb-8">
+        <div className="flex flex-col lg:flex-row gap-6">
+          {/* Left Sidebar - User Profile */}
+          <aside className="lg:w-80 flex-shrink-0">
+            <div className="sticky top-8 space-y-6">
+              {/* User Card */}
+              <div className="bg-card rounded-2xl border border-border p-6 shadow-lg">
+                <div className="flex flex-col items-center text-center space-y-4">
+                  <Avatar className="w-32 h-32 border-4 border-yellow-500/30 ring-4 ring-yellow-500/10 shadow-xl">
+                    <AvatarImage
+                      src={userImageUrl}
+                      alt={user?.name || "User avatar"}
+                      crossOrigin="anonymous"
+                      referrerPolicy="no-referrer"
+                      onError={(e) => {
+                        console.warn(
+                          "Failed to load user image, using fallback"
+                        );
+                        e.currentTarget.src = `https://avatar.vercel.sh/${encodeURIComponent(
+                          user?.name || "U"
+                        )}`;
+                      }}
+                    />
+                    <AvatarFallback className="bg-gradient-to-br from-yellow-500 to-amber-600 text-white text-4xl font-bold">
+                      {userInitials}
+                    </AvatarFallback>
+                  </Avatar>
 
-              {/* Profile Tab */}
-              <TabsContent value="profile" className="p-8 space-y-6 m-0">
-                {/* Avatar Section */}
-                <div className="space-y-6 pb-8 border-b border-yellow-500/20">
-                  <div>
-                    <h3 className="text-lg font-semibold text-yellow-400 mb-2 flex items-center gap-2">
-                      <Camera className="h-5 w-5" />
-                      Profile Details
-                    </h3>
-                  </div>
-
-                  <div className="flex flex-col md:flex-row items-center gap-8 bg-gradient-to-r from-yellow-500/5 to-amber-500/5 p-6 rounded-xl border border-yellow-500/10">
-                    <Avatar className="w-32 h-32 border-2 border-yellow-500/50 ring-4 ring-yellow-500/20 overflow-hidden">
-                      <AvatarImage
-                        src={
-                          user?.picture
-                            ? encodeURI(
-                                user.picture.replace("=s96-c", "=s256-c")
-                              )
-                            : user?.image
-                            ? encodeURI(user.image)
-                            : `https://avatar.vercel.sh/${encodeURIComponent(
-                                user?.name || "U"
-                              )}`
-                        }
-                        alt={user?.name || "User avatar"}
-                        crossOrigin="anonymous"
-                        referrerPolicy="no-referrer"
-                        onError={(e) => {
-                          console.warn(
-                            "Failed to load user image, using fallback"
-                          );
-                          e.currentTarget.src = `https://avatar.vercel.sh/${encodeURIComponent(
-                            user?.name || "U"
-                          )}`;
-                        }}
-                      />
-                      <AvatarFallback className="bg-gradient-to-br from-yellow-500 to-amber-600 text-white text-3xl font-bold">
-                        {user?.name
-                          ?.split(" ")
-                          .map((n) => n[0])
-                          .join("")
-                          .toUpperCase() || "U"}
-                      </AvatarFallback>
-                    </Avatar>
-
-                    <div className="flex flex-col gap-2">
-                      <h3 className="font-bold text-3xl bg-gradient-to-r from-yellow-600 to-yellow-400 bg-clip-text text-transparent">
-                        Welcome
-                      </h3>
-                      <h4 className="text-xl font-semibold text-white">
-                        {user?.name || "Guest User"}
-                      </h4>
-
-                      <p className="text-sm text-amber-200/80">
-                        Update your personal information and profile settings
+                  <div className="space-y-2 w-full">
+                    <h2 className="text-2xl font-bold text-foreground">
+                      {user?.name || "Guest User"}
+                    </h2>
+                    <div className="flex items-center justify-center gap-2 text-muted-foreground">
+                      <Mail className="h-4 w-4" />
+                      <p className="text-sm break-all">
+                        {user?.email || "No email"}
                       </p>
                     </div>
                   </div>
-                </div>
 
-                {/* Personal Information */}
-                <div className="space-y-6">
-                  <div>
-                    <h3 className="text-lg font-semibold text-yellow-400 mb-2 flex items-center gap-2">
-                      <User className="h-5 w-5" />
-                      Personal Information
-                    </h3>
-                    <p className="text-sm text-yellow-600/60">
-                      Update your personal details
-                    </p>
+                  <Separator className="bg-border" />
+
+                  <div className="w-full space-y-2 text-left">
+                    {user?.phone && (
+                      <div className="flex items-center gap-3 text-sm text-muted-foreground">
+                        <Phone className="h-4 w-4 text-yellow-500" />
+                        <span>{user.phone}</span>
+                      </div>
+                    )}
+                    {user?.location && (
+                      <div className="flex items-center gap-3 text-sm text-muted-foreground">
+                        <MapPin className="h-4 w-4 text-yellow-500" />
+                        <span>{user.location}</span>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </div>
+
+              {/* Navigation Menu */}
+              <nav className="bg-card rounded-2xl border border-border p-4 shadow-lg">
+                <div className="space-y-2">
+                  <button
+                    onClick={() => setActiveTab("profile")}
+                    className={cn(
+                      "w-full flex items-center gap-3 px-4 py-3 rounded-xl text-left transition-all duration-200",
+                      activeTab === "profile"
+                        ? "bg-yellow-500/10 text-yellow-600 border border-yellow-500/20 dark:text-yellow-400"
+                        : "text-muted-foreground hover:text-foreground hover:bg-muted"
+                    )}
+                  >
+                    <User className="h-5 w-5" />
+                    <span className="font-medium">Profile Settings</span>
+                  </button>
+
+                  <button
+                    onClick={() => setActiveTab("security")}
+                    className={cn(
+                      "w-full flex items-center gap-3 px-4 py-3 rounded-xl text-left transition-all duration-200",
+                      activeTab === "security"
+                        ? "bg-yellow-500/10 text-yellow-600 border border-yellow-500/20 dark:text-yellow-400"
+                        : "text-muted-foreground hover:text-foreground hover:bg-muted"
+                    )}
+                  >
+                    <Lock className="h-5 w-5" />
+                    <span className="font-medium">Security</span>
+                  </button>
+
+                  <button
+                    onClick={() => setActiveTab("preferences")}
+                    className={cn(
+                      "w-full flex items-center gap-3 px-4 py-3 rounded-xl text-left transition-all duration-200",
+                      activeTab === "preferences"
+                        ? "bg-yellow-500/10 text-yellow-600 border border-yellow-500/20 dark:text-yellow-400"
+                        : "text-muted-foreground hover:text-foreground hover:bg-muted"
+                    )}
+                  >
+                    <Bell className="h-5 w-5" />
+                    <span className="font-medium">Preferences</span>
+                  </button>
+                </div>
+              </nav>
+
+              {/* Logout Button with AlertDialog */}
+
+              <AlertDialog>
+                <AlertDialogTrigger asChild>
+                  <Button
+                    variant="outline"
+                    className="w-full hidden lg:flex items-center justify-center border-red-500/30 text-red-600 hover:bg-red-500/10 hover:text-red-600 hover:border-red-500/50 dark:text-red-400 dark:hover:text-red-400 transition-all duration-200 rounded-xl py-6"
+                  >
+                    <LogOut className="h-5 w-5 mr-2" />
+                    Logout
+                  </Button>
+                </AlertDialogTrigger>
+                <AlertDialogContent className="rounded-2xl border-border shadow-2xl max-w-md">
+                  <AlertDialogHeader className="space-y-3">
+                    <div className="mx-auto w-12 h-12 rounded-full bg-red-500/10 flex items-center justify-center">
+                      <LogOut className="h-6 w-6 text-red-600 dark:text-red-400" />
+                    </div>
+                    <AlertDialogTitle className="text-center text-2xl font-bold">
+                      Logout Confirmation
+                    </AlertDialogTitle>
+                    <AlertDialogDescription className="text-center text-muted-foreground">
+                      Are you sure you want to logout? You'll need to sign in
+                      again to access your account.
+                    </AlertDialogDescription>
+                  </AlertDialogHeader>
+                  <AlertDialogFooter className="flex-col sm:flex-row gap-3 mt-6">
+                    <AlertDialogCancel className="w-full sm:w-auto rounded-xl border-border hover:bg-muted transition-all duration-200">
+                      Cancel
+                    </AlertDialogCancel>
+                    <AlertDialogAction
+                      onClick={handleLogout}
+                      className="w-full sm:w-auto bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white font-semibold rounded-xl transition-all duration-200"
+                    >
+                      Yes, Logout
+                    </AlertDialogAction>
+                  </AlertDialogFooter>
+                </AlertDialogContent>
+              </AlertDialog>
+            </div>
+          </aside>
+
+          {/* Main Content Area */}
+          <main className="flex-1">
+            <div className="bg-card rounded-2xl border border-border shadow-lg overflow-hidden">
+              {/* Profile Tab */}
+              {activeTab === "profile" && (
+                <div className="p-8 space-y-8">
+                  <div className="flex items-center gap-3 pb-6 border-b border-border">
+                    <div className="p-3 bg-yellow-500/10 rounded-xl">
+                      <Cog className="h-6 w-6 text-yellow-600 dark:text-yellow-400" />
+                    </div>
+                    <div>
+                      <h1 className="text-2xl font-bold text-foreground">
+                        Profile Settings
+                      </h1>
+                      <p className="text-sm text-muted-foreground">
+                        Manage your personal information
+                      </p>
+                    </div>
                   </div>
 
-                  <form onSubmit={handleSaveProfile} className="space-y-4">
+                  <div className="space-y-6">
                     {/* Name */}
                     <div className="space-y-2">
                       <label
                         htmlFor="name"
-                        className="text-sm font-medium text-yellow-300"
+                        className="text-sm font-semibold text-foreground flex items-center gap-2"
                       >
+                        <User className="h-4 w-4 text-yellow-600 dark:text-yellow-400" />
                         Full Name
                       </label>
                       <Input
@@ -245,7 +332,7 @@ export default function Settings() {
                         value={formData.name}
                         onChange={handleInputChange}
                         placeholder="Enter your full name"
-                        className="bg-yellow-500/5 border border-yellow-500/30 focus:border-yellow-500 focus:ring-2 focus:ring-yellow-500/30 text-white placeholder:text-gray-500 transition-all duration-200"
+                        className="h-12"
                       />
                     </div>
 
@@ -253,9 +340,9 @@ export default function Settings() {
                     <div className="space-y-2">
                       <label
                         htmlFor="email"
-                        className="text-sm font-medium text-yellow-300 flex items-center gap-2"
+                        className="text-sm font-semibold text-foreground flex items-center gap-2"
                       >
-                        <Mail className="h-4 w-4" />
+                        <Mail className="h-4 w-4 text-yellow-600 dark:text-yellow-400" />
                         Email Address
                       </label>
                       <Input
@@ -265,7 +352,7 @@ export default function Settings() {
                         value={formData.email}
                         onChange={handleInputChange}
                         placeholder="Enter your email"
-                        className="bg-yellow-500/5 border border-yellow-500/30 focus:border-yellow-500 focus:ring-2 focus:ring-yellow-500/30 text-white placeholder:text-gray-500 transition-all duration-200"
+                        className="h-12"
                       />
                     </div>
 
@@ -273,9 +360,9 @@ export default function Settings() {
                     <div className="space-y-2">
                       <label
                         htmlFor="phone"
-                        className="text-sm font-medium text-yellow-300 flex items-center gap-2"
+                        className="text-sm font-semibold text-foreground flex items-center gap-2"
                       >
-                        <Phone className="h-4 w-4" />
+                        <Phone className="h-4 w-4 text-yellow-600 dark:text-yellow-400" />
                         Phone Number
                       </label>
                       <Input
@@ -284,7 +371,7 @@ export default function Settings() {
                         value={formData.phone}
                         onChange={handleInputChange}
                         placeholder="Enter your phone number"
-                        className="bg-yellow-500/5 border border-yellow-500/30 focus:border-yellow-500 focus:ring-2 focus:ring-yellow-500/30 text-white placeholder:text-gray-500 transition-all duration-200"
+                        className="h-12"
                       />
                     </div>
 
@@ -292,9 +379,9 @@ export default function Settings() {
                     <div className="space-y-2">
                       <label
                         htmlFor="location"
-                        className="text-sm font-medium text-yellow-300 flex items-center gap-2"
+                        className="text-sm font-semibold text-foreground flex items-center gap-2"
                       >
-                        <MapPin className="h-4 w-4" />
+                        <MapPin className="h-4 w-4 text-yellow-600 dark:text-yellow-400" />
                         Location
                       </label>
                       <Input
@@ -303,50 +390,55 @@ export default function Settings() {
                         value={formData.location}
                         onChange={handleInputChange}
                         placeholder="Enter your location"
-                        className="bg-yellow-500/5 border border-yellow-500/30 focus:border-yellow-500 focus:ring-2 focus:ring-yellow-500/30 text-white placeholder:text-gray-500 transition-all duration-200"
+                        className="h-12"
                       />
                     </div>
 
                     <Button
-                      type="submit"
+                      type="button"
                       disabled={isLoading}
+                      onClick={handleSaveProfile}
                       className={cn(
-                        "w-full bg-gradient-to-r from-yellow-500 to-amber-600 hover:from-yellow-600 hover:to-amber-700 text-black font-semibold border border-yellow-400/50 transition-all duration-200 shadow-lg shadow-yellow-500/20",
+                        "w-full h-12 bg-gradient-to-r from-yellow-500 to-amber-600 hover:from-yellow-600 hover:to-amber-700 text-black font-semibold transition-all duration-200",
                         profileSaved &&
                           "from-emerald-500 to-emerald-600 hover:from-emerald-600 hover:to-emerald-700"
                       )}
                     >
-                      <Save className="w-4 h-4" />
-                      {profileSaved && <Check className="h-4 w-4 mr-2" />}
+                      {profileSaved && <Check className="h-5 w-5 mr-2" />}
+                      {!profileSaved && <Save className="h-5 w-5 mr-2" />}
                       {isLoading
                         ? "Saving..."
                         : profileSaved
-                        ? "Saved!"
+                        ? "Saved Successfully!"
                         : "Save Changes"}
                     </Button>
-                  </form>
+                  </div>
                 </div>
-              </TabsContent>
+              )}
 
               {/* Security Tab */}
-              <TabsContent value="security" className="p-8 space-y-6 m-0">
-                <div className="space-y-6">
-                  <div>
-                    <h3 className="text-lg font-semibold text-yellow-400 mb-2 flex items-center gap-2">
-                      <Lock className="h-5 w-5" />
-                      Change Password
-                    </h3>
-                    <p className="text-sm text-yellow-600/60">
-                      Update your password to keep your account secure
-                    </p>
+              {activeTab === "security" && (
+                <div className="p-8 space-y-8">
+                  <div className="flex items-center gap-3 pb-6 border-b border-border">
+                    <div className="p-3 bg-yellow-500/10 rounded-xl">
+                      <Shield className="h-6 w-6 text-yellow-600 dark:text-yellow-400" />
+                    </div>
+                    <div>
+                      <h1 className="text-2xl font-bold text-foreground">
+                        Security Settings
+                      </h1>
+                      <p className="text-sm text-muted-foreground mt-1">
+                        Update your password and security preferences
+                      </p>
+                    </div>
                   </div>
 
-                  <form onSubmit={handlePasswordChange} className="space-y-4">
+                  <div className="space-y-8">
                     {/* Current Password */}
-                    <div className="space-y-2">
+                    <div className="space-y-3">
                       <label
                         htmlFor="currentPassword"
-                        className="text-sm font-medium text-yellow-300"
+                        className="text-sm font-semibold text-foreground"
                       >
                         Current Password
                       </label>
@@ -362,7 +454,7 @@ export default function Settings() {
                             }))
                           }
                           placeholder="Enter current password"
-                          className="bg-yellow-500/5 border border-yellow-500/30 focus:border-yellow-500 focus:ring-2 focus:ring-yellow-500/30 text-white placeholder:text-gray-500 pr-10 transition-all duration-200"
+                          className="h-12 pr-12 mt-2"
                         />
                         <button
                           type="button"
@@ -372,12 +464,12 @@ export default function Settings() {
                               current: !prev.current,
                             }))
                           }
-                          className="absolute right-3 top-1/2 -translate-y-1/2 text-yellow-600/60 hover:text-yellow-500 transition-colors"
+                          className="absolute right-4 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
                         >
                           {showPasswords.current ? (
-                            <EyeOff className="h-4 w-4" />
+                            <EyeOff className="h-5 w-5" />
                           ) : (
-                            <Eye className="h-4 w-4" />
+                            <Eye className="h-5 w-5" />
                           )}
                         </button>
                       </div>
@@ -387,7 +479,7 @@ export default function Settings() {
                     <div className="space-y-2">
                       <label
                         htmlFor="newPassword"
-                        className="text-sm font-medium text-yellow-300"
+                        className="text-sm font-semibold text-foreground"
                       >
                         New Password
                       </label>
@@ -403,7 +495,7 @@ export default function Settings() {
                             }))
                           }
                           placeholder="Enter new password"
-                          className="bg-yellow-500/5 border border-yellow-500/30 focus:border-yellow-500 focus:ring-2 focus:ring-yellow-500/30 text-white placeholder:text-gray-500 pr-10 transition-all duration-200"
+                          className="h-12 pr-12  mt-2"
                         />
                         <button
                           type="button"
@@ -413,12 +505,12 @@ export default function Settings() {
                               new: !prev.new,
                             }))
                           }
-                          className="absolute right-3 top-1/2 -translate-y-1/2 text-yellow-600/60 hover:text-yellow-500 transition-colors"
+                          className="absolute right-4 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
                         >
                           {showPasswords.new ? (
-                            <EyeOff className="h-4 w-4" />
+                            <EyeOff className="h-5 w-5" />
                           ) : (
-                            <Eye className="h-4 w-4" />
+                            <Eye className="h-5 w-5" />
                           )}
                         </button>
                       </div>
@@ -428,9 +520,9 @@ export default function Settings() {
                     <div className="space-y-2">
                       <label
                         htmlFor="confirmPassword"
-                        className="text-sm font-medium text-yellow-300"
+                        className="text-sm font-semibold text-foreground"
                       >
-                        Confirm Password
+                        Confirm New Password
                       </label>
                       <div className="relative">
                         <Input
@@ -444,7 +536,7 @@ export default function Settings() {
                             }))
                           }
                           placeholder="Confirm new password"
-                          className="bg-yellow-500/5 border border-yellow-500/30 focus:border-yellow-500 focus:ring-2 focus:ring-yellow-500/30 text-white placeholder:text-gray-500 pr-10 transition-all duration-200"
+                          className="h-12 pr-12  mt-2"
                         />
                         <button
                           type="button"
@@ -454,98 +546,124 @@ export default function Settings() {
                               confirm: !prev.confirm,
                             }))
                           }
-                          className="absolute right-3 top-1/2 -translate-y-1/2 text-yellow-600/60 hover:text-yellow-500 transition-colors"
+                          className="absolute right-4 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
                         >
                           {showPasswords.confirm ? (
-                            <EyeOff className="h-4 w-4" />
+                            <EyeOff className="h-5 w-5" />
                           ) : (
-                            <Eye className="h-4 w-4" />
+                            <Eye className="h-5 w-5" />
                           )}
                         </button>
                       </div>
                     </div>
 
                     <Button
-                      type="submit"
+                      type="button"
                       disabled={isLoading}
-                      className="w-full bg-gradient-to-r from-yellow-500 to-amber-600 hover:from-yellow-600 hover:to-amber-700 text-black font-semibold border border-yellow-400/50 transition-all duration-200 shadow-lg shadow-yellow-500/20 disabled:opacity-50"
+                      onClick={handlePasswordChange}
+                      className="w-full h-12 bg-gradient-to-r from-yellow-500 to-amber-600 hover:from-yellow-600 hover:to-amber-700 text-black font-semibold transition-all duration-200"
                     >
-                      <Lock className="h-4 w-4 mr-2" />
+                      <Lock className="h-5 w-5 mr-2" />
                       {isLoading ? "Updating..." : "Update Password"}
                     </Button>
-                  </form>
+                  </div>
                 </div>
-              </TabsContent>
+              )}
 
               {/* Preferences Tab */}
-              <TabsContent value="preferences" className="p-8 space-y-6 m-0">
-                <div className="space-y-6">
-                  <div>
-                    <h3 className="text-lg font-semibold text-yellow-400 mb-2 flex items-center gap-2">
-                      <Bell className="h-5 w-5" />
-                      Notifications & Privacy
-                    </h3>
-                    <p className="text-sm text-yellow-600/60">
-                      Manage how we communicate with you
-                    </p>
-                  </div>
-
-                  {/* Email Notifications */}
-                  <div className="flex items-center justify-between p-5 rounded-xl bg-yellow-500/5 border border-yellow-500/20 hover:border-yellow-500/40 transition-all duration-200">
-                    <div className="space-y-1">
-                      <p className="font-medium text-yellow-300">
-                        Email Notifications
-                      </p>
-                      <p className="text-sm text-yellow-600/60">
-                        Receive updates about bookings, offers, and activities
+              {activeTab === "preferences" && (
+                <div className="p-8 space-y-8">
+                  <div className="flex items-center gap-3 pb-6 border-b border-border">
+                    <div className="p-3 bg-yellow-500/10 rounded-xl">
+                      <Bell className="h-6 w-6 text-yellow-600 dark:text-yellow-400" />
+                    </div>
+                    <div>
+                      <h1 className="text-2xl font-bold text-foreground">
+                        Notification Preferences
+                      </h1>
+                      <p className="text-sm text-muted-foreground">
+                        Manage how we communicate with you
                       </p>
                     </div>
-                    <Switch
-                      checked={notification}
-                      onCheckedChange={setNotification}
-                      className="data-[state=checked]:bg-gradient-to-r data-[state=checked]:from-yellow-500 data-[state=checked]:to-amber-600"
-                    />
                   </div>
 
-                  {/* Marketing */}
-                  <div className="flex items-center justify-between p-5 rounded-xl bg-yellow-500/5 border border-yellow-500/20 hover:border-yellow-500/40 transition-all duration-200">
-                    <div className="space-y-1">
-                      <p className="font-medium text-yellow-300">
-                        Marketing & Promotions
-                      </p>
-                      <p className="text-sm text-yellow-600/60">
-                        Get exclusive deals and travel recommendations
-                      </p>
+                  <div className="space-y-4">
+                    {/* Email Notifications */}
+                    <div className="flex items-center justify-between p-6 rounded-xl bg-muted border border-border hover:border-yellow-500/30 transition-all duration-200">
+                      <div className="space-y-1">
+                        <p className="font-semibold text-foreground">
+                          Email Notifications
+                        </p>
+                        <p className="text-sm text-muted-foreground">
+                          Receive updates about bookings, offers, and activities
+                        </p>
+                      </div>
+                      <Switch
+                        checked={notification}
+                        onCheckedChange={setNotification}
+                        className="data-[state=checked]:bg-gradient-to-r data-[state=checked]:from-yellow-500 data-[state=checked]:to-amber-600"
+                      />
                     </div>
-                    <Switch
-                      checked={marketing}
-                      onCheckedChange={setMarketing}
-                      className="data-[state=checked]:bg-gradient-to-r data-[state=checked]:from-yellow-500 data-[state=checked]:to-amber-600"
-                    />
-                  </div>
 
-                  <Separator className="bg-yellow-500/20" />
-
-                  {/* Logout Section */}
-                  <div className="space-y-3 pt-4">
-                    <p className="text-sm font-medium text-yellow-300">
-                      Account Access
-                    </p>
-                    <Button
-                      onClick={handleLogout}
-                      className="w-full bg-gradient-to-r from-red-600/50 to-red-700/50 hover:from-red-600/70 hover:to-red-700/70 text-red-300 border border-red-500/30 hover:border-red-500/50 transition-all duration-200"
-                    >
-                      <LogOut className="h-4 w-4 mr-2" />
-                      Logout
-                    </Button>
-                    <p className="text-xs text-yellow-600/40">
-                      You will be logged out from all devices
-                    </p>
+                    {/* Marketing */}
+                    <div className="flex items-center justify-between p-6 rounded-xl bg-muted border border-border hover:border-yellow-500/30 transition-all duration-200">
+                      <div className="space-y-1">
+                        <p className="font-semibold text-foreground">
+                          Marketing & Promotions
+                        </p>
+                        <p className="text-sm text-muted-foreground">
+                          Get exclusive deals and travel recommendations
+                        </p>
+                      </div>
+                      <Switch
+                        checked={marketing}
+                        onCheckedChange={setMarketing}
+                        className="data-[state=checked]:bg-gradient-to-r data-[state=checked]:from-yellow-500 data-[state=checked]:to-amber-600"
+                      />
+                    </div>
                   </div>
                 </div>
-              </TabsContent>
-            </Tabs>
-          </div>
+              )}
+            </div>
+
+            {/* Mobile Logout Button with Styled AlertDialog */}
+            <AlertDialog>
+              <AlertDialogTrigger asChild>
+                <Button
+                  variant="outline"
+                  className="w-full lg:hidden border-red-500/30 text-red-600 hover:bg-red-500/10 hover:text-red-600 hover:border-red-500/50 dark:text-red-400 dark:hover:text-red-400 transition-all duration-200 rounded-xl py-6 mt-4"
+                >
+                  <LogOut className="h-5 w-5 mr-2" />
+                  Logout
+                </Button>
+              </AlertDialogTrigger>
+              <AlertDialogContent className="rounded-2xl border-border shadow-2xl max-w-md">
+                <AlertDialogHeader className="space-y-3">
+                  <div className="mx-auto w-12 h-12 rounded-full bg-red-500/10 flex items-center justify-center">
+                    <LogOut className="h-6 w-6 text-red-600 dark:text-red-400" />
+                  </div>
+                  <AlertDialogTitle className="text-center text-2xl font-bold">
+                    Logout Confirmation
+                  </AlertDialogTitle>
+                  <AlertDialogDescription className="text-center text-muted-foreground">
+                    Are you sure you want to logout? You'll need to sign in
+                    again to access your account.
+                  </AlertDialogDescription>
+                </AlertDialogHeader>
+                <AlertDialogFooter className="flex-col sm:flex-row gap-3 mt-6">
+                  <AlertDialogCancel className="w-full sm:w-auto rounded-xl border-border hover:bg-muted transition-all duration-200">
+                    Cancel
+                  </AlertDialogCancel>
+                  <AlertDialogAction
+                    onClick={handleLogout}
+                    className="w-full sm:w-auto bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white font-semibold rounded-xl transition-all duration-200"
+                  >
+                    Yes, Logout
+                  </AlertDialogAction>
+                </AlertDialogFooter>
+              </AlertDialogContent>
+            </AlertDialog>
+          </main>
         </div>
       </div>
     </div>

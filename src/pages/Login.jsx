@@ -1,22 +1,24 @@
-import React, { useState } from 'react';
-import { Mail, Lock } from 'lucide-react';
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { loginSchema } from '@/schemas/authSchema';
-import { FormInput } from '@/components/customComponents/FormInput';
-import { Checkbox } from '@/components/ui/checkbox';
-import { Spinner } from '@/components/ui/spinner';
+import React, { useState } from "react";
+import { Mail, Lock } from "lucide-react";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { loginSchema } from "@/schemas/authSchema";
+import { FormInput } from "@/components/customComponents/FormInput";
+import { Checkbox } from "@/components/ui/checkbox";
+import api from "@/api/axios";
+import { Spinner } from "@/components/ui/spinner";
 import {
   FormPrimaryButton,
   FormSecondaryButton,
-} from '@/components/customComponents/FormButtons';
-import { useNavigate } from 'react-router-dom';
-import { toast } from 'sonner';
-import { useAuthStore } from '@/store/authStore';
+} from "@/components/customComponents/FormButtons";
+import { useNavigate } from "react-router-dom";
+import { toast } from "sonner";
+import { useAuthStore } from "@/store/authStore";
 
 const LoginPage = () => {
   const navigate = useNavigate();
-  const { setError, isLoading, setLoading } = useAuthStore();
+  const { setError, isLoading, setLoading, checkAuthStatus } = useAuthStore();
+
   const [showPassword, setShowPassword] = useState(false);
 
   const {
@@ -26,8 +28,8 @@ const LoginPage = () => {
   } = useForm({
     resolver: zodResolver(loginSchema),
     defaultValues: {
-      email: '',
-      password: '',
+      email: "",
+      password: "",
       rememberMe: false,
     },
   });
@@ -39,11 +41,11 @@ const LoginPage = () => {
       const response = await fetch(
         `${import.meta.env.VITE_API_URL}/auth/login`,
         {
-          method: 'POST',
+          method: "POST",
           headers: {
-            'Content-Type': 'application/json',
+            "Content-Type": "application/json",
           },
-          credentials: 'include', // Important: sends cookies
+          credentials: "include", // Important: sends cookies
           body: JSON.stringify({
             email: data.email,
             password: data.password,
@@ -51,15 +53,16 @@ const LoginPage = () => {
         }
       );
 
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.message || 'Login failed');
-      }
+      const { data } = await api.post("/auth/login", {
+        email: data.email,
+        password: data.password,
+      });
 
-      toast.success('Login successful!');
-      navigate('/');
+      await checkAuthStatus(); // 🧠 refresh Zustand state
+      toast.success("Login successful!");
+      navigate("/");
     } catch (error) {
-      const errorMsg = error.message || 'Login failed. Please try again.';
+      const errorMsg = error.message || "Login failed. Please try again.";
       setError(errorMsg);
       toast.error(errorMsg);
     } finally {

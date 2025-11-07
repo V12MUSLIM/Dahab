@@ -261,15 +261,14 @@ export default function Home() {
         image={displayHero?.image}
         imageSm="hero-small.webp"
         imageMd="hero-medium.webp"
-        title={displayHero?.title}
         subtitle={displayHero?.subtitle}
         Icon={displayHero?.icon}
-        badge={displayHero?.badge}
         stats={displayHero?.stats ?? []}
         primaryCta={displayHero?.primaryCta}
         secondaryCta={displayHero?.secondaryCta}
         PrimaryButton={PrimaryButton}
         SecondaryButton={SecondaryButton}
+        showSearchBar
       />
 
       {/* Gallery */}
