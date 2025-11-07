@@ -42,7 +42,8 @@ api.interceptors.response.use(
         if (newAccessToken) {
           const { setAccessToken } = useAuthStore.getState();
           setAccessToken(newAccessToken);
-
+          const { checkAuthStatus } = useAuthStore.getState();
+          await checkAuthStatus();
           // update header and retry
           originalRequest.headers.Authorization = `Bearer ${newAccessToken}`;
           return api(originalRequest);

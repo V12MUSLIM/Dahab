@@ -1,11 +1,17 @@
-import { useEffect } from 'react';
-import { useAuthStore } from '@/store/authStore';
+import { useEffect } from "react";
+import { useAuthStore } from "@/store/authStore";
 
 export const useAuthCheck = () => {
   const { checkAuthStatus, isLoading } = useAuthStore();
 
   useEffect(() => {
-    checkAuthStatus();
+    let mounted = true;
+    (async () => {
+      if (mounted) await checkAuthStatus();
+    })();
+    return () => {
+      mounted = false;
+    };
   }, [checkAuthStatus]);
 
   return { isLoading };

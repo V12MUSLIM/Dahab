@@ -7,14 +7,13 @@ import DefaultLayout from "./DefaultLayout";
 
 export default function ProtectedLayout({ children }) {
   const navigate = useNavigate();
-  const { isAuthenticated, isLoading } = useAuthStore();
+  const { isAuthenticated, isLoading, isCheckingAuth } = useAuthStore();
 
   useEffect(() => {
-    if (!isLoading && !isAuthenticated) {
+    if (!isLoading && !isCheckingAuth && !isAuthenticated) {
       navigate(ROUTES.login, { replace: true });
     }
-  }, [isAuthenticated, isLoading, navigate]);
-
+  }, [isAuthenticated, isLoading, isCheckingAuth, navigate]);
   if (isLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-background">

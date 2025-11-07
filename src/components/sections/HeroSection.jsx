@@ -2,6 +2,7 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { Badge } from "../ui/badge";
+import GlassSearchBar from "../customComponents/GlassSearchBar";
 // eslint-disable-next-line no-unused-vars
 import {
   motion,
@@ -111,7 +112,7 @@ export default function HeroSection({
   image, // default desktop image
   imageMd, // tablet image
   imageSm, // mobile image
-  title = "Your Hero Title",
+  title = "",
   highlight,
   subtitle = "Your subtitle goes here...",
   Icon,
@@ -121,6 +122,7 @@ export default function HeroSection({
   PrimaryButton,
   SecondaryButton,
   stats = [],
+  showSearchBar,
 }) {
   const [imageLoaded, setImageLoaded] = useState(false);
   const shouldReduceMotion = useReducedMotion();
@@ -223,7 +225,10 @@ export default function HeroSection({
 
         {/* Title */}
         <motion.h1
-          className="text-8xl sm:text-8xl md:text-8xl lg:text-8xl xl:text-9xl font-black tracking-tight mb-6 bg-gradient-to-b from-white via-gray-100 to-gray-300 bg-clip-text text-transparent drop-shadow-2xl"
+          className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl 
+             font-black tracking-tight mb-6 
+             bg-gradient-to-b from-white via-gray-100 to-gray-300 
+             bg-clip-text text-transparent drop-shadow-2xl leading-tight"
           variants={fadeInUp}
           transition={{ duration: FADE_DURATION, ease: "easeOut" }}
         >
@@ -232,6 +237,9 @@ export default function HeroSection({
             {highlight && <span className="text-amber-500">{highlight}</span>}
           </span>
         </motion.h1>
+
+        {/* Animated Glass Gold Search Bar */}
+        {showSearchBar && <GlassSearchBar />}
 
         {/* Subtitle */}
         {subtitle && (

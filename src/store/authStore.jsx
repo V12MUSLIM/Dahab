@@ -122,25 +122,8 @@ export const useAuthStore = create(
       set({ error: message, isLoading: false });
     },
 
-    /** 🔄 Refresh token securely using cookie */
-    refreshAccessToken: async () => {
-      try {
-        const res = await secureFetch(`${API_CONFIG.baseUrl}/auth/refresh`, {
-          method: "POST",
-        });
-        if (!res.ok) throw new Error("Failed to refresh token");
-        const data = await res.json();
-        if (data.accessToken) {
-          get().setAccessToken(data.accessToken);
-          return data.accessToken;
-        }
-        return null;
-      } catch (error) {
-        console.error("Refresh token failed:", error);
-        get().clearAuth();
-        return null;
-      }
-    },
+
+
 
     /** ✅ Auth status checker with auto-refresh */
     checkAuthStatus: async () => {
