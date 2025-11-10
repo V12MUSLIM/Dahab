@@ -1,10 +1,7 @@
-// Configuration file for Dahab Tourism app
-
-import Settings from "@/pages/ProfileSettings";
 
 // Contact Information
 export const CONTACT = {
-  phone: "+20 10000000000",
+  phone: "+20 1028510036",
   email: "info@dahabtourism.com",
 };
 // Social Media Links

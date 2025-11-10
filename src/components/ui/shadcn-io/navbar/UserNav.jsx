@@ -67,8 +67,8 @@ const UserNav = React.memo(({ email, name, userImage }) => {
                   )}`;
                 }}
               />
-              <AvatarFallback className="bg-gradient-to-br from-yellow-500 to-amber-600 text-white font-bold">
-                {name[0]?.toUpperCase() || "U"}
+              <AvatarFallback className="bg-linear-to-br from-yellow-500 to-amber-600 text-white font-bold">
+                {(name?.[0] || email?.[0] || "U").toUpperCase()}
               </AvatarFallback>
             </Avatar>
           </Button>
@@ -80,9 +80,7 @@ const UserNav = React.memo(({ email, name, userImage }) => {
         >
           <DropdownMenuLabel className="font-normal px-3 py-2">
             <div className="flex flex-col space-y-1">
-              <p className="text-sm font-semibold text-foreground">
-                {name}
-              </p>
+              <p className="text-sm font-semibold text-foreground">{name}</p>
               <p className="text-xs leading-none text-muted-foreground break-all">
                 {email}
               </p>
@@ -90,7 +88,6 @@ const UserNav = React.memo(({ email, name, userImage }) => {
           </DropdownMenuLabel>
           <DropdownMenuSeparator className="bg-border my-2" />
           <DropdownMenuGroup className="space-y-1">
-        
             <DropdownMenuItem asChild className="cursor-pointer">
               <NavLink
                 to={ROUTES.settings}

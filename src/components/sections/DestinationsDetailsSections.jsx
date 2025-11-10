@@ -1,6 +1,7 @@
 "use client";
 import { lazy, Suspense, memo } from "react";
 import { useParams, Link } from "react-router-dom";
+// eslint-disable-next-line no-unused-vars
 import { motion } from "framer-motion";
 import {
   Clock,

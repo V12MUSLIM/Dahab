@@ -12,10 +12,10 @@ import AuthCallback from "./pages/AuthCallback";
 import { useAuthStore } from "./store/authStore";
 import Loading from "@/components/Loading";
 import { useSyncUserToQuery } from "@/hooks/useSyncUserToQuery";
-
+import AdminEditContact from "./pages/dashboard/EditContact";
 // EAGER LOAD
 import Home from "./pages/Home";
-
+import Forbidden from "./pages/403";
 // LAZY LOAD
 const Stay = lazy(() => import("./pages/Stay"));
 const StayDetails = lazy(() => import("./components/sections/StayDetails")); // Add this
@@ -185,16 +185,7 @@ function App() {
                   />
                 </Route>
 
-                {/* Protected Routes - wrapped in ProtectedLayout */}
-                <Route element={<ProtectedLayout />}>
-                  <Route
-                    path="/settings"
-                    element={
-                      <Suspense fallback={<PageSkeleton />}>
-                        <Settings />
-                      </Suspense>
-                    }
-                  />
+                <Route element={<ProtectedLayout allowedRoles={["admin"]} />}>
                   <Route
                     path="/dashboard"
                     element={
@@ -208,6 +199,36 @@ function App() {
                     element={
                       <Suspense fallback={<PageSkeleton />}>
                         <DashboardDestinations />
+                      </Suspense>
+                    }
+                  />
+                  <Route
+                    path="/dashboard/contacts"
+                    element={
+                      <Suspense fallback={<PageSkeleton />}>
+                        <AdminEditContact />
+                      </Suspense>
+                    }
+                  />
+                </Route>
+                <Route
+                  path="/403"
+                  element={
+                    <Suspense fallback={<PageSkeleton />}>
+                      <Forbidden />
+                    </Suspense>
+                  }
+                />
+
+                {/* User or Admin can access Settings */}
+                <Route
+                  element={<ProtectedLayout allowedRoles={["user", "admin"]} />}
+                >
+                  <Route
+                    path="/settings"
+                    element={
+                      <Suspense fallback={<PageSkeleton />}>
+                        <Settings />
                       </Suspense>
                     }
                   />
@@ -225,4 +246,6 @@ function App() {
 }
 
 export default App;
-{/* Testing  */}
+{
+  /* Testing  */
+}
