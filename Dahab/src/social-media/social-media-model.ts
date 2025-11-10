@@ -3,7 +3,7 @@ import mongoose from "mongoose";
 export interface ISocialMedia {
     name: string;
     icon: string;
-    href?: string;
+    href: string;
     label: string;
     color: string;
 }
@@ -18,7 +18,8 @@ export const SocialMediaSchema = new mongoose.Schema<ISocialMedia>({
         required: true
     },
     href: {
-        type: String 
+        type: String,
+        required: true
     },
     label: {
         type: String,
