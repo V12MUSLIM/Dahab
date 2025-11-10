@@ -16,7 +16,9 @@ import destinationRouter from "./src/home/Destinations/destination-router"
 import heroRouter from "./src/home/heros/hero-router";
 import cafeRouter from "./src/Dini/cafes/cafe-router";
 import experienceRouter  from "./src/experiences/experience-router";
+import contactRouter from "./src/contact/contact-router";
 import stayRouter from "./src/stay/stay-router";
+import socialMediaRouter from "./src/social-media/social-media-router";
 //       end imports
 import { sanitizeInput } from "./src/middlewares/sanitize.middleware";
 import session from "express-session";
@@ -104,6 +106,8 @@ app.use("/api/restaurant", restaurantRouter);
 app.use("/api/cafe",cafeRouter);
 app.use("/api/experience", experienceRouter)
 app.use("/api/stay", stayRouter)
+app.use("/api/contact", contactRouter)
+app.use("/api/social-media", socialMediaRouter)
 
 app.use((err: any, req: Request, res: Response, next: NextFunction) => {
     console.error(err);
