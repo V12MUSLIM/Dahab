@@ -6,6 +6,6 @@ const router = express.Router();
 
 router.post('/add',addSocialMedia)
 router.get('/',getSocialMedia)
-router.put('/update',updateSocialMedia)
+router.put('/update/:id',updateSocialMedia)
 
 export default router

@@ -7,7 +7,7 @@ const router = express.Router();
 
 router.post('/add',addContact)
 router.get('/',getContact)
-router.put('/update',updateContact)
+router.put('/update/:id',updateContact)
 
 
 export default router
