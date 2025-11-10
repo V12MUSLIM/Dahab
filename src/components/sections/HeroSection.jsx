@@ -5,6 +5,7 @@ import { Badge } from "../ui/badge";
 import GlassSearchBar from "../customComponents/GlassSearchBar";
 // eslint-disable-next-line no-unused-vars
 import {
+  // eslint-disable-next-line no-unused-vars
   motion,
   useReducedMotion,
   useScroll,
@@ -185,12 +186,14 @@ export default function HeroSection({
           <source srcSet={imageMd} media="(max-width: 1280px)" />
 
           {/* Default PC image */}
-          <img
+          <motion.img
             src={image}
             alt={`${title} background`}
             className="w-full h-full object-cover"
             onLoad={() => setImageLoaded(true)}
             style={{ y: yParallax }}
+            {...imageAnimation}
+            transition={{ duration: 1.2, ease: "easeOut" }}
           />
         </motion.picture>
       </motion.div>
@@ -244,7 +247,7 @@ export default function HeroSection({
         {/* Subtitle */}
         {subtitle && (
           <motion.p
-            className="mt-4 text-lg sm:text-xl md:text-2xl text-gray-100 font-light tracking-wide leading-relaxed drop-shadow-lg max-w-3xl mx-auto px-4"
+            className="font-dancing mt-4 text-lg sm:text-xl md:text-2xl text-gray-100 font-light tracking-wide leading-relaxed drop-shadow-lg max-w-3xl mx-auto px-4"
             variants={fadeInUp}
             transition={{
               duration: FADE_DURATION,
