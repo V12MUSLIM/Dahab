@@ -3,14 +3,30 @@ import { Suspense, lazy } from "react";
 import { motion } from "framer-motion";
 import { Badge } from "../ui/badge";
 import { ArrowLeft, ArrowRight } from "lucide-react";
-
+import { ROUTES } from "@/config/SiteConfig";
+import { NavLink } from "react-router-dom";
+import { FormPrimaryButton } from "../customComponents/FormButtons";
 // Lazy components
-const Carousel = lazy(() => import("../ui/carousel").then(m => ({ default: m.Carousel })));
-const CarouselContent = lazy(() => import("../ui/carousel").then(m => ({ default: m.CarouselContent })));
-const CarouselItem = lazy(() => import("../ui/carousel").then(m => ({ default: m.CarouselItem })));
-const CarouselNext = lazy(() => import("../ui/carousel").then(m => ({ default: m.CarouselNext })));
-const CarouselPrevious = lazy(() => import("../ui/carousel").then(m => ({ default: m.CarouselPrevious })));
-const ImageCard = lazy(() => import("../customComponents/cardTemplates").then(m => ({ default: m.ImageCard })));
+const Carousel = lazy(() =>
+  import("../ui/carousel").then((m) => ({ default: m.Carousel }))
+);
+const CarouselContent = lazy(() =>
+  import("../ui/carousel").then((m) => ({ default: m.CarouselContent }))
+);
+const CarouselItem = lazy(() =>
+  import("../ui/carousel").then((m) => ({ default: m.CarouselItem }))
+);
+const CarouselNext = lazy(() =>
+  import("../ui/carousel").then((m) => ({ default: m.CarouselNext }))
+);
+const CarouselPrevious = lazy(() =>
+  import("../ui/carousel").then((m) => ({ default: m.CarouselPrevious }))
+);
+const ImageCard = lazy(() =>
+  import("../customComponents/cardTemplates").then((m) => ({
+    default: m.ImageCard,
+  }))
+);
 
 export default function FeaturedDestinationsSection({ id }) {
   const destinations = [
@@ -114,7 +130,9 @@ export default function FeaturedDestinationsSection({ id }) {
                   className="pl-2 md:pl-4 md:basis-1/2 lg:basis-1/3"
                 >
                   <div className="h-full">
-                    <Suspense fallback={<div className="h-64 bg-muted animate-pulse" />}>
+                    <Suspense
+                      fallback={<div className="h-64 bg-muted animate-pulse" />}
+                    >
                       <ImageCard {...destination} />
                     </Suspense>
                   </div>
@@ -127,6 +145,13 @@ export default function FeaturedDestinationsSection({ id }) {
             </div>
           </Carousel>
         </Suspense>
+      </div>
+      <div className="w-full flex justify-center items-center py-16">
+        <NavLink to={ROUTES.destinations}>
+          <FormPrimaryButton className="px-24 py-6 text-lg sm:text-xl rounded-xl shadow-md">
+            View all <ArrowRight />
+          </FormPrimaryButton>
+        </NavLink>
       </div>
     </motion.div>
   );

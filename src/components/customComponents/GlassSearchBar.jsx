@@ -7,6 +7,16 @@ import { Search } from "lucide-react";
 export default function GlassSearchBar({ placeholder = "Search destinations..." }) {
   const [active, setActive] = useState(false);
 
+  const handleFocus = () => {
+    setActive(true);
+    document.body.style.overflow = "hidden"; // disable scroll
+  };
+
+  const handleBlur = () => {
+    setActive(false);
+    document.body.style.overflow = ""; // restore scroll
+  };
+
   return (
     <>
       {/* Background Blur Overlay */}
@@ -32,14 +42,13 @@ export default function GlassSearchBar({ placeholder = "Search destinations..." 
           className="relative w-full max-w-lg 
                      rounded-full border border-yellow-400/40
                      bg-white/10 backdrop-blur-2xl
-                     shadow-[0_0_25px_rgba(255,215,0,0.2)]
                      transition-all duration-500"
         >
           <input
             type="text"
             placeholder={placeholder}
-            onFocus={() => setActive(true)}
-            onBlur={() => setActive(false)}
+            onFocus={handleFocus}
+            onBlur={handleBlur}
             className="w-full py-3 pl-5 pr-14 text-lg text-white placeholder-white/70
                        bg-transparent rounded-full focus:outline-none
                        focus:ring-2 focus:ring-yellow-400/70 transition-all duration-300"

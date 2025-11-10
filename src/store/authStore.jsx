@@ -90,7 +90,7 @@ const middleware = (f) =>
 export const useAuthStore = create(
   middleware((set, get) => ({
     user: null,
-    accessToken: null, // 🔒 في الذاكرة فقط
+    accessToken: null,
     isLoading: false,
     error: null,
     isAuthenticated: false,
@@ -110,6 +110,16 @@ export const useAuthStore = create(
       });
     },
 
+    // 🆕 Helper to check role access
+    hasRole: (requiredRoles) => {
+      const { user } = get();
+      if (!user || !user.role) return false;
+      if (Array.isArray(requiredRoles)) {
+        return requiredRoles.includes(user.role);
+      }
+      return user.role === requiredRoles;
+    },
+
     setAccessToken: (token) => set({ accessToken: token }),
 
     setLoading: (isLoading) => set({ isLoading }),
@@ -121,9 +131,6 @@ export const useAuthStore = create(
           : error?.message || "An unknown error occurred";
       set({ error: message, isLoading: false });
     },
-
-
-
 
     /** ✅ Auth status checker with auto-refresh */
     checkAuthStatus: async () => {
@@ -141,9 +148,12 @@ export const useAuthStore = create(
         if (response.status === 401) {
           const newToken = await get().refreshAccessToken();
           if (newToken) {
-            const retry = await secureFetch(`${API_CONFIG.baseUrl}/auth/status`, {
-              headers: { Authorization: `Bearer ${newToken}` },
-            });
+            const retry = await secureFetch(
+              `${API_CONFIG.baseUrl}/auth/status`,
+              {
+                headers: { Authorization: `Bearer ${newToken}` },
+              }
+            );
             const retryData = await retry.json();
             if (retryData.authenticated && isValidUser(retryData.user)) {
               set({
