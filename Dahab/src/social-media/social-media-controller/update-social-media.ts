@@ -11,31 +11,22 @@ interface IRequest {
 
 interface IResponse {
     message: string;
-    updatedSocialMedia?: ISocialMedia | null;
+    updatedSocialMedia?: ISocialMedia;
 }
 
-export const updateSocialMedia: RequestHandler<{}, IResponse, IRequest> = async (req, res) => {
+export const updateSocialMedia: RequestHandler<{id: string}, IResponse, IRequest> = async (req, res) => {
     try {
-        const { name, ...updateData } = req.body;
-
-        if (!name) {
-            return res.status(400).json({ message: "Name is required to update social media" });
+        const updatedSocialMedia=await SocialMedia.findByIdAndUpdate(
+            {_id: req.params.id},
+            req.body,
+            {new: true, upsert: false}
+        ).select("-_id -__v");
+        if(!updatedSocialMedia){
+            return res.status(404).json({message: "Social Media not found"});
         }
-
-        const updatedSocialMedia = await SocialMedia.findOneAndUpdate(
-            { name },
-            updateData,
-            { new: true } // يرجع النسخة بعد التحديث
-        ).select("-__v");
-
-        if (!updatedSocialMedia) {
-            return res.status(404).json({ message: "Social media not found" });
-        }
-
-        res.status(200).json({
-            message: "Social media updated successfully",
-            updatedSocialMedia,
-        });
+        res.json(
+            {message: "Social Media updated successfully", updatedSocialMedia}
+        )
     } catch (error: any) {
         res.status(500).json({ message: error.message || "Error updating social media" });
     }

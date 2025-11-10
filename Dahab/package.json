@@ -5,7 +5,7 @@
   "main": "app.ts",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "nodemon --watch . --ext ts --exec ts-node app.ts",
+    "dev": "nodemon --watch . --ext ts --exec ts-node app.ts ",
     "build": "tsc",
     "start": "node dist/server.js"
   },
@@ -35,6 +35,7 @@
     "passport": "^0.7.0",
     "passport-google-oauth20": "^2.0.0",
     "sanitize-html": "^2.17.0",
+    "stripe": "^19.2.1",
     "xss": "^1.0.15"
   },
   "devDependencies": {
