@@ -1,6 +1,6 @@
 "use client";
 import { lazy, Suspense, memo } from "react";
-import { useParams, Link } from "react-router-dom";
+import { useParams, Link ,useNavigate} from "react-router-dom";
 import { motion } from "framer-motion";
 import {
   Clock,
@@ -122,11 +122,30 @@ const NotFoundState = memo(() => (
 
 export default function DestinationDetail() {
   const { IdPage } = useParams();
+    const navigate = useNavigate();
   const { getDestinationById, toggleFavorite, isFavorite } = useDestinations();
   const destination = getDestinationById(IdPage);
 
   if (!destination) return <NotFoundState />;
-
+   const handleBookNow = () => {
+    navigate('/booking', {
+      state: {
+        type: 'destination', // Booking type identifier
+        item: {
+          id: destination.IdPage,
+          title: destination.title,
+          price: destination.price,
+          description: destination.description,
+          images: destination.images || destination.galleryImages,
+          duration: destination.duration,
+          difficulty: destination.difficulty,
+          rating: destination.rating,
+          groupSize: destination.groupSize,
+          category: 'Destination'
+        },
+      }
+    });
+  };
   const googleMapsLink = destination.locationDetails
     ? `https://www.google.com/maps/search/?api=1&query=${destination.locationDetails.coordinates.lat},${destination.locationDetails.coordinates.lng}`
     : "";
@@ -491,7 +510,11 @@ export default function DestinationDetail() {
 
                   <div className="space-y-3 pt-4 flex flex-col">
                     <Suspense fallback={<ButtonSkeleton />}>
-                      <PrimaryButton className="w-full">Book Now</PrimaryButton>
+                      <PrimaryButton className="w-full"
+                      onClick={handleBookNow}
+                      >
+                        Book Now
+                      </PrimaryButton>
                     </Suspense>
 
                     <Suspense fallback={<ButtonSkeleton />}>
