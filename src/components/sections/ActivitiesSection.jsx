@@ -4,6 +4,7 @@ import { motion } from "framer-motion";
 import { FormPrimaryButton } from "../customComponents/FormButtons";
 import { ROUTES } from "@/config/SiteConfig";
 import { NavLink } from "react-router-dom";
+import { ChevronRight } from "lucide-react";
 export default function ActivitiesSection({
   badge,
   header,
@@ -72,10 +73,10 @@ export default function ActivitiesSection({
           </div>
         </div>
       </motion.section>
-      <div className="w-full flex justify-center items-center py-16">
+      <div className="w-full flex justify-center items-center">
         <NavLink to={ROUTES.experiences}>
           <FormPrimaryButton className="px-24 py-6 text-lg sm:text-xl rounded-xl shadow-md">
-            View all
+            View all <ChevronRight />
           </FormPrimaryButton>
         </NavLink>
       </div>

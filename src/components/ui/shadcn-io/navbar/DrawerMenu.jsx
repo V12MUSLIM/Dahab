@@ -8,7 +8,7 @@ import { ThemeToggle } from "@/components/theme-toggle";
 import SearchBar from "./SearchBar";
 import NavLinks from "./NavLinks";
 import { ROUTES, UI_TEXT } from "@/config/SiteConfig";
-
+import { DrawerTitle, DrawerDescription } from "@/components/ui/drawer";
 const DrawerMenu = React.memo(({ isMobile = false, onClose, user }) => {
   const [searchQuery, setSearchQuery] = React.useState("");
 
@@ -27,18 +27,18 @@ const DrawerMenu = React.memo(({ isMobile = false, onClose, user }) => {
 
   return (
     <div className="relative flex flex-col h-full">
-      {/* Optimized glass background with will-change */}
-      <div
-        className="absolute inset-0 backdrop-blur-md bg-white/95 dark:bg-black/95 pointer-events-none"
-        style={{ willChange: "transform" }}
-      />
+      {/* Background */}
+      <div className="absolute inset-0 backdrop-blur-md bg-white/95 dark:bg-black/95 pointer-events-none z-0" />
 
-      <div className="relative flex-1 overflow-y-auto overscroll-contain px-6 py-6 space-y-4">
-        {/* Header with close button */}
+      <div className="relative z-10 flex-1 overflow-y-auto px-6 py-6 space-y-4">
+        {/* Header */}
         <div className="flex items-center justify-between mb-4">
-          <h2 className="text-lg font-semibold text-amber-600 dark:text-amber-400">
-            {UI_TEXT.navigation.menu}
-          </h2>
+          <DrawerTitle asChild>
+            <h2 className="text-lg font-semibold text-amber-600 dark:text-amber-400">
+              {UI_TEXT.navigation.menu}
+            </h2>
+          </DrawerTitle>
+
           <DrawerClose asChild>
             <Button
               variant="ghost"
@@ -50,22 +50,38 @@ const DrawerMenu = React.memo(({ isMobile = false, onClose, user }) => {
           </DrawerClose>
         </div>
 
+        <DrawerDescription className="sr-only">
+          Navigate through menu options and settings.
+        </DrawerDescription>
+
         {isMobile && (
           <div className="space-y-3 pb-4 border-b border-amber-400/20 dark:border-amber-500/30">
             {user ? (
               <div className="flex items-center space-x-3 p-3 rounded-lg bg-amber-50 dark:bg-amber-900/20">
-                <Avatar className="h-12 w-12 border-2 border-amber-400/40 dark:border-amber-500/50">
+                <Avatar className="h-12 w-12 border-2 border-amber-400/40 dark:border-amber-500/50 ring-2 ring-amber-500/10 overflow-hidden">
                   <AvatarImage
                     src={
-                      user.picture || `https://avatar.vercel.sh/${user.name}`
+                      user?.picture
+                        ? encodeURI(user.picture.replace("=s96-c", "=s256-c"))
+                        : `https://avatar.vercel.sh/${encodeURIComponent(
+                            user?.name || user?.email || "User"
+                          )}`
                     }
                     alt={user?.name || "User avatar"}
-                    
+                    crossOrigin="anonymous"
+                    referrerPolicy="no-referrer"
+                    onError={(e) => {
+                      console.warn("Failed to load user image, using fallback");
+                      e.currentTarget.src = `https://avatar.vercel.sh/${encodeURIComponent(
+                        user?.name || user?.email || "User"
+                      )}`;
+                    }}
                   />
                   <AvatarFallback className="bg-gradient-to-br from-amber-500 to-orange-500 text-white font-semibold">
-                    {user.name[0]?.toUpperCase() || "U"}
+                    {(user?.name?.[0] || user?.email?.[0] || "U").toUpperCase()}
                   </AvatarFallback>
                 </Avatar>
+
                 <div className="flex-1 min-w-0">
                   <p className="text-sm font-semibold text-amber-600 dark:text-amber-400 truncate">
                     {user.name}
@@ -74,6 +90,7 @@ const DrawerMenu = React.memo(({ isMobile = false, onClose, user }) => {
                     {user.email}
                   </p>
                 </div>
+
                 <div className="ml-auto text-amber-600 dark:text-amber-400">
                   <NavLink
                     to={ROUTES.settings}
@@ -94,13 +111,13 @@ const DrawerMenu = React.memo(({ isMobile = false, onClose, user }) => {
                 </Button>
               </NavLink>
             )}
+
             <div className="flex justify-center">
               <ThemeToggle />
             </div>
           </div>
         )}
 
-        {/* Search with optimized transitions */}
         <SearchBar
           placeholder={UI_TEXT.search.placeholder}
           value={searchQuery}
@@ -108,7 +125,6 @@ const DrawerMenu = React.memo(({ isMobile = false, onClose, user }) => {
           onSubmit={handleSearch}
         />
 
-        {/* Navigation with optimized hover states */}
         <NavLinks isDrawer onNavLinkClick={handleNavLinkClick} />
       </div>
     </div>
@@ -116,5 +132,4 @@ const DrawerMenu = React.memo(({ isMobile = false, onClose, user }) => {
 });
 
 DrawerMenu.displayName = "DrawerMenu";
-
 export default DrawerMenu;
