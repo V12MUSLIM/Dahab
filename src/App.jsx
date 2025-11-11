@@ -15,6 +15,8 @@ import { useSyncUserToQuery } from "@/hooks/useSyncUserToQuery";
 
 // EAGER LOAD
 import Home from "./pages/Home";
+import { Book } from "lucide-react";
+
 
 // LAZY LOAD
 const Stay = lazy(() => import("./pages/Stay"));
@@ -37,6 +39,7 @@ const Dashboard = lazy(() => import("./pages/dashboard/Dashboard"));
 const DashboardDestinations = lazy(() =>
   import("./pages/dashboard/DashboardDestinations")
 );
+const Booking = lazy(() => import("./pages/Booking"));
 const Settings = lazy(() => import("./pages/ProfileSettings"));
 
 // --- Auth initialization ---
@@ -160,6 +163,14 @@ function App() {
                     }
                   />
                   <Route
+                    path="/booking"
+                    element={
+                      <Suspense fallback={<PageSkeleton />}>
+                        <Booking />
+                      </Suspense>
+                    }
+                  />
+                  <Route
                     path="/login"
                     element={
                       <Suspense fallback={<PageSkeleton />}>
@@ -225,4 +236,3 @@ function App() {
 }
 
 export default App;
-{/* Testing  */}

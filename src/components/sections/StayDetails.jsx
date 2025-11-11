@@ -133,7 +133,28 @@ export default function StayDetailsSection() {
       </div>
     );
   if (!stay) return <NotFoundState />;
-
+   const handleBookNow = () => {
+    navigate('/booking', {
+      state: {
+        type: 'stay', // Booking type identifier
+        item: {
+          id: stay.id,
+          title: stay.title,
+          price: stay.price,
+          description: stay.description,
+          images: stay.images || stay.galleryImages,
+          duration: stay.duration,
+          difficulty: stay.difficulty,
+          rating: stay.rating,
+          groupSize: stay.groupSize,
+          category: 'Stay'
+        },
+        preselected: {
+          selectedStays: [stay.id] // Pre-select this stay
+        }
+      }
+    });
+  };
   const googleMapsLink = stay.locationDetails
     ? `https://www.google.com/maps/search/?api=1&query=${stay.locationDetails.coordinates.lat},${stay.locationDetails.coordinates.lng}`
     : "";
@@ -624,7 +645,12 @@ export default function StayDetailsSection() {
                       <PrimaryButton
                         className="w-full"
                         onClick={() =>
-                          navigate(stay.bookingUrl || `/book/${stay.IdPage}`)
+                          handleBookNow()
+                        }
+                        aria-label={
+                          checkIn && checkOut
+                            ? "Reserve your stay"
+                            : "Select check-in and check-out dates to reserve"
                         }
                       >
                         Reserve Now

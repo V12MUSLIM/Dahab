@@ -1,4 +1,3 @@
-// sections/ExperienceDetailsSection.jsx
 "use client";
 import { lazy, Suspense, useState, memo } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
@@ -88,6 +87,31 @@ export default function ExperienceDetailsSection() {
   const relatedExperiences = getRelatedExperiences(IdPage);
 
   if (!experience) return <NotFoundState />;
+
+  // ========== FIXED: BOOKING BUTTON ==========
+  const handleBookNow = () => {
+    navigate('/booking', {
+      state: {
+        type: 'experience', // Booking type identifier
+        item: {
+          id: experience.IdPage,
+          title: experience.title,
+          price: experience.price,
+          description: experience.description,
+          images: experience.images || experience.galleryImages,
+          duration: experience.duration,
+          difficulty: experience.difficulty,
+          rating: experience.rating,
+          groupSize: experience.groupSize,
+          category: 'Experience'
+        },
+        preselected: {
+          selectedExperiences: [experience.IdPage] // Pre-select this experience
+        }
+      }
+    });
+  };
+  // ========== END FIX ==========
 
   const googleMapsLink = experience.locationDetails
     ? `https://www.google.com/maps/search/?api=1&query=${experience.locationDetails.coordinates.lat},${experience.locationDetails.coordinates.lng}`
@@ -344,13 +368,15 @@ export default function ExperienceDetailsSection() {
                     </div>
                   </div>
 
+                  {/* ========== FIXED: BOOKING BUTTON ========== */}
                   <div className="space-y-3 pt-4 flex flex-col">
                     <Suspense fallback={<ButtonSkeleton />}>
                       <PrimaryButton
                         className="w-full"
-                        onClick={() => navigate(experience.bookingUrl || `/book/${experience.IdPage}`)}
+                        onClick={handleBookNow}
                       >
-                        Book Now
+                        <Calendar className="w-5 h-5 mr-2" />
+                        Book This Experience
                       </PrimaryButton>
                     </Suspense>
 
@@ -364,10 +390,11 @@ export default function ExperienceDetailsSection() {
                           className={`w-5 h-5 mr-2 ${isLiked ? "fill-current text-red-500" : ""}`}
                           aria-hidden="true"
                         />
-                        {isLiked ? "Remove from Wishlist" : "Add to Wishlist"}
+                        {isLiked ? "Saved" : "Save to Wishlist"}
                       </SecondaryButton>
                     </Suspense>
                   </div>
+                  {/* ========== END FIX ========== */}
 
                   <div className="space-y-3 flex flex-col items-center">
                     <a
