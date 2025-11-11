@@ -6,13 +6,14 @@ import { toast } from "sonner";
 
 const AuthCallback = () => {
   const navigate = useNavigate();
-  const { checkAuthStatus } = useAuthStore();
+  const { checkAuthStatus, clearAuth } = useAuthStore();
 
   useEffect(() => {
     let isMounted = true;
 
     const handleCallback = async () => {
       try {
+        clearAuth();
         // Give browser time to store auth cookies
         await new Promise((resolve) => setTimeout(resolve, 800));
 

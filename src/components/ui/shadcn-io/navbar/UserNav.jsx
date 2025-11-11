@@ -12,11 +12,23 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 import { useAuthStore } from "@/store/authStore";
 import { toast } from "sonner";
 import { ROUTES } from "@/config/SiteConfig";
+
 const UserNav = React.memo(({ email, name, userImage }) => {
   const navigate = useNavigate();
+  const [showLogoutDialog, setShowLogoutDialog] = React.useState(false);
 
   const handleLogout = async () => {
     try {
@@ -31,76 +43,103 @@ const UserNav = React.memo(({ email, name, userImage }) => {
   };
 
   return (
-    <DropdownMenu>
-      <DropdownMenuTrigger asChild>
-        <Button
-          variant="ghost"
-          className="relative h-10 w-10 rounded-full hover:bg-amber-50 dark:hover:bg-amber-900/20 transition-all duration-200"
+    <>
+      <DropdownMenu>
+        <DropdownMenuTrigger asChild>
+          <Button
+            variant="ghost"
+            className="relative h-10 w-10 rounded-full hover:bg-yellow-500/10 dark:hover:bg-yellow-500/20 transition-all duration-200"
+          >
+            <Avatar className="h-10 w-10 border-2 border-yellow-500/30 ring-2 ring-yellow-500/10 overflow-hidden">
+              <AvatarImage
+                src={
+                  userImage
+                    ? encodeURI(userImage.replace("=s96-c", "=s256-c"))
+                    : `https://avatar.vercel.sh/${encodeURIComponent(name)}`
+                }
+                alt={name}
+                crossOrigin="anonymous"
+                referrerPolicy="no-referrer"
+                onError={(e) => {
+                  console.warn("Failed to load user image, using fallback");
+                  e.currentTarget.src = `https://avatar.vercel.sh/${encodeURIComponent(
+                    name
+                  )}`;
+                }}
+              />
+              <AvatarFallback className="bg-linear-to-br from-yellow-500 to-amber-600 text-white font-bold">
+                {(name?.[0] || email?.[0] || "U").toUpperCase()}
+              </AvatarFallback>
+            </Avatar>
+          </Button>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent
+          align="end"
+          className="w-64 bg-card backdrop-blur-md border-border rounded-2xl shadow-lg p-2"
+          forceMount
         >
-          <Avatar className="h-10 w-10 border-2 border-amber-400/40 dark:border-amber-500/50 overflow-hidden">
-            <AvatarImage
-              src={
-                userImage
-                  ? encodeURI(userImage.replace("=s96-c", "=s256-c"))
-                  : `https://avatar.vercel.sh/${encodeURIComponent(name)}`
-              }
-              alt={name}
-              crossOrigin="anonymous"
-              referrerPolicy="no-referrer"
-              onError={(e) => {
-                console.warn("Failed to load user image, using fallback");
-                e.currentTarget.src = `https://avatar.vercel.sh/${encodeURIComponent(
-                  name
-                )}`;
-              }}
-            />
-            <AvatarFallback className="bg-gradient-to-br from-amber-500 to-orange-500 text-white font-semibold">
-              {name[0]?.toUpperCase() || "U"}
-            </AvatarFallback>
-          </Avatar>
-        </Button>
-      </DropdownMenuTrigger>
-      <DropdownMenuContent
-        align="end"
-        className="w-64 bg-white/95 dark:bg-black/95 backdrop-blur-md border-amber-400/20 dark:border-amber-500/30"
-        forceMount
-      >
-        <DropdownMenuLabel className="font-normal">
-          <div className="flex flex-col space-y-1">
-            <p className="text-sm font-semibold text-amber-600 dark:text-amber-400">
-              {name}
-            </p>
-            <p className="text-xs leading-none text-muted-foreground">
-              {email}
-            </p>
-          </div>
-        </DropdownMenuLabel>
-        <DropdownMenuSeparator className="bg-amber-400/20 dark:bg-amber-500/30" />
-        <DropdownMenuGroup>
-          <DropdownMenuItem className="hover:bg-amber-50 dark:hover:bg-amber-900/20 cursor-pointer">
-            <User className="mr-2 h-4 w-4 text-amber-600 dark:text-amber-400" />
-            <span>Profile</span>
+          <DropdownMenuLabel className="font-normal px-3 py-2">
+            <div className="flex flex-col space-y-1">
+              <p className="text-sm font-semibold text-foreground">{name}</p>
+              <p className="text-xs leading-none text-muted-foreground break-all">
+                {email}
+              </p>
+            </div>
+          </DropdownMenuLabel>
+          <DropdownMenuSeparator className="bg-border my-2" />
+          <DropdownMenuGroup className="space-y-1">
+            <DropdownMenuItem asChild className="cursor-pointer">
+              <NavLink
+                to={ROUTES.settings}
+                className="flex items-center hover:bg-yellow-500/10 dark:hover:bg-yellow-500/20 rounded-xl transition-all duration-200 px-3 py-2"
+              >
+                <Settings className="mr-2 h-4 w-4 text-yellow-600 dark:text-yellow-400" />
+                <span>Settings</span>
+              </NavLink>
+            </DropdownMenuItem>
+          </DropdownMenuGroup>
+          <DropdownMenuSeparator className="bg-border my-2" />
+          <DropdownMenuItem
+            onClick={(e) => {
+              e.preventDefault();
+              setShowLogoutDialog(true);
+            }}
+            className="hover:bg-red-500/10 dark:hover:bg-red-500/20 text-red-600 dark:text-red-400 cursor-pointer rounded-xl transition-all duration-200 px-3 py-2"
+          >
+            <LogOut className="mr-2 h-4 w-4" />
+            <span>Logout</span>
           </DropdownMenuItem>
-          <DropdownMenuItem asChild className="cursor-pointer">
-            <NavLink
-              to={ROUTES.settings}
-              className="flex items-center hover:bg-amber-50 dark:hover:bg-amber-900/20"
+        </DropdownMenuContent>
+      </DropdownMenu>
+
+      <AlertDialog open={showLogoutDialog} onOpenChange={setShowLogoutDialog}>
+        <AlertDialogContent className="rounded-2xl border-border shadow-2xl max-w-md">
+          <AlertDialogHeader className="space-y-3">
+            <div className="mx-auto w-12 h-12 rounded-full bg-yellow-500/50 flex items-center justify-center">
+              <LogOut className="h-6 w-6 " />
+            </div>
+            <AlertDialogTitle className="text-center text-2xl font-bold">
+              Logout Confirmation
+            </AlertDialogTitle>
+            <AlertDialogDescription className="text-center text-muted-foreground">
+              Are you sure you want to logout? You'll need to sign in again to
+              access your account.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter className="flex-col sm:flex-row gap-3 mt-6">
+            <AlertDialogCancel className="w-full sm:w-auto rounded-xl border-border hover:bg-muted transition-all duration-200">
+              Cancel
+            </AlertDialogCancel>
+            <AlertDialogAction
+              onClick={handleLogout}
+              className="w-full sm:w-auto   font-semibold rounded-xl transition-all duration-200"
             >
-              <Settings className="mr-2 h-4 w-4 text-amber-600 dark:text-amber-400" />
-              <span>Settings</span>
-            </NavLink>
-          </DropdownMenuItem>
-        </DropdownMenuGroup>
-        <DropdownMenuSeparator className="bg-amber-400/20 dark:bg-amber-500/30" />
-        <DropdownMenuItem
-          onClick={handleLogout}
-          className="hover:bg-amber-50 dark:hover:bg-amber-900/20 text-red-600 dark:text-red-400 cursor-pointer"
-        >
-          <LogOut className="mr-2 h-4 w-4" />
-          <span>Log out</span>
-        </DropdownMenuItem>
-      </DropdownMenuContent>
-    </DropdownMenu>
+              Yes, Logout
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+    </>
   );
 });
 

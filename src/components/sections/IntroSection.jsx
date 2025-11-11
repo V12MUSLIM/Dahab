@@ -16,7 +16,7 @@ export default function IntroSection({
     Autoplay({
       delay: autoPlayInterval,
       stopOnInteraction: false,
-      stopOnMouseEnter: true,
+      stopOnMouseEnter: false,
     })
   );
 

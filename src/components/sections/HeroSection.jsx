@@ -2,8 +2,10 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { Badge } from "../ui/badge";
+import GlassSearchBar from "../customComponents/GlassSearchBar";
 // eslint-disable-next-line no-unused-vars
 import {
+  // eslint-disable-next-line no-unused-vars
   motion,
   useReducedMotion,
   useScroll,
@@ -111,7 +113,7 @@ export default function HeroSection({
   image, // default desktop image
   imageMd, // tablet image
   imageSm, // mobile image
-  title = "Your Hero Title",
+  title = "",
   highlight,
   subtitle = "Your subtitle goes here...",
   Icon,
@@ -121,6 +123,7 @@ export default function HeroSection({
   PrimaryButton,
   SecondaryButton,
   stats = [],
+  showSearchBar,
 }) {
   const [imageLoaded, setImageLoaded] = useState(false);
   const shouldReduceMotion = useReducedMotion();
@@ -183,12 +186,14 @@ export default function HeroSection({
           <source srcSet={imageMd} media="(max-width: 1280px)" />
 
           {/* Default PC image */}
-          <img
+          <motion.img
             src={image}
             alt={`${title} background`}
             className="w-full h-full object-cover"
             onLoad={() => setImageLoaded(true)}
             style={{ y: yParallax }}
+            {...imageAnimation}
+            transition={{ duration: 1.2, ease: "easeOut" }}
           />
         </motion.picture>
       </motion.div>
@@ -223,7 +228,10 @@ export default function HeroSection({
 
         {/* Title */}
         <motion.h1
-          className="text-8xl sm:text-8xl md:text-8xl lg:text-8xl xl:text-9xl font-black tracking-tight mb-6 bg-gradient-to-b from-white via-gray-100 to-gray-300 bg-clip-text text-transparent drop-shadow-2xl"
+          className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl 
+             font-black tracking-tight mb-6 
+             bg-gradient-to-b from-white via-gray-100 to-gray-300 
+             bg-clip-text text-transparent drop-shadow-2xl leading-tight"
           variants={fadeInUp}
           transition={{ duration: FADE_DURATION, ease: "easeOut" }}
         >
@@ -233,10 +241,13 @@ export default function HeroSection({
           </span>
         </motion.h1>
 
+        {/* Animated Glass Gold Search Bar */}
+        {showSearchBar && <GlassSearchBar />}
+
         {/* Subtitle */}
         {subtitle && (
           <motion.p
-            className="mt-4 text-lg sm:text-xl md:text-2xl text-gray-100 font-light tracking-wide leading-relaxed drop-shadow-lg max-w-3xl mx-auto px-4"
+            className="font-dancing mt-4 text-lg sm:text-xl md:text-2xl text-gray-100 font-light tracking-wide leading-relaxed drop-shadow-lg max-w-3xl mx-auto px-4"
             variants={fadeInUp}
             transition={{
               duration: FADE_DURATION,
