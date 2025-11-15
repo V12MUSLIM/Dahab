@@ -40,7 +40,7 @@ const DashboardDestinations = lazy(() =>
 );
 const Booking = lazy(() => import("./pages/Booking"));
 const Settings = lazy(() => import("./pages/ProfileSettings"));
-
+const Forbidden = lazy(() => import("./pages/403"));
 // --- Auth initialization ---
 const AuthInitializer = ({ children }) => {
   const { checkAuthStatus, isLoading } = useAuthStore();

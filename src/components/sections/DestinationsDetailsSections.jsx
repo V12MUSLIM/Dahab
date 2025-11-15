@@ -1,6 +1,6 @@
 "use client";
 import { lazy, Suspense, memo } from "react";
-import { useParams, Link } from "react-router-dom";
+import { useParams, Link ,useNavigate} from "react-router-dom";
 import { motion } from "framer-motion";
 import {
   Clock,
@@ -122,7 +122,7 @@ const NotFoundState = memo(() => (
 
 export default function DestinationDetail() {
   const { IdPage } = useParams();
-    const navigate = useNavigate();
+  const navigate = useNavigate();
   const { getDestinationById, toggleFavorite, isFavorite } = useDestinations();
   const destination = getDestinationById(IdPage);
 
