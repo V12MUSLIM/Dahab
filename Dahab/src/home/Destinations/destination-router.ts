@@ -16,6 +16,9 @@ router.post('/add',
 
     router.get('/', getDestination);
 
+router.post('/add', addDestination)
+router.get('/', getDestination)
+
 
 
 

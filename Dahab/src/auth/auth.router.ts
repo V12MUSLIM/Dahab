@@ -7,13 +7,17 @@
 import { refreshTokenHandler } from "./refresh-controller";
 
     const router = express.Router();
-
-
+    
     router.post("/register",uploadSingle("picture"),registerHandler);
 
     router.post("/login", loginHandler);
 
     router.post("/refresh",refreshTokenHandler);
+    router.post("/register", registerHandler);
+
+    router.post("/login", loginHandler);
+
+    router.post("/refresh", refreshTokenHandler);
 
     router.delete("/logout", logoutHandler);
 
