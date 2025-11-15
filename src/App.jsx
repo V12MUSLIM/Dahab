@@ -12,6 +12,7 @@ import AuthCallback from "./pages/AuthCallback";
 import { useAuthStore } from "./store/authStore";
 import Loading from "@/components/Loading";
 import { useSyncUserToQuery } from "@/hooks/useSyncUserToQuery";
+import Forbidden from "./pages/403";
 import AdminEditContact from "./pages/dashboard/EditContact";
 // EAGER LOAD
 import Home from "./pages/Home";

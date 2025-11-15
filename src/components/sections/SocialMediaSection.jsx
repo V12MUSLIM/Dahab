@@ -1,29 +1,126 @@
 "use client";
 
-// eslint-disable-next-line no-unused-vars
+import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { Mail, MapPin, Phone } from "lucide-react";
 import { Badge } from "../ui/badge";
-import { SOCIAL_MEDIA } from "@/config/SiteConfig";
+import { Spinner } from "../ui/spinner";
+import { API_CONFIG } from "@/store/authStore";
 
 export default function SocialMediaSection({
   badge = "",
   header,
   description,
-  socialLinks = SOCIAL_MEDIA,
-  id
+  id,
 }) {
-  // Icon map for lucide-react icons
-  const iconMap = {
-    Mail,
-    MapPin,
-    Phone,
-  };
+  const [socialMedia, setSocialMedia] = useState([]);
+  const [contact, setContact] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        if (!API_CONFIG.isValid) throw new Error("Invalid API configuration");
+
+        const [socialRes, contactRes] = await Promise.all([
+          fetch(`${API_CONFIG.baseUrl}/social-media`, { credentials: "include" }),
+          fetch(`${API_CONFIG.baseUrl}/contact`, { credentials: "include" }),
+        ]);
+
+        if (!socialRes.ok || !contactRes.ok) {
+          throw new Error("Failed to fetch site data");
+        }
+
+        const socialData = await socialRes.json();
+        const contactData = await contactRes.json();
+
+        const contact =
+          Array.isArray(contactData.contacts) && contactData.contacts.length > 0
+            ? contactData.contacts[0]
+            : null;
+
+        const socials =
+          Array.isArray(socialData.socialMediaes) && socialData.socialMediaes.length > 0
+            ? socialData.socialMediaes
+            : [];
+
+        setContact(contact);
+        setSocialMedia(socials);
+      } catch (err) {
+        console.error("Social media fetch error:", err);
+        setError(err.message);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchData();
+  }, []);
+
+  const iconMap = { Mail, MapPin, Phone };
+
+  // Normalize names for safe comparison
+  const normalizedNames = socialMedia.map((s) => s.name?.toLowerCase().trim());
+
+  // ✅ Only add contact-based items if not already included
+  const combinedLinks = [
+    ...socialMedia,
+    ...(!normalizedNames.includes("email") && contact?.email
+      ? [
+          {
+            name: "Email",
+            icon: "Mail",
+            href: `mailto:${contact.email}`,
+            label: "Email us",
+            color: "hover:bg-gradient-to-r hover:from-cyan-500 hover:to-blue-500",
+          },
+        ]
+      : []),
+    ...(!normalizedNames.includes("phone") && contact?.phone
+      ? [
+          {
+            name: "Phone",
+            icon: "Phone",
+            href: `tel:${contact.phone}`,
+            label: "Call us",
+            color: "hover:bg-gradient-to-r hover:from-green-500 hover:to-emerald-500",
+          },
+        ]
+      : []),
+    ...(!normalizedNames.includes("location")
+      ? [
+          {
+            name: "Location",
+            icon: "MapPin",
+            href: "https://maps.google.com/?q=Dahab,Egypt",
+            label: "Find us on map",
+            color: "hover:bg-gradient-to-r hover:from-purple-600 hover:to-purple-400",
+          },
+        ]
+      : []),
+  ];
+
+  if (isLoading) {
+    return (
+      <div className="flex justify-center items-center py-20">
+        <Spinner className="w-8 h-8 text-yellow-500" />
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <p className="text-center text-red-500 py-10">
+        Failed to load social media: {error}
+      </p>
+    );
+  }
 
   return (
     <section id={id} className="py-20 bg-muted/30 dark:bg-muted/20">
       <div className="max-w-6xl mx-auto px-4">
-        {/* Header Section */}
+        {/* Header */}
         <motion.div
           className="text-center mb-16 space-y-4"
           initial={{ opacity: 0, y: 20 }}
@@ -41,11 +138,10 @@ export default function SocialMediaSection({
           </p>
         </motion.div>
 
-        {/* Social Links Grid */}
+        {/* Social Icons */}
         <div className="flex flex-wrap justify-center gap-6">
-          {socialLinks.map((social, index) => {
+          {combinedLinks.map((social, index) => {
             const Icon = iconMap[social.icon] || social.icon;
-
             return (
               <motion.a
                 key={index}
@@ -53,7 +149,7 @@ export default function SocialMediaSection({
                 aria-label={social.label}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="relative  flex items-center justify-center w-14 h-14 rounded-full overflow-visible"
+                className="relative flex items-center justify-center w-14 h-14 rounded-full overflow-visible"
                 initial={{ opacity: 0, scale: 0.5 }}
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{
@@ -73,7 +169,7 @@ export default function SocialMediaSection({
                 }}
                 whileTap={{ scale: 0.95 }}
               >
-                {/* Animated Glow Ring */}
+                {/* Glow */}
                 <motion.div
                   className="absolute inset-0 rounded-full pointer-events-none"
                   initial={{ opacity: 0 }}
@@ -82,9 +178,7 @@ export default function SocialMediaSection({
                 >
                   <motion.div
                     className={`absolute inset-0 rounded-full bg-gradient-to-br ${social.color} opacity-30 blur-xl`}
-                    animate={{
-                      scale: [1, 1.2, 1],
-                    }}
+                    animate={{ scale: [1, 1.2, 1] }}
                     transition={{
                       duration: 2,
                       repeat: Infinity,
@@ -93,16 +187,15 @@ export default function SocialMediaSection({
                   />
                 </motion.div>
 
-                {/* Icon Background - Always has colored gradient */}
+                {/* Icon Background */}
                 <motion.div
-                  className={`relative from-yellow-600 to-yellow-700  h-14 w-14 flex items-center justify-center rounded-full bg-gradient-to-br ${social.color} shadow-lg`}
+                  className={`relative h-14 w-14 flex items-center justify-center rounded-full bg-gradient-to-br ${social.color} shadow-lg`}
                 >
                   {typeof Icon === "string" ? (
                     <motion.img
                       src={Icon}
                       alt={social.name}
                       className="h-6 w-6 object-contain filter brightness-0 invert"
-                      style={{ filter: "brightness(0) invert(1)" }}
                       whileHover={{ scale: 1.1, rotate: 5 }}
                       transition={{ type: "spring", stiffness: 300 }}
                     />
@@ -111,7 +204,7 @@ export default function SocialMediaSection({
                       whileHover={{ scale: 1.1, rotate: 5 }}
                       transition={{ type: "spring", stiffness: 300 }}
                     >
-                      <Icon className="h-6 w-6 text-white  dark:text-white drop-shadow-lg" />
+                      <Icon className="h-6 w-6 text-white dark:text-white drop-shadow-lg" />
                     </motion.div>
                   )}
                 </motion.div>
