@@ -1,3 +1,4 @@
+
 import { RequestHandler } from "express";
 import { User } from "../models/user-model";
 import bcrypt from "bcrypt";
@@ -23,7 +24,7 @@ export const registerValidation = [
 
 export const registerHandler: RequestHandler = async (req, res, next) => {
     try {
-        const { email, password, name } = req.body as { email: string; password: string; name: string; };
+        const { email, password, name  } = req.body as { email: string; password: string; name: string;picture?:string };
         if (!email || !password || !name) {
             return res.status(400).json({ message: "Missing required fields" });
         }
@@ -32,15 +33,18 @@ export const registerHandler: RequestHandler = async (req, res, next) => {
         const user = await User.findOne({ email }).exec();
         if (user) return res.status(409).json({ message: "Email already registered" });
 
+        const picture = req.file ? `/uploads/${req.file.filename}` : undefined
         const hashed = await bcrypt.hash(password, 10);
-        const newUser = new User({ email, password: hashed, name });
+        const newUser = new User({ email, password: hashed, name, picture:picture ||" " });
+        console.log(picture);
+        
         await newUser.save();
 
         const token = jwtService.createToken(
             { id: newUser._id, email: newUser.email },
             { expiresIn: "3d" }
         );
-        await emailService.sendEmailVerificationLink(newUser.email,token);
+        await emailService.sendEmailVerificationLink(newUser.email, token);
 
         return res.status(201).json({ message: "register successful" });
     } catch (err) {

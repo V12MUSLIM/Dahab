@@ -9,7 +9,7 @@ import helmet from "helmet";
 import cors from "cors";
 import morgan from "morgan";
 import compression from "compression";
-//       start imports
+//       start imports routers
 import packagesRouter from './src/home/packages/package-router'
 import activitiesRouter from "./src/home/activities/activities-router";
 import destinationRouter from "./src/home/Destinations/destination-router"
@@ -19,17 +19,17 @@ import experienceRouter  from "./src/experiences/experience-router";
 import contactRouter from "./src/contact/contact-router";
 import stayRouter from "./src/stay/stay-router";
 import socialMediaRouter from "./src/social-media/social-media-router";
-//       end imports
+import paymentRouter from "./src/payment/payment-router";
+import { uploadSingle, uploadArray } from "./src/middlewares/multer-middleware";
+//       end imports routers
 import { sanitizeInput } from "./src/middlewares/sanitize.middleware";
 import session from "express-session";
 import restaurantRouter from "./src/Dini/restaurant/restaurant-router";
 
 dotenv.config();
-
 const PORT = Number(process.env.PORT);
 const URI = process.env.DB_URL;
 const DB_NAME = process.env.DB_NAME;
-
 mongoose.connect(`${URI}/${DB_NAME}`)
     .then(() => console.log("MongoDB connected"))
     .catch((err) => {
@@ -108,6 +108,7 @@ app.use("/api/experience", experienceRouter)
 app.use("/api/stay", stayRouter)
 app.use("/api/contact", contactRouter)
 app.use("/api/social-media", socialMediaRouter)
+app.use("/api/payment", paymentRouter);
 
 app.use((err: any, req: Request, res: Response, next: NextFunction) => {
     console.error(err);

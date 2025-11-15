@@ -17,6 +17,7 @@ import AdminEditContact from "./pages/dashboard/EditContact";
 import Home from "./pages/Home";
 
 // LAZY LOAD
+const Forbidden= lazy(() => import("./pages/403"));
 const Stay = lazy(() => import("./pages/Stay"));
 const StayDetails = lazy(() => import("./components/sections/StayDetails")); // Add this
 const Dine = lazy(() => import("./pages/Dine"));

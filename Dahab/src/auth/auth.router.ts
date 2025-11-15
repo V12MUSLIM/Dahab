@@ -1,6 +1,6 @@
     import express, { Request, Response } from "express";
     import passport from "../config/passport";
-
+    import { uploadSingle, uploadArray } from "../middlewares/multer-middleware";
     import { registerHandler } from "./register-controller";
     import { loginHandler } from "./login-controller";
     import { logoutHandler } from "./logout-controller";
@@ -9,11 +9,11 @@ import { refreshTokenHandler } from "./refresh-controller";
     const router = express.Router();
 
 
-    router.post("/register", registerHandler);
+    router.post("/register",uploadSingle("picture"),registerHandler);
 
     router.post("/login", loginHandler);
 
-    router.post("/refresh", refreshTokenHandler);
+    router.post("/refresh",refreshTokenHandler);
 
     router.delete("/logout", logoutHandler);
 

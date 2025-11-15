@@ -7,7 +7,7 @@ export interface IDestination  {
     badge: string;
     description: string;
     longDescription: string;
-    imageUrl: string;
+    image: string[];
     href: string;
     IdPage: string;
     rating: string;
@@ -71,7 +71,7 @@ const destinationSchema = new  mongoose.Schema<IDestination>(
         badge: { type: String },
         description: { type: String, required: true },
         longDescription: { type: String },
-        imageUrl: { type: String },
+        image: { type: [String] },
         href: { type: String },
         IdPage: { type: String },
         rating: { type: String },
@@ -87,7 +87,7 @@ const destinationSchema = new  mongoose.Schema<IDestination>(
                 alt: String,
                 title: String,
                 description: String,
-
+                
             },
         ],
         locationDetails: {
