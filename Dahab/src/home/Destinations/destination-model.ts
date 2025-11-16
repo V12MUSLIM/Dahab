@@ -7,11 +7,9 @@ export interface IDestination  {
     badge: string;
     description: string;
     longDescription: string;
-<<<<<<< HEAD
-    imageUrl: string;
-=======
+
     image: string[];
->>>>>>> be3d324316f26fb053a31b0c983d3d287c60dc6f
+
     href: string;
     IdPage: string;
     rating: string;
@@ -75,11 +73,7 @@ const destinationSchema = new  mongoose.Schema<IDestination>(
         badge: { type: String },
         description: { type: String, required: true },
         longDescription: { type: String },
-<<<<<<< HEAD
-        imageUrl: { type: String },
-=======
         image: { type: [String] },
->>>>>>> be3d324316f26fb053a31b0c983d3d287c60dc6f
         href: { type: String },
         IdPage: { type: String },
         rating: { type: String },
@@ -95,11 +89,6 @@ const destinationSchema = new  mongoose.Schema<IDestination>(
                 alt: String,
                 title: String,
                 description: String,
-<<<<<<< HEAD
-
-=======
-                
->>>>>>> be3d324316f26fb053a31b0c983d3d287c60dc6f
             },
         ],
         locationDetails: {
