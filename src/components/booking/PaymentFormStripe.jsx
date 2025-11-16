@@ -241,6 +241,7 @@ export default function PaymentFormStripe({
               <p className="text-sm font-semibold text-red-800 dark:text-red-300">{cardError || error}</p>
             </motion.div>
           )}
+          
 
           <div className="p-5 
                           bg-gradient-to-r from-amber-50 to-orange-50 dark:from-amber-900/20 dark:to-orange-900/20 
