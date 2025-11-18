@@ -117,11 +117,11 @@ const CollapsibleSection = ({
 const NavLinks = React.memo(({ onNavLinkClick, isDrawer = false }) => {
   const [destinationsOpen, setDestinationsOpen] = React.useState(false);
   const [experiencesOpen, setExperiencesOpen] = React.useState(false);
-  const { contact, fetchSiteData } = useSiteStore();
+  const { contact, fetchContact } = useSiteStore();
 
   React.useEffect(() => {
-    fetchSiteData(true);
-  }, [fetchSiteData]);
+    fetchContact(true);
+  }, []);
 
   const handleLinkClick = () => {
     setDestinationsOpen(false);
