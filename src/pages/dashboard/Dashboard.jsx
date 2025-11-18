@@ -24,6 +24,7 @@ import {
   AlertCircle,
   Link,
   ChevronLeft,
+  Phone
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
@@ -140,10 +141,19 @@ const Dashboard = () => {
       title: "Contacts",
       description: "Manage contatcts",
       path: "/dashboard/contacts",
+      icon: Phone,
+      count: null,
+      status: "active",
+    },
+    {
+      title: "Socialmedia",
+      description: "Manage Socialmedia",
+      path: "/dashboard/socialmedia",
       icon: Link,
       count: null,
       status: "active",
     },
+
   ];
 
   const statCards = [

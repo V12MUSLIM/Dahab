@@ -11,7 +11,7 @@ export default function WhyBookWithUs() {
         </CardTitle>
       </CardHeader>
       <CardContent>
-        <ul className="text-sm space-y-1 text-gray-600">
+        <ul className="text-sm space-y-1 text-gray-600 dark:text-yellow-50">
           <li><Check className="w-4 h-4 text-yellow-600" /> Free cancellation up to 24h</li>
           <li><Check className="w-4 h-4 text-yellow-600" /> Best price guarantee</li>
           <li><Check className="w-4 h-4 text-yellow-600" /> 24/7 customer support</li>

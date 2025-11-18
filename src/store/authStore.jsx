@@ -38,10 +38,10 @@ const getApiConfig = () => {
   return { baseUrl, timeout: 10000, isValid: true };
 };
 
-const API_CONFIG = getApiConfig();
+export const API_CONFIG = getApiConfig();
 
 /** Secure fetch */
-const secureFetch = async (url, options = {}) => {
+export const secureFetch = async (url, options = {}) => {
   if (!API_CONFIG.isValid) throw new Error("Invalid API configuration");
 
   const controller = new AbortController();

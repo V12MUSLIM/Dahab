@@ -1,29 +1,73 @@
 "use client";
 
-// eslint-disable-next-line no-unused-vars
+import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
-import { Mail, MapPin, Phone } from "lucide-react";
 import { Badge } from "../ui/badge";
-import { SOCIAL_MEDIA } from "@/config/SiteConfig";
+import { Spinner } from "../ui/spinner";
+import { API_CONFIG } from "@/store/authStore";
 
 export default function SocialMediaSection({
   badge = "",
   header,
   description,
-  socialLinks = SOCIAL_MEDIA,
-  id
+  id,
 }) {
-  // Icon map for lucide-react icons
-  const iconMap = {
-    Mail,
-    MapPin,
-    Phone,
-  };
+  const [socialMedia, setSocialMedia] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        if (!API_CONFIG.isValid) throw new Error("Invalid API configuration");
+
+        const socialRes = await fetch(`${API_CONFIG.baseUrl}/social-media`, {
+          credentials: "include",
+        });
+
+        if (!socialRes.ok) {
+          throw new Error("Failed to fetch social media data");
+        }
+
+        const socialData = await socialRes.json();
+
+        const socials =
+          Array.isArray(socialData.socialMediaes) && socialData.socialMediaes.length > 0
+            ? socialData.socialMediaes
+            : [];
+
+        setSocialMedia(socials);
+      } catch (err) {
+        console.error("Social media fetch error:", err);
+        setError(err.message);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchData();
+  }, []);
+
+  if (isLoading) {
+    return (
+      <div className="flex justify-center items-center py-20">
+        <Spinner className="w-8 h-8 text-yellow-500" />
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <p className="text-center text-red-500 py-10">
+        Failed to load social media: {error}
+      </p>
+    );
+  }
 
   return (
     <section id={id} className="py-20 bg-muted/30 dark:bg-muted/20">
       <div className="max-w-6xl mx-auto px-4">
-        {/* Header Section */}
+        {/* Header */}
         <motion.div
           className="text-center mb-16 space-y-4"
           initial={{ opacity: 0, y: 20 }}
@@ -41,83 +85,70 @@ export default function SocialMediaSection({
           </p>
         </motion.div>
 
-        {/* Social Links Grid */}
+        {/* Social Icons */}
         <div className="flex flex-wrap justify-center gap-6">
-          {socialLinks.map((social, index) => {
-            const Icon = iconMap[social.icon] || social.icon;
-
-            return (
-              <motion.a
-                key={index}
-                href={social.href}
-                aria-label={social.label}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="relative  flex items-center justify-center w-14 h-14 rounded-full overflow-visible"
-                initial={{ opacity: 0, scale: 0.5 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{
-                  duration: 0.3,
-                  delay: index * 0.1,
+          {socialMedia.map((social, index) => (
+            <motion.a
+              key={social._id || index}
+              href={social.href}
+              aria-label={social.name}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="relative flex items-center justify-center w-14 h-14 rounded-full overflow-visible group"
+              initial={{ opacity: 0, scale: 0.5 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{
+                duration: 0.3,
+                delay: index * 0.1,
+                type: "spring",
+                stiffness: 260,
+                damping: 20,
+              }}
+              whileHover={{
+                scale: 1.2,
+                transition: {
                   type: "spring",
-                  stiffness: 260,
-                  damping: 20,
-                }}
-                whileHover={{
-                  scale: 1.2,
-                  transition: {
-                    type: "spring",
-                    stiffness: 400,
-                    damping: 10,
-                  },
-                }}
-                whileTap={{ scale: 0.95 }}
+                  stiffness: 400,
+                  damping: 10,
+                },
+              }}
+              whileTap={{ scale: 0.95 }}
+            >
+              {/* Glow Effect */}
+              <motion.div
+                className="absolute inset-0 rounded-full pointer-events-none"
+                initial={{ opacity: 0 }}
+                whileHover={{ opacity: 1 }}
+                transition={{ duration: 0.3 }}
               >
-                {/* Animated Glow Ring */}
                 <motion.div
-                  className="absolute inset-0 rounded-full pointer-events-none"
-                  initial={{ opacity: 0 }}
-                  whileHover={{ opacity: 1 }}
-                  transition={{ duration: 0.3 }}
-                >
-                  <motion.div
-                    className={`absolute inset-0 rounded-full bg-gradient-to-br ${social.color} opacity-30 blur-xl`}
-                    animate={{
-                      scale: [1, 1.2, 1],
-                    }}
-                    transition={{
-                      duration: 2,
-                      repeat: Infinity,
-                      repeatType: "reverse",
-                    }}
-                  />
-                </motion.div>
+                  className={`absolute inset-0 rounded-full ${social.label} opacity-30 blur-xl`}
+                  animate={{ scale: [1, 1.2, 1] }}
+                  transition={{
+                    duration: 2,
+                    repeat: Infinity,
+                    repeatType: "reverse",
+                  }}
+                />
+              </motion.div>
 
-                {/* Icon Background - Always has colored gradient */}
-                <motion.div
-                  className={`relative from-yellow-600 to-yellow-700  h-14 w-14 flex items-center justify-center rounded-full bg-gradient-to-br ${social.color} shadow-lg`}
-                >
-                  {typeof Icon === "string" ? (
-                    <motion.img
-                      src={Icon}
-                      alt={social.name}
-                      className="h-6 w-6 object-contain filter brightness-0 invert"
-                      style={{ filter: "brightness(0) invert(1)" }}
-                      whileHover={{ scale: 1.1, rotate: 5 }}
-                      transition={{ type: "spring", stiffness: 300 }}
-                    />
-                  ) : (
-                    <motion.div
-                      whileHover={{ scale: 1.1, rotate: 5 }}
-                      transition={{ type: "spring", stiffness: 300 }}
-                    >
-                      <Icon className="h-6 w-6 text-white  dark:text-white drop-shadow-lg" />
-                    </motion.div>
-                  )}
-                </motion.div>
-              </motion.a>
-            );
-          })}
+              {/* Icon Background with Hover Effect */}
+              <div
+                className={`relative h-14 w-14 flex items-center justify-center rounded-full ${social.label} ${social.color} shadow-lg transition-all duration-300`}
+              >
+                <motion.img
+                  src={social.icon}
+                  alt={social.name}
+                  className="h-6 w-6 object-contain filter brightness-0 invert"
+                  whileHover={{ scale: 1.1, rotate: 5 }}
+                  transition={{ type: "spring", stiffness: 300 }}
+                  onError={(e) => {
+                    e.target.style.display = "none";
+                  }}
+                />
+              </div>
+            </motion.a>
+          ))}
         </div>
       </div>
     </section>

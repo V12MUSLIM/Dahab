@@ -12,7 +12,9 @@ import AuthCallback from "./pages/AuthCallback";
 import { useAuthStore } from "./store/authStore";
 import Loading from "@/components/Loading";
 import { useSyncUserToQuery } from "@/hooks/useSyncUserToQuery";
-import AdminEditContact from "./pages/dashboard/EditContact";
+import Forbidden from "./pages/403";
+import AdminEditContact from "./pages/dashboard/AdminEditContact";
+import AdminEditSocials from "./pages/dashboard/AdminEditSocials";
 // EAGER LOAD
 import Home from "./pages/Home";
 
@@ -40,7 +42,7 @@ const DashboardDestinations = lazy(() =>
 );
 const Booking = lazy(() => import("./pages/Booking"));
 const Settings = lazy(() => import("./pages/ProfileSettings"));
-const Forbidden = lazy(() => import("./pages/403"));
+
 // --- Auth initialization ---
 const AuthInitializer = ({ children }) => {
   const { checkAuthStatus, isLoading } = useAuthStore();
@@ -220,6 +222,14 @@ function App() {
                       </Suspense>
                     }
                   />
+                  <Route
+                    path="/dashboard/socialmedia"
+                    element={
+                      <Suspense fallback={<PageSkeleton />}>
+                        <AdminEditSocials />
+                      </Suspense>
+                    }
+                  />
                 </Route>
                 <Route
                   path="/403"
@@ -256,4 +266,6 @@ function App() {
 }
 
 export default App;
-{/* Testing  */}
+{
+  /* Testing  */
+}
