@@ -62,34 +62,52 @@ export default function PaymentFormStripe({
     invalid: { color: "#ef4444", iconColor: "#ef4444" },
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setCardError(null);
-    if (!stripe || !elements) return;
-    setProcessing(true);
-    try {
-      const cardNumber = elements.getElement(CardNumberElement);
-      const { error: methodError, paymentMethod } = await stripe.createPaymentMethod({
-        type: "card",
-        card: cardNumber,
+ const handleSubmit = async (e) => {
+  e.preventDefault();
+  setCardError(null);
+
+  if (!stripe || !elements) return;
+
+  setProcessing(true);
+
+  try {
+
+    const res = await fetch("/create-payment-intent", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ amount: total }),
+    });
+
+    const { client_secret } = await res.json();
+
+   
+    const cardElement = elements.getElement(CardNumberElement);
+
+   
+    const result = await stripe.confirmCardPayment(client_secret, {
+      payment_method: {
+        card: cardElement,
         billing_details: {
           name: cardholderName || bookingData.name,
           email: bookingData.email,
           phone: bookingData.phone,
           address: { country },
         },
-      });
-      if (methodError) {
-        setCardError(methodError.message);
-        return;
-      }
-      await onSubmit(paymentMethod);
-    } catch (err) {
-      setCardError("Payment failed. Please try again.");
-    } finally {
-      setProcessing(false);
+      },
+    });
+
+    if (result.error) {
+      setCardError(result.error.message);
+    } else if (result.paymentIntent.status === "succeeded") {
+      onSubmit(result.paymentIntent);
     }
-  };
+  } catch (error) {
+    setCardError("Payment failed. Please try again.");
+  }
+
+  setProcessing(false);
+};
+
 
   const handleCardChange = (event) => {
     if (event.brand && event.brand !== cardBrand) {
@@ -137,7 +155,7 @@ export default function PaymentFormStripe({
           <div className="space-y-2">
             <Label htmlFor="cardholderName" className="flex items-center gap-2 text-sm text-gray-700 dark:text-gray-300">
               <CreditCard className="w-4 h-4 text-amber-600 dark:text-amber-500" />
-              Cardholder Name
+              Card Name
             </Label>
             <Input
               id="cardholderName"
@@ -241,7 +259,7 @@ export default function PaymentFormStripe({
               <p className="text-sm font-semibold text-red-800 dark:text-red-300">{cardError || error}</p>
             </motion.div>
           )}
-          
+
 
           <div className="p-5 
                           bg-gradient-to-r from-amber-50 to-orange-50 dark:from-amber-900/20 dark:to-orange-900/20 
