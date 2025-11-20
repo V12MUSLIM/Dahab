@@ -24,11 +24,21 @@ import {
   AlertCircle,
   Link,
   ChevronLeft,
-  Phone
+  Phone,
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-
+import { useSocials } from "@/hooks/useSocials";
+import { useContact } from "@/hooks/useContact";
 const Dashboard = () => {
+  const { socialsQuery } = useSocials();
+  const { contactQuery } = useContact();
+
+  const { data: socialMedia, isLoading: isSocialsLoading } = socialsQuery;
+  const { data: contactApiResponse, isLoading: isContactsLoading } =
+    contactQuery;
+  const socials = Array.isArray(socialMedia) ? socialMedia : [];
+  const rawContactsArray = contactApiResponse?.contacts;
+  const contacts = Array.isArray(rawContactsArray) ? rawContactsArray : [];
   // TODO: Replace with actual API call
   // Example: const { data: stats } = useQuery('dashboardStats', fetchDashboardStats);
   const [stats] = useState({
@@ -142,7 +152,7 @@ const Dashboard = () => {
       description: "Manage contatcts",
       path: "/dashboard/contacts",
       icon: Phone,
-      count: null,
+      count: isContactsLoading ? "..." : contacts.length,
       status: "active",
     },
     {
@@ -150,12 +160,13 @@ const Dashboard = () => {
       description: "Manage Socialmedia",
       path: "/dashboard/socialmedia",
       icon: Link,
-      count: null,
+      count: isSocialsLoading ? "..." : socials?.length ?? 0,
       status: "active",
     },
-
   ];
-
+  {
+    console.log(contacts.length);
+  }
   const statCards = [
     {
       title: "Total Bookings",
@@ -189,7 +200,7 @@ const Dashboard = () => {
 
   return (
     <div className="min-h-screen bg-slate-50 dark:bg-black p-6">
-                <Button
+      <Button
         variant="ghost"
         className="flex items-center gap-2 text-sm text-slate-600 dark:text-gray-300 hover:bg-slate-100 dark:hover:bg-gray-900"
         onClick={() => {
@@ -202,7 +213,6 @@ const Dashboard = () => {
       <div className="mx-auto max-w-7xl space-y-6">
         {/* Header */}
         <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
-
           <div>
             <h1 className="text-3xl font-bold tracking-tight text-slate-900 dark:text-white">
               Dashboard

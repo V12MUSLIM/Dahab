@@ -1,4 +1,3 @@
-
 // Contact Information
 export const CONTACT = {
   phone: "+20 1028510036",
@@ -18,7 +17,8 @@ export const SOCIAL_MEDIA = [
     icon: "instagram.svg",
     href: "https://instagram.com/dahabtourism",
     label: "Follow us on Instagram",
-    color: "hover:bg-gradient-to-br hover:from-pink-500 hover:via-purple-500 hover:to-orange-500",
+    color:
+      "hover:bg-gradient-to-br hover:from-pink-500 hover:via-purple-500 hover:to-orange-500",
   },
   {
     name: "Twitter",
@@ -159,6 +159,7 @@ export const UI_TEXT = {
     plan: "Plan",
     more: "More",
     menu: "Menu",
+    dashboard: "Dashboard",
   },
   buttons: {
     login: "Login",

@@ -6,6 +6,7 @@ import {
   BadgeDollarSign,
   DollarSign,
   Euro,
+  LayoutDashboard,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Drawer, DrawerContent, DrawerTrigger } from "@/components/ui/drawer";
@@ -23,6 +24,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { useAuthStore } from "@/store/authStore";
 
 /* 🌐 Language Dropdown */
 const ChangeLanguage = () => (
@@ -112,7 +114,8 @@ const NavbarDesktop = React.memo(({ user, isDrawerOpen, setIsDrawerOpen }) => {
   // 👇 Handle scroll direction visibility
   const [isVisible, setIsVisible] = React.useState(true);
   const lastScrollY = React.useRef(0);
-
+  const hasRole = useAuthStore((state) => state.hasRole);
+  const isAdmin = hasRole("admin");
   React.useEffect(() => {
     const handleScroll = () => {
       const currentScrollY = window.scrollY;
@@ -142,9 +145,7 @@ const NavbarDesktop = React.memo(({ user, isDrawerOpen, setIsDrawerOpen }) => {
     <header
       className={cn(
         "hidden lg:block fixed top-0 z-50 w-full border-b border-amber-400/20 dark:border-amber-500/30 bg-white/30 dark:bg-black/40 backdrop-blur-xl shadow-sm transition-all duration-500 ease-in-out",
-        isVisible
-          ? "translate-y-0 opacity-100"
-          : "-translate-y-full opacity-0"
+        isVisible ? "translate-y-0 opacity-100" : "-translate-y-full opacity-0"
       )}
     >
       <div className="container flex h-16 max-w-screen-2xl items-center justify-between px-4">
@@ -170,6 +171,17 @@ const NavbarDesktop = React.memo(({ user, isDrawerOpen, setIsDrawerOpen }) => {
 
         {/* Right Side Controls */}
         <div className="flex items-center space-x-3">
+          {isAdmin && (
+            <NavLink to={ROUTES.dashboard}>
+              <Button
+                variant="ghost"
+                size="icon"
+                className="hover:text-amber-600 dark:hover:text-amber-400"
+              >
+                <LayoutDashboard className="h-5 w-5" />
+              </Button>
+            </NavLink>
+          )}
           <ChangeCurrency />
           <ChangeLanguage />
           <ThemeToggle />

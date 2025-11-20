@@ -1,10 +1,10 @@
 "use client";
 
-import { useEffect, useState } from "react";
+// eslint-disable-next-line no-unused-vars
 import { motion } from "framer-motion";
 import { Badge } from "../ui/badge";
 import { Spinner } from "../ui/spinner";
-import { API_CONFIG } from "@/store/authStore";
+import { useSocials } from "@/hooks/useSocials";
 
 export default function SocialMediaSection({
   badge = "",
@@ -12,41 +12,9 @@ export default function SocialMediaSection({
   description,
   id,
 }) {
-  const [socialMedia, setSocialMedia] = useState([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState(null);
-
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        if (!API_CONFIG.isValid) throw new Error("Invalid API configuration");
-
-        const socialRes = await fetch(`${API_CONFIG.baseUrl}/social-media`, {
-          credentials: "include",
-        });
-
-        if (!socialRes.ok) {
-          throw new Error("Failed to fetch social media data");
-        }
-
-        const socialData = await socialRes.json();
-
-        const socials =
-          Array.isArray(socialData.socialMediaes) && socialData.socialMediaes.length > 0
-            ? socialData.socialMediaes
-            : [];
-
-        setSocialMedia(socials);
-      } catch (err) {
-        console.error("Social media fetch error:", err);
-        setError(err.message);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    fetchData();
-  }, []);
+  const {
+    socialsQuery: { data: socialMedia = [], isLoading, isError, error },
+  } = useSocials();
 
   if (isLoading) {
     return (
@@ -56,13 +24,14 @@ export default function SocialMediaSection({
     );
   }
 
-  if (error) {
+  if (isError) {
     return (
       <p className="text-center text-red-500 py-10">
-        Failed to load social media: {error}
+        Failed to load social media: {error?.message}
       </p>
     );
   }
+  console.log("SOCIAL MEDIA RAW:", socialMedia);
 
   return (
     <section id={id} className="py-20 bg-muted/30 dark:bg-muted/20">
@@ -77,9 +46,11 @@ export default function SocialMediaSection({
           <Badge className="mb-4 bg-gradient-to-r from-yellow-100 to-amber-100 dark:from-yellow-900/30 dark:to-amber-900/30 text-yellow-800 dark:text-yellow-400 border-yellow-300 dark:border-yellow-700 px-4 py-1.5 shadow-sm">
             {badge}
           </Badge>
+
           <h2 className="text-4xl md:text-5xl font-bold mb-4 bg-gradient-to-r from-black via-gray-800 to-black dark:from-white dark:via-gray-200 dark:to-white bg-clip-text text-transparent">
             {header}
           </h2>
+
           <p className="text-gray-600 dark:text-gray-400 text-lg max-w-2xl mx-auto leading-relaxed">
             {description}
           </p>
@@ -89,7 +60,7 @@ export default function SocialMediaSection({
         <div className="flex flex-wrap justify-center gap-6">
           {socialMedia.map((social, index) => (
             <motion.a
-              key={social._id || index}
+              key={social.name || index}
               href={social.href}
               aria-label={social.name}
               target="_blank"
@@ -106,11 +77,7 @@ export default function SocialMediaSection({
               }}
               whileHover={{
                 scale: 1.2,
-                transition: {
-                  type: "spring",
-                  stiffness: 400,
-                  damping: 10,
-                },
+                transition: { type: "spring", stiffness: 400, damping: 10 },
               }}
               whileTap={{ scale: 0.95 }}
             >
@@ -132,18 +99,19 @@ export default function SocialMediaSection({
                 />
               </motion.div>
 
-              {/* Icon Background with Hover Effect */}
+              {/* Icon Background */}
               <div
-                className={`relative h-14 w-14 flex items-center justify-center rounded-full ${social.label} ${social.color} shadow-lg transition-all duration-300`}
+                className={`relative bg-yellow-600  h-14 w-14 flex items-center justify-center rounded-full ${social.label} ${social.color} shadow-lg transition-all duration-300`}
               >
                 <motion.img
+                  loading="lazy"
                   src={social.icon}
                   alt={social.name}
                   className="h-6 w-6 object-contain filter brightness-0 invert"
                   whileHover={{ scale: 1.1, rotate: 5 }}
                   transition={{ type: "spring", stiffness: 300 }}
                   onError={(e) => {
-                    e.target.style.display = "none";
+                    e.target.src = "/fallback-icon.svg";
                   }}
                 />
               </div>

@@ -16,6 +16,7 @@ import {
   Mail,
   Waves,
   Mountain,
+  LayoutDashboard
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -31,8 +32,8 @@ import {
   EXPERIENCES,
   UI_TEXT,
 } from "@/config/SiteConfig";
-import { useSiteStore } from "@/store/siteStore";
-
+import { useContact } from "@/hooks/useContact";
+import { useAuthStore } from "@/store/authStore";
 // Map icon names from config to components
 const iconMap = { Waves, Mountain, Camera };
 
@@ -115,14 +116,20 @@ const CollapsibleSection = ({
 );
 
 const NavLinks = React.memo(({ onNavLinkClick, isDrawer = false }) => {
+  const hasRole = useAuthStore((state) => state.hasRole);
+  const isAdmin = hasRole("admin");
   const [destinationsOpen, setDestinationsOpen] = React.useState(false);
   const [experiencesOpen, setExperiencesOpen] = React.useState(false);
-  const { contact, fetchContact } = useSiteStore();
 
-  React.useEffect(() => {
-    fetchContact(true);
-  }, []);
+  const { contactQuery } = useContact();
+  const { data: contact, isLoading, isError, error } = contactQuery;
 
+  if (isLoading) {
+    return <div>Loading...</div>;
+  }
+  if (isError) {
+    return <div>Error in laoding contacts {error.message}</div>;
+  }
   const handleLinkClick = () => {
     setDestinationsOpen(false);
     setExperiencesOpen(false);
@@ -209,8 +216,15 @@ const NavLinks = React.memo(({ onNavLinkClick, isDrawer = false }) => {
             onClick={handleLinkClick}
             className="h-10 text-sm"
           />
+          {isAdmin && (
+            <NavItem
+              to={ROUTES.dashboard}
+              icon={LayoutDashboard}
+              label={UI_TEXT.navigation.dashboard}
+              onClick={handleLinkClick}
+            />
+          )}
         </div>
-
         <Separator className="my-4 border-amber-400/20 dark:border-amber-500/30" />
 
         {/* Contact Section */}
