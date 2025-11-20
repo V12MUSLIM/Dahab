@@ -117,11 +117,13 @@
     border-radius: 6px !important;
     min-height: 45px !important;
 
-    /* Fixes Stripe typing issues */
+
     overflow: visible !important;
     transform: none !important;
     animation: none !important;
     position: relative !important;
+    isolation: isolate !important; 
+    z-index: 1 !important;
   }
 
   .dark .stripe-field {
@@ -129,6 +131,7 @@
     border-color: #4b5563 !important;
   }
 }
+
 
 @layer base {
   * {
