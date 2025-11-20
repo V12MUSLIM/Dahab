@@ -137,7 +137,7 @@ export default function PaymentFormStripe({
           <div className="space-y-2">
             <Label htmlFor="cardholderName" className="flex items-center gap-2 text-sm text-gray-700 dark:text-gray-300">
               <CreditCard className="w-4 h-4 text-amber-600 dark:text-amber-500" />
-              Cardholder Name
+              Card Name
             </Label>
             <Input
               id="cardholderName"
@@ -241,7 +241,7 @@ export default function PaymentFormStripe({
               <p className="text-sm font-semibold text-red-800 dark:text-red-300">{cardError || error}</p>
             </motion.div>
           )}
-          
+
 
           <div className="p-5 
                           bg-gradient-to-r from-amber-50 to-orange-50 dark:from-amber-900/20 dark:to-orange-900/20 

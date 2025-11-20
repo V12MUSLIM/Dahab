@@ -60,13 +60,15 @@ export default function Booking() {
 
   const destinationsRaw = destinationsData?.destinations || [];
   const experiencesRaw = experiencesData?.experiences || [];
-  const dineRaw = dineData?.dine || [];
-  const stayRaw = stayData?.stay || [];
+  
+  const restaurantsRaw = dineData?.restaurants || [];
+  const cafesRaw = dineData?.cafes || [];
+  const hotelsRaw = stayData?.data || [];
 
   const destLoading = destinationsData?.loading || false;
   const expLoading = experiencesData?.loading || false;
-  const dineLoading = dineData?.loading || false;
-  const stayLoading = stayData?.loading || false;
+  const dineLoading = dineData?.isLoading || false;
+  const stayLoading = stayData?.isLoading || false;
 
   const destinations = useMemo(() => {
     const arr = safeArray(destinationsRaw).map((d, idx) => ({
@@ -90,32 +92,34 @@ export default function Booking() {
   }, [experiencesRaw]);
 
   const restaurants = useMemo(() => {
-    const arr = safeArray(dineRaw).filter((d) => d.type?.toLowerCase() === "restaurant").map((r, idx) => ({
+    const arr = safeArray(restaurantsRaw).map((r, idx) => ({
       ...r,
       id: r._id || r.id || `rest-${idx}`,
-      price: extractPrice(r.price)
+      price: extractPrice(r.price),
+      name: r.name || r.title
     }));
     return arr;
-  }, [dineRaw]);
+  }, [restaurantsRaw]);
 
   const cafes = useMemo(() => {
-    const arr = safeArray(dineRaw).filter((d) => d.type?.toLowerCase() === "cafe").map((c, idx) => ({
+    const arr = safeArray(cafesRaw).map((c, idx) => ({
       ...c,
       id: c._id || c.id || `cafe-${idx}`,
-      price: extractPrice(c.price)
+      price: extractPrice(c.price),
+      name: c.name || c.title
     }));
     return arr;
-  }, [dineRaw]);
+  }, [cafesRaw]);
 
   const hotels = useMemo(() => {
-    const arr = safeArray(stayRaw).map((h, idx) => ({
+    const arr = safeArray(hotelsRaw).map((h, idx) => ({
       ...h,
       id: h._id || h.id || `hotel-${idx}`,
       pricePerNight: extractPrice(h.pricePerNight || h.price),
       name: h.title || h.name || `Hotel ${idx + 1}`
     }));
     return arr;
-  }, [stayRaw]);
+  }, [hotelsRaw]);
 
   const [currentStep, setCurrentStep] = useState(1);
   const [loading, setLoading] = useState(false);
@@ -142,7 +146,10 @@ export default function Booking() {
 
   useEffect(() => {
     if (!preselectedData?.type || !preselectedData?.item) return;
-    const id = preselectedData.item?.id || `ext-${Math.random().toString(36).slice(2, 8)}`;
+    
+    const item = preselectedData.item;
+    const id = item._id || item.id || item.IdPage || `ext-${Math.random().toString(36).slice(2, 8)}`;
+    
     const fieldMap = {
       experience: "selectedExperiences",
       destination: "selectedDestinations",
@@ -161,7 +168,7 @@ export default function Booking() {
       }));
     }
 
-    setSuccessMessage(`✅ ${preselectedData.item?.name || "Item added successfully!"}`);
+    setSuccessMessage(`✅ ${item.title || item.name || "Item added successfully!"}`);
     setTimeout(() => setSuccessMessage(null), 4000);
   }, [preselectedData]);
 
