@@ -109,6 +109,29 @@
   --sidebar-border: oklch(1 0 0 / 10%);
   --sidebar-ring: oklch(0.553 0.013 58.071);
 }
+@layer components {
+  .stripe-field {
+    background: white !important;
+    padding: 12px !important;
+    border: 1px solid #d1d5db !important;
+    border-radius: 6px !important;
+    min-height: 45px !important;
+
+
+    overflow: visible !important;
+    transform: none !important;
+    animation: none !important;
+    position: relative !important;
+    isolation: isolate !important; 
+    z-index: 1 !important;
+  }
+
+  .dark .stripe-field {
+    background: #1f1f1f !important;
+    border-color: #4b5563 !important;
+  }
+}
+
 
 @layer base {
   * {
