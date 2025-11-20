@@ -62,52 +62,48 @@ export default function PaymentFormStripe({
     invalid: { color: "#ef4444", iconColor: "#ef4444" },
   };
 
- const handleSubmit = async (e) => {
-  e.preventDefault();
-  setCardError(null);
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setCardError(null);
 
-  if (!stripe || !elements) return;
+    if (!stripe || !elements) return;
 
-  setProcessing(true);
+    setProcessing(true);
 
-  try {
+    try {
+      const res = await fetch("/create-payment-intent", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ amount: total }),
+      });
 
-    const res = await fetch("/create-payment-intent", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ amount: total }),
-    });
+      const { client_secret } = await res.json();
 
-    const { client_secret } = await res.json();
+      const cardElement = elements.getElement(CardNumberElement);
 
-   
-    const cardElement = elements.getElement(CardNumberElement);
-
-   
-    const result = await stripe.confirmCardPayment(client_secret, {
-      payment_method: {
-        card: cardElement,
-        billing_details: {
-          name: cardholderName || bookingData.name,
-          email: bookingData.email,
-          phone: bookingData.phone,
-          address: { country },
+      const result = await stripe.confirmCardPayment(client_secret, {
+        payment_method: {
+          card: cardElement,
+          billing_details: {
+            name: cardholderName || bookingData.name,
+            email: bookingData.email,
+            phone: bookingData.phone,
+            address: { country },
+          },
         },
-      },
-    });
+      });
 
-    if (result.error) {
-      setCardError(result.error.message);
-    } else if (result.paymentIntent.status === "succeeded") {
-      onSubmit(result.paymentIntent);
+      if (result.error) {
+        setCardError(result.error.message);
+      } else if (result.paymentIntent.status === "succeeded") {
+        onSubmit(result.paymentIntent);
+      }
+    } catch (error) {
+      setCardError("Payment failed. Please try again.");
     }
-  } catch (error) {
-    setCardError("Payment failed. Please try again.");
-  }
 
-  setProcessing(false);
-};
-
+    setProcessing(false);
+  };
 
   const handleCardChange = (event) => {
     if (event.brand && event.brand !== cardBrand) {
@@ -173,16 +169,14 @@ export default function PaymentFormStripe({
             />
           </div>
 
+          {/* CARD NUMBER */}
           <div className="space-y-2 relative">
             <Label className="flex items-center gap-2 text-sm text-gray-700 dark:text-gray-300">
               <Lock className="w-4 h-4 text-amber-600 dark:text-amber-500" />
               Card Number
             </Label>
-            <div className="border border-gray-300 dark:border-zinc-700 
-                            rounded-lg p-4 
-                            bg-gray-50 dark:bg-zinc-800 
-                            focus-within:ring-2 focus-within:ring-amber-500 
-                            transition-all relative">
+
+            <div className="stripe-field">
               <CardNumberElement
                 options={{ style: isDarkMode ? ELEMENT_STYLE_DARK : ELEMENT_STYLE }}
                 onChange={handleCardChange}
@@ -197,24 +191,18 @@ export default function PaymentFormStripe({
             </div>
           </div>
 
+          {/* EXPIRATION + CVC */}
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
               <Label className="text-sm text-gray-700 dark:text-gray-300">Expiration Date</Label>
-              <div className="border border-gray-300 dark:border-zinc-700 
-                              rounded-lg p-4 
-                              bg-gray-50 dark:bg-zinc-800 
-                              focus-within:ring-2 focus-within:ring-amber-500 
-                              transition-all">
+              <div className="stripe-field">
                 <CardExpiryElement options={{ style: isDarkMode ? ELEMENT_STYLE_DARK : ELEMENT_STYLE }} />
               </div>
             </div>
+
             <div className="space-y-2">
               <Label className="text-sm text-gray-700 dark:text-gray-300">Security Code (CVC)</Label>
-              <div className="border border-gray-300 dark:border-zinc-700 
-                              rounded-lg p-4 
-                              bg-gray-50 dark:bg-zinc-800 
-                              focus-within:ring-2 focus-within:ring-amber-500 
-                              transition-all">
+              <div className="stripe-field">
                 <CardCvcElement options={{ style: isDarkMode ? ELEMENT_STYLE_DARK : ELEMENT_STYLE }} />
               </div>
             </div>
@@ -259,7 +247,6 @@ export default function PaymentFormStripe({
               <p className="text-sm font-semibold text-red-800 dark:text-red-300">{cardError || error}</p>
             </motion.div>
           )}
-
 
           <div className="p-5 
                           bg-gradient-to-r from-amber-50 to-orange-50 dark:from-amber-900/20 dark:to-orange-900/20 
