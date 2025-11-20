@@ -6,7 +6,6 @@ import {
   useStripe,
   useElements,
 } from "@stripe/react-stripe-js";
-import { motion } from "framer-motion";
 import {
   CreditCard,
   Shield,
@@ -129,15 +128,11 @@ export default function PaymentFormStripe({
   const isDarkMode = document.documentElement.classList.contains("dark");
 
   return (
-    <motion.form
-      onSubmit={handleSubmit}
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.3 }}
-      className="w-full"
-    >
+    <form onSubmit={handleSubmit} className="w-full">
       <Card className="border-gray-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 rounded-xl shadow-xl overflow-hidden">
         <CardContent className="p-6 space-y-6">
+
+          {/* HEADER */}
           <div className="text-center">
             <div className="flex items-center justify-center gap-2 text-amber-600 dark:text-amber-500 mb-2">
               <Wallet className="w-6 h-6" />
@@ -148,6 +143,7 @@ export default function PaymentFormStripe({
             </p>
           </div>
 
+          {/* CARDHOLDER NAME */}
           <div className="space-y-2">
             <Label htmlFor="cardholderName" className="flex items-center gap-2 text-sm text-gray-700 dark:text-gray-300">
               <CreditCard className="w-4 h-4 text-amber-600 dark:text-amber-500" />
@@ -208,6 +204,7 @@ export default function PaymentFormStripe({
             </div>
           </div>
 
+          {/* COUNTRY */}
           <div className="space-y-2">
             <Label htmlFor="country" className="flex items-center gap-2 text-sm text-gray-700 dark:text-gray-300">
               <Globe className="w-4 h-4 text-amber-600 dark:text-amber-500" />
@@ -234,10 +231,9 @@ export default function PaymentFormStripe({
             </select>
           </div>
 
+          {/* ERRORS */}
           {(cardError || error) && (
-            <motion.div
-              initial={{ opacity: 0, y: -10 }}
-              animate={{ opacity: 1, y: 0 }}
+            <div
               className="flex items-start gap-3 p-4 
                          bg-red-50 dark:bg-red-900/20 
                          border border-red-200 dark:border-red-800 
@@ -245,9 +241,10 @@ export default function PaymentFormStripe({
             >
               <AlertCircle className="w-5 h-5 text-red-600 dark:text-red-500 flex-shrink-0" />
               <p className="text-sm font-semibold text-red-800 dark:text-red-300">{cardError || error}</p>
-            </motion.div>
+            </div>
           )}
 
+          {/* AMOUNT BOX */}
           <div className="p-5 
                           bg-gradient-to-r from-amber-50 to-orange-50 dark:from-amber-900/20 dark:to-orange-900/20 
                           border border-amber-200 dark:border-amber-700/30 
@@ -265,6 +262,7 @@ export default function PaymentFormStripe({
             </div>
           </div>
 
+          {/* FOOTER */}
           <div className="flex items-center justify-center pt-2 border-t border-gray-200 dark:border-zinc-700">
             <p className="text-xs text-gray-600 dark:text-gray-400 mt-3 flex items-center gap-2">
               <Shield className="w-4 h-4 text-green-600 dark:text-green-500" />
@@ -272,6 +270,7 @@ export default function PaymentFormStripe({
             </p>
           </div>
 
+          {/* BUTTONS */}
           <div className="flex gap-3 pt-3">
             <SecondaryButton
               type="button"
@@ -301,6 +300,6 @@ export default function PaymentFormStripe({
           </div>
         </CardContent>
       </Card>
-    </motion.form>
+    </form>
   );
 }

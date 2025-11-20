@@ -6,7 +6,6 @@ import { CreditCard, ShieldCheck } from "lucide-react";
 import PaymentFormStripe from "@/components/booking/PaymentFormStripe";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 
-
 const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLIC_KEY);
 
 export default function Payment({
