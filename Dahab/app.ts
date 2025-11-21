@@ -15,15 +15,17 @@ import activitiesRouter from "./src/home/activities/activities-router";
 import destinationRouter from "./src/home/Destinations/destination-router"
 import heroRouter from "./src/home/heros/hero-router";
 import cafeRouter from "./src/Dini/cafes/cafe-router";
-import experienceRouter  from "./src/experiences/experience-router";
+import experienceRouter from "./src/experiences/experience-router";
 import contactRouter from "./src/contact/contact-router";
 import stayRouter from "./src/stay/stay-router";
 import socialMediaRouter from "./src/social-media/social-media-router";
 import restaurantRouter from "./src/Dini/restaurant/restaurant-router";
+import paymentRouter from "./src/Booking/payments/payment-router";
 import { uploadSingle, uploadArray } from "./src/middlewares/multer-middleware";
 //       end imports routers
 import { sanitizeInput } from "./src/middlewares/sanitize.middleware";
 import session from "express-session";
+import { stripeWebhook } from "./src/Booking/payments/payment-webhook";
 
 
 dotenv.config();
@@ -34,7 +36,7 @@ mongoose.connect(`${URI}/${DB_NAME}`)
     .then(() => console.log("MongoDB connected"))
     .catch((err) => {
         console.error("MongoDB connection error:", err);
-        
+
         process.exit(1);
     });
 
@@ -49,8 +51,8 @@ app.use(
         saveUninitialized: false,
         cookie: {
             httpOnly: true,
-            secure: false, 
-            maxAge: 24 * 60 * 60 * 1000, 
+            secure: false,
+            maxAge: 24 * 60 * 60 * 1000,
         },
     })
 );
@@ -62,10 +64,10 @@ app.use(helmet());
 
 const corsOptions = {
     origin:
-    process.env.FRONTEND_URL||
-    "http://localhost:5173"||
-    "http://localhost:3000",
-    credentials: true, 
+        process.env.FRONTEND_URL ||
+        "http://localhost:5173" ||
+        "http://localhost:3000",
+    credentials: true,
     methods: ["GET", "POST", "PUT", "DELETE"],
 };
 app.use(cors(corsOptions));
@@ -84,7 +86,7 @@ app.use(
 );
 app.use(express.urlencoded({ extended: true }));
 app.use(sanitizeInput);
-app.use(compression(    
+app.use(compression(
     {
         level: 6,
         threshold: 1000,
@@ -94,7 +96,7 @@ app.use(compression(
             }
             return compression.filter(req, res);
         },
-    }   
+    }
 ));
 // routes
 app.use("/api/auth", authRouter);
@@ -103,12 +105,17 @@ app.use("/api/activities", activitiesRouter);
 app.use("/api/destination", destinationRouter);
 app.use("/api/hero", heroRouter);
 app.use("/api/restaurant", restaurantRouter);
-app.use("/api/cafe",cafeRouter);
+app.use("/api/cafe", cafeRouter);
 app.use("/api/experience", experienceRouter)
 app.use("/api/stay", stayRouter)
 app.use("/api/contact", contactRouter)
 app.use("/api/social-media", socialMediaRouter)
-// app.use("/api/payment", paymentRouter);
+app.use("/api/payment", paymentRouter)
+app.post(
+    "/api/payments/webhook",
+    express.raw({ type: "application/json" }),
+    stripeWebhook
+);
 
 
 app.use((err: any, req: Request, res: Response, next: NextFunction) => {
