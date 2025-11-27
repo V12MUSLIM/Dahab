@@ -6,7 +6,6 @@ import { IRestaurant } from "../Dini/restaurant/restaurant-model";
 
 export interface IBooking {
     userId: Types.ObjectId;
-
     tripDetails: {
         checkIn: Date;
         checkOut: Date;
@@ -24,7 +23,7 @@ export interface IBooking {
     };
 
     paymentDetails: {
-        paymentIntentId: string;  // من Stripe
+        paymentIntentId: string;
         status: "pending" | "processing" | "succeeded" | "failed";
         amount: number;
         currency: string;
