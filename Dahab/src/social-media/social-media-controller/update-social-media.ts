@@ -2,7 +2,7 @@ import { RequestHandler } from "express";
 import { ISocialMedia, SocialMedia } from "../social-media-model";
 
 interface IRequest {
-    name?: string; // ممكن تعتمد على الاسم أو الـ _id، زي ما تحب
+    name?: string;
     icon?: string;
     href?: string;
     label?: string;
