@@ -10,7 +10,7 @@ interface IResponse {
     updateStay?: IStay;
 }
 
-export const updateActivities: RequestHandler<{id: string}, IResponse, IRequest> = async (req, res) => {
+export const updateStays: RequestHandler<{id: string}, IResponse, IRequest> = async (req, res) => {
     try {
         const updateStay=await Stay.findByIdAndUpdate(
             {_id: req.params.id},
