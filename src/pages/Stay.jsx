@@ -1,15 +1,10 @@
 // pages/Stay.jsx
 import { useState, lazy, Suspense, useMemo } from "react";
+// eslint-disable-next-line no-unused-vars
 import { motion } from "framer-motion";
 import {
   Hotel,
   Star,
-  Wifi,
-  Coffee,
-  Utensils,
-  Car,
-  Waves,
-  Mountain,
   CheckCircle,
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";

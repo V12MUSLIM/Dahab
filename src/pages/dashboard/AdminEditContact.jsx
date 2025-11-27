@@ -94,13 +94,7 @@ export default function AdminEditContact() {
       <div className="mx-auto max-w-7xl space-y-6">
         {/* Header */}
         <div className="flex flex-col gap-4">
-          <Button
-            variant="ghost"
-            className="flex items-center gap-2 text-sm text-slate-600 dark:text-gray-300 hover:bg-slate-100 dark:hover:bg-gray-900 w-fit"
-            onClick={() => navigate("/dashboard")}
-          >
-            <ChevronLeft className="h-4 w-4" /> Back to Dashboard
-          </Button>
+
 
           <div>
             <h1 className="text-3xl font-bold tracking-tight text-slate-900 dark:text-white">
@@ -140,7 +134,7 @@ export default function AdminEditContact() {
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     placeholder="contact@example.com"
-                    className="bg-white dark:bg-black border-slate-200 dark:border-gray-800 text-slate-900 dark:text-white focus:ring-2 focus:ring-slate-400 dark:focus:ring-gray-600"
+                    className="bg-white dark:bg-black border-slate-200 dark:border-gray-800 font-semibold text-slate-900 dark:text-white focus:ring-2 focus:ring-slate-400 dark:focus:ring-gray-600"
                   />
                 </div>
 
@@ -158,7 +152,7 @@ export default function AdminEditContact() {
                     value={phone}
                     onChange={(e) => setPhone(e.target.value)}
                     placeholder="+20 1385922880"
-                    className="bg-white dark:bg-black border-slate-200 dark:border-gray-800 text-slate-900 dark:text-white focus:ring-2 focus:ring-slate-400 dark:focus:ring-gray-600"
+                    className="bg-white dark:bg-black border-slate-200 dark:border-gray-800 font-semibold text-slate-900 dark:text-white focus:ring-2 focus:ring-slate-400 dark:focus:ring-gray-600"
                   />
                 </div>
 

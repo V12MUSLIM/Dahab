@@ -13,11 +13,10 @@ import { useAuthStore } from "./store/authStore";
 import Loading from "@/components/Loading";
 import { useSyncUserToQuery } from "@/hooks/useSyncUserToQuery";
 import Forbidden from "./pages/403";
-import AdminEditContact from "./pages/dashboard/AdminEditContact";
-import AdminEditSocials from "./pages/dashboard/AdminEditSocials";
+const DashboardLayout = lazy(() => import("./layouts/DashboardLayout"));
 // EAGER LOAD
 import Home from "./pages/Home";
-
+import DashboardRoutes from "./pages/dashboard/Dashboardroutes";
 // LAZY LOAD
 // const Forbidden= lazy(() => import("./pages/403"));
 const Stay = lazy(() => import("./pages/Stay"));
@@ -36,10 +35,7 @@ const DineDetails = lazy(() => import("./components/sections/DineDetails"));
 const NotFound = lazy(() => import("./pages/404"));
 const LoginPage = lazy(() => import("./pages/Login"));
 const SignupPage = lazy(() => import("./pages/SignUp"));
-const Dashboard = lazy(() => import("./pages/dashboard/Dashboard"));
-const DashboardDestinations = lazy(() =>
-  import("./pages/dashboard/DashboardDestinations")
-);
+
 const Booking = lazy(() => import("./pages/Booking"));
 const Settings = lazy(() => import("./pages/ProfileSettings"));
 
@@ -197,40 +193,23 @@ function App() {
                   />
                 </Route>
 
-                <Route element={<ProtectedLayout allowedRoles={["admin"]} />}>
+                <Route
+                  element={
+                    <ProtectedLayout allowedRoles={["admin"]}>
+                      <DashboardLayout />
+                    </ProtectedLayout>
+                  }
+                >
                   <Route
-                    path="/dashboard"
+                    path="/dashboard/*"
                     element={
                       <Suspense fallback={<PageSkeleton />}>
-                        <Dashboard />
-                      </Suspense>
-                    }
-                  />
-                  <Route
-                    path="/dashboard/destinations"
-                    element={
-                      <Suspense fallback={<PageSkeleton />}>
-                        <DashboardDestinations />
-                      </Suspense>
-                    }
-                  />
-                  <Route
-                    path="/dashboard/contacts"
-                    element={
-                      <Suspense fallback={<PageSkeleton />}>
-                        <AdminEditContact />
-                      </Suspense>
-                    }
-                  />
-                  <Route
-                    path="/dashboard/socialmedia"
-                    element={
-                      <Suspense fallback={<PageSkeleton />}>
-                        <AdminEditSocials />
+                        <DashboardRoutes />
                       </Suspense>
                     }
                   />
                 </Route>
+
                 <Route
                   path="/403"
                   element={
@@ -253,7 +232,6 @@ function App() {
                     }
                   />
                 </Route>
-
                 {/* OAuth callback - no layout */}
                 <Route path="/auth/callback" element={<AuthCallback />} />
               </Routes>

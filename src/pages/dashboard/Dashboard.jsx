@@ -9,6 +9,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
+import { usePackages } from "@/hooks/usePackages";
 import {
   MapPin,
   Activity,
@@ -23,7 +24,7 @@ import {
   Eye,
   AlertCircle,
   Link,
-  ChevronLeft,
+  Bed,
   Phone,
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
@@ -34,6 +35,7 @@ const Dashboard = () => {
   const { contactQuery } = useContact();
 
   const { data: socialMedia, isLoading: isSocialsLoading } = socialsQuery;
+  const { packages, isLoading: isPackagesLoading } = usePackages();
   const { data: contactApiResponse, isLoading: isContactsLoading } =
     contactQuery;
   const socials = Array.isArray(socialMedia) ? socialMedia : [];
@@ -120,7 +122,7 @@ const Dashboard = () => {
       description: "Manage tour packages and deals",
       path: "/dashboard/packages",
       icon: Package,
-      count: 15,
+      count: isPackagesLoading ? "..." : packages?.length ?? 0,
       status: "active",
     },
     {
@@ -128,6 +130,14 @@ const Dashboard = () => {
       description: "View and manage all bookings",
       path: "/dashboard/bookings",
       icon: CalendarCheck,
+      count: 127,
+      status: "pending",
+    },
+    {
+      title: "Stays",
+      description: "View and manage all stays",
+      path: "/dashboard/stays",
+      icon: Bed,
       count: 127,
       status: "pending",
     },
@@ -200,16 +210,6 @@ const Dashboard = () => {
 
   return (
     <div className="min-h-screen bg-slate-50 dark:bg-black p-6">
-      <Button
-        variant="ghost"
-        className="flex items-center gap-2 text-sm text-slate-600 dark:text-gray-300 hover:bg-slate-100 dark:hover:bg-gray-900"
-        onClick={() => {
-          navigate("/");
-        }}
-      >
-        <ChevronLeft className="h-4 w-4" /> Exit
-      </Button>
-
       <div className="mx-auto max-w-7xl space-y-6">
         {/* Header */}
         <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">

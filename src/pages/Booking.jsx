@@ -347,7 +347,7 @@ export default function Booking() {
 
       <BookingStepsNav steps={BOOKING_STEPS} currentStep={currentStep} />
 
-      <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-3 gap-8 py-12 px-4">
+      <div className="max-w-7xl  mx-auto grid grid-cols-1 lg:grid-cols-3 gap-8 py-12 px-4">
         <div className="lg:col-span-2">
           {isDataLoading && currentStep === 2 ? (
             <LoadingSpinner />

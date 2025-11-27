@@ -8,7 +8,14 @@ import { CheckCircle2 } from "lucide-react";
 // eslint-disable-next-line no-unused-vars
 import { motion } from "framer-motion";
 
-export default function PackageDealsSection({ packages,badge,header,description }) {
+export default function PackageDealsSection({
+  packages,
+  badge,
+  header,
+  description,
+}) {
+
+
   return (
     <motion.div
       className="w-full py-20 px-4"
@@ -20,13 +27,13 @@ export default function PackageDealsSection({ packages,badge,header,description 
       <div className="max-w-7xl mx-auto">
         <div className="text-center mb-12">
           <Badge className="mb-4 bg-yellow-100 dark:bg-yellow-900/30 text-yellow-800 dark:text-yellow-400 border-yellow-300 dark:border-yellow-700">
-         {badge}
+            {badge}
           </Badge>
           <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-foreground mb-4">
             {header}
           </h2>
           <p className="text-lg sm:text-xl text-muted-foreground max-w-2xl mx-auto">
-          {description}
+            {description}
           </p>
         </div>
 
@@ -70,12 +77,12 @@ export default function PackageDealsSection({ packages,badge,header,description 
                       <li key={feature} className="flex items-start gap-3">
                         <CheckCircle2 className="w-5 h-5 text-yellow-600 dark:text-yellow-500 flex-shrink-0 mt-0.5" />
                         <span className="text-sm">{feature}</span>
+                        {console.log("packages length:", packages.length)}
                       </li>
                     ))}
                   </ul>
                   {pkg.popular ? (
-                   <PrimaryButton>Book Now</PrimaryButton>
-
+                    <PrimaryButton>Book Now</PrimaryButton>
                   ) : (
                     <SecondaryButton>Book Now</SecondaryButton>
                   )}

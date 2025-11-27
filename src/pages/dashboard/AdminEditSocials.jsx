@@ -21,23 +21,25 @@ import {
   CheckCircle2,
   Loader2,
   X,
-  ChevronLeft,
-  Link as LinkIcon,
+  LinkIcon,
   PlusCircle,
   AlertCircle,
+  Trash2,
+  ExternalLink,
 } from "lucide-react";
 import { toast } from "sonner";
-import { useNavigate } from "react-router-dom";
 import { Label } from "@/components/ui/label";
-import { useSocials } from "@/hooks/useSocials"; // Adjust path as needed
+import { useSocials } from "@/hooks/useSocials";
+import { Separator } from "@/components/ui/separator";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 export default function AdminEditSocials() {
-  const navigate = useNavigate();
-
-  // Use the hook
   const { socialsQuery, addSocial, updateSocial } = useSocials();
-
-  // Handle loading and error states
   const { data: socialMedia, isLoading, isError, error } = socialsQuery;
 
   const [editing, setEditing] = useState(null);
@@ -58,21 +60,15 @@ export default function AdminEditSocials() {
     const icon = (newSocial.icon || "").trim();
     const label = (newSocial.label || "").trim();
     const color = (newSocial.color || "").trim();
+
     if (!name || !href || !icon || !label || !color) {
-      toast.warning("Fields cannot be empty.");
+      toast.warning("All fields are required");
       return;
     }
 
     try {
-      await addSocial.mutateAsync({
-        name,
-        href,
-        icon,
-        label,
-        color,
-      });
-
-      toast.success(`${name} added to social media!`);
+      await addSocial.mutateAsync({ name, href, icon, label, color });
+      toast.success(`${name} added successfully!`);
       setNewSocial({ name: "", href: "", icon: "", label: "", color: "" });
       setAdding(false);
     } catch (err) {
@@ -82,7 +78,7 @@ export default function AdminEditSocials() {
   };
 
   const openEdit = (item) => {
-    setEditing({ ...item }); // Create a copy to avoid mutating original
+    setEditing({ ...item });
   };
 
   const closeEdit = () => {
@@ -91,7 +87,6 @@ export default function AdminEditSocials() {
 
   const handleUpdate = async (e) => {
     e?.preventDefault();
-
     if (!editing?._id) return;
 
     try {
@@ -112,181 +107,173 @@ export default function AdminEditSocials() {
     }
   };
 
-  // Loading state
   if (isLoading) {
     return (
-      <div
-        className="min-h-screen bg-slate-50 dark:bg-black flex items-center justify-center"
-        role="status"
-        aria-live="polite"
-      >
-        <div className="flex items-center gap-2 text-slate-900 dark:text-white">
-          <Loader2 className="h-8 w-8 animate-spin" />
-          <span>Loading social media links...</span>
-        </div>
+      <div className="min-h-screen flex justify-center items-center">
+        <Loader2 className="animate-spin h-8 w-8" />
       </div>
     );
   }
 
-  // Error state
   if (isError) {
     return (
-      <div className="min-h-screen bg-slate-50 dark:bg-black flex items-center justify-center p-6">
-        <div className="max-w-md w-full bg-white dark:bg-zinc-950 border border-red-200 dark:border-red-800 rounded-lg p-6">
-          <div className="flex items-center gap-3 text-red-600 dark:text-red-400 mb-4">
-            <AlertCircle className="h-6 w-6" />
-            <h2 className="text-lg font-semibold">
-              Error Loading Social Media
-            </h2>
-          </div>
-          <p className="text-slate-600 dark:text-gray-400 mb-4">
-            {error?.message ||
-              "Failed to load social media links. Please try again."}
-          </p>
-          <Button onClick={() => socialsQuery.refetch()} className="w-full">
-            Retry
-          </Button>
-        </div>
+      <div className="min-h-screen p-6 flex items-center justify-center">
+        <Card className="max-w-md w-full bg-zinc-950 border-red-500/20">
+          <CardHeader>
+            <div className="flex items-center gap-3 text-red-400 mb-2">
+              <AlertCircle className="h-6 w-6" />
+              <CardTitle className="text-lg">Error Loading Social Media</CardTitle>
+            </div>
+            <CardDescription className="text-gray-400">
+              {error?.message || "Failed to load social media links. Please try again."}
+            </CardDescription>
+          </CardHeader>
+          <CardFooter>
+            <Button
+              onClick={() => socialsQuery.refetch()}
+              className="w-full bg-amber-500 hover:bg-amber-600"
+            >
+              Retry
+            </Button>
+          </CardFooter>
+        </Card>
       </div>
     );
   }
 
-  // Ensure socialMedia is an array
   const socials = Array.isArray(socialMedia) ? socialMedia : [];
 
   return (
-    <div className="min-h-screen bg-slate-50 dark:bg-black p-6">
+    <div className="min-h-screen p-6">
       <div className="mx-auto max-w-7xl space-y-6">
-        {/* Header */}
-        <div className="flex flex-col gap-4">
-          <Button
-            variant="ghost"
-            className="flex items-center gap-2 text-sm text-slate-600 dark:text-gray-300 hover:bg-slate-100 dark:hover:bg-gray-900 w-fit"
-            onClick={() => navigate("/dashboard")}
-          >
-            <ChevronLeft className="h-4 w-4" /> Back to Dashboard
-          </Button>
+        <div className="flex flex-col gap-10">
+          <header className="flex flex-col gap-3">
+            <div className="flex items-center justify-between">
+              <div>
+                <h1 className="text-3xl font-bold tracking-tight text-slate-900 dark:text-white">
+                  Social Media Links
+                </h1>
+                <p className="text-sm text-slate-600 dark:text-gray-400 mt-2">
+                  Manage your social media profile links displayed on the website
+                </p>
+              </div>
+              <Button
+                onClick={() => setAdding(true)}
+                className="bg-amber-500 hover:bg-amber-600 text-white"
+              >
+                <PlusCircle className="w-4 h-4 mr-2" />
+                Add Social Media
+              </Button>
+            </div>
+            <Separator className="bg-zinc-800" />
+          </header>
 
-          <div>
-            <h1 className="text-3xl font-bold tracking-tight text-slate-900 dark:text-white">
-              Social Media Links
-            </h1>
-            <p className="mt-1 text-sm text-slate-600 dark:text-gray-400">
-              Manage your social media profile links displayed on the website
-            </p>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+            {socials.map((s) => (
+              <Card
+                key={s._id}
+                className="bg-zinc-950 border-zinc-800 hover:border-amber-500/50 transition-all duration-300 hover:shadow-lg hover:shadow-amber-500/10 group"
+              >
+                <CardHeader className="pb-3">
+                  <div className="flex items-start gap-3">
+                    {s.icon && (
+                      <div className="p-2.5 rounded-lg bg-white group-hover:bg-zinc-800 transition-colors border border-zinc-800 shrink-0">
+                        <img
+                          src={s.icon}
+                          alt=""
+                          className="h-6 w-6 object-contain"
+                          onError={(e) => {
+                            e.target.style.display = "none";
+                          }}
+                        />
+                      </div>
+                    )}
+                    <div className="flex-1 min-w-0">
+                      <CardTitle className="text-base text-white group-hover:text-amber-500 transition-colors mb-1">
+                        {s.name}
+                      </CardTitle>
+                      <CardDescription className="text-gray-400 text-xs flex items-center gap-1">
+                        <ExternalLink className="h-3 w-3 shrink-0" />
+                        <span className="truncate">{s.href}</span>
+                      </CardDescription>
+                    </div>
+                  </div>
+                </CardHeader>
+
+                <CardFooter className="pt-3 flex gap-2">
+                  <TooltipProvider>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => openEdit(s)}
+                          className="flex-1 border-zinc-800 hover:border-amber-500/50 hover:bg-zinc-900"
+                        >
+                          <Pencil className="h-4 w-4" />
+                        </Button>
+                      </TooltipTrigger>
+                      <TooltipContent>
+                        <p>Edit {s.name}</p>
+                      </TooltipContent>
+                    </Tooltip>
+
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => console.log("Delete:", s._id)}
+                          className="border-zinc-800 hover:border-red-500/50 hover:bg-zinc-900 hover:text-red-500"
+                        >
+                          <Trash2 className="h-4 w-4" />
+                        </Button>
+                      </TooltipTrigger>
+                      <TooltipContent>
+                        <p>Delete {s.name}</p>
+                      </TooltipContent>
+                    </Tooltip>
+                  </TooltipProvider>
+                </CardFooter>
+              </Card>
+            ))}
+
+           
           </div>
         </div>
 
-        {/* Grid layout */}
-        <div
-          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6"
-          role="list"
-          aria-label="Social media links"
-        >
-          {socials.map((s) => (
-            <Card
-              key={s._id}
-              role="listitem"
-              className="dark:bg-zinc-950 dark:border-gray-800 hover:border-slate-300 dark:hover:border-gray-700 transition"
-            >
-              <CardHeader>
-                <div className="flex items-center gap-3">
-                  {s.icon && (
-                    <div
-                      className="p-2.5 rounded-lg bg-slate-100 dark:bg-white"
-                      aria-hidden="true"
-                    >
-                      <img
-                        src={s.icon}
-                        alt=""
-                        className="h-6 w-6 object-contain"
-                        onError={(e) => {
-                          e.target.style.display = "none";
-                        }}
-                      />
-                    </div>
-                  )}
-                  <div className="flex-1 min-w-0">
-                    <CardTitle className="text-base text-slate-900 dark:text-white">
-                      {s.name}
-                    </CardTitle>
-                    <CardDescription className="text-slate-600 dark:text-gray-400 truncate text-xs mt-0.5">
-                      {s.href}
-                    </CardDescription>
-                  </div>
-                </div>
-              </CardHeader>
-
-              <CardFooter>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => openEdit(s)}
-                  aria-label={`Edit ${s.name} link`}
-                  className="border-slate-200 dark:border-gray-700 text-slate-900 dark:text-gray-300 hover:bg-slate-100 dark:hover:bg-gray-900 w-full"
-                >
-                  <Pencil className="h-4 w-4 mr-2" aria-hidden="true" />
-                  Edit Link
-                </Button>
-              </CardFooter>
-            </Card>
-          ))}
-
-          {/* Add New Social Media Card */}
-          <Card
-            role="listitem"
-            className="dark:bg-zinc-950 dark:border-gray-800 hover:border-slate-300 dark:hover:border-gray-700 transition cursor-pointer min-h-[180px] flex flex-col items-center justify-center gap-3"
-            onClick={() => setAdding(true)}
-          >
-            <PlusCircle className="w-12 h-12 text-slate-400 dark:text-gray-600" />
-            <p className="text-lg font-medium text-slate-600 dark:text-gray-400">
-              Add New Social Media
-            </p>
-          </Card>
-        </div>
-
-        {/* Edit Dialog */}
         {/* Edit Dialog */}
         <Dialog open={!!editing} onOpenChange={closeEdit}>
-          <DialogContent
-            className="bg-white dark:bg-zinc-950 border border-slate-200 dark:border-gray-800 text-slate-900 dark:text-white max-w-md"
-            aria-describedby="dialog-description"
-          >
+          <DialogContent className="bg-zinc-950 border-zinc-800 text-white max-w-md">
             <DialogHeader>
-              <DialogTitle className="dark:text-white">
-                Edit Social Media
-              </DialogTitle>
-              <DialogDescription
-                id="dialog-description"
-                className="dark:text-gray-400"
-              >
+              <DialogTitle className="text-white">Edit Social Media</DialogTitle>
+              <DialogDescription className="text-gray-400">
                 Update your social media information
               </DialogDescription>
             </DialogHeader>
 
             {editing && (
               <div className="space-y-4 mt-4">
-                <div className="flex items-center gap-3 p-3 rounded-lg bg-slate-50 dark:bg-black border border-slate-200 dark:border-gray-800">
+                <div className="flex items-center gap-3 p-3 rounded-lg bg-zinc-900 border border-zinc-800">
                   {editing.icon && (
-                    <div className="bg-white dark:bg-white p-2 rounded-lg">
+                    <div className="bg-zinc-800 p-2 rounded-lg">
                       <img
                         src={editing.icon}
                         alt=""
                         className="h-7 w-7 object-contain"
-                        aria-hidden="true"
                         onError={(e) => {
                           e.target.style.display = "none";
                         }}
                       />
                     </div>
                   )}
-                  <div className="text-base font-medium text-slate-900 dark:text-white">
+                  <div className="text-base font-medium text-white">
                     {editing.name}
                   </div>
                 </div>
 
-                <div>
-                  <Label htmlFor="edit-name" className="text-sm font-medium">
+                <div className="grid gap-2">
+                  <Label htmlFor="edit-name" className="text-gray-200">
                     Name
                   </Label>
                   <Input
@@ -295,16 +282,13 @@ export default function AdminEditSocials() {
                     onChange={(e) =>
                       setEditing({ ...editing, name: e.target.value })
                     }
-                    className="bg-white dark:bg-black border-slate-200 dark:border-gray-800 text-slate-900 dark:text-white focus:ring-2 focus:ring-slate-400 dark:focus:ring-gray-600"
+                    className="bg-zinc-900 border-zinc-800 text-gray-200"
                     placeholder="e.g., Facebook"
                   />
                 </div>
 
-                <div>
-                  <Label
-                    htmlFor="edit-href"
-                    className="text-sm font-medium flex items-center gap-2"
-                  >
+                <div className="grid gap-2">
+                  <Label htmlFor="edit-href" className="text-gray-200 flex items-center gap-2">
                     <LinkIcon className="h-4 w-4" />
                     Profile URL
                   </Label>
@@ -315,13 +299,13 @@ export default function AdminEditSocials() {
                     onChange={(e) =>
                       setEditing({ ...editing, href: e.target.value })
                     }
-                    className="bg-white dark:bg-black border-slate-200 dark:border-gray-800 text-slate-900 dark:text-white focus:ring-2 focus:ring-slate-400 dark:focus:ring-gray-600"
+                    className="bg-zinc-900 border-zinc-800 text-gray-200"
                     placeholder="https://..."
                   />
                 </div>
 
-                <div>
-                  <Label htmlFor="edit-icon" className="text-sm font-medium">
+                <div className="grid gap-2">
+                  <Label htmlFor="edit-icon" className="text-gray-200">
                     Icon URL
                   </Label>
                   <Input
@@ -330,13 +314,13 @@ export default function AdminEditSocials() {
                     onChange={(e) =>
                       setEditing({ ...editing, icon: e.target.value })
                     }
-                    className="bg-white dark:bg-black border-slate-200 dark:border-gray-800 text-slate-900 dark:text-white focus:ring-2 focus:ring-slate-400 dark:focus:ring-gray-600"
+                    className="bg-zinc-900 border-zinc-800 text-gray-200"
                     placeholder="/icons/facebook.svg"
                   />
                 </div>
 
-                <div>
-                  <Label htmlFor="edit-label" className="text-sm font-medium">
+                <div className="grid gap-2">
+                  <Label htmlFor="edit-label" className="text-gray-200">
                     Label
                   </Label>
                   <Input
@@ -345,13 +329,13 @@ export default function AdminEditSocials() {
                     onChange={(e) =>
                       setEditing({ ...editing, label: e.target.value })
                     }
-                    className="bg-white dark:bg-black border-slate-200 dark:border-gray-800 text-slate-900 dark:text-white focus:ring-2 focus:ring-slate-400 dark:focus:ring-gray-600"
+                    className="bg-zinc-900 border-zinc-800 text-gray-200"
                     placeholder="bg-blue-600"
                   />
                 </div>
 
-                <div>
-                  <Label htmlFor="edit-color" className="text-sm font-medium">
+                <div className="grid gap-2">
+                  <Label htmlFor="edit-color" className="text-gray-200">
                     Hover Color Classes
                   </Label>
                   <Input
@@ -360,18 +344,26 @@ export default function AdminEditSocials() {
                     onChange={(e) =>
                       setEditing({ ...editing, color: e.target.value })
                     }
-                    className="bg-white dark:bg-black border-slate-200 dark:border-gray-800 text-slate-900 dark:text-white focus:ring-2 focus:ring-slate-400 dark:focus:ring-gray-600"
-                    placeholder="hover:bg-gradient-to-r hover:from-blue-600 hover:to-blue-500"
+                    className="bg-zinc-900 border-zinc-800 text-gray-200"
+                    placeholder="hover:bg-gradient-to-r hover:from-blue-600"
                   />
                 </div>
               </div>
             )}
 
-            <DialogFooter className="mt-6 flex flex-col sm:flex-row gap-2">
+            <DialogFooter className="gap-2">
+              <Button
+                variant="outline"
+                onClick={closeEdit}
+                className="border-zinc-800 hover:bg-zinc-900"
+              >
+                <X className="h-4 w-4 mr-2" />
+                Cancel
+              </Button>
               <Button
                 onClick={handleUpdate}
                 disabled={updateSocial.isPending}
-                className="bg-slate-900 dark:bg-white text-white dark:text-black hover:bg-slate-800 dark:hover:bg-gray-200 w-full sm:w-auto"
+                className="bg-amber-500 hover:bg-amber-600"
               >
                 {updateSocial.isPending ? (
                   <>
@@ -387,38 +379,23 @@ export default function AdminEditSocials() {
                   "Save Changes"
                 )}
               </Button>
-
-              <Button
-                variant="outline"
-                onClick={closeEdit}
-                className="border-slate-200 dark:border-gray-700 text-slate-900 dark:text-gray-300 hover:bg-slate-100 dark:hover:bg-gray-900 w-full sm:w-auto"
-              >
-                <X className="h-4 w-4 mr-2" />
-                Cancel
-              </Button>
             </DialogFooter>
           </DialogContent>
         </Dialog>
 
         {/* Add Dialog */}
         <Dialog open={adding} onOpenChange={setAdding}>
-          <DialogContent
-            className="bg-white dark:bg-zinc-950 border border-slate-200 dark:border-gray-800 text-slate-900 dark:text-white max-w-md"
-            aria-describedby="add-dialog-description"
-          >
+          <DialogContent className="bg-zinc-950 border-zinc-800 text-white max-w-md">
             <DialogHeader>
               <DialogTitle>Add Social Media</DialogTitle>
-              <DialogDescription
-                id="add-dialog-description"
-                className="dark:text-gray-400"
-              >
+              <DialogDescription className="text-gray-400">
                 Add a new social media to your website.
               </DialogDescription>
             </DialogHeader>
 
             <div className="space-y-4 mt-4">
-              <div>
-                <Label htmlFor="add-name" className="text-sm font-medium">
+              <div className="grid gap-2">
+                <Label htmlFor="add-name" className="text-gray-200">
                   Name
                 </Label>
                 <Input
@@ -427,12 +404,13 @@ export default function AdminEditSocials() {
                   onChange={(e) =>
                     setNewSocial({ ...newSocial, name: e.target.value })
                   }
+                  className="bg-zinc-900 border-zinc-800 text-gray-200"
                   placeholder="e.g., Facebook"
                 />
               </div>
 
-              <div>
-                <Label htmlFor="add-href" className="text-sm font-medium">
+              <div className="grid gap-2">
+                <Label htmlFor="add-href" className="text-gray-200">
                   URL
                 </Label>
                 <Input
@@ -442,12 +420,13 @@ export default function AdminEditSocials() {
                   onChange={(e) =>
                     setNewSocial({ ...newSocial, href: e.target.value })
                   }
+                  className="bg-zinc-900 border-zinc-800 text-gray-200"
                   placeholder="https://example.com/your-page"
                 />
               </div>
 
-              <div>
-                <Label htmlFor="add-icon" className="text-sm font-medium">
+              <div className="grid gap-2">
+                <Label htmlFor="add-icon" className="text-gray-200">
                   Icon URL
                 </Label>
                 <Input
@@ -456,12 +435,13 @@ export default function AdminEditSocials() {
                   onChange={(e) =>
                     setNewSocial({ ...newSocial, icon: e.target.value })
                   }
+                  className="bg-zinc-900 border-zinc-800 text-gray-200"
                   placeholder="/icons/facebook.svg"
                 />
-                <p className="text-sm text-slate-400 mt-1">
-                  *You can pick icons from{" "}
+                <p className="text-xs text-gray-400">
+                  Pick icons from{" "}
                   <a
-                    className="underline hover:text-slate-600"
+                    className="text-amber-500 hover:text-amber-400 underline"
                     href="https://simpleicons.org"
                     target="_blank"
                     rel="noopener noreferrer"
@@ -470,8 +450,9 @@ export default function AdminEditSocials() {
                   </a>
                 </p>
               </div>
-              <div>
-                <Label htmlFor="add-label" className="text-sm font-medium">
+
+              <div className="grid gap-2">
+                <Label htmlFor="add-label" className="text-gray-200">
                   Label
                 </Label>
                 <Input
@@ -480,11 +461,13 @@ export default function AdminEditSocials() {
                   onChange={(e) =>
                     setNewSocial({ ...newSocial, label: e.target.value })
                   }
+                  className="bg-zinc-900 border-zinc-800 text-gray-200"
                   placeholder="bg-blue-600"
                 />
               </div>
-              <div>
-                <Label htmlFor="add-color" className="text-sm font-medium">
+
+              <div className="grid gap-2">
+                <Label htmlFor="add-color" className="text-gray-200">
                   Hover Color Classes
                 </Label>
                 <Input
@@ -493,16 +476,27 @@ export default function AdminEditSocials() {
                   onChange={(e) =>
                     setNewSocial({ ...newSocial, color: e.target.value })
                   }
-                  placeholder="hover:bg-gradient-to-r hover:from-blue-600 hover:to-blue-500"
+                  className="bg-zinc-900 border-zinc-800 text-gray-200"
+                  placeholder="hover:bg-gradient-to-r hover:from-blue-600"
                 />
               </div>
             </div>
 
-            <DialogFooter className="mt-6 gap-2">
+            <DialogFooter className="gap-2">
+              <Button
+                variant="outline"
+                onClick={() => {
+                  setAdding(false);
+                  setNewSocial({ name: "", href: "", icon: "", label: "", color: "" });
+                }}
+                className="border-zinc-800 hover:bg-zinc-900"
+              >
+                Cancel
+              </Button>
               <Button
                 onClick={handleAddSocial}
                 disabled={addSocial.isPending}
-                className="bg-slate-900 dark:bg-white text-white dark:text-black hover:bg-slate-800 dark:hover:bg-gray-200"
+                className="bg-amber-500 hover:bg-amber-600"
               >
                 {addSocial.isPending ? (
                   <>
@@ -512,16 +506,6 @@ export default function AdminEditSocials() {
                 ) : (
                   "Add Social"
                 )}
-              </Button>
-              <Button
-                variant="outline"
-                onClick={() => {
-                  setAdding(false);
-                  setNewSocial({ name: "", href: "", icon: "" });
-                }}
-                className="border-slate-200 dark:border-gray-700"
-              >
-                Cancel
               </Button>
             </DialogFooter>
           </DialogContent>
