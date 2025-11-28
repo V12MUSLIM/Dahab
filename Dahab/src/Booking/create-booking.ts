@@ -6,6 +6,7 @@ import { Booking } from "./booking-model";
 
 
 export const createBooking: RequestHandler = async (req, res) => {
+    console.log("BODY ====>", req.body);
     try {
         const booking = await Booking.create({
             ...req.body,
@@ -16,6 +17,7 @@ export const createBooking: RequestHandler = async (req, res) => {
                 currency: "usd",
             },
         });
+        
 
         res.status(201).json({
             success: true,
