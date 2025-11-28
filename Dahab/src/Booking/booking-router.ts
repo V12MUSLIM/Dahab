@@ -1,12 +1,12 @@
 import express from "express";
-import { addBooking } from "./add-booking";
+import { createBooking } from "./create-booking";
 
 
 
 
 const router = express.Router();
 
-router.get('/',addBooking)
+router.post('/create', createBooking)
 
 
 
