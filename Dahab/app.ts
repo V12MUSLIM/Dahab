@@ -21,12 +21,13 @@ import stayRouter from "./src/stay/stay-router";
 import socialMediaRouter from "./src/social-media/social-media-router";
 import restaurantRouter from "./src/Dini/restaurant/restaurant-router";
 import paymentRouter from "./src/Booking/payments/payment-router";
-import { uploadSingle, uploadArray } from "./src/middlewares/multer-middleware";
+// import { uploadSingle, uploadArray } from "./src/middlewares/multer-middleware";
+import bookingRouter from "./src/Booking/booking-router";
 //       end imports routers
 import { sanitizeInput } from "./src/middlewares/sanitize.middleware";
 import session from "express-session";
 import { stripeWebhook } from "./src/Booking/payments/payment-webhook";
-import { addBooking } from "./src/Booking/add-booking";
+
 
 
 dotenv.config();
@@ -111,7 +112,7 @@ app.use("/api/experience", experienceRouter)
 app.use("/api/stay", stayRouter)
 app.use("/api/contact", contactRouter)
 app.use("/api/social-media", socialMediaRouter)
-app.use("/api/booking", addBooking)
+app.use("/api/booking", bookingRouter)
 app.use("/api/payment", paymentRouter)
 app.post(
     "/api/payments/webhook",
