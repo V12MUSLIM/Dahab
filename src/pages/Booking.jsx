@@ -271,7 +271,7 @@ export default function Booking() {
         nights,
         paymentMethodId: paymentMethod?.id,
       };
-      const res = await fetch(`${import.meta.env.VITE_API_BASE_URL}${API_ENDPOINTS.CREATE_BOOKING}`, {
+      const res = await fetch(`${import.meta.env.VITE_API_URL}${API_ENDPOINTS.CREATE_BOOKING}`, {
         method: "POST",
         headers: { "Content-Type": "application/json", "X-CSRF-Token": getCsrfToken() },
         credentials: "include",
