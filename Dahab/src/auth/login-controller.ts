@@ -6,7 +6,6 @@ import { User } from "../models/user-model";
 import bcrypt from "bcrypt";
 import { jwtService } from "../services/jwt.service";
 import { body } from "express-validator";
-import { log } from "console";
 
 
 export const loginValidation = [

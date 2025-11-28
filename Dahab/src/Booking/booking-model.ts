@@ -65,7 +65,7 @@ const bookingSchema = new mongoose.Schema(
                     item: {
                         type: mongoose.Schema.Types.ObjectId,
                         required: true,
-                        refPath: "services.kind",
+                        // refPath: "services.kind",
                     },
                     kind: {
                         type: String,
@@ -114,7 +114,7 @@ const bookingSchema = new mongoose.Schema(
             default: "trip-details",
         },
     },
-    { timestamps: true }
+    // { timestamps: true }
 );
 
 export const Booking = mongoose.model("Booking", bookingSchema);
