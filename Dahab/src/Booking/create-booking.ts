@@ -1,23 +1,26 @@
 import { RequestHandler } from "express";
 import { Booking } from "./booking-model";
 
-
-
-
-
 export const createBooking: RequestHandler = async (req, res) => {
+    console.log("📍 Booking endpoint hit!");
     console.log("BODY ====>", req.body);
+    
     try {
         const booking = await Booking.create({
-            ...req.body,
+            userId: req.body.userId,
+            tripDetails: req.body.tripDetails,
+            services: req.body.services || [],
+            userInfo: req.body.userInfo,
             paymentDetails: {
-                paymentIntentId: "",
-                status: "pending",
-                amount: req.body.amount,
-                currency: "usd",
+                paymentIntentId: req.body.paymentDetails?.paymentIntentId || "",
+                status: req.body.paymentDetails?.status || "pending",
+                amount: req.body.paymentDetails?.amount,
+                currency: req.body.paymentDetails?.currency || "usd",
             },
+            phase: req.body.phase || "trip-details",
         });
         
+        console.log("✅ Booking created successfully:", booking._id);
 
         res.status(201).json({
             success: true,
@@ -26,6 +29,7 @@ export const createBooking: RequestHandler = async (req, res) => {
         });
 
     } catch (error: any) {
+        console.error("❌ Booking error:", error.message);
         res.status(500).json({
             success: false,
             message: error.message || "Error adding booking",
@@ -36,28 +40,62 @@ export const createBooking: RequestHandler = async (req, res) => {
 
 
 
+
+
+
+
 // import { RequestHandler } from "express";
-// import { Booking, IBooking } from "./booking-model";
+// import { Booking } from "./booking-model";
 
-
-// interface IResponse {
-//     message: string
-// }
-
-// export const createBooking:RequestHandler<{},IResponse> = async (req, res) => {
-//     try{
-//         await Booking.create({
+// export const createBooking: RequestHandler = async (req, res) => {
+//     console.log("BODY ====>", req.body);
+//     try {
+//         const booking = await Booking.create({
 //             ...req.body,
 //             paymentDetails: {
 //                 paymentIntentId: "",
 //                 status: "pending",
-//                 amount:req.body.amount,
+//                 amount: req.body.amount,
 //                 currency: "usd",
-//             }
+//             },
 //         });
-//         res.status(201).json({message:"Booking added successfully"});
+        
+
+//         res.status(201).json({
+//             success: true,
+//             message: "Booking created successfully",
+//             booking,
+//         });
 
 //     } catch (error: any) {
-//         res.status(500).json({message:error.message || "Error adding Booking"});
+//         res.status(500).json({
+//             success: false,
+//             message: error.message || "Error adding booking",
+//         });
 //     }
-// }
+// };
+// // import { RequestHandler } from "express";
+// // import { Booking, IBooking } from "./booking-model";
+
+
+// // interface IResponse {
+// //     message: string
+// // }
+
+// // export const createBooking:RequestHandler<{},IResponse> = async (req, res) => {
+// //     try{
+// //         await Booking.create({
+// //             ...req.body,
+// //             paymentDetails: {
+// //                 paymentIntentId: "",
+// //                 status: "pending",
+// //                 amount:req.body.amount,
+// //                 currency: "usd",
+// //             }
+// //         });
+// //         res.status(201).json({message:"Booking added successfully"});
+
+// //     } catch (error: any) {
+// //         res.status(500).json({message:error.message || "Error adding Booking"});
+// //     }
+// // }

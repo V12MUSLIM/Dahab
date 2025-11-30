@@ -21,13 +21,29 @@ export const loginValidation = [
 export const loginHandler: RequestHandler = async (req, res, next) => {
     try {
         const { email, password } = req.body as { email: string; password: string };
-        if (!email || !password) return res.status(400).json({ message: "Missing credentials" });
+        if (!email || !password) {
+            return next({
+                status: 400,
+                message: "Missing credentials"});
+        }
+            // return res.status(400).json({ message: "Missing credentials" });
 
         const user = await User.findOne({ email }).select("+password").exec();
-        if (!user || !user.password) return res.status(400).json({ message: "Invalid email or password" });
-
+        if (!user || !user.password) {
+            // return res.status(400).json({ message: "Invalid email or password" });
+        return next({
+                status: 401,
+                message: "Invalid email or password"
+            });
+        }
         const validPassword = await bcrypt.compare(password, user.password);
-        if (!validPassword) return res.status(400).json({ message: "Invalid email or password" });
+        if (!validPassword)  {
+            return next({
+                status: 401,
+                message: "Invalid email or password"
+            });
+        }
+            // return res.status(400).json({ message: "Invalid email or password" });
 
         const token = jwtService.createToken({ id: user._id, email: user.email, role: user.role }, { expiresIn: "2h" });
         const refreshToken = jwtService.createToken(
