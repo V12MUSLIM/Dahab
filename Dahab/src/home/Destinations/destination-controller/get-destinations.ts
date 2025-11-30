@@ -10,7 +10,7 @@ interface IResponse{
 
 export const getDestination:RequestHandler<{},IResponse,{}> =async(req,res)=>{
     const destinations=await Destination.find().
-    select("-_id -__v");
+    select("-_id-__v");
     if(!destinations){
         return res.status(404).json({message:"Destination not found"});
     }
