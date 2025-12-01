@@ -13,7 +13,6 @@ export const isAuthenticated: RequestHandler = (req, res, next) => {
     try {
         req.user = <UserToken>jwt.verify(token, process.env.secretKey!);
         // console.log(jwt.verify(token, process.env.secretKey!));
-        
         next();
     } catch (error) {
         res.status(401).json({ message: "Unauthorized, please login" });

@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import Stripe from "stripe";
 import { Booking } from "../booking-model"
+import { set } from "mongoose";
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY as string);
 
@@ -34,7 +35,7 @@ export const createCheckoutSession = async (req: Request, res: Response) => {
             success_url: `${process.env.FRONTEND_URL}/payment-success?bookingId=${bookingId}`,
             cancel_url: `${process.env.FRONTEND_URL}/payment-failed?bookingId=${bookingId}`,
         });
-
+// set(booking, "paymentDetails.status", "processing");
         // 3) Return Session URL
         return res.json({ url: session.url });
     } catch (err) {

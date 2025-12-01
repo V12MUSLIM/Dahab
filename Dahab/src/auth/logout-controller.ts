@@ -25,8 +25,21 @@ export const logoutHandler: RequestHandler<{}, IResponse, {}> = async (req, res)
             return res.json({ message: "Logout successful google account" });
         }
 
-        res.clearCookie("token");
-        res.clearCookie("refreshToken");
+        res.clearCookie("token", {
+            httpOnly: true,
+            sameSite: "strict",
+            secure: process.env.NODE_ENV === "production",
+            path: "/"
+        });
+
+        res.clearCookie("refreshToken", {
+            httpOnly: true,
+            sameSite: "strict",
+            secure: process.env.NODE_ENV === "production",
+            path: "/"
+        });
+        // res.clearCookie("token");
+        // res.clearCookie("refreshToken");
         return res.json({ message: "Logout successful with email account" });
     } catch (err) {
         console.error("Logout error:", err);

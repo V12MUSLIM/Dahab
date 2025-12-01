@@ -6,7 +6,7 @@ export const isAuthorized = (...roles: Role[]): RequestHandler => {
     if (req.user) {
       if (roles.includes(req.user.role)) {
         next();
-      } else {
+      } else { 
         res.status(403).json({ message: "Forbidden" });
       }
     } else {

@@ -1,7 +1,7 @@
 // jwt.service.ts 
 import jwt from "jsonwebtoken";
 
-const SECRET = process.env.secretKey!;
+const SECRET = process.env.secretKey;
 if (!SECRET) throw new Error("JWT_SECRET not set");
 
 export const jwtService = {
