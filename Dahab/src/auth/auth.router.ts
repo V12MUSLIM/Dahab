@@ -2,14 +2,15 @@ import express, { Request, Response } from "express";
 import passport from "../config/passport";
 import { uploadSingle, uploadArray } from "../middlewares/multer-middleware";
 import { registerHandler } from "./register-controller";
-import { loginHandler } from "./login-controller";
+import { loginHandler, loginValidation } from "./login-controller";
 import { logoutHandler } from "./logout-controller";
 import { refreshTokenHandler } from "./refresh-controller";
+import { handleValidationErrors } from "../middlewares/handleValidationErrors";
 
 const router = express.Router();
 
 router.post("/register", uploadSingle("picture"), registerHandler);
-router.post("/login", loginHandler);
+router.post("/login",loginValidation,handleValidationErrors,loginHandler);
 router.post("/refresh", refreshTokenHandler);
 router.post("/register", registerHandler);
 router.delete("/logout", logoutHandler);

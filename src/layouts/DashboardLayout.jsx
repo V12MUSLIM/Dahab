@@ -1,6 +1,6 @@
 import React from "react";
 import { Button } from "@/components/ui/button";
-import { useNavigate, useLocation } from "react-router-dom";
+import { useNavigate, useLocation,Outlet } from "react-router-dom";
 import {
   LayoutDashboard,
   MapPin,
@@ -19,7 +19,7 @@ import {
 } from "lucide-react";
 import { useAuthStore } from "@/store/authStore";
 import { ThemeToggle } from "@/components/theme-toggle";
-const DashboardLayout = ({ children }) => {
+const DashboardLayout = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const { logout, user } = useAuthStore();
@@ -100,7 +100,7 @@ const DashboardLayout = ({ children }) => {
           </div>
 
           <div className="ml-auto flex items-center gap-2">
-            <ThemeToggle/>
+            <ThemeToggle />
             <Button
               variant="ghost"
               size="icon"
@@ -256,7 +256,9 @@ const DashboardLayout = ({ children }) => {
       </aside>
 
       {/* Main content */}
-      <main className="md:ml-64 min-h-screen">{children}</main>
+      <main className="md:ml-64 min-h-screen">
+        <Outlet />
+      </main>
     </div>
   );
 };

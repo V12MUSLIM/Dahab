@@ -13,6 +13,9 @@ import {
 } from "@/components/customComponents/FormButtons";
 import { Spinner } from "@/components/ui/spinner";
 import { toast } from "sonner";
+import { useMutation } from "@tanstack/react-query";
+import { useAuthStore } from "@/store/authStore";
+import api from "@/api/axios";
 
 // Signup Input Component (optimized for signup page styling)
 const SignupInput = ({
@@ -118,28 +121,59 @@ export default function SignupPage() {
   });
 
   const agreedToTerms = watch("agreedToTerms");
-//google signup foraward
+  //google signup foraward
   //////////////////////////////////////////////////////////////////
   const handleGoogleSignup = () => {
     const apiUrl = import.meta.env.VITE_API_URL;
     window.open(`${apiUrl}/auth/google`, "_self");
   };
   /////////////////////////////////////////////////////////////////
-  const onSubmit = async (data) => {
-    try {
-      console.log("Signup data:", data);
-      // TODO: Add your API call here
-      // const response = await signupUser(data);
 
-      // Simulate API call
-      await new Promise((resolve) => setTimeout(resolve, 1000));
+  const {  checkAuthStatus } = useAuthStore();
+  const signupMutation = useMutation({
+    mutationFn: async (formData) => {
+      await api.post(
+        "/auth/register",
+        {
+          name: formData.fullName,
+          email: formData.email,
+          password: formData.password,
+        },
+        { withCredentials: true }
+      );
 
+      const loginRes = await api.post(
+        "/auth/login",
+        {
+          email: formData.email,
+          password: formData.password,
+        },
+        { withCredentials: true }
+      );
+
+      return loginRes.data;
+    },
+
+    onSuccess: async () => {
+      await checkAuthStatus();
       toast.success("Account created successfully!");
-      // navigate("/login");
-    } catch (error) {
-      console.error("Signup error:", error);
-      toast.error("Signup failed. Please try again.");
-    }
+      navigate("/");
+    },
+
+    onError: (error) => {
+      const isLoginError = error.config?.url?.includes("/auth/login");
+      const msg = isLoginError
+        ? "Account created but auto-login failed. Please log in manually."
+        : error.response?.data?.message || "Signup failed.";
+
+      toast.error(msg);
+    },
+  });
+
+  const isProcessing = isSubmitting || signupMutation.isPending;
+  const onSubmit = async (data) => {
+    await signupMutation.mutateAsync(data);
+    console.log(data);
   };
 
   return (
@@ -263,7 +297,7 @@ export default function SignupPage() {
                 aria-busy={isSubmitting}
                 icon={isSubmitting ? null : ArrowRight}
               >
-                {isSubmitting ? (
+                {isProcessing ? (
                   <div className="flex items-center gap-2">
                     <Spinner className="w-4 h-4" />
                     <span>Creating Account...</span>

@@ -192,22 +192,18 @@ function App() {
                     }
                   />
                 </Route>
-
-                <Route
-                  element={
-                    <ProtectedLayout allowedRoles={["admin"]}>
-                      <DashboardLayout />
-                    </ProtectedLayout>
-                  }
-                >
-                  <Route
-                    path="/dashboard/*"
-                    element={
-                      <Suspense fallback={<PageSkeleton />}>
-                        <DashboardRoutes />
-                      </Suspense>
-                    }
-                  />
+                {/* ADMIN DASHBOARD */}
+                <Route element={<ProtectedLayout allowedRoles={["admin"]} />}>
+                  <Route path="/dashboard/*" element={<DashboardLayout />}>
+                    <Route
+                      path="*"
+                      element={
+                        <Suspense fallback={<PageSkeleton />}>
+                          <DashboardRoutes />
+                        </Suspense>
+                      }
+                    />
+                  </Route>
                 </Route>
 
                 <Route

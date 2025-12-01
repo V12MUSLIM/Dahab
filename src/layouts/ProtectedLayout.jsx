@@ -45,11 +45,8 @@ export default function ProtectedLayout({
 
   // For dashboard routes, don't wrap in DefaultLayout
   if (isDashboardRoute) {
-    return (
-      <DashboardLayout>
-        <Outlet />
-      </DashboardLayout>
-    );
+    return <Outlet />
+
   }
 
   // For other protected routes (like /settings), use DefaultLayout

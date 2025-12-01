@@ -30,12 +30,14 @@ import {
 import { useNavigate } from "react-router-dom";
 import { useSocials } from "@/hooks/useSocials";
 import { useContact } from "@/hooks/useContact";
+import { useStay } from "@/hooks/useStay";
 const Dashboard = () => {
   const { socialsQuery } = useSocials();
   const { contactQuery } = useContact();
 
   const { data: socialMedia, isLoading: isSocialsLoading } = socialsQuery;
   const { packages, isLoading: isPackagesLoading } = usePackages();
+  const { data: stay, isStayLoading } = useStay();
   const { data: contactApiResponse, isLoading: isContactsLoading } =
     contactQuery;
   const socials = Array.isArray(socialMedia) ? socialMedia : [];
@@ -138,7 +140,7 @@ const Dashboard = () => {
       description: "View and manage all stays",
       path: "/dashboard/stays",
       icon: Bed,
-      count: 127,
+      count: isStayLoading ? "... " : stay?.length ?? 0,
       status: "pending",
     },
     {
