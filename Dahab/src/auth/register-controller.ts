@@ -51,7 +51,7 @@ export const registerHandler: RequestHandler = async (req, res, next) => {
                 await emailService.sendEmailVerificationLink(newUser.email, token);
 
 
-                return res.status(201).json({ message: "register successful" });
+                return res.status(201).json({ message: "register successful" ,newUser});
         } catch (err) {
                 next(err);
         }
