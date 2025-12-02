@@ -34,7 +34,7 @@ export default function PaymentFormStripe({
   const [processing, setProcessing] = useState(false);
   const [cardError, setCardError] = useState(null);
   const [cardholderName, setCardholderName] = useState("");
-  const [country, setCountry] = useState("Egypt");
+  const [country, setCountry] = useState("EG");
   const [cardBrand, setCardBrand] = useState(null);
 
   const ELEMENT_STYLE = {
@@ -64,47 +64,65 @@ export default function PaymentFormStripe({
   const handleSubmit = async (e) => {
     e.preventDefault();
     setCardError(null);
-
-    if (!stripe || !elements) return;
-
     setProcessing(true);
 
     try {
-      const res = await fetch("/create-payment-intent", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ amount: total }),
-      });
+      if (!stripe || !elements) {
+        setCardError("Stripe has not loaded yet. Please try again.");
+        setProcessing(false);
+        return;
+      }
 
-      const { client_secret } = await res.json();
+      if (!cardholderName.trim()) {
+        setCardError("Please enter the cardholder name");
+        setProcessing(false);
+        return;
+      }
 
       const cardElement = elements.getElement(CardNumberElement);
+      
+      if (!cardElement) {
+        setCardError("Card element not found");
+        setProcessing(false);
+        return;
+      }
 
-      const result = await stripe.confirmCardPayment(client_secret, {
-        payment_method: {
-          card: cardElement,
-          billing_details: {
-            name: cardholderName || bookingData.name,
-            email: bookingData.email,
-            phone: bookingData.phone,
-            address: { country },
+      const { error: pmError, paymentMethod } = await stripe.createPaymentMethod({
+        type: "card",
+        card: cardElement,
+        billing_details: {
+          name: cardholderName,
+          email: bookingData.email,
+          phone: bookingData.phone,
+          address: {
+            country: country,
           },
         },
       });
 
-      if (result.error) {
-        setCardError(result.error.message);
-      } else if (result.paymentIntent.status === "succeeded") {
-        onSubmit(result.paymentIntent);
+      if (pmError) {
+        setCardError(pmError.message || "Failed to process card details");
+        setProcessing(false);
+        return;
       }
-    } catch (error) {
-      setCardError("Payment failed. Please try again.");
-    }
 
-    setProcessing(false);
+      await onSubmit(paymentMethod);
+      
+    } catch (err) {
+      console.error("Payment error:", err);
+      setCardError(err.message || "Payment failed. Please try again.");
+    } finally {
+      setProcessing(false);
+    }
   };
 
   const handleCardChange = (event) => {
+    if (event.error) {
+      setCardError(event.error.message);
+    } else {
+      setCardError(null);
+    }
+
     if (event.brand && event.brand !== cardBrand) {
       setCardBrand(event.brand);
     }
@@ -132,7 +150,6 @@ export default function PaymentFormStripe({
       <Card className="border-gray-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 rounded-xl shadow-xl overflow-hidden">
         <CardContent className="p-6 space-y-6">
 
-          {/* HEADER */}
           <div className="text-center">
             <div className="flex items-center justify-center gap-2 text-amber-600 dark:text-amber-500 mb-2">
               <Wallet className="w-6 h-6" />
@@ -143,7 +160,6 @@ export default function PaymentFormStripe({
             </p>
           </div>
 
-          {/* CARDHOLDER NAME */}
           <div className="space-y-2">
             <Label htmlFor="cardholderName" className="flex items-center gap-2 text-sm text-gray-700 dark:text-gray-300">
               <CreditCard className="w-4 h-4 text-amber-600 dark:text-amber-500" />
@@ -165,7 +181,6 @@ export default function PaymentFormStripe({
             />
           </div>
 
-          {/* CARD NUMBER */}
           <div className="space-y-2 relative">
             <Label className="flex items-center gap-2 text-sm text-gray-700 dark:text-gray-300">
               <Lock className="w-4 h-4 text-amber-600 dark:text-amber-500" />
@@ -187,24 +202,28 @@ export default function PaymentFormStripe({
             </div>
           </div>
 
-          {/* EXPIRATION + CVC */}
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
               <Label className="text-sm text-gray-700 dark:text-gray-300">Expiration Date</Label>
               <div className="stripe-field">
-                <CardExpiryElement options={{ style: isDarkMode ? ELEMENT_STYLE_DARK : ELEMENT_STYLE }} />
+                <CardExpiryElement 
+                  options={{ style: isDarkMode ? ELEMENT_STYLE_DARK : ELEMENT_STYLE }}
+                  onChange={(e) => e.error && setCardError(e.error.message)}
+                />
               </div>
             </div>
 
             <div className="space-y-2">
               <Label className="text-sm text-gray-700 dark:text-gray-300">Security Code (CVC)</Label>
               <div className="stripe-field">
-                <CardCvcElement options={{ style: isDarkMode ? ELEMENT_STYLE_DARK : ELEMENT_STYLE }} />
+                <CardCvcElement 
+                  options={{ style: isDarkMode ? ELEMENT_STYLE_DARK : ELEMENT_STYLE }}
+                  onChange={(e) => e.error && setCardError(e.error.message)}
+                />
               </div>
             </div>
           </div>
 
-          {/* COUNTRY */}
           <div className="space-y-2">
             <Label htmlFor="country" className="flex items-center gap-2 text-sm text-gray-700 dark:text-gray-300">
               <Globe className="w-4 h-4 text-amber-600 dark:text-amber-500" />
@@ -223,28 +242,28 @@ export default function PaymentFormStripe({
                          focus:ring-amber-500 focus:border-amber-500
                          disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              <option value="Egypt">Egypt</option>
-              <option value="United States">United States</option>
-              <option value="United Kingdom">United Kingdom</option>
-              <option value="UAE">UAE</option>
-              <option value="Saudi Arabia">Saudi Arabia</option>
+              <option value="EG">Egypt</option>
+              <option value="US">United States</option>
+              <option value="GB">United Kingdom</option>
+              <option value="AE">UAE</option>
+              <option value="SA">Saudi Arabia</option>
             </select>
           </div>
 
-          {/* ERRORS */}
           {(cardError || error) && (
             <div
               className="flex items-start gap-3 p-4 
                          bg-red-50 dark:bg-red-900/20 
                          border border-red-200 dark:border-red-800 
-                         rounded-lg"
+                         rounded-lg animate-shake"
             >
-              <AlertCircle className="w-5 h-5 text-red-600 dark:text-red-500 flex-shrink-0" />
-              <p className="text-sm font-semibold text-red-800 dark:text-red-300">{cardError || error}</p>
+              <AlertCircle className="w-5 h-5 text-red-600 dark:text-red-500 flex-shrink-0 mt-0.5" />
+              <p className="text-sm font-semibold text-red-800 dark:text-red-300">
+                {cardError || error}
+              </p>
             </div>
           )}
 
-          {/* AMOUNT BOX */}
           <div className="p-5 
                           bg-gradient-to-r from-amber-50 to-orange-50 dark:from-amber-900/20 dark:to-orange-900/20 
                           border border-amber-200 dark:border-amber-700/30 
@@ -262,7 +281,6 @@ export default function PaymentFormStripe({
             </div>
           </div>
 
-          {/* FOOTER */}
           <div className="flex items-center justify-center pt-2 border-t border-gray-200 dark:border-zinc-700">
             <p className="text-xs text-gray-600 dark:text-gray-400 mt-3 flex items-center gap-2">
               <Shield className="w-4 h-4 text-green-600 dark:text-green-500" />
@@ -270,7 +288,6 @@ export default function PaymentFormStripe({
             </p>
           </div>
 
-          {/* BUTTONS */}
           <div className="flex gap-3 pt-3">
             <SecondaryButton
               type="button"
@@ -282,7 +299,7 @@ export default function PaymentFormStripe({
             </SecondaryButton>
             <PrimaryButton
               type="submit"
-              disabled={!stripe || processing || loading}
+              disabled={!stripe || processing || loading || !cardholderName.trim()}
               className="flex-1 flex items-center justify-center gap-2 h-11"
             >
               {processing || loading ? (

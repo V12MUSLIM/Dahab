@@ -23,13 +23,15 @@ import { useDestinations } from "@/hooks/useDestination";
 import { useExperiences } from "@/hooks/useExperience";
 import { useDine } from "@/hooks/useDine";
 import { useStay } from "@/hooks/useStay";
+import { useAuthStore } from "@/store/authStore";
 
 import { TAX_RATE, BOOKING_STEPS } from "@/components/booking/Data/constants";
 import { API_ENDPOINTS } from "@/components/booking/Data/endpoints";
 import { isValidEmail, isValidPhone, validateDates } from "@/components/booking/servicesBooking/utils/validation";
 import { sanitizeInput, safeArray } from "@/components/booking/servicesBooking/utils/sanitization";
-import { getCsrfToken } from "@/components/booking/servicesBooking/utils/csrf";
 import { PrimaryButton, SecondaryButton } from "@/components/customComponents/ButtonVarients";
+
+import api from "@/api/axios";
 
 const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLIC_KEY);
 
@@ -53,6 +55,8 @@ export default function Booking() {
   const navigate = useNavigate();
   const preselectedData = location?.state;
 
+  const { user } = useAuthStore();
+
   const destinationsData = useDestinations();
   const experiencesData = useExperiences();
   const dineData = useDine();
@@ -60,7 +64,7 @@ export default function Booking() {
 
   const destinationsRaw = destinationsData?.destinations || [];
   const experiencesRaw = experiencesData?.experiences || [];
-  
+
   const restaurantsRaw = dineData?.restaurants || [];
   const cafesRaw = dineData?.cafes || [];
   const hotelsRaw = stayData?.data || [];
@@ -71,55 +75,61 @@ export default function Booking() {
   const stayLoading = stayData?.isLoading || false;
 
   const destinations = useMemo(() => {
-    const arr = safeArray(destinationsRaw).map((d, idx) => ({
-      ...d,
-      id: d._id || d.id || d.IdPage || `dest-${idx}`,
-      price: extractPrice(d.price),
-      name: d.title || d.name
-    }));
-    return arr;
-  }, [destinationsRaw]);
+  const arr = safeArray(destinationsRaw).map((d, idx) => ({
+    ...d,
+    id: d._id || `dest-${idx}`,
+    
+    price: extractPrice(d.price),
+    name: d.title || d.name
+  }));
+  return arr;
+}, [destinationsRaw]);
 
-  const flatExperiences = useMemo(() => {
-    const cats = safeArray(experiencesRaw);
-    const flat = cats.flatMap((cat) => safeArray(cat?.experiences)).map((e, idx) => ({
-      ...e,
-      id: e._id || e.id || e.IdPage || `exp-${idx}`,
-      price: extractPrice(e.price || e.priceAmount),
-      name: e.title || e.name
-    }));
-    return flat;
-  }, [experiencesRaw]);
+const flatExperiences = useMemo(() => {
+  const cats = safeArray(experiencesRaw);
+  const flat = cats.flatMap((cat) => safeArray(cat?.experiences)).map((e, idx) => ({
+    ...e,
+    id: e._id || `exp-${idx}`,
+    
+    price: extractPrice(e.price || e.priceAmount),
+    name: e.title || e.name
+  }));
+  return flat;
+}, [experiencesRaw]);
 
-  const restaurants = useMemo(() => {
-    const arr = safeArray(restaurantsRaw).map((r, idx) => ({
-      ...r,
-      id: r._id || r.id || `rest-${idx}`,
-      price: extractPrice(r.price),
-      name: r.name || r.title
-    }));
-    return arr;
-  }, [restaurantsRaw]);
+const restaurants = useMemo(() => {
+  const arr = safeArray(restaurantsRaw).map((r, idx) => ({
+    ...r,
+    id: r._id || `rest-${idx}`,
+    
+    price: extractPrice(r.price),
+    name: r.name || r.title
+  }));
+  return arr;
+}, [restaurantsRaw]);
 
-  const cafes = useMemo(() => {
-    const arr = safeArray(cafesRaw).map((c, idx) => ({
-      ...c,
-      id: c._id || c.id || `cafe-${idx}`,
-      price: extractPrice(c.price),
-      name: c.name || c.title
-    }));
-    return arr;
-  }, [cafesRaw]);
+const cafes = useMemo(() => {
+  const arr = safeArray(cafesRaw).map((c, idx) => ({
+    ...c,
+    id: c._id || `cafe-${idx}`,
+    
+    price: extractPrice(c.price),
+    name: c.name || c.title
+  }));
+  return arr;
+}, [cafesRaw]);
 
-  const hotels = useMemo(() => {
-    const arr = safeArray(hotelsRaw).map((h, idx) => ({
-      ...h,
-      id: h._id || h.id || `hotel-${idx}`,
-      pricePerNight: extractPrice(h.pricePerNight || h.price),
-      name: h.title || h.name || `Hotel ${idx + 1}`
-    }));
-    return arr;
-  }, [hotelsRaw]);
+const hotels = useMemo(() => {
+  const arr = safeArray(hotelsRaw).map((h, idx) => ({
+    ...h,
+    id: h._id || `hotel-${idx}`,
+    
+    pricePerNight: extractPrice(h.pricePerNight || h.price),
+    name: h.title || h.name || `Hotel ${idx + 1}`
+  }));
+  return arr;
+}, [hotelsRaw]);
+
 
   const [currentStep, setCurrentStep] = useState(1);
   const [loading, setLoading] = useState(false);
@@ -146,10 +156,10 @@ export default function Booking() {
 
   useEffect(() => {
     if (!preselectedData?.type || !preselectedData?.item) return;
-    
+
     const item = preselectedData.item;
     const id = item._id || item.id || item.IdPage || `ext-${Math.random().toString(36).slice(2, 8)}`;
-    
+
     const fieldMap = {
       experience: "selectedExperiences",
       destination: "selectedDestinations",
@@ -260,40 +270,163 @@ export default function Booking() {
   };
 
   const handleSubmitBooking = async (paymentMethod) => {
-    if (!validateStep(3)) return;
-    setLoading(true);
-    setPaymentError(null);
+  if (!validateStep(3)) return;
 
-    try {
-      const payload = {
-        ...bookingData,
-        total,
-        nights,
-        paymentMethodId: paymentMethod?.id,
-      };
-      const res = await fetch(`${import.meta.env.VITE_API_URL}${API_ENDPOINTS.CREATE_BOOKING}`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json", "X-CSRF-Token": getCsrfToken() },
-        credentials: "include",
-        body: JSON.stringify(payload),
-      });
-      const result = await res.json();
+  setLoading(true);
+  setPaymentError(null);
 
-      if (result?.success) {
-        setSuccessMessage("🎉 Booking confirmed! Redirecting...");
-        setTimeout(() => {
-          navigate(`/booking-confirmation/${result.bookingId}`, { state: { total } });
-        }, 1500);
-      } else {
-        setPaymentError(result?.message || "Booking failed. Please try again.");
-      }
-    } catch (error) {
-      console.error("Booking error:", error);
-      setPaymentError("Network error. Please check your connection and try again.");
-    } finally {
-      setLoading(false);
+  try {
+    console.log("🔍 bookingData.selectedDestinations:", bookingData.selectedDestinations);
+    console.log("🔍 destinations array:", destinations);
+    console.log("🔍 flatExperiences array:", flatExperiences);
+    console.log("🔍 restaurants array:", restaurants);
+    console.log("🔍 cafes array:", cafes);
+    console.log("🔍 hotels array:", hotels);
+
+    const mappedServices = [
+      ...bookingData.selectedDestinations
+        .map((id) => {
+          const d = destinations.find((item) => item.id === id);
+          console.log("🔍 Searching for id:", id);
+          console.log("🔍 Found destination:", d);
+          console.log("🔍 destination._id:", d?._id);
+          
+          if (!d || !d._id) {
+            console.warn("⚠️ Destination not found or missing _id for id:", id);
+            return null;
+          }
+          
+          const mapped = { item: d._id, kind: "Destination" };
+          console.log("✅ Mapped service:", mapped);
+          return mapped;
+        })
+        .filter(Boolean),
+
+      ...bookingData.selectedExperiences
+        .map((id) => {
+          const e = flatExperiences.find((item) => item.id === id);
+          if (!e || !e._id) {
+            console.warn("⚠️ Experience not found or missing _id for id:", id);
+            return null;
+          }
+          return { item: e._id, kind: "Experience" };
+        })
+        .filter(Boolean),
+
+      ...bookingData.selectedRestaurants
+        .map((id) => {
+          const r = restaurants.find((item) => item.id === id);
+          if (!r || !r._id) {
+            console.warn("⚠️ Restaurant not found or missing _id for id:", id);
+            return null;
+          }
+          return { item: r._id, kind: "Restaurant" };
+        })
+        .filter(Boolean),
+
+      ...bookingData.selectedCafes
+        .map((id) => {
+          const c = cafes.find((item) => item.id === id);
+          if (!c || !c._id) {
+            console.warn("⚠️ Cafe not found or missing _id for id:", id);
+            return null;
+          }
+          return { item: c._id, kind: "Cafe" };
+        })
+        .filter(Boolean),
+
+      ...(bookingData.includeStay && bookingData.roomType
+        ? (() => {
+            const h = hotels.find((item) => item.id === bookingData.roomType);
+            if (!h || !h._id) {
+              console.warn("⚠️ Hotel not found or missing _id");
+              return [];
+            }
+            return [{ item: h._id, kind: "Stay" }];
+          })()
+        : []),
+    ];
+
+    console.log("🔍 Final mappedServices:", mappedServices);
+
+    const tempPaymentIntentId = paymentMethod?.id || `pending_${Date.now()}`;
+
+    const payload = {
+      userId: user?._id || user?.id || "674b09e04f4c369e1cc56e3e",
+
+      tripDetails: {
+        checkIn: bookingData.checkIn,
+        checkOut: bookingData.checkOut,
+        adults: bookingData.adults,
+        children: bookingData.children,
+      },
+
+      services: mappedServices,
+
+      userInfo: {
+        name: bookingData.name,
+        phone: bookingData.phone,
+        email: bookingData.email,
+        specialRequests: bookingData.specialRequests || "",
+      },
+
+      amount: total,
+
+      paymentDetails: {
+        paymentIntentId: tempPaymentIntentId,
+        status: "pending",
+        amount: total,
+        currency: "usd",
+      },
+
+      phase: "trip-details",
+    };
+
+    console.log("📤 Sending booking payload:", JSON.stringify(payload, null, 2));
+
+    const response = await api.post(API_ENDPOINTS.CREATE_BOOKING, payload);
+    console.log("📥 Booking response:", response.data);
+
+    if (response.data?.success) {
+      setSuccessMessage("🎉 Booking confirmed! Redirecting...");
+      setTimeout(() => {
+        navigate(`/booking-confirmation/${response.data.booking._id}`, { 
+          state: { total, booking: response.data.booking } 
+        });
+      }, 1500);
+    } else {
+      setPaymentError(response.data?.message || "Booking failed. Please try again.");
     }
-  };
+  } catch (error) {
+    console.error("❌ Booking error:", error);
+    console.error("❌ Error response:", error.response?.data);
+    
+    let errorMessage = "An unexpected error occurred. Please try again.";
+    
+    if (error.code === 'TIMEOUT') {
+      errorMessage = "Request timed out. Please check your connection.";
+    } else if (error.code === 'NETWORK_ERROR') {
+      errorMessage = "Network error. Please check your internet connection.";
+    } else if (error.response) {
+      const status = error.response.status;
+      if (status === 500) {
+        errorMessage = error.response.data?.message || "Server error. Please check the data and try again.";
+      } else if (status === 400) {
+        errorMessage = error.response.data?.message || "Invalid booking data.";
+      } else if (status === 404) {
+        errorMessage = "Booking endpoint not found.";
+      } else {
+        errorMessage = error.response.data?.message || `Server error: ${status}`;
+      }
+    } else if (error.request) {
+      errorMessage = "No response from server. Please try again.";
+    }
+    
+    setPaymentError(errorMessage);
+  } finally {
+    setLoading(false);
+  }
+};
 
   const isDataLoading = destLoading || expLoading || dineLoading || stayLoading;
 
@@ -347,7 +480,7 @@ export default function Booking() {
 
       <BookingStepsNav steps={BOOKING_STEPS} currentStep={currentStep} />
 
-      <div className="max-w-7xl  mx-auto grid grid-cols-1 lg:grid-cols-3 gap-8 py-12 px-4">
+      <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-3 gap-8 py-12 px-4">
         <div className="lg:col-span-2">
           {isDataLoading && currentStep === 2 ? (
             <LoadingSpinner />

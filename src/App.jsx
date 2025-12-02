@@ -36,6 +36,8 @@ import LoginPage from "./pages/Login";
 import SignupPage from "./pages/SignUp";
 
 const Booking = lazy(() => import("./pages/Booking"));
+const BookingConfirmation = lazy(() => import("./pages/BookingConfirmation"));
+
 const Settings = lazy(() => import("./pages/ProfileSettings"));
 
 import GuestRoute from "./layouts/GuestRoute";
@@ -151,11 +153,30 @@ function App() {
                       </Suspense>
                     }
                   />
-                  <Route element={<GuestRoute />}>
-                    <Route path="/login" element={<LoginPage />} />
-                    <Route path="/signup" element={<SignupPage />} />
-                  </Route>
-
+                  <Route
+                    path="/booking-confirmation/:bookingId"
+                    element={
+                      <Suspense fallback={<PageSkeleton />}>
+                        <BookingConfirmation />
+                      </Suspense>
+                    }
+                  />
+                  <Route
+                    path="/login"
+                    element={
+                      <Suspense fallback={<PageSkeleton />}>
+                        <LoginPage />
+                      </Suspense>
+                    }
+                  />
+                  <Route
+                    path="/signup"
+                    element={
+                      <Suspense fallback={<PageSkeleton />}>
+                        <SignupPage />
+                      </Suspense>
+                    }
+                  />
                   <Route
                     path="*"
                     element={

@@ -31,7 +31,7 @@ export default function SocialMediaSection({
       </p>
     );
   }
-
+  
 
   return (
     <section id={id} className="py-20 bg-muted/30 dark:bg-muted/20">
