@@ -12,7 +12,7 @@ interface IResponse {
 
 
 
-export const getCages:RequestHandler<{},IResponse,{}> = async (req, res) => {
+export const getCafes:RequestHandler<{},IResponse,{}> = async (req, res) => {
 const cafes = await Cafe.find().select("-_id-__v");
     if (!cafes) {
         return res.status(404).json({ message: "Cafes not found" });

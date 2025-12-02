@@ -61,7 +61,7 @@ export const loginHandler: RequestHandler = async (req, res, next) => {
             secure: process.env.NODE_ENV === "production",
             maxAge: 7 * 24 * 60 * 60 * 1000,
         });
-        return res.json({ message: "Logged in successfully" });
+        return res.json({ message: "Logged in successfully" ,user});
     } catch (err) {
         next(err);
     }
