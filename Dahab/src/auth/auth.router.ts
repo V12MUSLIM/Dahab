@@ -6,6 +6,7 @@ import { loginHandler, loginValidation } from "./login-controller";
 import { logoutHandler } from "./logout-controller";
 import { refreshTokenHandler } from "./refresh-controller";
 import { handleValidationErrors } from "../middlewares/handleValidationErrors";
+import jwtAuth from "./jwt";
 
 const router = express.Router();
 
@@ -43,12 +44,18 @@ router.get("/me", (req: Request, res: Response) => {
     }
 });
 
-
-router.get("/status", (req: Request, res: Response) => {
+router.get("/status", jwtAuth, (req: Request, res: Response) => {
     res.json({
-        authenticated: req.isAuthenticated(),
-        user: req.isAuthenticated() ? req.user : null,
+        authenticated: true,
+        user: req.user,
     });
 });
+
+// router.get("/status", (req: Request, res: Response) => {
+//     res.json({
+//         authenticated: req.isAuthenticated(),
+//         user: req.isAuthenticated() ? req.user : null,
+//     });
+// });
 
 export default router;
