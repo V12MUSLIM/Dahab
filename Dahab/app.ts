@@ -25,7 +25,7 @@ import paymentRouter from "./src/Booking/payments/payment-router";
 import bookingRouter from "./src/Booking/booking-router";
 //       end imports routers
 import { sanitizeInput } from "./src/middlewares/sanitize.middleware";
-import session from "express-session";
+// import session from "express-session";
 import { stripeWebhook } from "./src/Booking/payments/payment-webhook";
 
 
@@ -46,20 +46,20 @@ const app = express();
 
 
 
-app.use(
-    session({
-        secret: process.env.SESSION_SECRET || "supersecret",
-        resave: false,
-        saveUninitialized: false,
-        cookie: {
-            httpOnly: true,
-            secure: false,
-            maxAge: 24 * 60 * 60 * 1000,
-        },
-    })
-);
+// app.use(
+//     session({
+//         secret: process.env.SESSION_SECRET || "supersecret",
+//         resave: false,
+//         saveUninitialized: false,
+//         cookie: {
+//             httpOnly: true,
+//             secure: false,
+//             maxAge: 24 * 60 * 60 * 1000,
+//         },
+//     })
+// );
 app.use(passport.initialize());
-app.use(passport.session());
+// app.use(passport.session());
 
 app.use(morgan("dev"));
 app.use(helmet());

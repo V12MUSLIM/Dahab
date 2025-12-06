@@ -1,17 +1,13 @@
 import { RequestHandler } from "express";
 import { ISocialMedia, SocialMedia } from "../social-media-model";
 
-interface IRequest extends ISocialMedia {}
+interface IRequest extends ISocialMedia { }
 
 interface IResponse {
   message: string;
 }
 
-export const addSocialMedia: RequestHandler<
-  {},
-  IResponse,
-  IRequest | IRequest[]
-> = async (req, res) => {
+export const addSocialMedia: RequestHandler<{},IResponse,IRequest | IRequest[]> = async (req, res) => {
   try {
     if (Array.isArray(req.body)) {
       await SocialMedia.insertMany(req.body);
