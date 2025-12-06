@@ -37,9 +37,9 @@ export function useStayMutations() {
 
   // Update room mutation
   const updateRoom = useMutation({
-    mutationFn: async ({ stayId, roomId, data }) => {
-      const response = await api.put(`/stays/update/${stayId}`, {
-        roomTypes: data,
+    mutationFn: async ({ stayId, rooms }) => {
+      const response = await api.put(`/stay/update/${stayId}`, {
+        roomTypes: rooms, // MUST be an array, NOT a single room
       });
       return response.data;
     },

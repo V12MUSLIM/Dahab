@@ -16,37 +16,75 @@ import {
   Mail,
   ChevronLeft,
   AlertCircle,
+  Save,
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
-import { useContact } from "@/hooks/useContact"; // Adjust path as needed
+import { useContact } from "@/hooks/useContact";
+import { Switch } from "@/components/ui/switch";
+import { Label } from "@/components/ui/label";
+import { Separator } from "@/components/ui/separator";
+import { Badge } from "@/components/ui/badge";
 
 export default function AdminEditContact() {
   const navigate = useNavigate();
   const { contactQuery, updateContact } = useContact();
   const { data: contact, isLoading, isError, error } = contactQuery;
 
-  const [email, setEmail] = useState("");
-  const [phone, setPhone] = useState("");
+  const [formData, setFormData] = useState({
+    email: "",
+    phone: "",
+    isActive: true,
+  });
+  const [isDirty, setIsDirty] = useState(false);
 
   // Sync form with fetched data
   useEffect(() => {
     if (contact) {
-      setEmail(contact.email || "");
-      setPhone(contact.phone || "");
+      setFormData({
+        email: contact.email || "",
+        phone: contact.phone || "",
+        isActive: contact.isActive !== false,
+      });
+      setIsDirty(false);
     }
   }, [contact]);
 
+  // Check if form has been modified
+  const handleInputChange = (field, value) => {
+    setFormData(prev => ({ ...prev, [field]: value }));
+    setIsDirty(true);
+  };
+
   const handleSave = async () => {
+    if (!isDirty) {
+      toast.info("No changes to save");
+      return;
+    }
+
+    // Basic validation
+    if (formData.email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
+      toast.error("Please enter a valid email address");
+      return;
+    }
+
+    if (formData.phone && !/^[\d\s\-\+\(\)]{6,}$/.test(formData.phone)) {
+      toast.error("Please enter a valid phone number");
+      return;
+    }
+
     try {
       await updateContact.mutateAsync({
         id: contact?._id,
-        email,
-        phone,
+        email: formData.email.trim(),
+        phone: formData.phone.trim(),
+        isActive: formData.isActive,
       });
 
       toast.success("Contact information updated successfully!");
+      setIsDirty(false);
 
+      // Reset mutation state after success
       setTimeout(() => {
         updateContact.reset();
       }, 2000);
@@ -56,13 +94,49 @@ export default function AdminEditContact() {
     }
   };
 
+  const handleCancel = () => {
+    if (isDirty) {
+      if (window.confirm("You have unsaved changes. Are you sure you want to cancel?")) {
+        if (contact) {
+          setFormData({
+            email: contact.email || "",
+            phone: contact.phone || "",
+            isActive: contact.isActive !== false,
+          });
+        }
+        setIsDirty(false);
+      }
+    } else {
+      navigate("/dashboard");
+    }
+  };
+
+  const handleKeyDown = (e) => {
+    if ((e.ctrlKey || e.metaKey) && e.key === 's') {
+      e.preventDefault();
+      handleSave();
+    }
+  };
+
+  // Add keyboard shortcut listener
+  useEffect(() => {
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [formData, isDirty]);
+
   // Loading state
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-slate-50 dark:bg-black flex items-center justify-center">
-        <div className="flex items-center gap-2 text-slate-900 dark:text-white">
-          <Loader2 className="h-6 w-6 animate-spin" />
-          <span>Loading contact information...</span>
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <div className="flex flex-col items-center gap-4">
+          <div className="relative">
+            <Loader2 className="h-10 w-10 animate-spin text-primary" />
+            <div className="absolute inset-0 animate-ping bg-primary/10 rounded-full" />
+          </div>
+          <div className="text-center space-y-1">
+            <p className="text-lg font-medium">Loading Contact Information</p>
+            <p className="text-sm text-muted-foreground">Fetching your contact details...</p>
+          </div>
         </div>
       </div>
     );
@@ -71,172 +145,301 @@ export default function AdminEditContact() {
   // Error state
   if (isError) {
     return (
-      <div className="min-h-screen bg-slate-50 dark:bg-black flex items-center justify-center p-6">
-        <div className="max-w-md w-full bg-white dark:bg-zinc-950 border border-red-200 dark:border-red-800 rounded-lg p-6">
-          <div className="flex items-center gap-3 text-red-600 dark:text-red-400 mb-4">
-            <AlertCircle className="h-6 w-6" />
-            <h2 className="text-lg font-semibold">Error Loading Contact</h2>
-          </div>
-          <p className="text-slate-600 dark:text-gray-400 mb-4">
-            {error?.message ||
-              "Failed to load contact information. Please try again."}
-          </p>
-          <Button onClick={() => contactQuery.refetch()} className="w-full">
-            Retry
-          </Button>
-        </div>
+      <div className="min-h-screen bg-background flex items-center justify-center p-6">
+        <Card className="max-w-md w-full border-destructive/20">
+          <CardHeader className="text-center">
+            <div className="mx-auto w-12 h-12 rounded-full bg-destructive/10 flex items-center justify-center mb-4">
+              <AlertCircle className="h-6 w-6 text-destructive" />
+            </div>
+            <CardTitle className="text-xl">Unable to Load Contact Information</CardTitle>
+            <CardDescription className="mt-2">
+              {error?.message || "There was an error loading your contact information."}
+            </CardDescription>
+          </CardHeader>
+          <CardFooter className="flex flex-col gap-2">
+            <Button onClick={() => contactQuery.refetch()} className="w-full">
+              Try Again
+            </Button>
+            <Button variant="outline" className="w-full" onClick={() => navigate("/dashboard")}>
+              Return to Dashboard
+            </Button>
+          </CardFooter>
+        </Card>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-slate-50 dark:bg-black p-6">
-      <div className="mx-auto max-w-7xl space-y-6">
+    <div className="min-h-screen bg-background p-6">
+      <div className="mx-auto max-w-7xl space-y-8">
         {/* Header */}
-        <div className="flex flex-col gap-4">
+        <div className="flex flex-col gap-6">
+          <div className="flex flex-col gap-2">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={handleCancel}
+                  className="h-10 w-10"
+                >
+                  <ChevronLeft className="h-5 w-5" />
+                </Button>
+                <div>
+                  <h1 className="text-3xl font-bold tracking-tight">Contact Information</h1>
+                  <p className="text-muted-foreground mt-1">
+                    Manage your business contact details displayed on the website
+                  </p>
+                </div>
+              </div>
+              <div className="flex items-center gap-2">
+                {isDirty && (
+                  <Badge variant="outline" className="animate-pulse">
+                    Unsaved Changes
+                  </Badge>
+                )}
+              </div>
+            </div>
+            <Separator />
+          </div>
 
+          {/* Stats Card */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <Card className="bg-gradient-to-br from-background to-secondary/50">
+              <CardContent className="pt-6">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-sm text-muted-foreground">Contact Status</p>
+                    <div className="flex items-center gap-2 mt-1">
+                      <div className={`h-2 w-2 rounded-full ${formData.isActive ? 'bg-green-500' : 'bg-muted-foreground'}`} />
+                      <p className="text-lg font-semibold">
+                        {formData.isActive ? 'Active' : 'Inactive'}
+                      </p>
+                    </div>
+                  </div>
+                  <div className="p-3 rounded-full bg-primary/10">
+                    <Phone className="h-5 w-5 text-primary" />
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
 
-          <div>
-            <h1 className="text-3xl font-bold tracking-tight text-slate-900 dark:text-white">
-              Contact Information
-            </h1>
-            <p className="mt-1 text-sm text-slate-600 dark:text-gray-400">
-              Manage your business contact details displayed on the website
-            </p>
+            <Card className="bg-gradient-to-br from-background to-secondary/50">
+              <CardContent className="pt-6">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-sm text-muted-foreground">Email</p>
+                    <p className="text-lg font-semibold truncate">
+                      {formData.email || 'Not set'}
+                    </p>
+                  </div>
+                  <div className="p-3 rounded-full bg-blue-500/10">
+                    <Mail className="h-5 w-5 text-blue-500" />
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card className="bg-gradient-to-br from-background to-secondary/50">
+              <CardContent className="pt-6">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-sm text-muted-foreground">Phone</p>
+                    <p className="text-lg font-semibold">
+                      {formData.phone || 'Not set'}
+                    </p>
+                  </div>
+                  <div className="p-3 rounded-full bg-green-500/10">
+                    <Phone className="h-5 w-5 text-green-500" />
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
           </div>
         </div>
 
         {/* Main Content */}
         <div className="grid gap-6 lg:grid-cols-3">
           <div className="lg:col-span-2">
-            <Card className="dark:bg-zinc-950 dark:border-gray-800">
+            <Card>
               <CardHeader>
-                <CardTitle className="dark:text-white">
-                  Edit Contact Details
-                </CardTitle>
-                <CardDescription className="dark:text-gray-400">
+                <CardTitle>Edit Contact Details</CardTitle>
+                <CardDescription>
                   Update your email and phone number for customer inquiries
                 </CardDescription>
               </CardHeader>
 
               <CardContent className="space-y-6">
-                <div className="space-y-2">
-                  <label
-                    htmlFor="email-input"
-                    className="text-sm font-medium text-slate-900 dark:text-gray-300 flex items-center gap-2"
-                  >
-                    <Mail className="h-4 w-4" />
-                    Email Address
-                  </label>
-                  <Input
-                    id="email-input"
-                    type="email"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    placeholder="contact@example.com"
-                    className="bg-white dark:bg-black border-slate-200 dark:border-gray-800 font-semibold text-slate-900 dark:text-white focus:ring-2 focus:ring-slate-400 dark:focus:ring-gray-600"
-                  />
-                </div>
-
-                <div className="space-y-2">
-                  <label
-                    htmlFor="phone-input"
-                    className="text-sm font-medium text-slate-900 dark:text-gray-300 flex items-center gap-2"
-                  >
-                    <Phone className="h-4 w-4" />
-                    Phone Number
-                  </label>
-                  <Input
-                    id="phone-input"
-                    type="tel"
-                    value={phone}
-                    onChange={(e) => setPhone(e.target.value)}
-                    placeholder="+20 1385922880"
-                    className="bg-white dark:bg-black border-slate-200 dark:border-gray-800 font-semibold text-slate-900 dark:text-white focus:ring-2 focus:ring-slate-400 dark:focus:ring-gray-600"
-                  />
-                </div>
-
-                {updateContact.isError && (
-                  <div className="rounded-lg border border-red-200 dark:border-red-900 bg-red-50 dark:bg-red-950 p-3">
-                    <p className="text-sm text-red-700 dark:text-red-400">
-                      {updateContact.error?.message ||
-                        "Failed to update contact information"}
+                <div className="space-y-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="email-input" className="flex items-center gap-2">
+                      <Mail className="h-4 w-4" />
+                      Email Address
+                    </Label>
+                    <Input
+                      id="email-input"
+                      type="email"
+                      value={formData.email}
+                      onChange={(e) => handleInputChange('email', e.target.value)}
+                      placeholder="contact@example.com"
+                      className="font-medium"
+                    />
+                    <p className="text-xs text-muted-foreground">
+                      This email will be used for contact form submissions
                     </p>
                   </div>
-                )}
+
+                  <div className="space-y-2">
+                    <Label htmlFor="phone-input" className="flex items-center gap-2">
+                      <Phone className="h-4 w-4" />
+                      Phone Number
+                    </Label>
+                    <Input
+                      id="phone-input"
+                      type="tel"
+                      value={formData.phone}
+                      onChange={(e) => handleInputChange('phone', e.target.value)}
+                      placeholder="+20 123 456 7890"
+                      className="font-medium"
+                    />
+                    <p className="text-xs text-muted-foreground">
+                      Include country code for international calls
+                    </p>
+                  </div>
+
+                  <div className="flex items-center justify-between p-4 rounded-lg border bg-muted/50">
+                    <div className="space-y-0.5">
+                      <Label htmlFor="active-status">Active Status</Label>
+                      <p className="text-sm text-muted-foreground">
+                        Show contact information on website
+                      </p>
+                    </div>
+                    <Switch
+                      id="active-status"
+                      checked={formData.isActive}
+                      onCheckedChange={(checked) => handleInputChange('isActive', checked)}
+                    />
+                  </div>
+
+                  {updateContact.isError && (
+                    <div className="rounded-lg border border-destructive/20 bg-destructive/10 p-4">
+                      <div className="flex items-center gap-2 text-destructive">
+                        <AlertCircle className="h-4 w-4" />
+                        <p className="text-sm font-medium">
+                          Failed to update contact information
+                        </p>
+                      </div>
+                      <p className="text-sm text-destructive/80 mt-1">
+                        {updateContact.error?.message || "Please try again"}
+                      </p>
+                    </div>
+                  )}
+                </div>
               </CardContent>
 
-              <CardFooter className="flex gap-3">
+              <CardFooter className="flex flex-col sm:flex-row gap-3">
                 <Button
                   onClick={handleSave}
-                  disabled={updateContact.isPending}
-                  className="bg-slate-900 dark:bg-white text-white dark:text-black hover:bg-slate-800 dark:hover:bg-gray-200 flex-1 sm:flex-none"
+                  disabled={updateContact.isPending || !isDirty}
+                  className="gap-2 flex-1 sm:flex-none"
                 >
                   {updateContact.isPending ? (
                     <>
-                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />{" "}
+                      <Loader2 className="h-4 w-4 animate-spin" />
                       Saving...
                     </>
                   ) : updateContact.isSuccess ? (
                     <>
-                      <CheckCircle2 className="mr-2 h-4 w-4" /> Saved!
+                      <CheckCircle2 className="h-4 w-4" />
+                      Saved!
                     </>
                   ) : (
-                    "Save Changes"
+                    <>
+                      <Save className="h-4 w-4" />
+                      Save Changes
+                    </>
                   )}
                 </Button>
                 <Button
                   variant="outline"
-                  onClick={() => navigate("/dashboard")}
-                  className="dark:border-gray-700 dark:text-gray-300 dark:hover:bg-gray-900"
+                  onClick={handleCancel}
+                  className="flex-1 sm:flex-none"
                 >
                   Cancel
                 </Button>
+                <div className="text-xs text-muted-foreground text-center sm:text-left flex-1">
+                  <kbd className="px-1 py-0.5 bg-muted rounded text-xs">Ctrl</kbd> + <kbd className="px-1 py-0.5 bg-muted rounded text-xs">S</kbd> to save
+                </div>
               </CardFooter>
             </Card>
           </div>
 
           {/* Info Sidebar */}
           <div className="space-y-6">
-            <Card className="dark:bg-zinc-950 dark:border-gray-800">
+            <Card>
               <CardHeader>
-                <CardTitle className="dark:text-white">
-                  Current Contact Info
-                </CardTitle>
+                <CardTitle>Current Contact Info</CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
                 <div className="space-y-2">
-                  <div className="flex items-center gap-2 text-sm text-slate-600 dark:text-gray-400">
+                  <div className="flex items-center gap-2 text-sm text-muted-foreground">
                     <Mail className="h-4 w-4" />
                     <span>Email</span>
                   </div>
-                  <p className="text-sm font-medium text-slate-900 dark:text-white break-all">
+                  <p className="text-sm font-medium break-all">
                     {contact?.email || "Not set"}
                   </p>
                 </div>
                 <div className="space-y-2">
-                  <div className="flex items-center gap-2 text-sm text-slate-600 dark:text-gray-400">
+                  <div className="flex items-center gap-2 text-sm text-muted-foreground">
                     <Phone className="h-4 w-4" />
                     <span>Phone</span>
                   </div>
-                  <p className="text-sm font-medium text-slate-900 dark:text-white">
+                  <p className="text-sm font-medium">
                     {contact?.phone || "Not set"}
                   </p>
+                </div>
+                <Separator />
+                <div className="space-y-2">
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm text-muted-foreground">Status</span>
+                    <Badge variant={contact?.isActive !== false ? "default" : "secondary"}>
+                      {contact?.isActive !== false ? "Active" : "Inactive"}
+                    </Badge>
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm text-muted-foreground">Last Updated</span>
+                    <span className="text-sm font-medium">Just now</span>
+                  </div>
                 </div>
               </CardContent>
             </Card>
 
-            <Card className="dark:bg-zinc-950 dark:border-gray-800">
+            <Card>
               <CardHeader>
-                <CardTitle className="text-sm dark:text-white">
-                  💡 Tip
+                <CardTitle className="text-sm flex items-center gap-2">
+                  💡 Tips & Best Practices
                 </CardTitle>
               </CardHeader>
-              <CardContent>
-                <p className="text-sm text-slate-600 dark:text-gray-400">
-                  These contact details will be displayed on your website's
-                  contact page and footer.
-                </p>
+              <CardContent className="space-y-3">
+                <div className="space-y-1">
+                  <p className="text-sm font-medium">Email Address</p>
+                  <p className="text-xs text-muted-foreground">
+                    Use a professional email that you check regularly for business inquiries.
+                  </p>
+                </div>
+                <div className="space-y-1">
+                  <p className="text-sm font-medium">Phone Number</p>
+                  <p className="text-xs text-muted-foreground">
+                    Include country code for international accessibility.
+                  </p>
+                </div>
+                <div className="space-y-1">
+                  <p className="text-sm font-medium">Active Status</p>
+                  <p className="text-xs text-muted-foreground">
+                    Toggle off to temporarily hide contact information during vacations or holidays.
+                  </p>
+                </div>
               </CardContent>
             </Card>
           </div>

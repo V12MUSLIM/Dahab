@@ -4,37 +4,54 @@ import { useAuthStore } from "@/store/authStore";
 import { ROUTES } from "@/config/SiteConfig";
 import Loading from "@/components/Loading";
 import DefaultLayout from "./DefaultLayout";
-import DashboardLayout from "./DashboardLayout";
-export default function ProtectedLayout({
-  children,
-  allowedRoles,
-  useDefaultLayout = true,
-}) {
+
+export default function ProtectedLayout({ allowedRoles }) {
   const navigate = useNavigate();
   const location = useLocation();
-  const { isAuthenticated, isLoading, isCheckingAuth, hasRole } =
-    useAuthStore();
 
-  // Check if we're on a dashboard route
-  const isDashboardRoute = location.pathname.startsWith("/dashboard");
-
-  useEffect(() => {
-    if (!isLoading && !isCheckingAuth) {
-      if (!isAuthenticated) {
-        navigate(ROUTES.login, { replace: true });
-      } else if (allowedRoles && !hasRole(allowedRoles)) {
-        navigate("/403", { replace: true });
-      }
-    }
-  }, [
+  const {
     isAuthenticated,
     isLoading,
     isCheckingAuth,
+    hasRole,
+    isInitialized,
+  } = useAuthStore();
+
+  const isDashboardRoute = location.pathname.startsWith("/dashboard");
+
+  // 🚨 FIX: do NOT run redirect logic before initialization
+  useEffect(() => {
+    if (!isInitialized) return;
+    if (isCheckingAuth || isLoading) return;
+
+    if (!isAuthenticated) {
+      navigate(ROUTES.login, { replace: true });
+      return;
+    }
+
+    if (allowedRoles && !hasRole(allowedRoles)) {
+      navigate("/403", { replace: true });
+    }
+  }, [
+    isInitialized,      // <-- REQUIRED
+    isAuthenticated,
+    isCheckingAuth,
+    isLoading,
     allowedRoles,
     navigate,
     hasRole,
   ]);
 
+  // 🚨 MUST BE FIRST CHECK
+  if (!isInitialized) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-background">
+        <Loading loadingMessage="Checking session..." />
+      </div>
+    );
+  }
+
+  // After initialization but still loading
   if (isLoading || isCheckingAuth) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-background">
@@ -43,13 +60,10 @@ export default function ProtectedLayout({
     );
   }
 
-  // For dashboard routes, don't wrap in DefaultLayout
   if (isDashboardRoute) {
-    return <Outlet />
-
+    return <Outlet />;
   }
 
-  // For other protected routes (like /settings), use DefaultLayout
   return (
     <DefaultLayout>
       <Outlet />

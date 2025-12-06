@@ -101,7 +101,10 @@ export default function SocialMediaSection({
 
               {/* Icon Background */}
               <div
-                className={`relative bg-yellow-600  h-14 w-14 flex items-center justify-center rounded-full ${social.label} ${social.color} shadow-lg transition-all duration-300`}
+                className="relative h-14 w-14 flex items-center justify-center rounded-full shadow-lg transition-all duration-300"
+                style={{
+                  background: social.color, // "#FF4500"
+                }}
               >
                 <motion.img
                   loading="lazy"

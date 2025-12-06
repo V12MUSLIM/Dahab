@@ -106,7 +106,7 @@ app.use("/api/packages", packagesRouter);
 app.use("/api/activities", activitiesRouter);
 app.use("/api/destination", destinationRouter);
 app.use("/api/hero", heroRouter);
-app.use("/api/restaurant", restaurantRouter);
+app.use("/api/ccccccccccccccccc", restaurantRouter);
 app.use("/api/cafe", cafeRouter);
 app.use("/api/experience", experienceRouter)
 app.use("/api/stay", stayRouter)

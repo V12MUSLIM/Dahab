@@ -147,7 +147,7 @@ export default function AdminEditStays() {
   };
 
   return (
-    <div className="min-h-screen p-6 bg-background">
+    <div className="min-h-screen p-6 bg-slate-50 dark:bg-black">
       <div className="mx-auto max-w-7xl space-y-6">
         <div className="flex flex-col gap-10">
           <header className="flex flex-col gap-3">

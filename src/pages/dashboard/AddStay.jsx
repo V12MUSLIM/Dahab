@@ -1,16 +1,36 @@
-import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import api from "@/api/axios";
 import { toast } from "sonner";
-
+import { useStayFormStore } from "@/store/useStayFormStore";
+import { FormField } from "@/components/admin/enttityForm/FormField";
+import { FormSection } from "@/components/admin/enttityForm/FormSection";
+import { ResponsiveFormStepper } from "@/components/admin/enttityForm/ResponsiveFormStepper";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
 import { Separator } from "@/components/ui/separator";
-import { Loader2, ArrowLeft, ArrowRight, Check } from "lucide-react";
-
+import { Badge } from "@/components/ui/badge";
+import { MultiItemManager } from "@/components/admin/enttityForm/MultiItemManager";
+import {
+  Loader2,
+  ArrowLeft,
+  ArrowRight,
+  Check,
+  Save,
+  RotateCcw,
+} from "lucide-react";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
+import { ImageManager } from "@/components/admin/enttityForm/ImageManager";
 const steps = [
   "Basic Info",
   "Location & Policies",
@@ -18,98 +38,24 @@ const steps = [
   "Rooms & Media",
 ];
 
-const initialForm = {
-  // category wrapper (for your top-level category document)
-  category: "",
-  categoryId: "",
-  categoryDescription: "",
-
-  // stay basic info
-  name: "",
-  subtitle: "",
-  description: "",
-  fullDescription: "",
-  badge: "",
-  type: "hotel",
-  propertyType: "",
-  location: "",
-
-  // numeric/meta
-  rating: "",
-  totalReviews: "",
-  starRating: "",
-  minStay: "",
-  maxGuests: "",
-  totalRooms: "",
-  pricePerNight: "",
-  currency: "USD",
-  yearBuilt: "",
-  lastRenovated: "",
-
-  href: "",
-  bookingUrl: "",
-
-  // location details
-  city: "",
-  region: "",
-  country: "",
-  address: "",
-  lat: "",
-  lng: "",
-  nearbyAttractions: "", // each line: "Name | 0.5 km"
-
-  // policies
-  cancellation: "",
-  payment: "",
-  children: "",
-  pets: "",
-  smoking: "",
-  checkInFrom: "",
-  checkInUntil: "",
-  checkOut: "",
-
-  // amenities (each textarea: one item per line)
-  generalAmenities: "",
-  recreationAmenities: "",
-  servicesAmenities: "",
-  diningAmenities: "",
-  wellnessAmenities: "",
-
-  // features / includes / languages (one per line)
-  features: "",
-  priceIncludes: "",
-  languages: "",
-
-  // images
-  images: "",        // each line = image URL
-  galleryImages: "", // each line = image URL
-};
-
-function parseLines(str) {
-  if (!str) return [];
-  return str
-    .split("\n")
-    .map((s) => s.trim())
-    .filter(Boolean);
-}
-
-function parseNearby(str) {
-  // format per line: "Name | 0.5 km"
-  return parseLines(str).map((line) => {
-    const [name, distance] = line.split("|").map((s) => s.trim());
-    return { name, distance: distance || "" };
-  });
-}
-
 export default function AddStay() {
-  const [step, setStep] = useState(0);
-  const [form, setForm] = useState(initialForm);
-  const [rooms, setRooms] = useState([
-    { name: "", size: "", beds: "", maxOccupancy: "", price: "", amenities: "" },
-  ]);
-
   const navigate = useNavigate();
   const queryClient = useQueryClient();
+
+  const {
+    formData,
+    rooms,
+    currentStep,
+    updateField,
+    updateRoom,
+    addRoom,
+    removeRoom,
+    nextStep,
+    prevStep,
+    resetForm,
+    getPayload,
+    hasUnsavedChanges,
+  } = useStayFormStore();
 
   const addStayMutation = useMutation({
     mutationFn: async (payload) => {
@@ -119,138 +65,37 @@ export default function AddStay() {
     onSuccess: () => {
       toast.success("Stay added successfully");
       queryClient.invalidateQueries({ queryKey: ["stays"] });
+      resetForm();
       navigate("/dashboard/stays");
     },
     onError: (error) => {
       toast.error(
-        error?.response?.data?.message || "Failed to add stay, please try again."
+        error?.response?.data?.message ||
+          "Failed to add stay, please try again."
       );
     },
   });
 
-  const isLastStep = step === steps.length - 1;
-  const isFirstStep = step === 0;
+  const isLastStep = currentStep === steps.length - 1;
+  const isFirstStep = currentStep === 0;
 
   const handleChange = (e) => {
-    const { name, value } = e.target;
-    setForm((prev) => ({ ...prev, [name]: value }));
+    const { name, value, type } = e.target;
+    updateField(
+      name,
+      type === "number" && value !== "" ? Number(value) : value
+    );
   };
 
-  const handleRoomChange = (index, field, value) => {
-    setRooms((prev) => {
-      const copy = [...prev];
-      copy[index] = { ...copy[index], [field]: value };
-      return copy;
-    });
-  };
-
-  const addRoom = () => {
-    setRooms((prev) => [
-      ...prev,
-      { name: "", size: "", beds: "", maxOccupancy: "", price: "", amenities: "" },
-    ]);
-  };
-
-  const removeRoom = (index) => {
-    setRooms((prev) => prev.filter((_, i) => i !== index));
-  };
-
-  const handleNext = () => {
-    if (!isLastStep) setStep((s) => s + 1);
-  };
-
-  const handleBack = () => {
-    if (!isFirstStep) setStep((s) => s - 1);
+  const handleRoomChange = (index, field, rawValue) => {
+    const isNumberField = ["maxOccupancy", "price"].includes(field);
+    const value =
+      isNumberField && rawValue !== "" ? Number(rawValue) : rawValue;
+    updateRoom(index, field, value);
   };
 
   const handleSubmit = () => {
-    // build payload that matches your example JSON
-    const payload = {
-      category: form.category,
-      categoryId: form.categoryId,
-      description: form.categoryDescription,
-      stays: [
-        {
-          type: form.type,
-          IdPage: form.categoryId || form.name.toLowerCase().replace(/\s+/g, "-"),
-          name: form.name,
-          subtitle: form.subtitle,
-          description: form.description,
-          fullDescription: form.fullDescription,
-          badge: form.badge,
-          rating: form.rating || undefined,
-          totalReviews: form.totalReviews ? Number(form.totalReviews) : 0,
-          location: form.location,
-          checkInTime: form.checkInFrom,
-          checkOutTime: form.checkOut,
-          minStay: form.minStay ? Number(form.minStay) : 1,
-          maxGuests: form.maxGuests ? Number(form.maxGuests) : 1,
-          totalRooms: form.totalRooms ? Number(form.totalRooms) : 0,
-          pricePerNight: form.pricePerNight
-            ? Number(form.pricePerNight)
-            : 0,
-          currency: form.currency || "USD",
-          priceIncludes: parseLines(form.priceIncludes),
-
-          roomTypes: rooms.map((room) => ({
-            name: room.name,
-            size: room.size,
-            beds: room.beds,
-            maxOccupancy: room.maxOccupancy
-              ? Number(room.maxOccupancy)
-              : 1,
-            price: room.price ? Number(room.price) : 0,
-            amenities: parseLines(room.amenities),
-          })),
-
-          features: parseLines(form.features),
-          languages: parseLines(form.languages),
-          propertyType: form.propertyType,
-          starRating: form.starRating ? Number(form.starRating) : undefined,
-          yearBuilt: form.yearBuilt ? Number(form.yearBuilt) : undefined,
-          lastRenovated: form.lastRenovated
-            ? Number(form.lastRenovated)
-            : undefined,
-          href: form.href,
-          bookingUrl: form.bookingUrl,
-
-          images: parseLines(form.images),
-          galleryImages: parseLines(form.galleryImages),
-
-          locationDetails: {
-            coordinates: {
-              lat: form.lat ? Number(form.lat) : undefined,
-              lng: form.lng ? Number(form.lng) : undefined,
-            },
-            city: form.city,
-            region: form.region,
-            country: form.country,
-            address: form.address,
-            nearbyAttractions: parseNearby(form.nearbyAttractions),
-          },
-
-          amenities: {
-            general: parseLines(form.generalAmenities),
-            recreation: parseLines(form.recreationAmenities),
-            services: parseLines(form.servicesAmenities),
-            dining: parseLines(form.diningAmenities),
-            wellness: parseLines(form.wellnessAmenities),
-          },
-
-          policies: {
-            cancellation: form.cancellation,
-            payment: form.payment,
-            children: form.children,
-            pets: form.pets,
-            smoking: form.smoking,
-            checkInFrom: form.checkInFrom,
-            checkInUntil: form.checkInUntil,
-            checkOut: form.checkOut,
-          },
-        },
-      ],
-    };
-
+    const payload = getPayload();
     addStayMutation.mutate(payload);
   };
 
@@ -258,87 +103,66 @@ export default function AddStay() {
     if (isLastStep) {
       handleSubmit();
     } else {
-      handleNext();
+      nextStep();
     }
+  };
+
+  const handleCancel = () => {
+    if (hasUnsavedChanges()) {
+      return;
+    }
+    navigate("/dashboard/stays");
   };
 
   return (
     <div className="min-h-screen p-6 bg-background">
       <div className="mx-auto max-w-5xl space-y-6">
         <header className="space-y-2">
-          <h1 className="text-3xl font-bold tracking-tight">
-            Add New Stay
-          </h1>
-          <p className="text-muted-foreground text-sm">
-            Create a new stay by filling in the details step by step.
-          </p>
+          <div className="flex items-center justify-between">
+            <div>
+              <h1 className="text-3xl font-bold tracking-tight">
+                Add New Stay
+              </h1>
+              <p className="text-muted-foreground text-sm">
+                Create a new stay by filling in the details step by step.
+              </p>
+            </div>
+            {hasUnsavedChanges() && (
+              <Badge variant="outline" className="flex items-center gap-2">
+                <Save className="w-3 h-3" />
+                Draft Auto-Saved
+              </Badge>
+            )}
+          </div>
         </header>
 
-        {/* Stepper header */}
-        <div className="flex items-center gap-4">
-          {steps.map((label, index) => {
-            const isActive = index === step;
-            const isCompleted = index < step;
-
-            return (
-              <div
-                key={label}
-                className="flex items-center gap-2 flex-1 min-w-0"
-              >
-                <div
-                  className={`flex h-8 w-8 items-center justify-center rounded-full border text-sm
-                    ${
-                      isActive
-                        ? "border-primary bg-primary text-primary-foreground"
-                        : isCompleted
-                        ? "border-emerald-500 bg-emerald-500 text-emerald-50"
-                        : "border-muted text-muted-foreground"
-                    }`}
-                >
-                  {isCompleted ? <Check className="w-4 h-4" /> : index + 1}
-                </div>
-                <div className="flex-1 min-w-0">
-                  <p
-                    className={`truncate text-sm font-medium ${
-                      isActive ? "text-foreground" : "text-muted-foreground"
-                    }`}
-                  >
-                    {label}
-                  </p>
-                  <div className="h-1 mt-1 rounded-full bg-muted">
-                    <div
-                      className={`h-1 rounded-full transition-all ${
-                        isActive || isCompleted
-                          ? "bg-primary w-full"
-                          : "bg-transparent w-0"
-                      }`}
-                    />
-                  </div>
-                </div>
-              </div>
-            );
-          })}
-        </div>
+        <ResponsiveFormStepper steps={steps} currentStep={currentStep} />
 
         {/* Card with step content */}
         <Card className="border-border">
           <CardHeader>
-            <CardTitle>{steps[step]}</CardTitle>
+            <CardTitle>{steps[currentStep]}</CardTitle>
           </CardHeader>
           <Separator />
           <CardContent className="pt-6 space-y-6">
-            {step === 0 && (
-              <StepBasicInfo form={form} onChange={handleChange} />
+            {currentStep === 0 && (
+              <StepBasicInfo formData={formData} onChange={handleChange} />
             )}
-            {step === 1 && (
-              <StepLocationPolicies form={form} onChange={handleChange} />
+            {currentStep === 1 && (
+              <StepLocationPolicies
+                formData={formData}
+                onChange={handleChange}
+              />
             )}
-            {step === 2 && (
-              <StepAmenitiesFeatures form={form} onChange={handleChange} />
+            {currentStep === 2 && (
+              <StepAmenitiesFeatures
+                formData={formData}
+                onChange={handleChange}
+              />
             )}
-            {step === 3 && (
+            {currentStep === 3 && (
               <StepRoomsMedia
-                form={form}
+                formData={formData}
                 onChange={handleChange}
                 rooms={rooms}
                 onRoomChange={handleRoomChange}
@@ -354,21 +178,87 @@ export default function AddStay() {
               <Button
                 variant="outline"
                 disabled={isFirstStep || addStayMutation.isPending}
-                onClick={handleBack}
+                onClick={prevStep}
               >
                 <ArrowLeft className="w-4 h-4 mr-2" />
                 Back
               </Button>
 
               <div className="flex gap-2">
-                <Button
-                  variant="outline"
-                  type="button"
-                  onClick={() => navigate("/dashboard/stays")}
-                  disabled={addStayMutation.isPending}
-                >
-                  Cancel
-                </Button>
+                {hasUnsavedChanges() ? (
+                  <AlertDialog>
+                    <AlertDialogTrigger asChild>
+                      <Button
+                        variant="outline"
+                        type="button"
+                        disabled={addStayMutation.isPending}
+                      >
+                        Cancel
+                      </Button>
+                    </AlertDialogTrigger>
+                    <AlertDialogContent>
+                      <AlertDialogHeader>
+                        <AlertDialogTitle>Discard changes?</AlertDialogTitle>
+                        <AlertDialogDescription>
+                          You have unsaved changes. Are you sure you want to
+                          leave? Your progress is saved as a draft and will be
+                          available when you return.
+                        </AlertDialogDescription>
+                      </AlertDialogHeader>
+                      <AlertDialogFooter>
+                        <AlertDialogCancel>Continue Editing</AlertDialogCancel>
+                        <AlertDialogAction
+                          onClick={() => navigate("/dashboard/stays")}
+                        >
+                          Leave Anyway
+                        </AlertDialogAction>
+                      </AlertDialogFooter>
+                    </AlertDialogContent>
+                  </AlertDialog>
+                ) : (
+                  <Button
+                    variant="outline"
+                    type="button"
+                    onClick={handleCancel}
+                    disabled={addStayMutation.isPending}
+                  >
+                    Cancel
+                  </Button>
+                )}
+
+                {hasUnsavedChanges() && (
+                  <AlertDialog>
+                    <AlertDialogTrigger asChild>
+                      <Button
+                        variant="outline"
+                        type="button"
+                        disabled={addStayMutation.isPending}
+                      >
+                        <RotateCcw className="w-4 h-4 mr-2" />
+                        Reset
+                      </Button>
+                    </AlertDialogTrigger>
+                    <AlertDialogContent>
+                      <AlertDialogHeader>
+                        <AlertDialogTitle>Reset form?</AlertDialogTitle>
+                        <AlertDialogDescription>
+                          This will clear all your progress and cannot be
+                          undone.
+                        </AlertDialogDescription>
+                      </AlertDialogHeader>
+                      <AlertDialogFooter>
+                        <AlertDialogCancel>Cancel</AlertDialogCancel>
+                        <AlertDialogAction
+                          onClick={resetForm}
+                          className="bg-destructive hover:bg-destructive/90"
+                        >
+                          Reset Form
+                        </AlertDialogAction>
+                      </AlertDialogFooter>
+                    </AlertDialogContent>
+                  </AlertDialog>
+                )}
+
                 <Button
                   type="button"
                   onClick={onPrimaryAction}
@@ -401,556 +291,511 @@ export default function AddStay() {
   );
 }
 
-/* ---------- Step 0: Basic Info ---------- */
+/* ---------- Step Components with FormField & FormSection ---------- */
 
-function StepBasicInfo({ form, onChange }) {
+function StepBasicInfo({ formData, onChange }) {
   return (
-    <div className="grid gap-6">
-      <div className="grid md:grid-cols-3 gap-4">
-        <div className="space-y-1">
-          <label className="text-sm font-medium">Category Name</label>
-          <Input
+    <div className="space-y-6">
+      <FormSection
+        title="Category Information"
+        description="Define the category and grouping for this stay"
+      >
+        <div className="grid md:grid-cols-3 gap-4">
+          <FormField
+            label="Category Name"
             name="category"
-            value={form.category}
+            value={formData.category}
             onChange={onChange}
             placeholder="Mid-Range Hotels"
+            helpText='Group of stays (e.g. "Mid-Range Hotels").'
           />
-          <p className="text-xs text-muted-foreground">
-            Group of stays (e.g. “Mid-Range Hotels”).
-          </p>
-        </div>
-
-        <div className="space-y-1">
-          <label className="text-sm font-medium">Category ID (slug)</label>
-          <Input
+          <FormField
+            label="Category ID (slug)"
             name="categoryId"
-            value={form.categoryId}
+            value={formData.categoryId}
             onChange={onChange}
             placeholder="mid-range-hotels"
           />
-        </div>
-
-        <div className="space-y-1">
-          <label className="text-sm font-medium">Property Type</label>
-          <Input
+          <FormField
+            label="Property Type"
             name="propertyType"
-            value={form.propertyType}
+            value={formData.propertyType}
             onChange={onChange}
             placeholder="Hotel / Boutique Hotel / Resort"
           />
         </div>
-      </div>
 
-      <div className="space-y-1">
-        <label className="text-sm font-medium">Category Description</label>
-        <Textarea
+        <FormField
+          label="Category Description"
           name="categoryDescription"
-          value={form.categoryDescription}
+          value={formData.categoryDescription}
           onChange={onChange}
           placeholder="Comfortable stays with great value and amenities"
+          component="textarea"
           rows={2}
         />
-      </div>
+      </FormSection>
 
-      <Separator />
-
-      <div className="grid md:grid-cols-2 gap-4">
-        <div className="space-y-1">
-          <label className="text-sm font-medium">Stay Name</label>
-          <Input
+      <FormSection
+        title="Property Details"
+        description="Basic information about the property"
+        withSeparator
+      >
+        <div className="grid md:grid-cols-2 gap-4">
+          <FormField
+            label="Stay Name"
             name="name"
-            value={form.name}
+            value={formData.name}
             onChange={onChange}
             placeholder="Bedouin Moon Hotel"
           />
-        </div>
-        <div className="space-y-1">
-          <label className="text-sm font-medium">Subtitle</label>
-          <Input
+          <FormField
+            label="Subtitle"
             name="subtitle"
-            value={form.subtitle}
+            value={formData.subtitle}
             onChange={onChange}
             placeholder="Sea View Hotel."
           />
         </div>
-      </div>
 
-      <div className="grid md:grid-cols-3 gap-4">
-        <div className="space-y-1">
-          <label className="text-sm font-medium">Badge</label>
-          <Input
+        <div className="grid md:grid-cols-3 gap-4">
+          <FormField
+            label="Badge"
             name="badge"
-            value={form.badge}
+            value={formData.badge}
             onChange={onChange}
             placeholder="Great Value / Boutique Luxury"
           />
-        </div>
-        <div className="space-y-1">
-          <label className="text-sm font-medium">Type</label>
-          <Input
+          <FormField
+            label="Type"
             name="type"
-            value={form.type}
+            value={formData.type}
             onChange={onChange}
             placeholder="hotel / boutique / resort"
           />
-        </div>
-        <div className="space-y-1">
-          <label className="text-sm font-medium">Location Label</label>
-          <Input
+          <FormField
+            label="Location Label"
             name="location"
-            value={form.location}
+            value={formData.location}
             onChange={onChange}
             placeholder="Mashraba / Lighthouse / Dahab City"
           />
         </div>
-      </div>
 
-      <div className="space-y-1">
-        <label className="text-sm font-medium">Short Description</label>
-        <Textarea
+        <FormField
+          label="Short Description"
           name="description"
-          value={form.description}
+          value={formData.description}
           onChange={onChange}
           placeholder="Stunning views between mountains and sea..."
+          component="textarea"
           rows={2}
         />
-      </div>
 
-      <div className="space-y-1">
-        <label className="text-sm font-medium">Full Description</label>
-        <Textarea
+        <FormField
+          label="Full Description"
           name="fullDescription"
-          value={form.fullDescription}
+          value={formData.fullDescription}
           onChange={onChange}
           placeholder="Experience the perfect blend of natural beauty and comfort..."
+          component="textarea"
           rows={4}
         />
-      </div>
+      </FormSection>
 
-      <div className="grid md:grid-cols-4 gap-4">
-        <div className="space-y-1">
-          <label className="text-sm font-medium">Price per Night (USD)</label>
-          <Input
+      <FormSection
+        title="Pricing & Capacity"
+        description="Configure pricing, guest limits, and room availability"
+        withSeparator
+      >
+        <div className="grid md:grid-cols-4 gap-4">
+          <FormField
+            label="Price per Night (USD)"
             name="pricePerNight"
             type="number"
-            value={form.pricePerNight}
+            value={formData.pricePerNight}
             onChange={onChange}
             placeholder="71"
           />
-        </div>
-        <div className="space-y-1">
-          <label className="text-sm font-medium">Currency</label>
-          <Input
+          <FormField
+            label="Currency"
             name="currency"
-            value={form.currency}
+            value={formData.currency}
             onChange={onChange}
             placeholder="USD"
           />
-        </div>
-        <div className="space-y-1">
-          <label className="text-sm font-medium">Min Stay (nights)</label>
-          <Input
+          <FormField
+            label="Min Stay (nights)"
             name="minStay"
             type="number"
-            value={form.minStay}
+            value={formData.minStay}
             onChange={onChange}
             placeholder="1"
           />
-        </div>
-        <div className="space-y-1">
-          <label className="text-sm font-medium">Max Guests</label>
-          <Input
+          <FormField
+            label="Max Guests"
             name="maxGuests"
             type="number"
-            value={form.maxGuests}
+            value={formData.maxGuests}
             onChange={onChange}
             placeholder="3"
           />
         </div>
-      </div>
 
-      <div className="grid md:grid-cols-4 gap-4">
-        <div className="space-y-1">
-          <label className="text-sm font-medium">Total Rooms</label>
-          <Input
+        <div className="grid md:grid-cols-4 gap-4">
+          <FormField
+            label="Total Rooms"
             name="totalRooms"
             type="number"
-            value={form.totalRooms}
+            value={formData.totalRooms}
             onChange={onChange}
             placeholder="42"
           />
-        </div>
-        <div className="space-y-1">
-          <label className="text-sm font-medium">Rating</label>
-          <Input
+          <FormField
+            label="Rating"
             name="rating"
-            value={form.rating}
+            value={formData.rating}
             onChange={onChange}
             placeholder="4.7"
           />
-        </div>
-        <div className="space-y-1">
-          <label className="text-sm font-medium">Total Reviews</label>
-          <Input
+          <FormField
+            label="Total Reviews"
             name="totalReviews"
             type="number"
-            value={form.totalReviews}
+            value={formData.totalReviews}
             onChange={onChange}
             placeholder="189"
           />
-        </div>
-        <div className="space-y-1">
-          <label className="text-sm font-medium">Star Rating</label>
-          <Input
+          <FormField
+            label="Star Rating"
             name="starRating"
             type="number"
-            value={form.starRating}
+            value={formData.starRating}
             onChange={onChange}
             placeholder="3"
           />
         </div>
-      </div>
+      </FormSection>
 
-      <div className="grid md:grid-cols-3 gap-4">
-        <div className="space-y-1">
-          <label className="text-sm font-medium">Year Built</label>
-          <Input
+      <FormSection
+        title="Property History"
+        description="Construction and renovation timeline"
+        withSeparator
+      >
+        <div className="grid md:grid-cols-2 gap-4">
+          <FormField
+            label="Year Built"
             name="yearBuilt"
             type="number"
-            value={form.yearBuilt}
+            value={formData.yearBuilt}
             onChange={onChange}
             placeholder="2005"
           />
-        </div>
-        <div className="space-y-1">
-          <label className="text-sm font-medium">Last Renovated</label>
-          <Input
+          <FormField
+            label="Last Renovated"
             name="lastRenovated"
             type="number"
-            value={form.lastRenovated}
+            value={formData.lastRenovated}
             onChange={onChange}
             placeholder="2019"
           />
         </div>
-        <div className="space-y-1">
-          <label className="text-sm font-medium">Total Rooms (again)</label>
-          <Input
-            name="totalRooms"
-            type="number"
-            value={form.totalRooms}
-            onChange={onChange}
-            placeholder="42"
-          />
-        </div>
-      </div>
+      </FormSection>
 
-      <div className="grid md:grid-cols-2 gap-4">
-        <div className="space-y-1">
-          <label className="text-sm font-medium">Stay Page URL (href)</label>
-          <Input
+      <FormSection
+        title="URLs & Links"
+        description="Configure page and booking URLs"
+        withSeparator
+      >
+        <div className="grid md:grid-cols-2 gap-4">
+          <FormField
+            label="Stay Page URL (href)"
             name="href"
-            value={form.href}
+            value={formData.href}
             onChange={onChange}
             placeholder="/stay/bedouin-moon"
           />
-        </div>
-        <div className="space-y-1">
-          <label className="text-sm font-medium">Booking URL</label>
-          <Input
+          <FormField
+            label="Booking URL"
             name="bookingUrl"
-            value={form.bookingUrl}
+            value={formData.bookingUrl}
             onChange={onChange}
             placeholder="/book/bedouin-moon"
           />
         </div>
-      </div>
+      </FormSection>
     </div>
   );
 }
 
-/* ---------- Step 1: Location & Policies ---------- */
-
-function StepLocationPolicies({ form, onChange }) {
+function StepLocationPolicies({ formData, onChange }) {
   return (
-    <div className="grid gap-6">
-      <div className="grid md:grid-cols-2 gap-4">
-        <div className="space-y-1">
-          <label className="text-sm font-medium">City</label>
-          <Input
+    <div className="space-y-6">
+      <FormSection
+        title="Location Details"
+        description="Geographic information and address"
+      >
+        <div className="grid md:grid-cols-2 gap-4">
+          <FormField
+            label="City"
             name="city"
-            value={form.city}
+            value={formData.city}
             onChange={onChange}
             placeholder="Dahab"
           />
-        </div>
-        <div className="space-y-1">
-          <label className="text-sm font-medium">Region</label>
-          <Input
+          <FormField
+            label="Region"
             name="region"
-            value={form.region}
+            value={formData.region}
             onChange={onChange}
             placeholder="South Sinai"
           />
         </div>
-      </div>
 
-      <div className="grid md:grid-cols-2 gap-4">
-        <div className="space-y-1">
-          <label className="text-sm font-medium">Country</label>
-          <Input
+        <div className="grid md:grid-cols-2 gap-4">
+          <FormField
+            label="Country"
             name="country"
-            value={form.country}
+            value={formData.country}
             onChange={onChange}
             placeholder="Egypt"
           />
-        </div>
-        <div className="space-y-1">
-          <label className="text-sm font-medium">Address</label>
-          <Input
+          <FormField
+            label="Address"
             name="address"
-            value={form.address}
+            value={formData.address}
             onChange={onChange}
             placeholder="Mashraba, Dahab"
           />
         </div>
-      </div>
 
-      <div className="grid md:grid-cols-2 gap-4">
-        <div className="space-y-1">
-          <label className="text-sm font-medium">Latitude</label>
-          <Input
+        <div className="grid md:grid-cols-2 gap-4">
+          <FormField
+            label="Latitude"
             name="lat"
-            value={form.lat}
+            value={formData.lat}
             onChange={onChange}
             placeholder="28.51"
           />
-        </div>
-        <div className="space-y-1">
-          <label className="text-sm font-medium">Longitude</label>
-          <Input
+          <FormField
+            label="Longitude"
             name="lng"
-            value={form.lng}
+            value={formData.lng}
             onChange={onChange}
             placeholder="34.52"
           />
         </div>
-      </div>
 
-      <div className="space-y-1">
-        <label className="text-sm font-medium">Nearby Attractions</label>
-        <Textarea
+        <FormField
+          label="Nearby Attractions"
           name="nearbyAttractions"
-          value={form.nearbyAttractions}
+          value={formData.nearbyAttractions}
           onChange={onChange}
+          component="textarea"
           placeholder={`Mashraba Beach | 0.1 km\nLighthouse | 2 km\nDahab Market | 3 km`}
           rows={4}
+          helpText={
+            <>
+              <code>One per line, format: de{">"}Name | distance</code>
+            </>
+          }
         />
-        <p className="text-xs text-muted-foreground">
-          One per line, format: <code>Name | distance</code>
-        </p>
-      </div>
+      </FormSection>
 
-      <Separator />
-
-      <div className="grid md:grid-cols-2 gap-4">
-        <div className="space-y-1">
-          <label className="text-sm font-medium">Cancellation Policy</label>
-          <Input
+      <FormSection
+        title="Guest Policies"
+        description="Cancellation, payment, and guest rules"
+        withSeparator
+      >
+        <div className="grid md:grid-cols-2 gap-4">
+          <FormField
+            label="Cancellation Policy"
             name="cancellation"
-            value={form.cancellation}
+            value={formData.cancellation}
             onChange={onChange}
             placeholder="Free cancellation up to 24 hours before arrival"
           />
-        </div>
-        <div className="space-y-1">
-          <label className="text-sm font-medium">Payment Policy</label>
-          <Input
+          <FormField
+            label="Payment Policy"
             name="payment"
-            value={form.payment}
+            value={formData.payment}
             onChange={onChange}
             placeholder="Pay at property"
           />
         </div>
-      </div>
 
-      <div className="grid md:grid-cols-3 gap-4">
-        <div className="space-y-1">
-          <label className="text-sm font-medium">Children Policy</label>
-          <Input
+        <div className="grid md:grid-cols-3 gap-4">
+          <FormField
+            label="Children Policy"
             name="children"
-            value={form.children}
+            value={formData.children}
             onChange={onChange}
             placeholder="All ages welcome"
           />
-        </div>
-        <div className="space-y-1">
-          <label className="text-sm font-medium">Pets Policy</label>
-          <Input
+          <FormField
+            label="Pets Policy"
             name="pets"
-            value={form.pets}
+            value={formData.pets}
             onChange={onChange}
             placeholder="Not allowed"
           />
-        </div>
-        <div className="space-y-1">
-          <label className="text-sm font-medium">Smoking Policy</label>
-          <Input
+          <FormField
+            label="Smoking Policy"
             name="smoking"
-            value={form.smoking}
+            value={formData.smoking}
             onChange={onChange}
             placeholder="Smoking allowed in designated areas"
           />
         </div>
-      </div>
+      </FormSection>
 
-      <div className="grid md:grid-cols-3 gap-4">
-        <div className="space-y-1">
-          <label className="text-sm font-medium">Check-in From</label>
-          <Input
+      <FormSection
+        title="Check-in & Check-out Times"
+        description="Configure arrival and departure times"
+        withSeparator
+      >
+        <div className="grid md:grid-cols-3 gap-4">
+          <FormField
+            label="Check-in From"
             name="checkInFrom"
-            value={form.checkInFrom}
+            value={formData.checkInFrom}
             onChange={onChange}
             placeholder="14:00"
           />
-        </div>
-        <div className="space-y-1">
-          <label className="text-sm font-medium">Check-in Until</label>
-          <Input
+          <FormField
+            label="Check-in Until"
             name="checkInUntil"
-            value={form.checkInUntil}
+            value={formData.checkInUntil}
             onChange={onChange}
             placeholder="21:00"
           />
-        </div>
-        <div className="space-y-1">
-          <label className="text-sm font-medium">Check-out</label>
-          <Input
+          <FormField
+            label="Check-out"
             name="checkOut"
-            value={form.checkOut}
+            value={formData.checkOut}
             onChange={onChange}
             placeholder="12:00"
           />
         </div>
-      </div>
+      </FormSection>
     </div>
   );
 }
 
-/* ---------- Step 2: Amenities & Features ---------- */
-
-function StepAmenitiesFeatures({ form, onChange }) {
+function StepAmenitiesFeatures({ formData, onChange }) {
   return (
-    <div className="grid gap-6">
-      <div className="grid md:grid-cols-2 gap-4">
-        <div className="space-y-1">
-          <label className="text-sm font-medium">General Amenities</label>
-          <Textarea
+    <div className="space-y-6">
+      <FormSection
+        title="Property Amenities"
+        description="List all available amenities by category"
+      >
+        <div className="grid md:grid-cols-2 gap-4">
+          <FormField
+            label="General Amenities"
             name="generalAmenities"
-            value={form.generalAmenities}
+            value={formData.generalAmenities}
             onChange={onChange}
+            component="textarea"
             placeholder={`Free WiFi\nAir Conditioning (in some rooms)\nRestaurant\n24-Hour Reception`}
             rows={4}
           />
-        </div>
-        <div className="space-y-1">
-          <label className="text-sm font-medium">Recreation Amenities</label>
-          <Textarea
+          <FormField
+            label="Recreation Amenities"
             name="recreationAmenities"
-            value={form.recreationAmenities}
+            value={formData.recreationAmenities}
             onChange={onChange}
+            component="textarea"
             placeholder={`Private Beach\nPanoramic Pool\nDiving Center\nSnorkeling`}
             rows={4}
           />
         </div>
-      </div>
 
-      <div className="grid md:grid-cols-2 gap-4">
-        <div className="space-y-1">
-          <label className="text-sm font-medium">Service Amenities</label>
-          <Textarea
+        <div className="grid md:grid-cols-2 gap-4">
+          <FormField
+            label="Service Amenities"
             name="servicesAmenities"
-            value={form.servicesAmenities}
+            value={formData.servicesAmenities}
             onChange={onChange}
+            component="textarea"
             placeholder={`Tour Booking\nAirport Shuttle (extra charge)\nLaundry`}
             rows={4}
           />
-        </div>
-        <div className="space-y-1">
-          <label className="text-sm font-medium">Dining Amenities</label>
-          <Textarea
+          <FormField
+            label="Dining Amenities"
             name="diningAmenities"
-            value={form.diningAmenities}
+            value={formData.diningAmenities}
             onChange={onChange}
+            component="textarea"
             placeholder={`On-site Restaurant\nBreakfast Room\nPacked Lunches`}
             rows={4}
           />
         </div>
-      </div>
 
-      <div className="space-y-1">
-        <label className="text-sm font-medium">Wellness Amenities</label>
-        <Textarea
+        <FormField
+          label="Wellness Amenities"
           name="wellnessAmenities"
-          value={form.wellnessAmenities}
+          value={formData.wellnessAmenities}
           onChange={onChange}
+          component="textarea"
           placeholder="Daily Yoga Classes\nBeach Massages\nWellness Programs"
           rows={3}
         />
-      </div>
+      </FormSection>
 
-      <Separator />
-
-      <div className="grid md:grid-cols-3 gap-4">
-        <div className="space-y-1 md:col-span-2">
-          <label className="text-sm font-medium">Features</label>
-          <Textarea
+      <FormSection
+        title="Features & Languages"
+        description="Highlight key features and spoken languages"
+        withSeparator
+      >
+        <div className="grid md:grid-cols-3 gap-4">
+          <FormField
+            className="md:col-span-2"
+            label="Features"
             name="features"
-            value={form.features}
+            value={formData.features}
             onChange={onChange}
+            component="textarea"
             placeholder={`Mountain & Sea Views\nPrivate Beach\nDiving Center\nPanoramic Pool\nBudget Friendly`}
             rows={4}
+            helpText="One feature per line."
           />
-          <p className="text-xs text-muted-foreground">
-            One feature per line.
-          </p>
-        </div>
 
-        <div className="space-y-1">
-          <label className="text-sm font-medium">Languages</label>
-          <Textarea
+          <FormField
+            label="Languages"
             name="languages"
-            value={form.languages}
+            value={formData.languages}
             onChange={onChange}
+            component="textarea"
             placeholder={`English\nArabic\nRussian`}
             rows={4}
+            helpText="One language per line."
           />
-          <p className="text-xs text-muted-foreground">
-            One language per line.
-          </p>
         </div>
-      </div>
+      </FormSection>
 
-      <div className="space-y-1">
-        <label className="text-sm font-medium">Price Includes</label>
-        <Textarea
+      <FormSection
+        title="What's Included"
+        description="Services and benefits included in the price"
+        withSeparator
+      >
+        <FormField
+          label="Price Includes"
           name="priceIncludes"
-          value={form.priceIncludes}
+          value={formData.priceIncludes}
           onChange={onChange}
+          component="textarea"
           placeholder={`Continental breakfast\nWiFi access\nBeach access\nPool usage\nDaily room cleaning`}
           rows={4}
+          helpText="One item per line."
         />
-        <p className="text-xs text-muted-foreground">
-          One item per line.
-        </p>
-      </div>
+      </FormSection>
     </div>
   );
 }
 
-/* ---------- Step 3: Rooms & Media ---------- */
 
 function StepRoomsMedia({
-  form,
+  formData,
   onChange,
   rooms,
   onRoomChange,
@@ -958,144 +803,106 @@ function StepRoomsMedia({
   onRemoveRoom,
 }) {
   return (
-    <div className="grid gap-6">
-      <div className="space-y-1">
-        <label className="text-sm font-medium">Main Images</label>
-        <Textarea
+    <div className="space-y-6">
+      <FormSection
+        title="Property Images"
+        description="Upload main and gallery images"
+      >
+        <ImageManager
+          label="Main Images"
           name="images"
-          value={form.images}
+          value={formData.images}
           onChange={onChange}
-          placeholder={`https://example.com/image1.jpg\nhttps://example.com/image2.jpg`}
-          rows={3}
+          helpText="Main images for the stay's primary gallery"
+          maxImages={10}
+          showPreview={true}
         />
-        <p className="text-xs text-muted-foreground">
-          One image URL per line.
-        </p>
-      </div>
 
-      <div className="space-y-1">
-        <label className="text-sm font-medium">Gallery Images</label>
-        <Textarea
+        <ImageManager
+          label="Gallery Images"
           name="galleryImages"
-          value={form.galleryImages}
+          value={formData.galleryImages}
           onChange={onChange}
-          placeholder={`https://example.com/gallery1.jpg`}
-          rows={3}
+          helpText="Additional images for the extended gallery"
+          maxImages={15}
+          showPreview={true}
         />
-        <p className="text-xs text-muted-foreground">
-          One image URL per line.
-        </p>
-      </div>
+      </FormSection>
 
-      <Separator />
-
-      <div className="flex items-center justify-between">
-        <h3 className="text-base font-semibold">Room Types</h3>
-        <Button type="button" size="sm" onClick={onAddRoom}>
-          Add Room
-        </Button>
-      </div>
-
-      <div className="space-y-4">
-        {rooms.map((room, index) => (
-          <Card key={index} className="border-dashed border-primary/40">
-            <CardHeader className="flex flex-row items-center justify-between py-3">
-              <CardTitle className="text-sm">
-                Room #{index + 1}
-              </CardTitle>
-              {rooms.length > 1 && (
-                <Button
-                  type="button"
-                  size="icon"
-                  variant="outline"
-                  onClick={() => onRemoveRoom(index)}
-                >
-                  ✕
-                </Button>
-              )}
-            </CardHeader>
-            <Separator />
-            <CardContent className="pt-4 space-y-4">
+      <FormSection
+        title="Room Types"
+        description="Define different room categories and their details"
+        withSeparator
+      >
+        <MultiItemManager
+          itemName="Room"
+          itemNamePlural="Room Types"
+          items={rooms}
+          onAdd={onAddRoom}
+          onRemove={onRemoveRoom}
+          minItems={1}
+          maxItems={10}
+          emptyMessage="No room types defined. Add at least one room type."
+          renderItem={(room, index) => (
+            <div className="space-y-4">
               <div className="grid md:grid-cols-2 gap-4">
-                <div className="space-y-1">
-                  <label className="text-sm font-medium">Name</label>
-                  <Input
-                    value={room.name}
-                    onChange={(e) =>
-                      onRoomChange(index, "name", e.target.value)
-                    }
-                    placeholder="Standard Mountain View"
-                  />
-                </div>
-                <div className="space-y-1">
-                  <label className="text-sm font-medium">Size</label>
-                  <Input
-                    value={room.size}
-                    onChange={(e) =>
-                      onRoomChange(index, "size", e.target.value)
-                    }
-                    placeholder="22 m²"
-                  />
-                </div>
+                <FormField
+                  label="Room Name"
+                  name={`room-${index}-name`}
+                  value={room.name}
+                  onChange={(e) => onRoomChange(index, "name", e.target.value)}
+                  placeholder="Standard Mountain View"
+                  required
+                />
+                <FormField
+                  label="Room Size"
+                  name={`room-${index}-size`}
+                  value={room.size}
+                  onChange={(e) => onRoomChange(index, "size", e.target.value)}
+                  placeholder="22 m²"
+                />
               </div>
 
               <div className="grid md:grid-cols-3 gap-4">
-                <div className="space-y-1">
-                  <label className="text-sm font-medium">Beds</label>
-                  <Input
-                    value={room.beds}
-                    onChange={(e) =>
-                      onRoomChange(index, "beds", e.target.value)
-                    }
-                    placeholder="2 Single"
-                  />
-                </div>
-                <div className="space-y-1">
-                  <label className="text-sm font-medium">
-                    Max Occupancy
-                  </label>
-                  <Input
-                    type="number"
-                    value={room.maxOccupancy}
-                    onChange={(e) =>
-                      onRoomChange(index, "maxOccupancy", e.target.value)
-                    }
-                    placeholder="2"
-                  />
-                </div>
-                <div className="space-y-1">
-                  <label className="text-sm font-medium">Price</label>
-                  <Input
-                    type="number"
-                    value={room.price}
-                    onChange={(e) =>
-                      onRoomChange(index, "price", e.target.value)
-                    }
-                    placeholder="55"
-                  />
-                </div>
+                <FormField
+                  label="Bed Configuration"
+                  name={`room-${index}-beds`}
+                  value={room.beds}
+                  onChange={(e) => onRoomChange(index, "beds", e.target.value)}
+                  placeholder="2 Single Beds"
+                />
+                <FormField
+                  label="Max Occupancy"
+                  name={`room-${index}-maxOccupancy`}
+                  type="number"
+                  value={room.maxOccupancy}
+                  onChange={(e) => onRoomChange(index, "maxOccupancy", e.target.value)}
+                  placeholder="2"
+                />
+                <FormField
+                  label="Price per Night"
+                  name={`room-${index}-price`}
+                  type="number"
+                  value={room.price}
+                  onChange={(e) => onRoomChange(index, "price", e.target.value)}
+                  placeholder="55"
+                />
               </div>
 
-              <div className="space-y-1">
-                <label className="text-sm font-medium">
-                  Room Amenities
-                </label>
-                <Textarea
-                  value={room.amenities}
-                  onChange={(e) =>
-                    onRoomChange(index, "amenities", e.target.value)
-                  }
-                  placeholder={`Mountain View\nFan\nPrivate Bathroom\nWardrobe`}
-                  rows={3}
-                />
-                <p className="text-xs text-muted-foreground">
-                  One amenity per line.
-                </p>
-              </div>
-            </CardContent>
-          </Card>
-        ))}
-      </div>
+              <FormField
+                label="Room Amenities"
+                name={`room-${index}-amenities`}
+                value={room.amenities}
+                onChange={(e) => onRoomChange(index, "amenities", e.target.value)}
+                component="textarea"
+                placeholder={`Mountain View\nFan\nPrivate Bathroom\nWardrobe`}
+                rows={3}
+                helpText="One amenity per line."
+              />
+            </div>
+          )}
+        />
+      </FormSection>
     </div>
   );
 }

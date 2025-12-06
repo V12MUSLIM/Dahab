@@ -1,164 +1,168 @@
 import mongoose from "mongoose";
+const RoomTypeSchema = new mongoose.Schema({
+  _id: { type: String },
+  name: String,
+  size: String,
+  beds: String,
+  maxOccupancy: Number,
+  price: Number,
+  amenities: [String],
+});
 
 interface Stay {
-    id: string;
-    IdPage: string;
-    type: string;
-    name: string;
-    subtitle: string;
-    description: string;
-    fullDescription: string;
-    images: string[];
-    galleryImages: string[];
-    badge: string;
-    rating: string;
-    totalReviews: number;
-    location: string;
-    locationDetails: {
-        city: string;
-        region: string;
-        country: string;
-        coordinates: {
-            lat: number;
-            lng: number;
-        };
-        address: string;
-        nearbyAttractions: {
-            name: string;
-            distance: string;
-        }[];
+  id: string;
+  IdPage: string;
+  type: string;
+  name: string;
+  subtitle: string;
+  description: string;
+  fullDescription: string;
+  images: string[];
+  galleryImages: string[];
+  badge: string;
+  rating: string;
+  totalReviews: number;
+  location: string;
+  locationDetails: {
+    city: string;
+    region: string;
+    country: string;
+    coordinates: {
+      lat: number;
+      lng: number;
     };
-    checkInTime: string;
-    checkOutTime: string;
-    minStay: number;
-    maxGuests: number;
-    totalRooms: number;
-    pricePerNight: number;
-    currency: string;
-    priceIncludes: string[];
-    roomTypes: {
-        name: string;
-        size: string;
-        beds: string;
-        maxOccupancy: number;
-        price: number;
-        amenities: string[];
+    address: string;
+    nearbyAttractions: {
+      name: string;
+      distance: string;
     }[];
-    amenities: {
-        general: string[];
-        recreation: string[];
-        wellness: string[];
-        services: string[];
-        dining: string[];
-    };
-    features: string[];
-    policies: {
-        cancellation: string;
-        payment: string;
-        children: string;
-        pets: string;
-        smoking: string;
-        checkInFrom: string;
-        checkInUntil: string;
-        checkOut: string;
-    };
-    languages: string[];
-    propertyType: string;
-    starRating: number;
-    yearBuilt: number;
-    lastRenovated: number;
-    href: string;
-    bookingUrl: string;
+  };
+  checkInTime: string;
+  checkOutTime: string;
+  minStay: number;
+  maxGuests: number;
+  totalRooms: number;
+  pricePerNight: number;
+  currency: string;
+  priceIncludes: string[];
+  roomTypes: {
+    name: string;
+    size: string;
+    beds: string;
+    maxOccupancy: number;
+    price: number;
+    amenities: string[];
+  }[];
+  amenities: {
+    general: string[];
+    recreation: string[];
+    wellness: string[];
+    services: string[];
+    dining: string[];
+  };
+  features: string[];
+  policies: {
+    cancellation: string;
+    payment: string;
+    children: string;
+    pets: string;
+    smoking: string;
+    checkInFrom: string;
+    checkInUntil: string;
+    checkOut: string;
+  };
+  languages: string[];
+  propertyType: string;
+  starRating: number;
+  yearBuilt: number;
+  lastRenovated: number;
+  href: string;
+  bookingUrl: string;
 }
 
 export interface IStay {
-    category: string;
-    categoryId: string; // Not unique (fix for your error)
-    description: string;
-    stays: Stay[];
+  category: string;
+  categoryId: string; // Not unique (fix for your error)
+  description: string;
+  stays: Stay[];
 }
 
 const StaySchema = new mongoose.Schema<Stay>({
-    id: String,
-    IdPage: String,
-    type: String,
-    name: String,
-    subtitle: String,
-    description: String,
-    fullDescription: String,
-    images: [String],
-    galleryImages: [String],
-    badge: String,
-    rating: String,
-    totalReviews: Number,
-    location: String,
-    locationDetails: {
-        city: String,
-        region: String,
-        country: String,
-        coordinates: {
-            lat: Number,
-            lng: Number
-        },
-        address: String,
-        nearbyAttractions: [
-            {
-                name: String,
-                distance: String
-            }
-        ]
+  id: String,
+  IdPage: String,
+  type: String,
+  name: String,
+  subtitle: String,
+  description: String,
+  fullDescription: String,
+  images: [String],
+  galleryImages: [String],
+  badge: String,
+  rating: String,
+  totalReviews: Number,
+  location: String,
+  locationDetails: {
+    city: String,
+    region: String,
+    country: String,
+    coordinates: {
+      lat: Number,
+      lng: Number,
     },
-    checkInTime: String,
-    checkOutTime: String,
-    minStay: Number,
-    maxGuests: Number,
-    totalRooms: Number,
-    pricePerNight: Number,
-    currency: String,
-    priceIncludes: [String],
-    roomTypes: [
-        {
-            name: String,
-            size: String,
-            beds: String,
-            maxOccupancy: Number,
-            price: Number,
-            amenities: [String]
-        }
+    address: String,
+    nearbyAttractions: [
+      {
+        name: String,
+        distance: String,
+      },
     ],
-    amenities: {
-        general: [String],
-        recreation: [String],
-        wellness: [String],
-        services: [String],
-        dining: [String],
-    },
-    features: [String],
-    policies: {
-        cancellation: String,
-        payment: String,
-        children: String,
-        pets: String,
-        smoking: String,
-        checkInFrom: String,
-        checkInUntil: String,
-        checkOut: String
-    },
-    languages: [String],
-    propertyType: String,
-    starRating: Number,
-    yearBuilt: Number,
-    lastRenovated: Number,
-    href: String,
-    bookingUrl: String
+  },
+  checkInTime: String,
+  checkOutTime: String,
+  minStay: Number,
+  maxGuests: Number,
+  totalRooms: Number,
+  pricePerNight: Number,
+  currency: String,
+  priceIncludes: [String],
+  roomTypes: [RoomTypeSchema],
+
+  amenities: {
+    general: [String],
+    recreation: [String],
+    wellness: [String],
+    services: [String],
+    dining: [String],
+  },
+  features: [String],
+  policies: {
+    cancellation: String,
+    payment: String,
+    children: String,
+    pets: String,
+    smoking: String,
+    checkInFrom: String,
+    checkInUntil: String,
+    checkOut: String,
+  },
+  languages: [String],
+  propertyType: String,
+  starRating: Number,
+  yearBuilt: Number,
+  lastRenovated: Number,
+  href: String,
+  bookingUrl: String,
 });
 
-const StaysSchema = new mongoose.Schema<IStay>({
+const StaysSchema = new mongoose.Schema<IStay>(
+  {
     category: { type: String, required: true },
-    categoryId: { type: String, required: true, unique: false },   // NOT UNIQUE (fix)
+    categoryId: { type: String, required: true, unique: false }, // NOT UNIQUE (fix)
     description: { type: String, required: true },
-    stays: { type: [StaySchema], required: true }
-}, { timestamps: true });
+    stays: { type: [StaySchema], required: true },
+  },
+  { timestamps: true }
+);
 
 export const Stay = mongoose.model<IStay>("Stay", StaysSchema, "stays");
 
