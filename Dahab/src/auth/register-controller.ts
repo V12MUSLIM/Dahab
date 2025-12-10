@@ -23,8 +23,6 @@ export const registerValidation = [
 
 export const registerHandler: RequestHandler = async (req, res, next) => {
         try {
-                // const { email, password, name  } = req.body as { email: string; password: string; name: string;picture?:string };
-
                 const { email, password, name } = req.body as { email: string; password: string; name: string; };
 
                 if (!email || !password || !name) {
@@ -35,19 +33,20 @@ export const registerHandler: RequestHandler = async (req, res, next) => {
                 const user = await User.findOne({ email }).exec();
                 if (user) return res.status(409).json({ message: "Email already registered" });
 
-
-                // const picture = req.file ? `/uploads/${req.file.filename}` : undefined
                 const hashed = await bcrypt.hash(password, 10);
-                const newUser = new User({ email, password: hashed, name /*, picture:picture ||" "*/ });
-                // console.log(picture);
+                const newUser = new User({ email, password: hashed, name  });
 
 
                 await newUser.save();
 
+                // console.log("i will create token");
+                
                 const token = jwtService.createToken(
                         { id: newUser._id, email: newUser.email },
                         { expiresIn: "3d" }
                 );
+                // console.log(token);
+                
                 await emailService.sendEmailVerificationLink(newUser.email, token);
 
 

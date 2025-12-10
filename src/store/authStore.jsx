@@ -42,28 +42,47 @@ export const API_CONFIG = getApiConfig();
 
 /** Secure fetch */
 export const secureFetch = async (url, options = {}) => {
-  if (!API_CONFIG.isValid) throw new Error("Invalid API configuration");
+  if (!API_CONFIG.isValid) {
+    throw new Error("Invalid API configuration");
+  }
 
   const controller = new AbortController();
-  const timeoutId = setTimeout(() => controller.abort(), API_CONFIG.timeout);
+  const timeoutId = setTimeout(
+    () => controller.abort(),
+    API_CONFIG.timeout
+  );
+
+  const token = useAuthStore.getState().accessToken;
 
   try {
-    const response = await fetch(url, {
+    const response = await fetch(`${API_CONFIG.baseURL}${url}`, {
       ...options,
       signal: controller.signal,
       credentials: "include",
       headers: {
-        "Content-Type": "application/json",
+        ...(options.body instanceof FormData
+          ? {}
+          : { "Content-Type": "application/json" }),
+        ...(token && { Authorization: `Bearer ${token}` }),
         ...options.headers,
       },
     });
-    clearTimeout(timeoutId);
+
+    if (!response.ok) {
+      const errorBody = await response.text();
+      throw new Error(
+        `${response.status} ${response.statusText}: ${errorBody}`
+      );
+    }
 
     return response;
   } catch (error) {
-    clearTimeout(timeoutId);
-    if (error.name === "AbortError") throw new Error("Request timeout");
+    if (error.name === "AbortError") {
+      throw new Error("Request timeout");
+    }
     throw error;
+  } finally {
+    clearTimeout(timeoutId);
   }
 };
 
@@ -96,7 +115,7 @@ export const useAuthStore = create(
     isAuthenticated: false,
     lastAuthCheck: null,
     isCheckingAuth: false,
-
+    isInitialized: false,
     setUser: (user) => {
       if (user && !isValidUser(user)) {
         console.error("Invalid user data structure:", user);
@@ -136,50 +155,52 @@ export const useAuthStore = create(
     checkAuthStatus: async () => {
       const state = get();
 
+      // Prevent duplicate parallel checks
       if (state.isCheckingAuth) return state.user;
-      if (state.lastAuthCheck && Date.now() - state.lastAuthCheck < 30000) {
-        return state.user;
-      }
 
       try {
         set({ isLoading: true, isCheckingAuth: true, error: null });
 
+        // Always check backend on refresh
         const response = await secureFetch(`${API_CONFIG.baseUrl}/auth/status`);
+
+        // Try token refresh if expired
         if (response.status === 401) {
-          const newToken = await get().refreshAccessToken();
-          if (newToken) {
-            const retry = await secureFetch(
-              `${API_CONFIG.baseUrl}/auth/status`,
-              {
-                headers: { Authorization: `Bearer ${newToken}` },
+          if (get().refreshAccessToken) {
+            const newToken = await get().refreshAccessToken();
+            if (newToken) {
+              const retry = await secureFetch(
+                `${API_CONFIG.baseUrl}/auth/status`,
+                {
+                  headers: { Authorization: `Bearer ${newToken}` },
+                }
+              );
+              const retryData = await retry.json();
+              if (retryData.authenticated && isValidUser(retryData.user)) {
+                set({
+                  user: retryData.user,
+                  isAuthenticated: true,
+                });
+                return retryData.user;
               }
-            );
-            const retryData = await retry.json();
-            if (retryData.authenticated && isValidUser(retryData.user)) {
-              set({
-                user: retryData.user,
-                isAuthenticated: true,
-                lastAuthCheck: Date.now(),
-              });
-              return retryData.user;
             }
           }
         }
 
+        // Normal success case
         const data = await response.json();
         if (data.authenticated && isValidUser(data.user)) {
           set({
             user: data.user,
             isAuthenticated: true,
-            lastAuthCheck: Date.now(),
           });
           return data.user;
         }
 
+        // Not logged in
         set({
           user: null,
           isAuthenticated: false,
-          lastAuthCheck: Date.now(),
         });
         return null;
       } catch (error) {
@@ -187,12 +208,11 @@ export const useAuthStore = create(
         set({
           user: null,
           isAuthenticated: false,
-          error: error.message || "Failed to verify authentication",
-          lastAuthCheck: Date.now(),
+          error: error.message || "Auth check failed",
         });
         return null;
       } finally {
-        set({ isLoading: false, isCheckingAuth: false });
+        set({ isLoading: false, isCheckingAuth: false, isInitialized: true });
       }
     },
 

@@ -1,7 +1,7 @@
 import express, { Request, Response, NextFunction } from "express";
 import cookieParser from "cookie-parser";
 import authRouter from "./src/auth/auth.router";
-import passport from './src/config/passport';
+// import passport from './src/config/passport';
 import mongoose from "mongoose";
 import rateLimit from "express-rate-limit";
 import dotenv from "dotenv";
@@ -27,6 +27,7 @@ import bookingRouter from "./src/Booking/booking-router";
 import { sanitizeInput } from "./src/middlewares/sanitize.middleware";
 // import session from "express-session";
 import { stripeWebhook } from "./src/Booking/payments/payment-webhook";
+import passport from "./src/config/passport-jwt";
 
 
 

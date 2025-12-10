@@ -52,13 +52,13 @@ export const loginHandler: RequestHandler = async (req, res, next) => {
         res.cookie("token", token, {
             httpOnly: true,
             sameSite: process.env.NODE_ENV === "production" ? "strict" : "none",
-            secure: process.env.NODE_ENV === "production",
+            secure: false,
             maxAge: 2 * 60 * 60 * 1000,
         });
         res.cookie("refreshToken", refreshToken, {
             httpOnly: true,
             sameSite: process.env.NODE_ENV === "production" ? "strict" : "none",
-            secure: process.env.NODE_ENV === "production",
+            secure: false,
             maxAge: 7 * 24 * 60 * 60 * 1000,
         });
         return res.json({ message: "Logged in successfully" ,user});
