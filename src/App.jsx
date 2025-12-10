@@ -38,18 +38,25 @@ const SignupPage = lazy(() => import("./pages/SignUp"));
 
 const Booking = lazy(() => import("./pages/Booking"));
 const Settings = lazy(() => import("./pages/ProfileSettings"));
-
+import { useLocation } from "react-router-dom";
+import GuestRoute from "./layouts/GuestRoute";
 // --- Auth initialization ---
 const AuthInitializer = ({ children }) => {
-  const { checkAuthStatus, isLoading } = useAuthStore();
+  const checkAuthStatus = useAuthStore((s) => s.checkAuthStatus);
+  const isInitialized = useAuthStore((s) => s.isInitialized);
+  const location = useLocation();
+
+  const skip = location.hash.startsWith("#/auth/callback");
 
   useEffect(() => {
-    checkAuthStatus(); // check user auth state once app loads
-  }, [checkAuthStatus]);
+    if (!skip) {
+      checkAuthStatus();
+    }
+  }, []); 
 
-  if (isLoading) {
+  if (!skip && !isInitialized) {
     return (
-      <div className="flex items-center justify-center h-screen bg-background">
+      <div className="min-h-screen flex items-center justify-center bg-background">
         <Loading loadingMessage="Please wait..." />
       </div>
     );
@@ -62,16 +69,17 @@ function App() {
   useSyncUserToQuery();
 
   return (
-    <AuthInitializer>
-      <ThemeProvider
-        attribute="class"
-        defaultTheme="system"
-        enableSystem
-        disableTransitionOnChange
-      >
-        <HashRouter>
+    <ThemeProvider
+      attribute="class"
+      defaultTheme="system"
+      enableSystem
+      disableTransitionOnChange
+    >
+      <HashRouter>
+        <Toaster />
+        <AuthInitializer>
           <ScrollToTop />
-          <Toaster />
+
           <ExperienceProvider>
             <div className="App">
               <Routes>
@@ -167,22 +175,25 @@ function App() {
                       </Suspense>
                     }
                   />
-                  <Route
-                    path="/login"
-                    element={
-                      <Suspense fallback={<PageSkeleton />}>
-                        <LoginPage />
-                      </Suspense>
-                    }
-                  />
-                  <Route
-                    path="/signup"
-                    element={
-                      <Suspense fallback={<PageSkeleton />}>
-                        <SignupPage />
-                      </Suspense>
-                    }
-                  />
+                  <Route element={<GuestRoute />}>
+                    <Route
+                      path="/login"
+                      element={
+                        <Suspense fallback={<PageSkeleton />}>
+                          <LoginPage />
+                        </Suspense>
+                      }
+                    />
+                    <Route
+                      path="/signup"
+                      element={
+                        <Suspense fallback={<PageSkeleton />}>
+                          <SignupPage />
+                        </Suspense>
+                      }
+                    />
+                  </Route>
+
                   <Route
                     path="*"
                     element={
@@ -192,22 +203,18 @@ function App() {
                     }
                   />
                 </Route>
-
-                <Route
-                  element={
-                    <ProtectedLayout allowedRoles={["admin"]}>
-                      <DashboardLayout />
-                    </ProtectedLayout>
-                  }
-                >
-                  <Route
-                    path="/dashboard/*"
-                    element={
-                      <Suspense fallback={<PageSkeleton />}>
-                        <DashboardRoutes />
-                      </Suspense>
-                    }
-                  />
+                {/* ADMIN DASHBOARD */}
+                <Route element={<ProtectedLayout allowedRoles={["admin"]} />}>
+                  <Route path="/dashboard/*" element={<DashboardLayout />}>
+                    <Route
+                      path="*"
+                      element={
+                        <Suspense fallback={<PageSkeleton />}>
+                          <DashboardRoutes />
+                        </Suspense>
+                      }
+                    />
+                  </Route>
                 </Route>
 
                 <Route
@@ -237,13 +244,10 @@ function App() {
               </Routes>
             </div>
           </ExperienceProvider>
-        </HashRouter>
-      </ThemeProvider>
-    </AuthInitializer>
+        </AuthInitializer>
+      </HashRouter>
+    </ThemeProvider>
   );
 }
 
 export default App;
-{
-  /* Testing  */
-}

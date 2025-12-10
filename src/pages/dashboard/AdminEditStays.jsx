@@ -1,4 +1,8 @@
+// AdminEditStays.jsx - Updated with Edit and Delete functionality
+
+import { useState } from "react";
 import { useStay } from "@/hooks/useStay";
+import { useStayMutations } from "@/hooks/useStayMutations";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import {
@@ -12,11 +16,11 @@ import {
   Car,
   Mountain,
   Bed,
-  List,
   Plus,
   DollarSign,
+  Edit,
 } from "lucide-react";
-import { useLocation, useParams, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import {
@@ -25,15 +29,27 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
+import EditStayDialog from "./EditStayDialog";
 
 export default function AdminEditStays() {
   const { data: stays, isLoading, error } = useStay();
+  const { deleteStay } = useStayMutations();
   const navigate = useNavigate();
-  const { id } = useParams();
-  const location = useLocation();
-
-  const current = location.pathname;
-  const isActive = (path) => current.includes(path);
+  
+  const [selectedStay, setSelectedStay] = useState(null);
+  const [editDialogOpen, setEditDialogOpen] = useState(false);
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [stayToDelete, setStayToDelete] = useState(null);
 
   if (isLoading) {
     return (
@@ -48,6 +64,7 @@ export default function AdminEditStays() {
   }
 
   const flatStays = Array.isArray(stays) ? stays.flat() : [];
+  
   const amenityIcons = {
     Wifi: Wifi,
     Coffee: Coffee,
@@ -57,7 +74,6 @@ export default function AdminEditStays() {
     Mountain: Mountain,
   };
 
-  // Helper function to get amenity names from stay
   const getAmenityNames = (stay) => {
     const amenities = [];
     if (stay.amenities) {
@@ -104,8 +120,34 @@ export default function AdminEditStays() {
     "Boutique Luxury": "bg-rose-500/80 text-rose-100",
   };
 
+  const handleEditClick = (stay) => {
+    setSelectedStay(stay);
+    setEditDialogOpen(true);
+  };
+
+  const handleDeleteClick = (stay) => {
+    setStayToDelete(stay);
+    setDeleteDialogOpen(true);
+  };
+
+  const handleCloseEditDialog = (isOpen) => {
+    if (!isOpen) {
+      setEditDialogOpen(false);
+      // Reset selected stay after dialog closes
+      setTimeout(() => setSelectedStay(null), 200);
+    }
+  };
+
+  const confirmDelete = async () => {
+    if (stayToDelete) {
+      await deleteStay.mutateAsync(stayToDelete._id);
+      setDeleteDialogOpen(false);
+      setStayToDelete(null);
+    }
+  };
+
   return (
-    <div className="min-h-screen p-6 bg-background">
+    <div className="min-h-screen p-6 bg-slate-50 dark:bg-black">
       <div className="mx-auto max-w-7xl space-y-6">
         <div className="flex flex-col gap-10">
           <header className="flex flex-col gap-3">
@@ -118,7 +160,10 @@ export default function AdminEditStays() {
                   Edit, delete, or add stays to your accommodation listings.
                 </p>
               </div>
-              <Button className="bg-primary hover:bg-primary/90 text-primary-foreground">
+              <Button
+                onClick={() => navigate("addstay")}
+                className="bg-primary hover:bg-primary/90 text-primary-foreground"
+              >
                 <Plus className="w-4 h-4 mr-2" />
                 Add New Stay
               </Button>
@@ -168,7 +213,9 @@ export default function AdminEditStays() {
                       <span className="text-3xl font-bold text-foreground">
                         {stay.pricePerNight}
                       </span>
-                      <span className="text-sm text-muted-foreground ml-1">/night</span>
+                      <span className="text-sm text-muted-foreground ml-1">
+                        /night
+                      </span>
                     </div>
 
                     {amenities.length > 0 && (
@@ -221,16 +268,28 @@ export default function AdminEditStays() {
                           <Tooltip>
                             <TooltipTrigger asChild>
                               <Button
-                                variant={isActive("rooms") ? "default" : "outline"}
+                                variant="outline"
+                                size="icon"
+                                onClick={() => handleEditClick(stay)}
+                                className="border-border hover:border-primary/50 hover:bg-muted"
+                              >
+                                <Edit className="w-4 h-4" />
+                              </Button>
+                            </TooltipTrigger>
+                            <TooltipContent>
+                              <p>Edit Stay</p>
+                            </TooltipContent>
+                          </Tooltip>
+
+                          <Tooltip>
+                            <TooltipTrigger asChild>
+                              <Button
+                                variant="outline"
                                 size="icon"
                                 onClick={() =>
                                   navigate(`/dashboard/stays/${stay._id}/rooms`)
                                 }
-                                className={
-                                  isActive("rooms")
-                                    ? "bg-primary hover:bg-primary/90 text-primary-foreground border-primary"
-                                    : "border-border hover:border-primary/50 hover:bg-muted"
-                                }
+                                className="border-border hover:border-primary/50 hover:bg-muted"
                               >
                                 <Bed className="w-4 h-4" />
                               </Button>
@@ -243,56 +302,10 @@ export default function AdminEditStays() {
                           <Tooltip>
                             <TooltipTrigger asChild>
                               <Button
-                                variant={isActive("location") ? "default" : "outline"}
-                                size="icon"
-                                onClick={() =>
-                                  navigate(`/dashboard/stays/${stay._id}`)
-                                }
-                                className={
-                                  isActive("location")
-                                    ? "bg-primary hover:bg-primary/90 text-primary-foreground border-primary"
-                                    : "border-border hover:border-primary/50 hover:bg-muted"
-                                }
-                              >
-                                <MapPin className="w-4 h-4" />
-                              </Button>
-                            </TooltipTrigger>
-                            <TooltipContent>
-                              <p>Edit Location</p>
-                            </TooltipContent>
-                          </Tooltip>
-
-                          <Tooltip>
-                            <TooltipTrigger asChild>
-                              <Button
-                                variant={isActive("features") ? "default" : "outline"}
-                                size="icon"
-                                onClick={() =>
-                                  navigate(`/dashboard/stays/${stay._id}`)
-                                }
-                                className={
-                                  isActive("features")
-                                    ? "bg-primary hover:bg-primary/90 text-primary-foreground border-primary"
-                                    : "border-border hover:border-primary/50 hover:bg-muted"
-                                }
-                              >
-                                <List className="w-4 h-4" />
-                              </Button>
-                            </TooltipTrigger>
-                            <TooltipContent>
-                              <p>Edit Features</p>
-                            </TooltipContent>
-                          </Tooltip>
-
-                          <Tooltip>
-                            <TooltipTrigger asChild>
-                              <Button
                                 variant="outline"
                                 size="icon"
                                 className="border-border hover:border-destructive/50 hover:bg-muted hover:text-destructive"
-                                onClick={() =>
-                                  console.log("Delete stay:", stay._id)
-                                }
+                                onClick={() => handleDeleteClick(stay)}
                               >
                                 <Trash2 className="w-4 h-4" />
                               </Button>
@@ -311,6 +324,46 @@ export default function AdminEditStays() {
           </div>
         </div>
       </div>
+
+      {/* Edit Dialog */}
+      {selectedStay && (
+        <EditStayDialog
+          key={selectedStay._id}
+          stay={selectedStay}
+          open={editDialogOpen}
+          onOpenChange={handleCloseEditDialog}
+        />
+      )}
+
+      {/* Delete Confirmation Dialog */}
+      <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+            <AlertDialogDescription>
+              This will permanently delete <strong>{stayToDelete?.name}</strong>.
+              This action cannot be undone.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={confirmDelete}
+              className="bg-destructive hover:bg-destructive/90"
+              disabled={deleteStay.isPending}
+            >
+              {deleteStay.isPending ? (
+                <>
+                  <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                  Deleting...
+                </>
+              ) : (
+                "Delete"
+              )}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }

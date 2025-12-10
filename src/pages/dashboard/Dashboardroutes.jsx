@@ -6,7 +6,10 @@ import AdminEditPackages from "./AdminEditPackges";
 import Dashboard from "./Dashboard";
 import EditRooms from "./EditRooms";
 import DashboardDestinations from "./DashboardDestinations";
+
 const AdminEditStays = lazy(() => import("./AdminEditStays"));
+const AddStay = lazy(() => import("./AddStay")); // ⬅️ new
+
 export default function DashboardRoutes() {
   return (
     <Routes>
@@ -15,10 +18,13 @@ export default function DashboardRoutes() {
       <Route path="contacts" element={<AdminEditContact />} />
       <Route path="socialmedia" element={<AdminEditSocials />} />
       <Route path="packages" element={<AdminEditPackages />} />
-      <Route path="stays" element={<AdminEditStays />} />
 
-      {/* Stays management */}
-      <Route path="stays/:id/rooms" element={<EditRooms />} />
+      {/* Stay Management */}
+      <Route path="stays">
+        <Route index element={<AdminEditStays />} />
+        <Route path="addstay" element={<AddStay />} /> {/* ⬅️ new */}
+        <Route path=":id/rooms" element={<EditRooms />} />
+      </Route>
     </Routes>
   );
 }

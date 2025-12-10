@@ -3,45 +3,41 @@ import { useNavigate } from "react-router-dom";
 import { useAuthStore } from "@/store/authStore";
 import Loading from "@/components/Loading";
 import { toast } from "sonner";
+import { flushSync } from "react-dom";
 
 const AuthCallback = () => {
   const navigate = useNavigate();
-  const { checkAuthStatus, clearAuth } = useAuthStore();
+  const { checkAuthStatus } = useAuthStore();
 
   useEffect(() => {
-    let isMounted = true;
+    let mounted = true;
 
     const handleCallback = async () => {
       try {
-        clearAuth();
-        // Give browser time to store auth cookies
-        await new Promise((resolve) => setTimeout(resolve, 800));
-
-        // Check if user is authenticated
         const user = await checkAuthStatus();
-
-        // Only proceed if the component is still mounted
-        if (!isMounted) return;
+        if (!mounted) return;
 
         if (user) {
-          const displayName =
-            user.name || user.fullName || user.email || "there";
-          toast.success(`Logged in successfully! Welcome ${displayName}`);
+          const name = user.name || user.fullName || user.email;
+
+          flushSync(() => {
+            toast.success(`Logged in successfully! Welcome ${name}`);
+          });
+
           navigate("/", { replace: true });
         } else {
-          throw new Error("User not authenticated");
+          throw new Error("No user");
         }
-      } catch (error) {
-        console.error("Auth callback error:", error);
-        toast.error("Authentication failed. Please try again.");
+      } catch (err) {
+        console.error("Auth callback error:", err);
+        toast.error("Authentication failed.");
         navigate("/login", { replace: true });
       }
     };
 
     handleCallback();
-
     return () => {
-      isMounted = false;
+      mounted = false;
     };
   }, [checkAuthStatus, navigate]);
 

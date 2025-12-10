@@ -26,71 +26,31 @@ import {
   Link,
   Bed,
   Phone,
+  Construction,
+  CheckCircle2,
+  Sparkles,
+  Zap,
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useSocials } from "@/hooks/useSocials";
 import { useContact } from "@/hooks/useContact";
+import { useStay } from "@/hooks/useStay";
+import { Separator } from "@/components/ui/separator";
+
 const Dashboard = () => {
+  const navigate = useNavigate();
+
   const { socialsQuery } = useSocials();
   const { contactQuery } = useContact();
-
   const { data: socialMedia, isLoading: isSocialsLoading } = socialsQuery;
   const { packages, isLoading: isPackagesLoading } = usePackages();
   const { data: contactApiResponse, isLoading: isContactsLoading } =
     contactQuery;
+  const { data: stay, isLoading: isStayLoading } = useStay();
+
   const socials = Array.isArray(socialMedia) ? socialMedia : [];
   const rawContactsArray = contactApiResponse?.contacts;
   const contacts = Array.isArray(rawContactsArray) ? rawContactsArray : [];
-  // TODO: Replace with actual API call
-  // Example: const { data: stats } = useQuery('dashboardStats', fetchDashboardStats);
-  const [stats] = useState({
-    totalBookings: 1247,
-    bookingsChange: 12.5,
-    totalRevenue: 45890,
-    revenueChange: 8.3,
-    activeUsers: 3421,
-    usersChange: -2.1,
-    pageViews: 89234,
-    viewsChange: 15.7,
-  });
-
-  // TODO: Replace with actual API call
-  // Example: const { data: recentActivity } = useQuery('recentActivity', fetchRecentActivity);
-  const [recentActivity] = useState([
-    {
-      id: 1,
-      type: "booking",
-      user: "John Doe",
-      item: "Cairo Tour Package",
-      time: "5 min ago",
-    },
-    {
-      id: 2,
-      type: "user",
-      user: "Jane Smith",
-      item: "New registration",
-      time: "12 min ago",
-    },
-    {
-      id: 3,
-      type: "booking",
-      user: "Mike Johnson",
-      item: "Luxor Temple Visit",
-      time: "1 hour ago",
-    },
-  ]);
-
-  // TODO: Replace with actual navigation logic
-  const navigate = useNavigate();
-
-  // TODO: Add authentication check
-  // React.useEffect(() => {
-  //   const isAdmin = localStorage.getItem("isAdmin") === "true";
-  //   if (!isAdmin) {
-  //     navigate("/login");
-  //     return;
-  //   }
-  // }, [navigate]);
 
   const dashboardItems = [
     {
@@ -99,7 +59,9 @@ const Dashboard = () => {
       path: "/dashboard/herosections",
       icon: Award,
       count: 5,
-      status: "active",
+      status: "under-construction",
+      implemented: false,
+      gradient: "from-amber-500 to-orange-500",
     },
     {
       title: "Destinations",
@@ -107,7 +69,9 @@ const Dashboard = () => {
       path: "/dashboard/destinations",
       icon: MapPin,
       count: 24,
-      status: "active",
+      status: "under-construction",
+      implemented: false,
+      gradient: "from-blue-500 to-cyan-500",
     },
     {
       title: "Activities",
@@ -115,7 +79,9 @@ const Dashboard = () => {
       path: "/dashboard/activities",
       icon: Activity,
       count: 38,
-      status: "active",
+      status: "under-construction",
+      implemented: false,
+      gradient: "from-purple-500 to-pink-500",
     },
     {
       title: "Packages",
@@ -124,6 +90,8 @@ const Dashboard = () => {
       icon: Package,
       count: isPackagesLoading ? "..." : packages?.length ?? 0,
       status: "active",
+      implemented: true,
+      gradient: "from-green-500 to-emerald-500",
     },
     {
       title: "Bookings",
@@ -131,23 +99,29 @@ const Dashboard = () => {
       path: "/dashboard/bookings",
       icon: CalendarCheck,
       count: 127,
-      status: "pending",
+      status: "under-construction",
+      implemented: false,
+      gradient: "from-indigo-500 to-blue-500",
     },
     {
       title: "Stays",
-      description: "View and manage all stays",
+      description: "View and manage all accommodation stays",
       path: "/dashboard/stays",
       icon: Bed,
-      count: 127,
-      status: "pending",
+      count: isStayLoading ? "..." : stay?.length ?? 0,
+      status: "active",
+      implemented: true,
+      gradient: "from-rose-500 to-red-500",
     },
     {
       title: "Users",
       description: "Manage user accounts and permissions",
       path: "/dashboard/users",
       icon: Users,
-      count: 3421,
-      status: "active",
+      count: null,
+      status: "under-construction",
+      implemented: false,
+      gradient: "from-violet-500 to-purple-500",
     },
     {
       title: "Analytics",
@@ -155,314 +129,337 @@ const Dashboard = () => {
       path: "/dashboard/analytics",
       icon: BarChart3,
       count: null,
-      status: "active",
+      status: "under-construction",
+      implemented: false,
+      gradient: "from-cyan-500 to-teal-500",
     },
     {
       title: "Contacts",
-      description: "Manage contatcts",
+      description: "Manage contact information",
       path: "/dashboard/contacts",
       icon: Phone,
-      count: isContactsLoading ? "..." : contacts.length,
+      count: isContactsLoading ? "..." : contacts.length ?? 0,
       status: "active",
+      implemented: true,
+      gradient: "from-sky-500 to-blue-500",
     },
     {
-      title: "Socialmedia",
-      description: "Manage Socialmedia",
+      title: "Social Media",
+      description: "Manage social media links",
       path: "/dashboard/socialmedia",
       icon: Link,
       count: isSocialsLoading ? "..." : socials?.length ?? 0,
       status: "active",
+      implemented: true,
+      gradient: "from-pink-500 to-rose-500",
     },
   ];
-  {
-    console.log(contacts.length);
-  }
-  const statCards = [
-    {
-      title: "Total Bookings",
-      value: stats.totalBookings.toLocaleString(),
-      change: stats.bookingsChange,
-      icon: CalendarCheck,
-      color: "text-blue-600 dark:text-blue-400",
-    },
-    {
-      title: "Revenue",
-      value: `$${stats.totalRevenue.toLocaleString()}`,
-      change: stats.revenueChange,
-      icon: DollarSign,
-      color: "text-green-600 dark:text-green-400",
-    },
-    {
-      title: "Active Users",
-      value: stats.activeUsers.toLocaleString(),
-      change: stats.usersChange,
-      icon: Users,
-      color: "text-purple-600 dark:text-purple-400",
-    },
-    {
-      title: "Page Views",
-      value: stats.pageViews.toLocaleString(),
-      change: stats.viewsChange,
-      icon: Eye,
-      color: "text-orange-600 dark:text-cyan-400",
-    },
-  ];
+
+  const implementedCount = dashboardItems.filter(
+    (item) => item.implemented
+  ).length;
+  const underConstructionCount = dashboardItems.filter(
+    (item) => !item.implemented
+  ).length;
+  const completionPercentage =
+    (implementedCount / dashboardItems.length) * 100;
 
   return (
-    <div className="min-h-screen bg-slate-50 dark:bg-black p-6">
-      <div className="mx-auto max-w-7xl space-y-6">
-        {/* Header */}
-        <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
-          <div>
-            <h1 className="text-3xl font-bold tracking-tight text-slate-900 dark:text-white">
-              Dashboard
-            </h1>
-            <p className="mt-1 text-sm text-slate-600 dark:text-gray-400">
-              Welcome back! Here's what's happening with your tourism platform.
-            </p>
-          </div>
-          <div className="flex items-center gap-2">
-            <Button
-              variant="outline"
-              onClick={() => navigate("/dashboard/analytics")}
-              className="dark:border-gray-700 dark:text-gray-300 dark:hover:bg-gray-900 dark:hover:text-white"
-            >
-              <BarChart3 className="mr-2 h-4 w-4" />
-              Analytics
-            </Button>
-            <Button
-              onClick={() => navigate("/dashboard/destinations")}
-              className="dark:bg-white dark:text-black dark:hover:bg-gray-200"
-            >
-              <MapPin className="mr-2 h-4 w-4" />
-              Add Destination
-            </Button>
-          </div>
-        </div>
+    <div className="min-h-screen p-6 bg-gradient-to-br from-background via-background to-secondary/20">
+      <div className="mx-auto max-w-7xl space-y-8">
+        {/* Header Section */}
+        <div className="flex flex-col gap-6">
+          <div className="flex justify-between items-center">
+            <div className="flex items-center gap-3">
+              <div className="p-3 rounded-xl bg-gradient-to-br from-primary to-primary/60 flex items-center justify-center shadow-lg">
+                <Sparkles className="h-6 w-6 text-primary-foreground" />
+              </div>
+              <div>
+                <h1 className="text-3xl font-bold tracking-tight">
+                  Admin Dashboard
+                </h1>
+                <p className="text-muted-foreground">
+                  Manage your tourism platform content and settings
+                </p>
+              </div>
+            </div>
 
-        {/* Stats Grid */}
-        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-          {statCards.map((stat) => {
-            const Icon = stat.icon;
-            const isPositive = stat.change > 0;
-            return (
-              <Card
-                key={stat.title}
-                className="dark:bg-zinc-950 dark:border-gray-800"
+            <div className="flex items-center gap-2">
+              <Badge
+                variant="outline"
+                className="bg-green-50 dark:bg-green-950 text-green-700 dark:text-green-400 border-green-200 dark:border-green-900 px-3 py-1"
               >
-                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardTitle className="text-sm font-medium dark:text-gray-300">
-                    {stat.title}
-                  </CardTitle>
-                  <Icon className={`h-4 w-4 ${stat.color}`} />
-                </CardHeader>
-                <CardContent>
-                  <div className="text-2xl font-bold dark:text-white">
-                    {stat.value}
+                <CheckCircle2 className="w-3 h-3 mr-1.5" />
+                {implementedCount} Active
+              </Badge>
+              <Badge
+                variant="outline"
+                className="bg-amber-50 dark:bg-amber-950 text-amber-700 dark:text-amber-400 border-amber-200 dark:border-amber-900 px-3 py-1"
+              >
+                <Construction className="w-3 h-3 mr-1.5" />
+                {underConstructionCount} In Progress
+              </Badge>
+            </div>
+          </div>
+
+          <Separator />
+
+          {/* Info Banner */}
+          <Card className="border-blue-200 dark:border-blue-900/50 bg-gradient-to-r from-blue-50 to-cyan-50 dark:from-blue-950/50 dark:to-cyan-950/50">
+            <CardContent className="flex items-start gap-4 p-6">
+              <div className="p-2 rounded-lg bg-blue-100 dark:bg-blue-900/50 flex-shrink-0">
+                <AlertCircle className="h-5 w-5 text-blue-600 dark:text-blue-400" />
+              </div>
+              <div className="flex-1 space-y-1">
+                <h4 className="font-semibold text-blue-900 dark:text-blue-300">
+                  Platform Development Status
+                </h4>
+                <p className="text-sm text-blue-700 dark:text-blue-400">
+                  Some features are still under development. Fully functional
+                  modules are marked with a green badge. Items marked "Under
+                  Construction" are coming soon.
+                </p>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Stats Grid */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <Card className="bg-gradient-to-br from-background to-secondary/50 hover:shadow-lg transition-shadow">
+              <CardContent className="pt-6">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-sm text-muted-foreground font-medium">
+                      Total Modules
+                    </p>
+                    <p className="text-3xl font-bold mt-1">
+                      {dashboardItems.length}
+                    </p>
                   </div>
-                  <div className="flex items-center text-xs text-slate-600 dark:text-gray-400">
-                    <TrendingUp
-                      className={`mr-1 h-3 w-3 ${
-                        isPositive
-                          ? "text-green-600 dark:text-green-400"
-                          : "rotate-180 text-red-600 dark:text-red-400"
-                      }`}
-                    />
-                    <span
-                      className={
-                        isPositive
-                          ? "text-green-600 dark:text-green-400"
-                          : "text-red-600 dark:text-red-400"
-                      }
-                    >
-                      {Math.abs(stat.change)}%
-                    </span>
-                    <span className="ml-1">from last month</span>
+                  <div className="p-3 rounded-xl bg-gradient-to-br from-primary/10 to-primary/5">
+                    <Package className="h-6 w-6 text-primary" />
                   </div>
-                </CardContent>
-              </Card>
-            );
-          })}
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card className="bg-gradient-to-br from-background to-secondary/50 hover:shadow-lg transition-shadow">
+              <CardContent className="pt-6">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-sm text-muted-foreground font-medium">
+                      Active Features
+                    </p>
+                    <p className="text-3xl font-bold mt-1">
+                      {implementedCount}
+                    </p>
+                  </div>
+                  <div className="p-3 rounded-xl bg-gradient-to-br from-green-500/10 to-emerald-500/5">
+                    <CheckCircle2 className="h-6 w-6 text-green-500" />
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card className="bg-gradient-to-br from-background to-secondary/50 hover:shadow-lg transition-shadow">
+              <CardContent className="pt-6">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-sm text-muted-foreground font-medium">
+                      Completion
+                    </p>
+                    <p className="text-3xl font-bold mt-1">
+                      {Math.round(completionPercentage)}%
+                    </p>
+                  </div>
+                  <div className="p-3 rounded-xl bg-gradient-to-br from-blue-500/10 to-cyan-500/5">
+                    <Zap className="h-6 w-6 text-blue-500" />
+                  </div>
+                </div>
+                <div className="mt-3">
+                  <Progress
+                    value={completionPercentage}
+                    className="h-2"
+                  />
+                </div>
+              </CardContent>
+            </Card>
+          </div>
         </div>
 
-        <div className="grid gap-6 lg:grid-cols-3">
-          {/* Main Navigation Cards */}
-          <div className="lg:col-span-2">
-            <Card className="dark:bg-zinc-950 dark:border-gray-800">
-              <CardHeader>
-                <CardTitle className="dark:text-white">Quick Access</CardTitle>
-                <CardDescription className="dark:text-gray-400">
-                  Navigate to the main areas of your dashboard
+        {/* Main Content */}
+        <Card className="shadow-lg">
+          <CardHeader>
+            <div className="flex items-center justify-between">
+              <div>
+                <CardTitle className="text-2xl">Content Management</CardTitle>
+                <CardDescription className="mt-1">
+                  Access and manage different sections of your platform
                 </CardDescription>
-              </CardHeader>
+              </div>
+            </div>
+          </CardHeader>
+          <CardContent>
+            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+              {dashboardItems.map((item) => {
+                const Icon = item.icon;
+                const isActive = item.implemented;
 
-              <CardContent>
-                <div className="grid gap-4 sm:grid-cols-2">
-                  {dashboardItems.map((item) => {
-                    const Icon = item.icon;
-                    return (
-                      <button
-                        key={item.title}
-                        onClick={() => navigate(item.path)}
-                        className="group text-left focus:outline-none"
-                      >
-                        <div className="flex items-start gap-3 rounded-lg border border-slate-200 dark:border-gray-800 bg-white dark:bg-black p-4 transition hover:border-slate-300 dark:hover:border-gray-700 hover:bg-slate-50 dark:hover:bg-zinc-950 focus-visible:ring-2 focus-visible:ring-slate-400 dark:focus-visible:ring-gray-600 focus-visible:ring-offset-2 dark:focus-visible:ring-offset-black">
-                          <div className="rounded-md bg-slate-100 dark:bg-gray-900 p-2 transition group-hover:bg-slate-200 dark:group-hover:bg-gray-800">
-                            <Icon className="h-5 w-5 text-slate-700 dark:text-gray-300" />
+                return (
+                  <button
+                    key={item.title}
+                    onClick={() => isActive && navigate(item.path)}
+                    disabled={!isActive}
+                    className={`group text-left focus:outline-none ${
+                      !isActive ? "cursor-not-allowed" : ""
+                    }`}
+                  >
+                    <Card
+                      className={`h-full transition-all duration-300 ${
+                        isActive
+                          ? "hover:shadow-xl hover:scale-105 hover:border-primary/50"
+                          : "opacity-60"
+                      }`}
+                    >
+                      <CardContent className="p-6">
+                        <div className="flex flex-col gap-4">
+                          {/* Icon and Badge */}
+                          <div className="flex items-start justify-between">
+                            <div
+                              className={`p-3 rounded-xl bg-gradient-to-br ${
+                                item.gradient || "from-gray-500 to-gray-600"
+                              } shadow-lg ${
+                                isActive
+                                  ? "group-hover:scale-110 transition-transform"
+                                  : ""
+                              }`}
+                            >
+                              <Icon className="h-6 w-6 text-white" />
+                            </div>
+                            {isActive ? (
+                              <ArrowRight className="h-5 w-5 text-muted-foreground opacity-0 transition-all group-hover:opacity-100 group-hover:translate-x-1" />
+                            ) : (
+                              <Badge
+                                variant="outline"
+                                className="bg-amber-50 dark:bg-amber-950 text-amber-700 dark:text-amber-400 border-amber-200 dark:border-amber-900 text-xs"
+                              >
+                                <Construction className="w-3 h-3 mr-1" />
+                                Soon
+                              </Badge>
+                            )}
                           </div>
-                          <div className="flex-1 space-y-1">
-                            <div className="flex items-center justify-between">
-                              <h3 className="font-medium text-slate-900 dark:text-white">
+
+                          {/* Content */}
+                          <div className="space-y-2">
+                            <div className="flex items-center justify-between gap-2">
+                              <h3
+                                className={`font-semibold text-lg ${
+                                  isActive
+                                    ? "text-foreground"
+                                    : "text-muted-foreground"
+                                }`}
+                              >
                                 {item.title}
                               </h3>
-                              {item.count !== null && (
+                              {item.count !== null && isActive && (
                                 <Badge
-                                  variant={
-                                    item.status === "pending"
-                                      ? "default"
-                                      : "secondary"
-                                  }
-                                  className="ml-2 dark:bg-gray-800 dark:text-gray-300 dark:border-gray-700"
+                                  variant="secondary"
+                                  className="font-semibold"
                                 >
                                   {item.count}
                                 </Badge>
                               )}
                             </div>
-                            <p className="text-xs text-slate-600 dark:text-gray-400">
+                            <p
+                              className={`text-sm ${
+                                isActive
+                                  ? "text-muted-foreground"
+                                  : "text-muted-foreground/60"
+                              }`}
+                            >
                               {item.description}
                             </p>
+
+                            {isActive && (
+                              <Badge
+                                variant="outline"
+                                className="bg-green-50 dark:bg-green-950 text-green-700 dark:text-green-400 border-green-200 dark:border-green-900 text-xs w-fit"
+                              >
+                                <CheckCircle2 className="w-3 h-3 mr-1" />
+                                Ready
+                              </Badge>
+                            )}
                           </div>
-                          <ArrowRight className="h-4 w-4 text-slate-400 dark:text-gray-600 opacity-0 transition group-hover:translate-x-0.5 group-hover:opacity-100" />
                         </div>
-                      </button>
-                    );
-                  })}
-                </div>
-              </CardContent>
-            </Card>
-          </div>
-
-          {/* Recent Activity Sidebar */}
-          <div className="space-y-6">
-            <Card className="dark:bg-zinc-950 dark:border-gray-800">
-              <CardHeader>
-                <CardTitle className="dark:text-white">
-                  Recent Activity
-                </CardTitle>
-                <CardDescription className="dark:text-gray-400">
-                  Latest updates from your platform
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-4">
-                  {recentActivity.map((activity) => (
-                    <div
-                      key={activity.id}
-                      className="flex items-start gap-3 pb-3 last:pb-0 border-b dark:border-gray-800 last:border-0"
-                    >
-                      <div
-                        className={`rounded-full p-2 ${
-                          activity.type === "booking"
-                            ? "bg-blue-100 dark:bg-blue-950"
-                            : "bg-purple-100 dark:bg-purple-950"
-                        }`}
-                      >
-                        {activity.type === "booking" ? (
-                          <CalendarCheck className="h-3 w-3 text-blue-600 dark:text-blue-400" />
-                        ) : (
-                          <Users className="h-3 w-3 text-purple-600 dark:text-purple-400" />
-                        )}
-                      </div>
-                      <div className="flex-1 space-y-1">
-                        <p className="text-sm font-medium dark:text-white">
-                          {activity.user}
-                        </p>
-                        <p className="text-xs text-slate-600 dark:text-gray-400">
-                          {activity.item}
-                        </p>
-                        <p className="text-xs text-slate-500 dark:text-gray-500">
-                          {activity.time}
-                        </p>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </CardContent>
-            </Card>
-
-            <Card className="dark:bg-zinc-950 dark:border-gray-800">
-              <CardHeader>
-                <CardTitle className="dark:text-white">System Status</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="space-y-2">
-                  <div className="flex items-center justify-between text-sm">
-                    <span className="text-slate-600 dark:text-gray-400">
-                      Database
-                    </span>
-                    <Badge
-                      variant="secondary"
-                      className="bg-green-100 dark:bg-green-950 text-green-700 dark:text-green-400 dark:border-green-900"
-                    >
-                      Healthy
-                    </Badge>
-                  </div>
-                  <Progress value={95} className="h-2 dark:bg-gray-900" />
-                </div>
-                <div className="space-y-2">
-                  <div className="flex items-center justify-between text-sm">
-                    <span className="text-slate-600 dark:text-gray-400">
-                      API Response
-                    </span>
-                    <Badge
-                      variant="secondary"
-                      className="bg-green-100 dark:bg-green-950 text-green-700 dark:text-green-400 dark:border-green-900"
-                    >
-                      Fast
-                    </Badge>
-                  </div>
-                  <Progress value={88} className="h-2 dark:bg-gray-900" />
-                </div>
-                <div className="space-y-2">
-                  <div className="flex items-center justify-between text-sm">
-                    <span className="text-slate-600 dark:text-gray-400">
-                      Storage
-                    </span>
-                    <Badge
-                      variant="secondary"
-                      className="bg-yellow-100 dark:bg-yellow-950 text-yellow-700 dark:text-yellow-400 dark:border-yellow-900"
-                    >
-                      72%
-                    </Badge>
-                  </div>
-                  <Progress value={72} className="h-2 dark:bg-gray-900" />
-                </div>
-              </CardContent>
-            </Card>
-          </div>
-        </div>
-
-        {/* Alert Banner */}
-        <Card className="border-orange-200 dark:border-orange-900 bg-orange-50 dark:bg-orange-950">
-          <CardContent className="flex items-start gap-3 p-4">
-            <AlertCircle className="h-5 w-5 text-orange-600 dark:text-orange-400 mt-0.5" />
-            <div className="flex-1">
-              <h4 className="font-medium text-orange-900 dark:text-orange-300">
-                Action Required
-              </h4>
-              <p className="text-sm text-orange-700 dark:text-orange-400 mt-1">
-                You have 12 pending bookings awaiting confirmation. Review them
-                to ensure smooth operations.
-              </p>
+                      </CardContent>
+                    </Card>
+                  </button>
+                );
+              })}
             </div>
-            <Button
-              size="sm"
-              variant="outline"
-              className="border-orange-300 dark:border-orange-800 dark:text-orange-400 hover:bg-orange-100 dark:hover:bg-orange-950"
-              onClick={() => navigate("/dashboard/bookings")}
-            >
-              Review
-            </Button>
+          </CardContent>
+        </Card>
+
+        {/* System Status Card */}
+        <Card className="shadow-lg">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <div className="p-2 rounded-lg bg-primary/10">
+                <BarChart3 className="h-5 w-5 text-primary" />
+              </div>
+              System Health
+            </CardTitle>
+            <CardDescription>
+              Current platform health and performance metrics
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-6">
+            <div className="space-y-3">
+              <div className="flex items-center justify-between">
+                <span className="text-sm font-medium flex items-center gap-2">
+                  <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
+                  Database Connection
+                </span>
+                <Badge
+                  variant="outline"
+                  className="bg-green-50 dark:bg-green-950 text-green-700 dark:text-green-400 border-green-200 dark:border-green-900"
+                >
+                  <CheckCircle2 className="w-3 h-3 mr-1" />
+                  Healthy
+                </Badge>
+              </div>
+              <Progress value={95} className="h-2" />
+            </div>
+
+            <div className="space-y-3">
+              <div className="flex items-center justify-between">
+                <span className="text-sm font-medium flex items-center gap-2">
+                  <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
+                  API Response Time
+                </span>
+                <Badge
+                  variant="outline"
+                  className="bg-green-50 dark:bg-green-950 text-green-700 dark:text-green-400 border-green-200 dark:border-green-900"
+                >
+                  <Zap className="w-3 h-3 mr-1" />
+                  Fast (120ms)
+                </Badge>
+              </div>
+              <Progress value={88} className="h-2" />
+            </div>
+
+            <div className="space-y-3">
+              <div className="flex items-center justify-between">
+                <span className="text-sm font-medium">Feature Completion</span>
+                <Badge
+                  variant="outline"
+                  className="bg-blue-50 dark:bg-blue-950 text-blue-700 dark:text-blue-400 border-blue-200 dark:border-blue-900"
+                >
+                  {implementedCount} / {dashboardItems.length}
+                </Badge>
+              </div>
+              <Progress value={completionPercentage} className="h-2" />
+            </div>
           </CardContent>
         </Card>
       </div>

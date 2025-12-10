@@ -1,211 +1,397 @@
-import { useParams, useNavigate } from "react-router-dom";
+// EditRooms.jsx - Component for managing room types
+
 import { useState } from "react";
+import { useParams, useNavigate } from "react-router-dom";
 import { useStay } from "@/hooks/useStay";
+import { useStayMutations } from "@/hooks/useStayMutations";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Badge } from "@/components/ui/badge";
+import { Separator } from "@/components/ui/separator";
 import {
   Dialog,
   DialogContent,
-  DialogDescription,
-  DialogFooter,
   DialogHeader,
   DialogTitle,
+  DialogDescription,
 } from "@/components/ui/dialog";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Loader2, Edit, ArrowLeft } from "lucide-react";
+import {
+  Bed,
+  DollarSign,
+  Users,
+  Maximize,
+  Plus,
+  Edit,
+  Trash2,
+  ArrowLeft,
+  Loader2,
+} from "lucide-react";
 
 export default function EditRooms() {
   const { id } = useParams();
   const navigate = useNavigate();
-  const { data, isLoading, error } = useStay();
-  
-  const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
+  const { data: stays, isLoading } = useStay();
+  const { updateStay } = useStayMutations();
+
+  const [editDialogOpen, setEditDialogOpen] = useState(false);
   const [selectedRoom, setSelectedRoom] = useState(null);
-  const [formData, setFormData] = useState({
+  const [selectedRoomIndex, setSelectedRoomIndex] = useState(null);
+
+  // Room form state
+  const [roomForm, setRoomForm] = useState({
     name: "",
     size: "",
     beds: "",
-    price: "",
+    maxOccupancy: 1,
+    price: 0,
+    amenities: [],
   });
 
   if (isLoading) {
     return (
       <div className="min-h-screen flex justify-center items-center">
-        <Loader2 className="animate-spin" />
+        <Loader2 className="animate-spin text-primary" />
       </div>
     );
   }
 
-  if (error) {
-    return <h1>Error: {error.message}</h1>;
-  }
-
-  const flatStays = Array.isArray(data) ? data.flat() : [];
+  // Find the specific stay
+  const flatStays = Array.isArray(stays) ? stays.flat() : [];
   const stay = flatStays.find((s) => s._id === id);
 
   if (!stay) {
     return (
-      <div className="min-h-screen flex justify-center items-center">
-        <h1>Stay not found</h1>
+      <div className="min-h-screen p-6">
+        <h1 className="text-2xl font-bold text-destructive">Stay not found</h1>
       </div>
     );
   }
 
-  const handleEditClick = (room) => {
+  const handleEditRoom = (room, index) => {
     setSelectedRoom(room);
-    setFormData({
+    setSelectedRoomIndex(index);
+    setRoomForm({
       name: room.name,
       size: room.size,
       beds: room.beds,
+      maxOccupancy: room.maxOccupancy,
       price: room.price,
+      amenities: room.amenities || [],
     });
-    setIsEditDialogOpen(true);
+    setEditDialogOpen(true);
   };
 
-  const handleInputChange = (field, value) => {
-    setFormData((prev) => ({ ...prev, [field]: value }));
+  const handleAddRoom = () => {
+    setSelectedRoom(null);
+    setSelectedRoomIndex(null);
+    setRoomForm({
+      name: "",
+      size: "",
+      beds: "",
+      maxOccupancy: 1,
+      price: 0,
+      amenities: [],
+    });
+    setEditDialogOpen(true);
   };
 
-  const handleSave = async () => {
-    // Add your API call here to update the room
-    console.log("Saving room:", selectedRoom._id, formData);
-    setIsEditDialogOpen(false);
+  const handleSaveRoom = async () => {
+    const updatedRooms = [...(stay.roomTypes || [])];
+
+    if (selectedRoomIndex !== null) {
+      // Update existing room
+      updatedRooms[selectedRoomIndex] = {
+        ...updatedRooms[selectedRoomIndex],
+        ...roomForm,
+      };
+    } else {
+      // Add new room
+      updatedRooms.push({
+        _id: `room_${Date.now()}`,
+        ...roomForm,
+      });
+    }
+
+    await updateStay.mutateAsync({
+      id: stay._id,
+      data: { roomTypes: updatedRooms },
+    });
+
+    setEditDialogOpen(false);
   };
+
+  const handleDeleteRoom = async (index) => {
+    const updatedRooms = stay.roomTypes.filter((_, i) => i !== index);
+    await updateStay.mutateAsync({
+      id: stay._id,
+      data: { roomTypes: updatedRooms },
+    });
+  };
+
+  const handleAmenityChange = (amenity) => {
+    setRoomForm((prev) => ({
+      ...prev,
+      amenities: prev.amenities.includes(amenity)
+        ? prev.amenities.filter((a) => a !== amenity)
+        : [...prev.amenities, amenity],
+    }));
+  };
+
+  const commonAmenities = [
+    "Sea View",
+    "Mountain View",
+    "Garden View",
+    "Balcony",
+    "Private Terrace",
+    "Air Conditioning",
+    "Mini Bar",
+    "Coffee Maker",
+    "Safe",
+    "Bathtub",
+    "Jacuzzi",
+    "Living Area",
+    "Kitchenette",
+    "Direct Beach Access",
+  ];
 
   return (
-    <div className="min-h-screen p-6">
-      <div className="mx-auto max-w-7xl space-y-6">
-        <div className="flex flex-col gap-10">
-          <header className="flex flex-col gap-3">
-            <div className="flex items-center gap-3">
-              <Button
-                variant="outline"
-                size="icon"
-                onClick={() => navigate("/dashboard/stays")}
-              >
-                <ArrowLeft className="w-4 h-4" />
-              </Button>
-              <h1 className="text-3xl font-bold tracking-tight text-slate-900 dark:text-white">
-                Edit Rooms — {stay.name}
-              </h1>
-            </div>
-            <p className="text-sm text-slate-600 dark:text-gray-400">
-              Manage room types for this stay. Edit room details, pricing, and availability.
+    <div className="min-h-screen p-6 bg-background">
+      <div className="mx-auto max-w-6xl space-y-6">
+        <div className="flex items-center gap-4">
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={() => navigate("/dashboard/stays")}
+          >
+            <ArrowLeft className="w-5 h-5" />
+          </Button>
+          <div className="flex-1">
+            <h1 className="text-3xl font-bold tracking-tight">
+              Room Management
+            </h1>
+            <p className="text-muted-foreground mt-1">
+              Managing rooms for <strong>{stay.name}</strong>
             </p>
-          </header>
+          </div>
+          <Button onClick={handleAddRoom}>
+            <Plus className="w-4 h-4 mr-2" />
+            Add Room Type
+          </Button>
+        </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-            {stay.roomTypes.map((room) => (
-              <Card className="bg-zinc-950" key={room._id}>
-                <CardHeader>
-                  <CardTitle>{room.name}</CardTitle>
-                </CardHeader>
+        <Separator />
 
-                <CardContent>
-                  <div className="flex flex-col gap-2">
-                    <div className="flex justify-between items-center py-1">
-                      <span className="text-sm text-gray-400">Size</span>
-                      <span className="text-gray-200">{room.size}</span>
-                    </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          {stay.roomTypes?.map((room, index) => (
+            <Card key={room._id || index} className="hover:border-primary/50">
+              <CardHeader>
+                <div className="flex items-start justify-between">
+                  <CardTitle className="text-lg">{room.name}</CardTitle>
+                  <Badge variant="secondary">
+                    <DollarSign className="w-3 h-3 mr-1" />
+                    {room.price}
+                  </Badge>
+                </div>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="space-y-2 text-sm">
+                  <div className="flex items-center gap-2">
+                    <Maximize className="w-4 h-4 text-muted-foreground" />
+                    <span>{room.size}</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Bed className="w-4 h-4 text-muted-foreground" />
+                    <span>{room.beds}</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Users className="w-4 h-4 text-muted-foreground" />
+                    <span>Max {room.maxOccupancy} guests</span>
+                  </div>
+                </div>
 
-                    <div className="flex justify-between items-center py-1">
-                      <span className="text-sm text-gray-400">Beds</span>
-                      <span className="text-gray-200">{room.beds}</span>
-                    </div>
-
-                    <div className="flex justify-between items-center py-1">
-                      <span className="text-sm text-gray-400">Price</span>
-                      <span className="text-2xl text-gray-200 font-semibold">
-                        ${room.price}
-                      </span>
-                    </div>
-
-                    <div className="mt-4">
-                      <Button
-                        className="w-full"
-                        onClick={() => handleEditClick(room)}
-                      >
-                        <Edit className="w-4 h-4 mr-2" />
-                        Edit Room
-                      </Button>
+                {room.amenities && room.amenities.length > 0 && (
+                  <div>
+                    <h4 className="text-xs font-semibold text-muted-foreground uppercase mb-2">
+                      Amenities
+                    </h4>
+                    <div className="flex flex-wrap gap-1">
+                      {room.amenities.slice(0, 3).map((amenity, i) => (
+                        <Badge key={i} variant="outline" className="text-xs">
+                          {amenity}
+                        </Badge>
+                      ))}
+                      {room.amenities.length > 3 && (
+                        <Badge variant="outline" className="text-xs">
+                          +{room.amenities.length - 3}
+                        </Badge>
+                      )}
                     </div>
                   </div>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-        </div>
-      </div>
+                )}
 
-      <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
-        <DialogContent className="sm:max-w-[425px] bg-zinc-950 border-zinc-800">
-          <DialogHeader>
-            <DialogTitle className="text-white">Edit Room</DialogTitle>
-            <DialogDescription className="text-gray-400">
-              Update the room details below. Click save when finished.
-            </DialogDescription>
-          </DialogHeader>
-          <div className="grid gap-4 py-4">
-            <div className="grid gap-2">
-              <Label htmlFor="name" className="text-gray-200">
-                Room Name
-              </Label>
-              <Input
-                id="name"
-                value={formData.name}
-                onChange={(e) => handleInputChange("name", e.target.value)}
-                className="bg-zinc-900 border-zinc-800 text-gray-200"
-              />
+                <div className="flex gap-2 pt-2">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="flex-1"
+                    onClick={() => handleEditRoom(room, index)}
+                  >
+                    <Edit className="w-3 h-3 mr-1" />
+                    Edit
+                  </Button>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => handleDeleteRoom(index)}
+                    className="text-destructive hover:bg-destructive/10"
+                  >
+                    <Trash2 className="w-3 h-3" />
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+
+        {/* Edit/Add Room Dialog */}
+        <Dialog open={editDialogOpen} onOpenChange={setEditDialogOpen}>
+          <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+            <DialogHeader>
+              <DialogTitle>
+                {selectedRoom ? "Edit Room Type" : "Add Room Type"}
+              </DialogTitle>
+              <DialogDescription>
+                {selectedRoom
+                  ? "Update the details for this room type"
+                  : "Add a new room type to this stay"}
+              </DialogDescription>
+            </DialogHeader>
+
+            <div className="space-y-4">
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label htmlFor="roomName">Room Name *</Label>
+                  <Input
+                    id="roomName"
+                    value={roomForm.name}
+                    onChange={(e) =>
+                      setRoomForm({ ...roomForm, name: e.target.value })
+                    }
+                    placeholder="Deluxe Sea View"
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="roomSize">Size *</Label>
+                  <Input
+                    id="roomSize"
+                    value={roomForm.size}
+                    onChange={(e) =>
+                      setRoomForm({ ...roomForm, size: e.target.value })
+                    }
+                    placeholder="32 m²"
+                  />
+                </div>
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="beds">Bed Configuration *</Label>
+                <Input
+                  id="beds"
+                  value={roomForm.beds}
+                  onChange={(e) =>
+                    setRoomForm({ ...roomForm, beds: e.target.value })
+                  }
+                  placeholder="1 King or 2 Twin"
+                />
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label htmlFor="maxOccupancy">Max Occupancy *</Label>
+                  <Input
+                    id="maxOccupancy"
+                    type="number"
+                    min="1"
+                    value={roomForm.maxOccupancy}
+                    onChange={(e) =>
+                      setRoomForm({
+                        ...roomForm,
+                        maxOccupancy: parseInt(e.target.value),
+                      })
+                    }
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="price">Price per Night (USD) *</Label>
+                  <Input
+                    id="price"
+                    type="number"
+                    min="0"
+                    value={roomForm.price}
+                    onChange={(e) =>
+                      setRoomForm({
+                        ...roomForm,
+                        price: parseFloat(e.target.value),
+                      })
+                    }
+                  />
+                </div>
+              </div>
+
+              <div className="space-y-2">
+                <Label>Amenities</Label>
+                <div className="grid grid-cols-2 gap-2 max-h-48 overflow-y-auto p-2 border rounded-md">
+                  {commonAmenities.map((amenity) => (
+                    <label
+                      key={amenity}
+                      className="flex items-center gap-2 cursor-pointer"
+                    >
+                      <input
+                        type="checkbox"
+                        checked={roomForm.amenities.includes(amenity)}
+                        onChange={() => handleAmenityChange(amenity)}
+                        className="rounded"
+                      />
+                      <span className="text-sm">{amenity}</span>
+                    </label>
+                  ))}
+                </div>
+              </div>
+
+              <div className="flex justify-end gap-3 pt-4 border-t">
+                <Button
+                  variant="outline"
+                  onClick={() => setEditDialogOpen(false)}
+                >
+                  Cancel
+                </Button>
+                <Button
+                  onClick={handleSaveRoom}
+                  disabled={
+                    !roomForm.name ||
+                    !roomForm.size ||
+                    !roomForm.beds ||
+                    updateStay.isPending
+                  }
+                >
+                  {updateStay.isPending ? (
+                    <>
+                      <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                      Saving...
+                    </>
+                  ) : (
+                    "Save Room"
+                  )}
+                </Button>
+              </div>
             </div>
-            <div className="grid gap-2">
-              <Label htmlFor="size" className="text-gray-200">
-                Size
-              </Label>
-              <Input
-                id="size"
-                value={formData.size}
-                onChange={(e) => handleInputChange("size", e.target.value)}
-                className="bg-zinc-900 border-zinc-800 text-gray-200"
-              />
-            </div>
-            <div className="grid gap-2">
-              <Label htmlFor="beds" className="text-gray-200">
-                Beds
-              </Label>
-              <Input
-                id="beds"
-                type="number"
-                value={formData.beds}
-                onChange={(e) => handleInputChange("beds", e.target.value)}
-                className="bg-zinc-900 border-zinc-800 text-gray-200"
-              />
-            </div>
-            <div className="grid gap-2">
-              <Label htmlFor="price" className="text-gray-200">
-                Price
-              </Label>
-              <Input
-                id="price"
-                type="number"
-                value={formData.price}
-                onChange={(e) => handleInputChange("price", e.target.value)}
-                className="bg-zinc-900 border-zinc-800 text-gray-200"
-              />
-            </div>
-          </div>
-          <DialogFooter className="gap-2">
-            <Button
-              variant="outline"
-              onClick={() => setIsEditDialogOpen(false)}
-              className="border-zinc-800"
-            >
-              Cancel
-            </Button>
-            <Button onClick={handleSave}>Save Changes</Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+          </DialogContent>
+        </Dialog>
+      </div>
     </div>
   );
 }

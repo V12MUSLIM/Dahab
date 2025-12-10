@@ -7,15 +7,22 @@ import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
 import { CheckCircle2 } from "lucide-react";
 // eslint-disable-next-line no-unused-vars
 import { motion } from "framer-motion";
+import { usePackages } from "@/hooks/usePackages";
+import { PackagesSkeleton } from "../skeletons/PackagesSkeleton";
+export default function PackageDealsSection({ badge, header, description }) {
+  const { packages, isLoading, error } = usePackages();
 
-export default function PackageDealsSection({
-  packages,
-  badge,
-  header,
-  description,
-}) {
+  if (isLoading) {
+    return <PackagesSkeleton />;
+  }
 
-
+  if (error) {
+    return (
+      <div className="self-center">
+        Somthing went wrong fetching packages {error.message}{" "}
+      </div>
+    );
+  }
   return (
     <motion.div
       className="w-full py-20 px-4"

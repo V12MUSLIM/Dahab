@@ -93,4 +93,3 @@ export const logoutHandler: RequestHandler<{}, IResponse, {}> = async (req, res)
 //         res.status(500).json({ message: "Logout failed" });
 //     }
 // };
-

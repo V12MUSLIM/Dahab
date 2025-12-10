@@ -14,15 +14,16 @@ import {
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import { useAuthStore } from "@/store/authStore";
+import { useMutation } from "@tanstack/react-query";
 
 const LoginPage = () => {
   const navigate = useNavigate();
-  const { setError, isLoading, setLoading, checkAuthStatus } = useAuthStore();
+  const { setError, checkAuthStatus } = useAuthStore();
 
   const {
     register,
     handleSubmit,
-    formState: { errors, isSubmitting },
+    formState: { errors },
   } = useForm({
     resolver: zodResolver(loginSchema),
     defaultValues: {
@@ -32,23 +33,21 @@ const LoginPage = () => {
     },
   });
 
-  // Email/Password Login
-  const onSubmit = async (formData) => {
-    if (
-      import.meta.env.DEV &&
-      formData.email === "mostafa@dahab.com" &&
-      formData.password === "1234678"
-    ) {
-      useAuthStore.setState({
-        user: { email: formData.email, role: "admin" },
-        isAuthenticated: true,
-      });
-      navigate("/dashboard");
-      return;
-    }
-
-    try {
-      setLoading(true);
+  // Login mutation
+  const loginMutation = useMutation({
+    mutationFn: async (formData) => {
+      
+      if (
+        import.meta.env.DEV &&
+        formData.email === "mostafa@dahab.com" &&
+        formData.password === "1234678"
+      ) {
+        useAuthStore.setState({
+          user: { email: formData.email, role: "admin" },
+          isAuthenticated: true,
+        });
+        return { isDev: true };
+      }
 
       const response = await api.post(
         "/auth/login",
@@ -59,30 +58,40 @@ const LoginPage = () => {
         { withCredentials: true }
       );
 
-      if (response.status === 200) {
-        await checkAuthStatus();
-        toast.success("Login successful!");
-        navigate("/");
-      } else {
+      if (response.status !== 200) {
         throw new Error("Unexpected response from server");
       }
-    } catch (error) {
+
+      return response.data;
+    },
+    onSuccess: async (data) => {
+      if (!data.isDev) {
+        await checkAuthStatus();
+      }
+      toast.success("Login successful!");
+      navigate(data.isDev ? "/dashboard" : "/");
+    },
+    onError: (error) => {
       const errorMsg =
         error.response?.data?.message ||
         error.message ||
         "Login failed. Please try again.";
       setError(errorMsg);
       toast.error(errorMsg);
-    } finally {
-      setLoading(false);
-    }
+    },
+  });
+
+  // Email/Password Login
+  const onSubmit = async (formData) => {
+    loginMutation.mutate(formData);
   };
 
   // Google OAuth Redirect
   const handleGoogleLogin = () => {
-    setLoading(true);
     window.location.href = `${import.meta.env.VITE_API_URL}/auth/google`;
   };
+
+  const isLoading = loginMutation.isPending;
 
   return (
     <div
@@ -162,10 +171,10 @@ const LoginPage = () => {
 
               <FormPrimaryButton
                 type="submit"
-                disabled={isSubmitting || isLoading}
+                disabled={isLoading}
                 className="text-xl"
               >
-                {isSubmitting || isLoading ? (
+                {isLoading ? (
                   <div className="flex items-center gap-2">
                     <Spinner className="w-4 h-4">Logging in...</Spinner>
                   </div>

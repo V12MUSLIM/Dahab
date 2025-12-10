@@ -115,48 +115,6 @@ export default function Home() {
 
   const displayHero = heroObj || fallbackHero;
 
-  // Fallback packages
-  const fallbackPackages = [
-    {
-      title: "Adventure Seeker",
-      price: "$299",
-      duration: "3 Days",
-      features: [
-        "Blue Hole diving experience",
-        "Desert safari with Bedouin dinner",
-        "Snorkeling at Three Pools",
-        "Rock climbing session",
-        "All equipment included",
-      ],
-      popular: true,
-    },
-    {
-      title: "Relaxation Retreat",
-      price: "$249",
-      duration: "4 Days",
-      features: [
-        "Beachfront accommodation",
-        "Daily yoga sessions",
-        "Spa treatment package",
-        "Lagoon day trip",
-        "Sunset meditation",
-      ],
-      popular: false,
-    },
-    {
-      title: "Ultimate Explorer",
-      price: "$599",
-      duration: "7 Days",
-      features: [
-        "Advanced diving package",
-        "Mount Sinai overnight trek",
-        "Colored Canyon expedition",
-        "Windsurfing lessons",
-        "Photography workshop",
-      ],
-      popular: false,
-    },
-  ];
 
   // Fallback activities
   const fallbackActivities = [
@@ -202,7 +160,7 @@ export default function Home() {
     },
   ];
 
-  const displayPackages = packages || fallbackPackages;
+  const displayPackages = packages ;
 
 
   const displayActivities = activities
