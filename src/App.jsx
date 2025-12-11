@@ -1,6 +1,6 @@
 import "./App.css";
 import { HashRouter, Routes, Route } from "react-router-dom";
-import { lazy, Suspense, useEffect } from "react";
+import { lazy, Suspense} from "react";
 import DefaultLayout from "./layouts/DefaultLayout";
 import ProtectedLayout from "./layouts/ProtectedLayout";
 import { ExperienceProvider } from "./Context/ExperiencesContext";
@@ -9,8 +9,7 @@ import ScrollToTop from "./components/ScrollToTop";
 import { PageSkeleton } from "@/components/skeletons/PageSkeleton";
 import { Toaster } from "@/components/ui/sonner";
 import AuthCallback from "./pages/AuthCallback";
-import { useAuthStore } from "./store/authStore";
-import Loading from "@/components/Loading";
+
 import { useSyncUserToQuery } from "@/hooks/useSyncUserToQuery";
 import Forbidden from "./pages/403";
 const DashboardLayout = lazy(() => import("./layouts/DashboardLayout"));
@@ -19,8 +18,8 @@ import Home from "./pages/Home";
 import DashboardRoutes from "./pages/dashboard/Dashboardroutes";
 // LAZY LOAD
 // const Forbidden= lazy(() => import("./pages/403"));
-const Stay = lazy(() => import("./pages/Stay"));
-const StayDetails = lazy(() => import("./components/sections/StayDetails")); // Add this
+const Stay = lazy(() => import("./pages/stay/Stay"));
+const StayDetails = lazy(() => import("./pages/stay/StayDetails")); // Add this
 const Dine = lazy(() => import("./pages/Dine"));
 const PlanTrip = lazy(() => import("./pages/PlanTrip"));
 const Destinations = lazy(() => import("./pages/Destinations"));
@@ -33,37 +32,14 @@ const DestinationDetail = lazy(() =>
 );
 const DineDetails = lazy(() => import("./components/sections/DineDetails"));
 const NotFound = lazy(() => import("./pages/404"));
-const LoginPage = lazy(() => import("./pages/Login"));
-const SignupPage = lazy(() => import("./pages/SignUp"));
+import LoginPage from "./pages/Login";
+import SignupPage from "./pages/SignUp";
 
 const Booking = lazy(() => import("./pages/Booking"));
 const Settings = lazy(() => import("./pages/ProfileSettings"));
-import { useLocation } from "react-router-dom";
+
 import GuestRoute from "./layouts/GuestRoute";
-// --- Auth initialization ---
-const AuthInitializer = ({ children }) => {
-  const checkAuthStatus = useAuthStore((s) => s.checkAuthStatus);
-  const isInitialized = useAuthStore((s) => s.isInitialized);
-  const location = useLocation();
-
-  const skip = location.hash.startsWith("#/auth/callback");
-
-  useEffect(() => {
-    if (!skip) {
-      checkAuthStatus();
-    }
-  }, []); 
-
-  if (!skip && !isInitialized) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-background">
-        <Loading loadingMessage="Please wait..." />
-      </div>
-    );
-  }
-
-  return children;
-};
+import AuthInitializer from "./lib/AuthIntializer";
 
 function App() {
   useSyncUserToQuery();
@@ -176,22 +152,8 @@ function App() {
                     }
                   />
                   <Route element={<GuestRoute />}>
-                    <Route
-                      path="/login"
-                      element={
-                        <Suspense fallback={<PageSkeleton />}>
-                          <LoginPage />
-                        </Suspense>
-                      }
-                    />
-                    <Route
-                      path="/signup"
-                      element={
-                        <Suspense fallback={<PageSkeleton />}>
-                          <SignupPage />
-                        </Suspense>
-                      }
-                    />
+                    <Route path="/login" element={<LoginPage />} />
+                    <Route path="/signup" element={<SignupPage />} />
                   </Route>
 
                   <Route
@@ -227,18 +189,23 @@ function App() {
                 />
 
                 {/* User or Admin can access Settings */}
-                <Route
-                  element={<ProtectedLayout allowedRoles={["user", "admin"]} />}
-                >
+                <Route element={<DefaultLayout />}>
                   <Route
-                    path="/settings"
                     element={
-                      <Suspense fallback={<PageSkeleton />}>
-                        <Settings />
-                      </Suspense>
+                      <ProtectedLayout allowedRoles={["user", "admin"]} />
                     }
-                  />
+                  >
+                    <Route
+                      path="/settings"
+                      element={
+                        <Suspense fallback={<PageSkeleton />}>
+                          <Settings />
+                        </Suspense>
+                      }
+                    />
+                  </Route>
                 </Route>
+
                 {/* OAuth callback - no layout */}
                 <Route path="/auth/callback" element={<AuthCallback />} />
               </Routes>

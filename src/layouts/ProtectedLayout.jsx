@@ -1,72 +1,31 @@
 import { useEffect } from "react";
-import { useNavigate, useLocation, Outlet } from "react-router-dom";
+import { useNavigate, Outlet } from "react-router-dom";
 import { useAuthStore } from "@/store/authStore";
-import { ROUTES } from "@/config/SiteConfig";
-import Loading from "@/components/Loading";
-import DefaultLayout from "./DefaultLayout";
 
 export default function ProtectedLayout({ allowedRoles }) {
   const navigate = useNavigate();
-  const location = useLocation();
+  const { isAuthenticated, user } = useAuthStore();
 
-  const {
-    isAuthenticated,
-    isLoading,
-    isCheckingAuth,
-    hasRole,
-    isInitialized,
-  } = useAuthStore();
-
-  const isDashboardRoute = location.pathname.startsWith("/dashboard");
-
-  // 🚨 FIX: do NOT run redirect logic before initialization
   useEffect(() => {
-    if (!isInitialized) return;
-    if (isCheckingAuth || isLoading) return;
-
     if (!isAuthenticated) {
-      navigate(ROUTES.login, { replace: true });
+      navigate("/login", { replace: true });
       return;
     }
 
-    if (allowedRoles && !hasRole(allowedRoles)) {
+    if (allowedRoles && !allowedRoles.includes(user?.role)) {
       navigate("/403", { replace: true });
     }
-  }, [
-    isInitialized,      // <-- REQUIRED
-    isAuthenticated,
-    isCheckingAuth,
-    isLoading,
-    allowedRoles,
-    navigate,
-    hasRole,
-  ]);
+  }, [isAuthenticated, allowedRoles, navigate, user]);
 
-  // 🚨 MUST BE FIRST CHECK
-  if (!isInitialized) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-background">
-        <Loading loadingMessage="Checking session..." />
-      </div>
-    );
+  // Don't render protected content while checking authentication
+  if (!isAuthenticated) {
+    return null;
   }
 
-  // After initialization but still loading
-  if (isLoading || isCheckingAuth) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-background">
-        <Loading loadingMessage="Checking session..." />
-      </div>
-    );
+  // Don't render if user doesn't have required role
+  if (allowedRoles && !allowedRoles.includes(user?.role)) {
+    return null;
   }
 
-  if (isDashboardRoute) {
-    return <Outlet />;
-  }
-
-  return (
-    <DefaultLayout>
-      <Outlet />
-    </DefaultLayout>
-  );
+  return <Outlet />;
 }

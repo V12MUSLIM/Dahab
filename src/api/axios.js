@@ -1,7 +1,7 @@
 import axios from "axios";
 import { useAuthStore } from "@/store/authStore";
 
-const BASE_URL = import.meta.env.VITE_API_URL ?? "/api";
+const BASE_URL = import.meta.env.VITE_API_URL;
 
 const api = axios.create({
   baseURL: BASE_URL,
@@ -9,60 +9,57 @@ const api = axios.create({
   timeout: 10000,
 });
 
-// ✅ attach accessToken from memory before every request
-api.interceptors.request.use(
-  (config) => {
-    const token = useAuthStore.getState().accessToken;
-    if (token) config.headers.Authorization = `Bearer ${token}`;
-    return config;
-  },
-  (error) => Promise.reject(error)
-);
+// Track ongoing refresh request to prevent race conditions
+let refreshTokenPromise = null;
 
-// ✅ handle automatic token refresh
+// inject token
+api.interceptors.request.use((config) => {
+  const token = useAuthStore.getState().accessToken;
+  if (token) config.headers.Authorization = `Bearer ${token}`;
+  return config;
+});
+
+// refresh token on 401
 api.interceptors.response.use(
-  (response) => response,
+  (res) => res,
   async (error) => {
-    const originalRequest = error.config;
-    const status = error.response?.status;
-
-    // only retry once if 401 (expired token)
-    if (status === 401 && !originalRequest._retry) {
-      originalRequest._retry = true;
+    const original = error.config;
+    if (error.response?.status === 401 && !original._retry) {
+      original._retry = true;
 
       try {
-        // refresh token using the secure cookie (httpOnly)
-        const refreshResponse = await axios.post(
-          `${BASE_URL}/auth/refresh`,
-          {},
-          { withCredentials: true }
-        );
+        // Reuse existing refresh request if one is already in progress
+        if (!refreshTokenPromise) {
+          refreshTokenPromise = axios
+            .post(
+              `${BASE_URL}/auth/refresh`,
+              {},
+              { withCredentials: true }
+            )
+            .finally(() => {
+              // Clear the promise after completion
+              refreshTokenPromise = null;
+            });
+        }
 
-        const newAccessToken = refreshResponse.data?.accessToken;
-        if (newAccessToken) {
-          const { setAccessToken } = useAuthStore.getState();
-          setAccessToken(newAccessToken);
-          const { checkAuthStatus } = useAuthStore.getState();
-          await checkAuthStatus();
-          // update header and retry
-          originalRequest.headers.Authorization = `Bearer ${newAccessToken}`;
-          return api(originalRequest);
+        const refreshRes = await refreshTokenPromise;
+        const newToken = refreshRes.data?.accessToken;
+        
+        if (newToken) {
+          useAuthStore.getState().setAccessToken(newToken);
+          original.headers.Authorization = `Bearer ${newToken}`;
+          return api(original);
         }
       } catch (refreshError) {
-        console.error("Token refresh failed:", refreshError);
-
-        // clear state and redirect if refresh fails
-        const { clearAuth } = useAuthStore.getState();
-        clearAuth();
-
-        // avoid hard navigation loop if already on login page
+        // Refresh failed - logout user
+        useAuthStore.getState().logout();
+        
+        // Redirect to login if not already there
         if (!window.location.pathname.startsWith("/login")) {
           window.location.href = "/login";
         }
       }
     }
-
-    // if any other error, reject normally
     return Promise.reject(error);
   }
 );

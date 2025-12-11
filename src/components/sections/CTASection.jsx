@@ -4,10 +4,15 @@ import {
 } from "../customComponents/ButtonVarients";
 import { Badge } from "../ui/badge";
 import { ArrowRight, Phone, Sparkles, CheckCircle2 } from "lucide-react";
+import { NavLink } from "react-router-dom";
+import { Spinner } from "../ui/spinner";
 // eslint-disable-next-line no-unused-vars
 import { motion } from "framer-motion";
-
+import { useContact } from "@/hooks/useContact";
 export default function CTASection() {
+  const { contactQuery } = useContact();
+  const { data: contact, isLoading } = contactQuery;
+  const { phone } = contact || {};
   return (
     <motion.div
       className="relative py-24 overflow-hidden"
@@ -50,9 +55,19 @@ export default function CTASection() {
             </p>
 
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-8">
-              <PrimaryButton icon={ArrowRight}>Start Planing</PrimaryButton>
-
-              <SecondaryButton icon={Phone}>Contact Us</SecondaryButton>
+              <NavLink to='/plantrip'>
+                <PrimaryButton icon={ArrowRight}>Start Planing</PrimaryButton>
+              </NavLink>
+              <SecondaryButton
+                icon={Phone}
+                disabled={isLoading || !phone}
+                onClick={() => {
+                  if (!phone) return;
+                  window.location.href = `tel:${phone}`;
+                }}
+              >
+                {isLoading ? <Spinner /> : "Contact Us"}
+              </SecondaryButton>
             </div>
 
             <div className="flex flex-wrap items-center justify-center gap-4 sm:gap-8 text-white/80">

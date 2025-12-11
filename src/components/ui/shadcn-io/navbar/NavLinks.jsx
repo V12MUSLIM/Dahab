@@ -16,7 +16,7 @@ import {
   Mail,
   Waves,
   Mountain,
-  LayoutDashboard
+  LayoutDashboard,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -34,6 +34,7 @@ import {
 } from "@/config/SiteConfig";
 import { useContact } from "@/hooks/useContact";
 import { useAuthStore } from "@/store/authStore";
+import { Skeleton } from "../../skeleton";
 // Map icon names from config to components
 const iconMap = { Waves, Mountain, Camera };
 
@@ -51,7 +52,38 @@ const NavItem = ({ to, icon: Icon, label, onClick, className }) => (
     </Button>
   </NavLink>
 );
+const ContactRow = ({ isLoading, isError, value, icon: Icon, href }) => {
+  if (isLoading) {
+    return (
+      <div className="px-3 h-10 flex items-center gap-3">
+        <Skeleton className="h-4 w-4 rounded-full" />
+        <Skeleton className="h-3 w-32" />
+      </div>
+    );
+  }
 
+  if (isError) {
+    return (
+      <div className="h-10 px-3 text-xs text-destructive flex items-center">
+        Contact unavailable
+      </div>
+    );
+  }
+
+  if (!value) return null;
+
+  return (
+    <a href={href(value)} className="block">
+      <Button
+        variant="ghost"
+        className="w-full justify-start h-10 text-sm hover:bg-amber-50 dark:hover:bg-amber-900/20 hover:text-amber-600 dark:hover:text-amber-400 transition-all"
+      >
+        <Icon className="mr-3 h-4 w-4" />
+        {value}
+      </Button>
+    </a>
+  );
+};
 const CollapsibleSection = ({
   title,
   icon: MainIcon,
@@ -124,12 +156,6 @@ const NavLinks = React.memo(({ onNavLinkClick, isDrawer = false }) => {
   const { contactQuery } = useContact();
   const { data: contact, isLoading, isError, error } = contactQuery;
 
-  if (isLoading) {
-    return <div>Loading...</div>;
-  }
-  if (isError) {
-    return <div>Error in laoding contacts {error.message}</div>;
-  }
   const handleLinkClick = () => {
     setDestinationsOpen(false);
     setExperiencesOpen(false);
@@ -232,26 +258,21 @@ const NavLinks = React.memo(({ onNavLinkClick, isDrawer = false }) => {
           <h3 className="font-semibold text-xs text-amber-600 dark:text-amber-400 uppercase tracking-wider px-3 mb-2">
             {UI_TEXT.sections.getInTouch}
           </h3>
-          {phone && (
-            <NavItem
-              to={ROUTES.contact}
-              icon={Phone}
-              label={phone}
-              onClick={handleLinkClick}
-              className="h-10 text-sm"
-            />
-          )}
-          {email && (
-            <a href={`mailto:${email}`} className="block">
-              <Button
-                variant="ghost"
-                className="w-full justify-start h-10 text-sm hover:bg-amber-50 dark:hover:bg-amber-900/20 hover:text-amber-600 dark:hover:text-amber-400 transition-all duration-200"
-              >
-                <Mail className="mr-3 h-4 w-4" />
-                {email}
-              </Button>
-            </a>
-          )}
+          <ContactRow
+            isLoading={isLoading}
+            isError={isError}
+            value={phone}
+            icon={Phone}
+            href={(v) => `tel:${v}`}
+          />
+
+          <ContactRow
+            isLoading={isLoading}
+            isError={isError}
+            value={email}
+            icon={Mail}
+            href={(v) => `mailto:${v}`}
+          />
         </div>
       </nav>
     );

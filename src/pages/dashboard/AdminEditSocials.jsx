@@ -22,7 +22,6 @@ import {
   Pencil,
   CheckCircle2,
   Loader2,
-  X,
   Link as LinkIcon,
   PlusCircle,
   AlertCircle,
@@ -66,7 +65,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
-
+import { LoadingState } from "@/components/admin/adminUI/LoadingState";
 // Common social media presets for better UX
 const SOCIAL_PRESETS = [
   {
@@ -241,18 +240,7 @@ export default function AdminEditSocials() {
   if (isLoading) {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center">
-        <div className="flex flex-col items-center gap-4">
-          <div className="relative">
-            <Loader2 className="animate-spin h-10 w-10 text-primary" />
-            <div className="absolute inset-0 animate-ping bg-primary/10 rounded-full" />
-          </div>
-          <div className="text-center space-y-1">
-            <p className="text-lg font-medium">Loading Social Media</p>
-            <p className="text-sm text-muted-foreground">
-              Fetching your social links...
-            </p>
-          </div>
-        </div>
+       <LoadingState message=" Social Media"/>
       </div>
     );
   }

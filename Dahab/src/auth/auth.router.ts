@@ -7,6 +7,8 @@ import { handleValidationErrors } from "../middlewares/handleValidationErrors";
 import jwtService from "../services/jwt.service";
 import { COOKIE_OPTIONS } from "../utils/cookieOptions";
 import passport from "../config/passport-jwt";
+import jwtAuth from "./jwt"; // JWT middleware
+import { User } from "../models/user-model";
 
 const router = express.Router();
 
@@ -23,7 +25,7 @@ router.get(
     })
 );
 
-// Step 2: Google Callback
+// Google Callback
 router.get(
     "/google/callback",
     passport.authenticate("google", {
@@ -45,12 +47,12 @@ router.get(
             console.log("✅ User found:", { id: user._id, email: user.email });
 
             const token = jwtService.createToken(
-                { id: user._id, email: user.email },
+                { id: user._id, email: user.email, role: user.role },
                 { expiresIn: "2h" }
             );
 
             const refreshToken = jwtService.createToken(
-                { id: user._id, email: user.email },
+                { id: user._id, email: user.email, role: user.role },
                 { expiresIn: "7d" }
             );
 
@@ -77,15 +79,63 @@ router.get(
     }
 );
 
-router.get("/me", (req, res) => {
+// Protected route with JWT middleware
+router.get("/me", jwtAuth, (req, res) => {
     res.json({ success: true, user: req.user });
 });
 
-router.get("/status", (req: Request, res: Response) => {
-    res.json({
-        authenticated: req.isAuthenticated(),
-        user: req.isAuthenticated() ? req.user : null,
-    });
+// ✅ FIXED: Status endpoint reads token from cookie, not Authorization header
+router.get("/status", async (req: Request, res: Response) => {
+    try {
+        // Get token from cookie (not from Authorization header)
+        const token = req.cookies.token;
+
+        if (!token) {
+            return res.status(401).json({ 
+                user: null,
+                accessToken: null 
+            });
+        }
+
+        // Verify token
+        const decoded = jwtService.verifyToken<{ id: string; email: string; role: string }>(token);
+
+        if (!decoded) {
+            return res.status(401).json({ 
+                user: null,
+                accessToken: null 
+            });
+        }
+
+        // Fetch user from database
+        const user = await User.findById(decoded.id).select("-password");
+
+        if (!user) {
+            return res.status(401).json({ 
+                user: null,
+                accessToken: null 
+            });
+        }
+
+        // Return user and token
+        const userResponse = {
+            _id: user._id,
+            email: user.email,
+            name: user.name,
+            role: user.role,
+        };
+
+        return res.json({
+            user: userResponse,
+            accessToken: token,
+        });
+    } catch (error) {
+        console.error("Status check error:", error);
+        return res.status(401).json({ 
+            user: null,
+            accessToken: null 
+        });
+    }
 });
 
 export default router;

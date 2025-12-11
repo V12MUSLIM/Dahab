@@ -15,9 +15,9 @@ import { Spinner } from "@/components/ui/spinner";
 import { toast } from "sonner";
 import { useMutation } from "@tanstack/react-query";
 import { useAuthStore } from "@/store/authStore";
-import api from "@/api/axios";
+import { authApi } from "@/api/authApi";
 
-// Signup Input Component (optimized for signup page styling)
+// Signup Input Component with improved styling
 const SignupInput = ({
   icon: Icon,
   type = "text",
@@ -102,13 +102,14 @@ const SignupInput = ({
 
 export default function SignupPage() {
   const navigate = useNavigate();
+  const { setUser, setAccessToken } = useAuthStore();
 
   const {
     register,
     handleSubmit,
-    formState: { errors, isSubmitting },
-    setValue,
+    formState: { errors },
     watch,
+    setValue,
   } = useForm({
     resolver: zodResolver(signupSchema),
     defaultValues: {
@@ -121,64 +122,41 @@ export default function SignupPage() {
   });
 
   const agreedToTerms = watch("agreedToTerms");
-  //google signup foraward
-  //////////////////////////////////////////////////////////////////
-  const handleGoogleSignup = () => {
-    const apiUrl = import.meta.env.VITE_API_URL;
-    window.open(`${apiUrl}/auth/google`, "_self");
-  };
-  /////////////////////////////////////////////////////////////////
 
-  const {  checkAuthStatus } = useAuthStore();
   const signupMutation = useMutation({
     mutationFn: async (formData) => {
-      await api.post(
-        "/auth/register",
-        {
-          name: formData.fullName,
-          email: formData.email,
-          password: formData.password,
-        },
-        { withCredentials: true }
-      );
+      await authApi.register({
+        name: formData.fullName,
+        email: formData.email,
+        password: formData.password,
+      });
 
-      const loginRes = await api.post(
-        "/auth/login",
-        {
-          email: formData.email,
-          password: formData.password,
-        },
-        { withCredentials: true }
-      );
+      const loginRes = await authApi.login({
+        email: formData.email,
+        password: formData.password,
+      });
 
       return loginRes.data;
     },
 
-    onSuccess: async () => {
-      await checkAuthStatus();
-      toast.success("Account created successfully!");
+    onSuccess: (data) => {
+      setUser(data.user);
+      setAccessToken(data.accessToken);
+      toast.success("Account created!");
       navigate("/");
     },
 
-    onError: (error) => {
-      const isLoginError = error.config?.url?.includes("/auth/login");
-      const msg = isLoginError
-        ? "Account created but auto-login failed. Please log in manually."
-        : error.response?.data?.message || "Signup failed.";
-
-      toast.error(msg);
+    onError: (err) => {
+      toast.error(err.response?.data?.message || "Signup failed");
     },
   });
 
-  const isProcessing = isSubmitting || signupMutation.isPending;
-  const onSubmit = async (data) => {
-    await signupMutation.mutateAsync(data);
-    console.log(data);
-  };
+  const onSubmit = (data) => signupMutation.mutate(data);
+  const isLoading = signupMutation.isPending;
 
   return (
     <div
-      className="min-h-screen  bg-cover bg-center bg-no-repeat flex items-center justify-center p-3 sm:p-4 relative"
+      className="min-h-screen bg-cover bg-center bg-no-repeat flex items-center justify-center p-3 sm:p-4 relative"
       style={{
         backgroundImage: `url('image4.webp')`,
       }}
@@ -292,12 +270,12 @@ export default function SignupPage() {
 
               <FormPrimaryButton
                 type="submit"
-                disabled={isSubmitting}
-                aria-disabled={isSubmitting}
-                aria-busy={isSubmitting}
-                icon={isSubmitting ? null : ArrowRight}
+                disabled={isLoading}
+                aria-disabled={isLoading}
+                aria-busy={isLoading}
+                icon={isLoading ? null : ArrowRight}
               >
-                {isProcessing ? (
+                {isLoading ? (
                   <div className="flex items-center gap-2">
                     <Spinner className="w-4 h-4" />
                     <span>Creating Account...</span>
@@ -322,7 +300,10 @@ export default function SignupPage() {
               {/* Google Sign Up Button */}
               <FormSecondaryButton
                 type="button"
-                onClick={() => handleGoogleSignup()}
+                onClick={() =>
+                  (window.location.href =
+                    `${import.meta.env.VITE_API_URL}/auth/google`)
+                }
               >
                 <svg
                   className="w-4 h-4 sm:w-5 sm:h-5 mr-2 shrink-0"
@@ -346,7 +327,7 @@ export default function SignupPage() {
                     fill="#EA4335"
                   />
                 </svg>
-                <span className="text-xs sm:text-sm"> sign up with Google</span>
+                <span className="text-xs sm:text-sm">Sign up with Google</span>
               </FormSecondaryButton>
             </form>
 
