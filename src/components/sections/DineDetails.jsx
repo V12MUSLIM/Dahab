@@ -1,6 +1,6 @@
 "use client";
 import { useState, lazy, Suspense, memo } from "react";
-import { useParams, Link } from "react-router-dom";
+import { useParams, Link ,useNavigate} from "react-router-dom";
 import { motion } from "framer-motion";
 import {
   MapPin,
@@ -84,7 +84,7 @@ const ButtonSkeleton = memo(() => (
   <div className="w-full h-12 bg-gray-200 dark:bg-gray-800 rounded-lg animate-pulse" role="status" aria-label="Loading button" />
 ));
 
-const BookingForm = memo(({ restaurant }) => {
+const BookingForm = memo(({ restaurant, cafe , type, item }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [formData, setFormData] = useState({
     name: "",
@@ -96,12 +96,37 @@ const BookingForm = memo(({ restaurant }) => {
     specialRequests: "",
   });
 
-  const handleSubmit = (e) => {
+  const navigate = useNavigate();
+
+ const handleSubmit = (e) => {
     e.preventDefault();
-    alert("Reservation submitted successfully!");
+
+    navigate("/booking", {
+      state: {
+        type,         
+        preselected: {
+          checkIn: formData.date,
+          checkOut: formData.date,
+          adults: Number(formData.guests) || 1,
+          children: 0,
+          includeStay: false,
+          roomType: "",
+          selectedDestinations: [],
+          selectedExperiences: [],
+          selectedRestaurants: type === "restaurant" && item?._id ? [item._id] : [],
+          selectedCafes: type === "cafe" && item?._id ? [item._id] : [],
+          name: formData.name,
+          email: formData.email,
+          phone: formData.phone,
+          specialRequests: formData.specialRequests,
+        },
+      },
+    });
+
     setIsOpen(false);
   };
 
+   
   const handleChange = (e) => {
     setFormData((prev) => ({
       ...prev,
@@ -121,7 +146,7 @@ const BookingForm = memo(({ restaurant }) => {
         <DialogHeader>
           <DialogTitle>Book a Table</DialogTitle>
           <DialogDescription>
-            Reserve your table at {restaurant.title}
+            Reserve your table at {restaurant.title || cafe.title}
           </DialogDescription>
         </DialogHeader>
         <form onSubmit={handleSubmit} className="space-y-4 mt-4">
@@ -236,12 +261,9 @@ const BookingForm = memo(({ restaurant }) => {
             <p>Free cancellation up to 24 hours before.</p>
           </div>
 
-          <Button
-            type="submit"
-            className="w-full bg-yellow-600 hover:bg-yellow-700 dark:bg-yellow-500 dark:hover:bg-yellow-600 text-white"
-          >
+          <PrimaryButton type="submit">
             Confirm Reservation
-          </Button>
+          </PrimaryButton>
         </form>
       </DialogContent>
     </Dialog>
@@ -282,9 +304,7 @@ const WHY_BOOK_ITEMS = [
 export default function DineDetails() {
   const { IdPage } = useParams();
   const [favorites, setFavorites] = useState([]);
-  
   const { allDining, isLoading } = useDine();
-  
   const restaurant = allDining?.find(
     (r) => String(r.IdPage).toLowerCase() === String(IdPage).toLowerCase()
   );

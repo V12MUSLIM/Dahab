@@ -145,7 +145,7 @@ export default function SelectServices({
           </CardHeader>
           <CardContent className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 pt-6">
             {safeArray(destinations).map((d, i) => {
-              const id = d.id || i;
+              const id = d.id ;
               const selected = safeArray(bookingData.selectedDestinations).includes(id);
               const price = d.price || 50;
               return (

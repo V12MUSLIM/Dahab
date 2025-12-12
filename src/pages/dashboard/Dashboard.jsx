@@ -30,10 +30,7 @@ import {
 
 import { Separator } from "@/components/ui/separator";
 import { useNavigate } from "react-router-dom";
-import { useStay } from "@/hooks/useStay";
-import { usePackages } from "@/hooks/usePackages";
-import { useContact } from "@/hooks/useContact";
-import { useSocials } from "@/hooks/useSocials";
+import { tr } from "zod/v4/locales";
 
 const Dashboard = () => {
   const { contactQuery } = useContact();
@@ -60,8 +57,8 @@ const Dashboard = () => {
       path: "/dashboard/destinations",
       icon: MapPin,
       count: 24,
-      status: "under-construction",
-      implemented: false,
+      status: "active",
+      implemented: true,
       gradient: "from-blue-500 to-cyan-500",
     },
     {

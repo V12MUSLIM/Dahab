@@ -28,7 +28,7 @@ const StatusPill = ({ status }) => {
   );
 };
 
-const DashboardDestinations = () => {
+const AddDestinations = () => {
   // Replace with backend data + loading later
   const [query, setQuery] = React.useState("");
   const [status, setStatus] = React.useState("All");
@@ -166,4 +166,4 @@ const DashboardDestinations = () => {
   );
 };
 
-export default DashboardDestinations;
+export default AddDestinations;
