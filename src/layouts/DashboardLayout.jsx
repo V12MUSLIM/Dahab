@@ -16,7 +16,7 @@ import {
   Bed,
   Link as LinkIcon,
   Award,
-  Sparkles,
+  UserStar,
   Home
 } from "lucide-react";
 import { useAuthStore } from "@/store/authStore";
@@ -149,7 +149,7 @@ const DashboardLayout = () => {
 
           <div className="flex items-center gap-2">
             <div className="p-2 rounded-lg bg-gradient-to-br from-primary to-primary/60 shadow-lg flex items-center justify-center">
-              <Sparkles className="h-5 w-5 text-primary-foreground" />
+              <UserStar className="h-5 w-5 text-primary-foreground" />
             </div>
             <span className="text-lg font-bold text-foreground">
               Dahab Admin
@@ -189,7 +189,7 @@ const DashboardLayout = () => {
             <DrawerHeader className="flex flex-row items-center justify-between p-4 border-b">
               <div className="flex items-center gap-2">
                 <div className="p-2 rounded-lg bg-gradient-to-br from-primary to-primary/60 shadow-lg">
-                  <Sparkles className="h-4 w-4 text-primary-foreground" />
+                  <UserStar className="h-4 w-4 text-primary-foreground" />
                 </div>
                 <DrawerTitle className="text-lg font-bold text-foreground">
                   Dahab Admin

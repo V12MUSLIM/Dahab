@@ -335,7 +335,7 @@ export default function AdminEditContact() {
                 </div>
               </CardContent>
 
-              <CardFooter className="flex flex-col sm:flex-row gap-3 bg-white/20 dark:bg-gray-900/20 backdrop-blur-sm border-t border-white/10 dark:border-gray-800/30 p-6">
+              <CardFooter className="flex flex-col sm:flex-row gap-3  p-6">
                 <Button
                   onClick={handleSave}
                   disabled={updateContact.isPending || !isDirty}
@@ -365,7 +365,7 @@ export default function AdminEditContact() {
                 >
                   Cancel
                 </Button>
-                <div className="text-xs text-muted-foreground text-center sm:text-left flex-1 flex items-center gap-1">
+                <div className="  text-xs text-muted-foreground text-center sm:text-left flex-1 flex items-center gap-1">
                   <kbd className="px-2 py-1 bg-white/50 dark:bg-gray-800/50 rounded text-xs border border-white/30 dark:border-gray-700/50 backdrop-blur-sm">
                     Ctrl
                   </kbd>

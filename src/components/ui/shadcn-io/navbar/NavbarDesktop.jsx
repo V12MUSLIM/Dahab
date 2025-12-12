@@ -116,30 +116,29 @@ const NavbarDesktop = React.memo(({ user, isDrawerOpen, setIsDrawerOpen }) => {
   const lastScrollY = React.useRef(0);
   const hasRole = useAuthStore((state) => state.hasRole);
   const isAdmin = hasRole("admin");
-  React.useEffect(() => {
-    const handleScroll = () => {
-      const currentScrollY = window.scrollY;
+ React.useEffect(() => {
+  const handleScroll = () => {
+    const currentScrollY = window.scrollY;
 
-      if (currentScrollY > lastScrollY.current + 10 && currentScrollY > 80) {
-        setIsVisible(false); // scrolling down
-      } else if (currentScrollY < lastScrollY.current - 10) {
-        setIsVisible(true); // scrolling up
-      }
+    // Always show navbar when near the top
+    if (currentScrollY < 80) {
+      setIsVisible(true);
+    }
+    // Hide when scrolling down significantly
+    else if (currentScrollY > lastScrollY.current + 10) {
+      setIsVisible(false);
+    }
+    // Show when scrolling up
+    else if (currentScrollY < lastScrollY.current - 10) {
+      setIsVisible(true);
+    }
 
-      lastScrollY.current = currentScrollY;
-    };
+    lastScrollY.current = currentScrollY;
+  };
 
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
-
-  const handleSearch = React.useCallback(
-    (e) => {
-      e.preventDefault();
-      console.log("Searching for:", searchQuery);
-    },
-    [searchQuery]
-  );
+  window.addEventListener("scroll", handleScroll);
+  return () => window.removeEventListener("scroll", handleScroll);
+}, []);
 
   return (
     <header
@@ -165,7 +164,7 @@ const NavbarDesktop = React.memo(({ user, isDrawerOpen, setIsDrawerOpen }) => {
             placeholder={UI_TEXT.search.desktopPlaceholder}
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            onSubmit={handleSearch}
+           
           />
         </div>
 

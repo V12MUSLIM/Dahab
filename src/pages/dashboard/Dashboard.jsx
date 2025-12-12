@@ -23,27 +23,26 @@ import {
   Phone,
   Construction,
   CheckCircle2,
-  Sparkles,
+  UserStar,
   Zap,
-  Shield,
-  Cpu,
   Server,
 } from "lucide-react";
+
 import { Separator } from "@/components/ui/separator";
 import { useNavigate } from "react-router-dom";
+import { useStay } from "@/hooks/useStay";
+import { usePackages } from "@/hooks/usePackages";
+import { useContact } from "@/hooks/useContact";
+import { useSocials } from "@/hooks/useSocials";
 
 const Dashboard = () => {
-  // Mock data for demonstration
-  const packages = [1, 2, 3, 4, 5];
-  const stay = [1, 2, 3];
-  const contacts = [1, 2];
-  const socials = [1, 2, 3, 4];
-
-  const isPackagesLoading = false;
-  const isStayLoading = false;
-  const isContactsLoading = false;
-  const isSocialsLoading = false;
-  const navigate = useNavigate();
+  const { contactQuery } = useContact();
+  const { data: contacts, isLoading: iscontactLoading } = contactQuery;
+  const { packages, isLoading: isPackagesLoading } = usePackages();
+  const { socialsQuery } = useSocials();
+  const { data: socials, isSocialsLaoding } = socialsQuery;
+  const { data: stays, isLoading: isStaysLoading } = useStay();
+  const navigate = useNavigate()
   const dashboardItems = [
     {
       title: "Hero Sections",
@@ -100,7 +99,7 @@ const Dashboard = () => {
       description: "View and manage all accommodation stays",
       path: "/dashboard/stays",
       icon: Bed,
-      count: isStayLoading ? "..." : stay?.length ?? 0,
+      count: isStaysLoading ? "..." : stays?.length ?? 0,
       status: "active",
       implemented: true,
       gradient: "from-rose-500 to-red-500",
@@ -130,7 +129,7 @@ const Dashboard = () => {
       description: "Manage contact information",
       path: "/dashboard/contacts",
       icon: Phone,
-      count: isContactsLoading ? "..." : contacts.length ?? 0,
+      count: iscontactLoading ? "..." : contacts?.length ?? 0,
       status: "active",
       implemented: true,
       gradient: "from-sky-500 to-blue-500",
@@ -140,7 +139,7 @@ const Dashboard = () => {
       description: "Manage social media links",
       path: "/dashboard/socialmedia",
       icon: Link,
-      count: isSocialsLoading ? "..." : socials?.length ?? 0,
+      count: isSocialsLaoding ? "..." : socials?.length ?? 0,
       status: "active",
       implemented: true,
       gradient: "from-pink-500 to-rose-500",
@@ -157,7 +156,7 @@ const Dashboard = () => {
   const handelNavigation = (path) => {
     navigate(path);
   };
-  
+
   return (
     <div className="min-h-screen p-4 sm:p-6 lg:p-8">
       <div className="mx-auto max-w-7xl space-y-6">
@@ -166,7 +165,7 @@ const Dashboard = () => {
           <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4">
             <div className="flex items-center gap-3">
               <div className="p-3 rounded-xl bg-gradient-to-br from-primary/20 to-primary/10 backdrop-blur-sm border border-primary/20 shadow-lg">
-                <Sparkles className="h-6 w-6 text-primary" />
+                <UserStar className="h-6 w-6 text-primary" />
               </div>
               <div className="min-w-0">
                 <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold tracking-tight bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text text-transparent">
@@ -271,9 +270,9 @@ const Dashboard = () => {
                   </div>
                 </div>
                 <div className="mt-4">
-                  <Progress 
-                    value={completionPercentage} 
-                    className="h-2 bg-white/30 dark:bg-gray-800/30 backdrop-blur-sm" 
+                  <Progress
+                    value={completionPercentage}
+                    className="h-2 bg-white/30 dark:bg-gray-800/30 backdrop-blur-sm"
                   />
                 </div>
               </CardContent>
@@ -426,9 +425,9 @@ const Dashboard = () => {
                   Healthy
                 </Badge>
               </div>
-              <Progress 
-                value={95} 
-                className="h-2 bg-white/30 dark:bg-gray-800/30 backdrop-blur-sm" 
+              <Progress
+                value={95}
+                className="h-2 bg-white/30 dark:bg-gray-800/30 backdrop-blur-sm"
               />
             </div>
 
@@ -446,9 +445,9 @@ const Dashboard = () => {
                   Fast (120ms)
                 </Badge>
               </div>
-              <Progress 
-                value={88} 
-                className="h-2 bg-white/30 dark:bg-gray-800/30 backdrop-blur-sm" 
+              <Progress
+                value={88}
+                className="h-2 bg-white/30 dark:bg-gray-800/30 backdrop-blur-sm"
               />
             </div>
 
@@ -466,9 +465,9 @@ const Dashboard = () => {
                   99.9%
                 </Badge>
               </div>
-              <Progress 
-                value={99.9} 
-                className="h-2 bg-white/30 dark:bg-gray-800/30 backdrop-blur-sm" 
+              <Progress
+                value={99.9}
+                className="h-2 bg-white/30 dark:bg-gray-800/30 backdrop-blur-sm"
               />
             </div>
 
@@ -484,9 +483,9 @@ const Dashboard = () => {
                   {implementedCount} / {dashboardItems.length}
                 </Badge>
               </div>
-              <Progress 
-                value={completionPercentage} 
-                className="h-2 bg-white/30 dark:bg-gray-800/30 backdrop-blur-sm" 
+              <Progress
+                value={completionPercentage}
+                className="h-2 bg-white/30 dark:bg-gray-800/30 backdrop-blur-sm"
               />
             </div>
           </CardContent>
