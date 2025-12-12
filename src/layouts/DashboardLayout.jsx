@@ -17,7 +17,7 @@ import {
   Link as LinkIcon,
   Award,
   UserStar,
-  Home
+  Home,
 } from "lucide-react";
 import { useAuthStore } from "@/store/authStore";
 import { ThemeToggle } from "@/components/theme-toggle";
@@ -27,9 +27,9 @@ import {
   DrawerContent,
   DrawerHeader,
   DrawerTitle,
-  DrawerDescription,
   DrawerClose,
 } from "@/components/ui/drawer";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
 const DashboardLayout = () => {
   const navigate = useNavigate();
@@ -96,14 +96,18 @@ const DashboardLayout = () => {
         {/* Static starfield background */}
         <div className="absolute inset-0">
           <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(255,255,255,0.1)_0%,rgba(0,0,0,0)_70%)]" />
-          <style dangerouslySetInnerHTML={{ __html: `
+          <style
+            dangerouslySetInnerHTML={{
+              __html: `
             @keyframes dashboard-stars-twinkle {
               0% { opacity: 0.3; }
               50% { opacity: 0.6; }
               100% { opacity: 0.3; }
             }
-          `}} />
-          <div 
+          `,
+            }}
+          />
+          <div
             className="absolute inset-0"
             style={{
               backgroundImage: `
@@ -114,14 +118,14 @@ const DashboardLayout = () => {
                 radial-gradient(1px 1px at 130px 80px, #fff, rgba(0,0,0,0)),
                 radial-gradient(1px 1px at 160px 120px, #ddd, rgba(0,0,0,0))
               `,
-              backgroundRepeat: 'repeat',
-              backgroundSize: '200px 200px',
-              animation: 'dashboard-stars-twinkle 5s ease-in-out infinite',
-              opacity: 0.3
+              backgroundRepeat: "repeat",
+              backgroundSize: "200px 200px",
+              animation: "dashboard-stars-twinkle 5s ease-in-out infinite",
+              opacity: 0.3,
             }}
           />
         </div>
-        
+
         {/* Shooting stars effect - subtle colors */}
         <ShootingStars
           starColor="#6366f1"
@@ -179,11 +183,7 @@ const DashboardLayout = () => {
       </header>
 
       {/* Sidebar Drawer for all screens */}
-      <Drawer 
-        open={drawerOpen} 
-        onOpenChange={setDrawerOpen}
-        direction="left"
-      >
+      <Drawer open={drawerOpen} onOpenChange={setDrawerOpen} direction="left">
         <DrawerContent className="top-0 left-0 right-auto mt-0 w-72 h-full rounded-none border-r border-border/50 bg-white/95 dark:bg-gray-950/95 backdrop-blur-sm supports-[backdrop-filter]:bg-white/80 dark:supports-[backdrop-filter]:bg-gray-950/80">
           <div className="h-full flex flex-col">
             <DrawerHeader className="flex flex-row items-center justify-between p-4 border-b">
@@ -196,9 +196,9 @@ const DashboardLayout = () => {
                 </DrawerTitle>
               </div>
               <DrawerClose asChild>
-                <Button 
-                  variant="ghost" 
-                  size="icon" 
+                <Button
+                  variant="ghost"
+                  size="icon"
                   className="h-8 w-8 text-muted-foreground hover:text-foreground"
                 >
                   <svg
@@ -218,15 +218,44 @@ const DashboardLayout = () => {
                 </Button>
               </DrawerClose>
             </DrawerHeader>
-            
+
             <div className="flex-1 overflow-y-auto p-4">
               {/* User info */}
               <div className="mb-6 px-3 py-3 rounded-xl bg-gradient-to-br from-secondary/50 to-background border">
                 <div className="flex items-center gap-3">
-                  <div className="h-10 w-10 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center shadow-lg">
-                    <span className="text-white font-semibold text-sm">
-                      {user?.name?.charAt(0)?.toUpperCase() || "A"}
-                    </span>
+                  <div className="h-10 w-10 rounded-full shadow-lg">
+                    <Avatar className="h-12 w-12 border-2 overflow-hidden">
+                      <AvatarImage
+                        src={
+                          user?.picture
+                            ? encodeURI(
+                                user.picture.replace("=s96-c", "=s256-c")
+                              )
+                            : `https://api.dicebear.com/7.x/initials/svg?seed=${encodeURIComponent(
+                                user?.name || user?.email || "User"
+                              )}`
+                        }
+                        alt={user?.name || "User avatar"}
+                        crossOrigin="anonymous"
+                        referrerPolicy="no-referrer"
+                        onError={(e) => {
+                          console.warn(
+                            "Failed to load user image, using fallback"
+                          );
+                          e.currentTarget.src = `https://api.dicebear.com/7.x/initials/svg?seed=${encodeURIComponent(
+                            user?.name || user?.email || "User"
+                          )}`;
+                        }}
+                      />
+
+                      <AvatarFallback className="bg-gradient-to-br from-amber-500 to-orange-500 text-white font-semibold">
+                        {(
+                          user?.name?.[0] ||
+                          user?.email?.[0] ||
+                          "U"
+                        ).toUpperCase()}
+                      </AvatarFallback>
+                    </Avatar>
                   </div>
                   <div className="flex-1 min-w-0">
                     <p className="text-sm font-semibold text-foreground truncate">
@@ -242,9 +271,9 @@ const DashboardLayout = () => {
               {/* Navigation */}
               <nav className="space-y-1">
                 {navItems.map((item) => (
-                  <NavButton 
-                    key={item.path} 
-                    item={item} 
+                  <NavButton
+                    key={item.path}
+                    item={item}
                     onClose={() => setDrawerOpen(false)}
                   />
                 ))}
