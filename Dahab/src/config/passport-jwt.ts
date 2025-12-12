@@ -42,10 +42,7 @@ passport.use(
                         picture,
                         isVerified: true,
                     });
-
                     console.log("✅ User created:", user._id);
-
-                    // Send welcome email in background (won't block OAuth flow)
                     emailService.sendGoogleWelcomeEmail(email, profile.displayName)
                         .then(() => console.log(`✅ Welcome email sent to ${email}`))
                         .catch((err) => console.error("❌ Failed to send welcome email:", err));

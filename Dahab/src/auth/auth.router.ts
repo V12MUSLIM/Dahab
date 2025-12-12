@@ -123,6 +123,7 @@ router.get("/status", async (req: Request, res: Response) => {
             email: user.email,
             name: user.name,
             role: user.role,
+            picture: user.picture
         };
 
         return res.json({
