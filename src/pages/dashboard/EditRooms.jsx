@@ -1,5 +1,5 @@
 // EditRooms.jsx - Component for managing room types
-
+import { AmenityManager } from "@/components/stay/AmenityManger";
 import { useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useStay } from "@/hooks/useStay";
@@ -27,6 +27,11 @@ import {
   Trash2,
   ArrowLeft,
   Loader2,
+  ChevronLeft,
+  Building,
+  Hotel,
+  Sparkles,
+  Eye,
 } from "lucide-react";
 
 export default function EditRooms() {
@@ -52,7 +57,9 @@ export default function EditRooms() {
   if (isLoading) {
     return (
       <div className="min-h-screen flex justify-center items-center">
-        <Loader2 className="animate-spin text-primary" />
+        <div className="p-4 rounded-xl bg-white/30 dark:bg-gray-900/30 backdrop-blur-sm">
+          <Loader2 className="animate-spin text-primary h-8 w-8" />
+        </div>
       </div>
     );
   }
@@ -63,8 +70,20 @@ export default function EditRooms() {
 
   if (!stay) {
     return (
-      <div className="min-h-screen p-6">
-        <h1 className="text-2xl font-bold text-destructive">Stay not found</h1>
+      <div className="min-h-screen p-6 flex flex-col items-center justify-center">
+        <div className="p-6 rounded-xl bg-white/30 dark:bg-gray-900/30 backdrop-blur-sm border-white/20 dark:border-gray-800/50 text-center">
+          <h1 className="text-2xl font-bold text-destructive bg-gradient-to-r from-destructive to-destructive/70 bg-clip-text text-transparent">
+            Stay not found
+          </h1>
+          <p className="text-muted-foreground mt-2">The requested stay could not be found.</p>
+          <Button 
+            onClick={() => navigate("/dashboard/stays")} 
+            className="mt-4 bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70 shadow-lg backdrop-blur-sm"
+          >
+            <ArrowLeft className="w-4 h-4 mr-2" />
+            Back to Stays
+          </Button>
+        </div>
       </div>
     );
   }
@@ -156,57 +175,149 @@ export default function EditRooms() {
     "Direct Beach Access",
   ];
 
+  const totalRooms = stay.roomTypes?.length || 0;
+  const avgPrice = totalRooms > 0 
+    ? Math.round(stay.roomTypes.reduce((acc, room) => acc + (room.price || 0), 0) / totalRooms)
+    : 0;
+
   return (
-    <div className="min-h-screen p-6 bg-background">
-      <div className="mx-auto max-w-6xl space-y-6">
-        <div className="flex items-center gap-4">
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={() => navigate("/dashboard/stays")}
-          >
-            <ArrowLeft className="w-5 h-5" />
-          </Button>
-          <div className="flex-1">
-            <h1 className="text-3xl font-bold tracking-tight">
-              Room Management
-            </h1>
-            <p className="text-muted-foreground mt-1">
-              Managing rooms for <strong>{stay.name}</strong>
-            </p>
+    <div className="min-h-screen p-4 sm:p-6 lg:p-8 bg-gradient-to-br from-slate-50 to-gray-100 dark:from-gray-950 dark:to-black">
+      <div className="mx-auto max-w-7xl space-y-6">
+        {/* Header Section */}
+        <div className="flex flex-col gap-6">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <div className="flex items-center gap-3">
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={() => navigate("/dashboard/stays")}
+                className="h-10 w-10 rounded-xl bg-white/50 dark:bg-gray-900/50 backdrop-blur-sm border border-white/20 dark:border-gray-800/50"
+              >
+                <ChevronLeft className="w-5 h-5" />
+              </Button>
+              <div className="p-3 rounded-xl bg-gradient-to-br from-primary/20 to-primary/10 backdrop-blur-sm border border-primary/20 shadow-lg">
+                <Hotel className="h-6 w-6 text-primary" />
+              </div>
+              <div>
+                <h1 className="text-2xl sm:text-3xl font-bold tracking-tight bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text text-transparent">
+                  Room Management
+                </h1>
+                <p className="text-sm text-muted-foreground mt-2">
+                  Managing rooms for <strong className="bg-gradient-to-r from-primary to-primary/70 bg-clip-text text-transparent">{stay.name}</strong>
+                </p>
+              </div>
+            </div>
+            <Button 
+              onClick={handleAddRoom}
+              className="gap-2 bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70 shadow-lg backdrop-blur-sm h-11"
+            >
+              <Plus className="w-4 h-4 mr-2" />
+              Add Room Type
+            </Button>
           </div>
-          <Button onClick={handleAddRoom}>
-            <Plus className="w-4 h-4 mr-2" />
-            Add Room Type
-          </Button>
+
+          <Separator className="opacity-50" />
+
+          {/* Stats Cards */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <Card className="bg-white/30 dark:bg-gray-900/30 backdrop-blur-sm border-white/20 dark:border-gray-800/50 shadow-lg">
+              <CardContent className="p-6">
+                <div className="flex items-center justify-between">
+                  <div className="min-w-0 flex-1">
+                    <p className="text-xs text-muted-foreground font-medium uppercase tracking-wider">
+                      Total Rooms
+                    </p>
+                    <p className="text-2xl font-bold mt-2 bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text text-transparent">
+                      {totalRooms}
+                    </p>
+                  </div>
+                  <div className="p-3 rounded-xl bg-blue-500/10 backdrop-blur-sm">
+                    <Bed className="h-6 w-6 text-blue-500" />
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card className="bg-white/30 dark:bg-gray-900/30 backdrop-blur-sm border-white/20 dark:border-gray-800/50 shadow-lg">
+              <CardContent className="p-6">
+                <div className="flex items-center justify-between">
+                  <div className="min-w-0 flex-1">
+                    <p className="text-xs text-muted-foreground font-medium uppercase tracking-wider">
+                      Avg. Price
+                    </p>
+                    <p className="text-2xl font-bold mt-2 bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text text-transparent">
+                      ${avgPrice}
+                    </p>
+                  </div>
+                  <div className="p-3 rounded-xl bg-green-500/10 backdrop-blur-sm">
+                    <DollarSign className="h-6 w-6 text-green-500" />
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card className="bg-white/30 dark:bg-gray-900/30 backdrop-blur-sm border-white/20 dark:border-gray-800/50 shadow-lg">
+              <CardContent className="p-6">
+                <div className="flex items-center justify-between">
+                  <div className="min-w-0 flex-1">
+                    <p className="text-xs text-muted-foreground font-medium uppercase tracking-wider">
+                      Stay Status
+                    </p>
+                    <p className="text-lg font-bold mt-2">
+                      <Badge className="bg-green-500/10 text-green-600 dark:text-green-400 border-green-500/20 backdrop-blur-sm">
+                        <Eye className="h-3 w-3 mr-1" />
+                        Active
+                      </Badge>
+                    </p>
+                  </div>
+                  <div className="p-3 rounded-xl bg-amber-500/10 backdrop-blur-sm">
+                    <Sparkles className="h-6 w-6 text-amber-500" />
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
         </div>
 
-        <Separator />
-
+        {/* Room Cards Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {stay.roomTypes?.map((room, index) => (
-            <Card key={room._id || index} className="hover:border-primary/50">
+            <Card 
+              key={room._id || index} 
+              className="bg-white/30 dark:bg-gray-900/30 backdrop-blur-sm border-white/20 dark:border-gray-800/50 hover:border-primary/50 transition-all duration-300 hover:shadow-xl"
+            >
               <CardHeader>
                 <div className="flex items-start justify-between">
-                  <CardTitle className="text-lg">{room.name}</CardTitle>
-                  <Badge variant="secondary">
+                  <CardTitle className="text-lg bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text text-transparent">
+                    {room.name}
+                  </CardTitle>
+                  <Badge
+                    variant="outline"
+                    className="bg-gradient-to-r from-green-500/10 to-green-600/10 backdrop-blur-sm text-green-600 dark:text-green-400 border-green-500/20 font-semibold"
+                  >
                     <DollarSign className="w-3 h-3 mr-1" />
                     {room.price}
                   </Badge>
                 </div>
               </CardHeader>
               <CardContent className="space-y-4">
-                <div className="space-y-2 text-sm">
+                <div className="space-y-3 text-sm">
                   <div className="flex items-center gap-2">
-                    <Maximize className="w-4 h-4 text-muted-foreground" />
+                    <div className="p-1.5 rounded-md bg-blue-500/10">
+                      <Maximize className="w-4 h-4 text-blue-500" />
+                    </div>
                     <span>{room.size}</span>
                   </div>
                   <div className="flex items-center gap-2">
-                    <Bed className="w-4 h-4 text-muted-foreground" />
+                    <div className="p-1.5 rounded-md bg-purple-500/10">
+                      <Bed className="w-4 h-4 text-purple-500" />
+                    </div>
                     <span>{room.beds}</span>
                   </div>
                   <div className="flex items-center gap-2">
-                    <Users className="w-4 h-4 text-muted-foreground" />
+                    <div className="p-1.5 rounded-md bg-amber-500/10">
+                      <Users className="w-4 h-4 text-amber-500" />
+                    </div>
                     <span>Max {room.maxOccupancy} guests</span>
                   </div>
                 </div>
@@ -218,12 +329,19 @@ export default function EditRooms() {
                     </h4>
                     <div className="flex flex-wrap gap-1">
                       {room.amenities.slice(0, 3).map((amenity, i) => (
-                        <Badge key={i} variant="outline" className="text-xs">
+                        <Badge 
+                          key={i} 
+                          variant="outline" 
+                          className="text-xs bg-white/50 dark:bg-gray-800/50 backdrop-blur-sm"
+                        >
                           {amenity}
                         </Badge>
                       ))}
                       {room.amenities.length > 3 && (
-                        <Badge variant="outline" className="text-xs">
+                        <Badge 
+                          variant="outline" 
+                          className="text-xs bg-white/50 dark:bg-gray-800/50 backdrop-blur-sm"
+                        >
                           +{room.amenities.length - 3}
                         </Badge>
                       )}
@@ -235,7 +353,7 @@ export default function EditRooms() {
                   <Button
                     variant="outline"
                     size="sm"
-                    className="flex-1"
+                    className="flex-1 bg-white/30 dark:bg-gray-800/30 backdrop-blur-sm border-white/30 dark:border-gray-700/50 hover:border-primary/50 hover:bg-primary/10"
                     onClick={() => handleEditRoom(room, index)}
                   >
                     <Edit className="w-3 h-3 mr-1" />
@@ -245,7 +363,7 @@ export default function EditRooms() {
                     variant="outline"
                     size="sm"
                     onClick={() => handleDeleteRoom(index)}
-                    className="text-destructive hover:bg-destructive/10"
+                    className="bg-white/30 dark:bg-gray-800/30 backdrop-blur-sm border-white/30 dark:border-gray-700/50 text-destructive hover:border-destructive/50 hover:bg-destructive/10 hover:text-destructive"
                   >
                     <Trash2 className="w-3 h-3" />
                   </Button>
@@ -255,14 +373,45 @@ export default function EditRooms() {
           ))}
         </div>
 
+        {/* Empty State */}
+        {(!stay.roomTypes || stay.roomTypes.length === 0) && (
+          <div className="text-center py-12 space-y-4">
+            <div className="mx-auto w-16 h-16 rounded-full bg-white/20 dark:bg-gray-800/20 backdrop-blur-sm flex items-center justify-center">
+              <Hotel className="h-8 w-8 text-muted-foreground" />
+            </div>
+            <div className="space-y-2">
+              <h3 className="text-lg font-semibold">No rooms added yet</h3>
+              <p className="text-muted-foreground">
+                Get started by adding your first room type for this stay
+              </p>
+            </div>
+            <Button 
+              onClick={handleAddRoom} 
+              className="gap-2 bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70 shadow-lg backdrop-blur-sm"
+            >
+              <Plus className="w-4 h-4 mr-2" />
+              Add Room Type
+            </Button>
+          </div>
+        )}
+
         {/* Edit/Add Room Dialog */}
         <Dialog open={editDialogOpen} onOpenChange={setEditDialogOpen}>
-          <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+          <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto bg-white/95 dark:bg-gray-950/95 backdrop-blur-sm border-white/20 dark:border-gray-800/50">
             <DialogHeader>
-              <DialogTitle>
-                {selectedRoom ? "Edit Room Type" : "Add Room Type"}
-              </DialogTitle>
-              <DialogDescription>
+              <div className="flex items-center gap-2">
+                <div className="p-2 rounded-lg bg-gradient-to-br from-primary/20 to-primary/10">
+                  {selectedRoom ? (
+                    <Edit className="h-5 w-5 text-primary" />
+                  ) : (
+                    <Plus className="h-5 w-5 text-primary" />
+                  )}
+                </div>
+                <DialogTitle className="text-xl">
+                  {selectedRoom ? "Edit Room Type" : "Add Room Type"}
+                </DialogTitle>
+              </div>
+              <DialogDescription className="text-muted-foreground">
                 {selectedRoom
                   ? "Update the details for this room type"
                   : "Add a new room type to this stay"}
@@ -270,9 +419,14 @@ export default function EditRooms() {
             </DialogHeader>
 
             <div className="space-y-4">
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <Label htmlFor="roomName">Room Name *</Label>
+                  <Label htmlFor="roomName" className="flex items-center gap-2">
+                    <div className="p-1.5 rounded-md bg-blue-500/10">
+                      <Building className="h-4 w-4 text-blue-500" />
+                    </div>
+                    Room Name *
+                  </Label>
                   <Input
                     id="roomName"
                     value={roomForm.name}
@@ -280,11 +434,17 @@ export default function EditRooms() {
                       setRoomForm({ ...roomForm, name: e.target.value })
                     }
                     placeholder="Deluxe Sea View"
+                    className="bg-white/50 dark:bg-gray-800/50 border-white/30 dark:border-gray-700/50 backdrop-blur-sm"
                   />
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="roomSize">Size *</Label>
+                  <Label htmlFor="roomSize" className="flex items-center gap-2">
+                    <div className="p-1.5 rounded-md bg-green-500/10">
+                      <Maximize className="h-4 w-4 text-green-500" />
+                    </div>
+                    Size *
+                  </Label>
                   <Input
                     id="roomSize"
                     value={roomForm.size}
@@ -292,12 +452,18 @@ export default function EditRooms() {
                       setRoomForm({ ...roomForm, size: e.target.value })
                     }
                     placeholder="32 m²"
+                    className="bg-white/50 dark:bg-gray-800/50 border-white/30 dark:border-gray-700/50 backdrop-blur-sm"
                   />
                 </div>
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="beds">Bed Configuration *</Label>
+                <Label htmlFor="beds" className="flex items-center gap-2">
+                  <div className="p-1.5 rounded-md bg-purple-500/10">
+                    <Bed className="h-4 w-4 text-purple-500" />
+                  </div>
+                  Bed Configuration *
+                </Label>
                 <Input
                   id="beds"
                   value={roomForm.beds}
@@ -305,12 +471,18 @@ export default function EditRooms() {
                     setRoomForm({ ...roomForm, beds: e.target.value })
                   }
                   placeholder="1 King or 2 Twin"
+                  className="bg-white/50 dark:bg-gray-800/50 border-white/30 dark:border-gray-700/50 backdrop-blur-sm"
                 />
               </div>
 
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <Label htmlFor="maxOccupancy">Max Occupancy *</Label>
+                  <Label htmlFor="maxOccupancy" className="flex items-center gap-2">
+                    <div className="p-1.5 rounded-md bg-amber-500/10">
+                      <Users className="h-4 w-4 text-amber-500" />
+                    </div>
+                    Max Occupancy *
+                  </Label>
                   <Input
                     id="maxOccupancy"
                     type="number"
@@ -322,11 +494,17 @@ export default function EditRooms() {
                         maxOccupancy: parseInt(e.target.value),
                       })
                     }
+                    className="bg-white/50 dark:bg-gray-800/50 border-white/30 dark:border-gray-700/50 backdrop-blur-sm"
                   />
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="price">Price per Night (USD) *</Label>
+                  <Label htmlFor="price" className="flex items-center gap-2">
+                    <div className="p-1.5 rounded-md bg-green-500/10">
+                      <DollarSign className="h-4 w-4 text-green-500" />
+                    </div>
+                    Price per Night (USD) *
+                  </Label>
                   <Input
                     id="price"
                     type="number"
@@ -338,34 +516,25 @@ export default function EditRooms() {
                         price: parseFloat(e.target.value),
                       })
                     }
+                    className="bg-white/50 dark:bg-gray-800/50 border-white/30 dark:border-gray-700/50 backdrop-blur-sm"
                   />
                 </div>
               </div>
 
-              <div className="space-y-2">
-                <Label>Amenities</Label>
-                <div className="grid grid-cols-2 gap-2 max-h-48 overflow-y-auto p-2 border rounded-md">
-                  {commonAmenities.map((amenity) => (
-                    <label
-                      key={amenity}
-                      className="flex items-center gap-2 cursor-pointer"
-                    >
-                      <input
-                        type="checkbox"
-                        checked={roomForm.amenities.includes(amenity)}
-                        onChange={() => handleAmenityChange(amenity)}
-                        className="rounded"
-                      />
-                      <span className="text-sm">{amenity}</span>
-                    </label>
-                  ))}
-                </div>
-              </div>
+              <AmenityManager
+                label="Room Amenities"
+                selectedAmenities={roomForm.amenities}
+                onChange={(amenities) =>
+                  setRoomForm({ ...roomForm, amenities })
+                }
+                defaultAmenities={commonAmenities}
+              />
 
-              <div className="flex justify-end gap-3 pt-4 border-t">
+              <div className="flex justify-end gap-3 pt-4 border-t border-white/10 dark:border-gray-800/30">
                 <Button
                   variant="outline"
                   onClick={() => setEditDialogOpen(false)}
+                  className="border-white/30 dark:border-gray-700/50 bg-white/30 dark:bg-gray-800/30 backdrop-blur-sm"
                 >
                   Cancel
                 </Button>
@@ -377,6 +546,7 @@ export default function EditRooms() {
                     !roomForm.beds ||
                     updateStay.isPending
                   }
+                  className="gap-2 bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70 shadow-lg backdrop-blur-sm"
                 >
                   {updateStay.isPending ? (
                     <>

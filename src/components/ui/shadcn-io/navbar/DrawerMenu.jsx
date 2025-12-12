@@ -63,7 +63,7 @@ const DrawerMenu = React.memo(({ isMobile = false, onClose, user }) => {
                     src={
                       user?.picture
                         ? encodeURI(user.picture.replace("=s96-c", "=s256-c"))
-                        : `https://avatar.vercel.sh/${encodeURIComponent(
+                        : `https://api.dicebear.com/7.x/initials/svg?seed=${encodeURIComponent(
                             user?.name || user?.email || "User"
                           )}`
                     }
@@ -72,11 +72,12 @@ const DrawerMenu = React.memo(({ isMobile = false, onClose, user }) => {
                     referrerPolicy="no-referrer"
                     onError={(e) => {
                       console.warn("Failed to load user image, using fallback");
-                      e.currentTarget.src = `https://avatar.vercel.sh/${encodeURIComponent(
+                      e.currentTarget.src = `https://api.dicebear.com/7.x/initials/svg?seed=${encodeURIComponent(
                         user?.name || user?.email || "User"
                       )}`;
                     }}
                   />
+                
                   <AvatarFallback className="bg-gradient-to-br from-amber-500 to-orange-500 text-white font-semibold">
                     {(user?.name?.[0] || user?.email?.[0] || "U").toUpperCase()}
                   </AvatarFallback>

@@ -34,6 +34,10 @@ import {
   Check,
   Palette,
   Type,
+  ChevronLeft,
+  Eye,
+  EyeOff,
+  RefreshCw,
 } from "lucide-react";
 import { toast } from "sonner";
 import { Label } from "@/components/ui/label";
@@ -66,6 +70,8 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 import { LoadingState } from "@/components/admin/adminUI/LoadingState";
+import { ErrorState } from "@/components/admin/adminUI/ErrorState";
+
 // Common social media presets for better UX
 const SOCIAL_PRESETS = [
   {
@@ -169,6 +175,7 @@ export default function AdminEditSocials() {
       console.error(err);
     }
   };
+
   const openEdit = (item) => {
     setEditing({
       ...item,
@@ -179,6 +186,7 @@ export default function AdminEditSocials() {
   const closeEdit = () => {
     setEditing(null);
   };
+
   const handleUpdate = async (e) => {
     e?.preventDefault();
     if (!editing?._id) return;
@@ -247,106 +255,106 @@ export default function AdminEditSocials() {
 
   if (isError) {
     return (
-      <div className="min-h-screen p-6 flex items-center justify-center">
-        <Card className="max-w-md w-full border-destructive/20">
-          <CardHeader className="text-center">
-            <div className="mx-auto w-12 h-12 rounded-full bg-destructive/10 flex items-center justify-center mb-4">
-              <AlertCircle className="h-6 w-6 text-destructive" />
-            </div>
-            <CardTitle className="text-xl">
-              Unable to Load Social Media
-            </CardTitle>
-            <CardDescription className="mt-2">
-              {error?.message ||
-                "There was an error loading your social media links."}
-            </CardDescription>
-          </CardHeader>
-          <CardFooter className="flex flex-col gap-2">
-            <Button onClick={() => socialsQuery.refetch()} className="w-full">
-              Try Again
-            </Button>
-            <Button variant="outline" className="w-full">
-              Contact Support
-            </Button>
-          </CardFooter>
-        </Card>
-      </div>
+      <ErrorState
+        message={error.message}
+        onRetry={() => socialsQuery.refetch()}
+        error={error}
+      />
     );
   }
 
+  const activeCount = socialMedia?.filter((s) => s.isActive !== false).length || 0;
+
   return (
-    <div className="min-h-screen p-6">
-      <div className="mx-auto max-w-7xl space-y-8">
+    <div className="min-h-screen p-4 sm:p-6 lg:p-8">
+      <div className="mx-auto max-w-7xl space-y-6">
         {/* Header Section */}
         <div className="flex flex-col gap-6">
-          <div className="flex justify-between items-cenetr">
+          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
             <div className="flex items-center gap-3">
-              <div className="p-2 rounded-lg bg-primary/10 flex items-center justify-center">
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={() => window.history.back()}
+                className="h-10 w-10 rounded-xl bg-white/50 dark:bg-gray-900/50 backdrop-blur-sm border border-white/20 dark:border-gray-800/50"
+              >
+                <ChevronLeft className="h-5 w-5" />
+              </Button>
+              <div className="p-3 rounded-xl bg-gradient-to-br from-primary/20 to-primary/10 backdrop-blur-sm border border-primary/20 shadow-lg">
                 <Globe className="h-6 w-6 text-primary" />
               </div>
-
               <div>
-                <h1 className="text-3xl font-bold tracking-tight">
+                <h1 className="text-2xl sm:text-3xl font-bold tracking-tight bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text text-transparent">
                   Social Media Links
                 </h1>
-                <p className="text-muted-foreground">
+                <p className="text-sm text-muted-foreground">
                   Manage and customize your social media profiles
                 </p>
               </div>
             </div>
 
-            <Button onClick={() => setAdding(true)} className="gap-2" size="sm">
+            <Button 
+              onClick={() => setAdding(true)} 
+              className="gap-2 h-11 bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70 shadow-lg backdrop-blur-sm"
+            >
               <PlusCircle className="h-4 w-4" />
               Add New
             </Button>
           </div>
 
-          <Separator />
-          {/* Stats and Actions */}
+          <Separator className="opacity-50" />
+
+          {/* Stats Cards */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <Card className="bg-gradient-to-br from-background to-secondary/50">
-              <CardContent className="pt-6">
+            <Card className="bg-white/30 dark:bg-gray-900/30 backdrop-blur-sm border-white/20 dark:border-gray-800/50 shadow-lg">
+              <CardContent className="p-6">
                 <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-sm text-muted-foreground">Total Links</p>
-                    <p className="text-3xl font-bold">
+                  <div className="min-w-0 flex-1">
+                    <p className="text-xs text-muted-foreground font-medium uppercase tracking-wider">
+                      Total Links
+                    </p>
+                    <p className="text-2xl font-bold mt-2 bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text text-transparent">
                       {socialMedia?.length || 0}
                     </p>
                   </div>
-                  <div className="p-3 rounded-full bg-primary/10">
-                    <LinkIcon className="h-5 w-5 text-primary" />
+                  <div className="p-3 rounded-xl bg-primary/10 backdrop-blur-sm">
+                    <LinkIcon className="h-6 w-6 text-primary" />
                   </div>
                 </div>
               </CardContent>
             </Card>
 
-            <Card className="bg-gradient-to-br from-background to-secondary/50">
-              <CardContent className="pt-6">
+            <Card className="bg-white/30 dark:bg-gray-900/30 backdrop-blur-sm border-white/20 dark:border-gray-800/50 shadow-lg">
+              <CardContent className="p-6">
                 <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-sm text-muted-foreground">
+                  <div className="min-w-0 flex-1">
+                    <p className="text-xs text-muted-foreground font-medium uppercase tracking-wider">
                       Active Links
                     </p>
-                    <p className="text-3xl font-bold">
-                      {socialMedia?.filter((s) => s.isActive !== false)
-                        .length || 0}
+                    <p className="text-2xl font-bold mt-2 bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text text-transparent">
+                      {activeCount}
                     </p>
                   </div>
-                  <div className="p-3 rounded-full bg-green-500/10">
-                    <CheckCircle2 className="h-5 w-5 text-green-500" />
+                  <div className="p-3 rounded-xl bg-green-500/10 backdrop-blur-sm">
+                    <CheckCircle2 className="h-6 w-6 text-green-500" />
                   </div>
                 </div>
               </CardContent>
             </Card>
 
-            <Card className="bg-gradient-to-br from-background to-secondary/50">
-              <CardContent className="pt-6">
+            <Card className="bg-white/30 dark:bg-gray-900/30 backdrop-blur-sm border-white/20 dark:border-gray-800/50 shadow-lg">
+              <CardContent className="p-6">
                 <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-sm text-muted-foreground">
-                      Last Updated
+                  <div className="min-w-0 flex-1">
+                    <p className="text-xs text-muted-foreground font-medium uppercase tracking-wider">
+                      Inactive Links
                     </p>
-                    <p className="text-lg font-semibold">Just now</p>
+                    <p className="text-2xl font-bold mt-2 bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text text-transparent">
+                      {socialMedia?.length - activeCount || 0}
+                    </p>
+                  </div>
+                  <div className="p-3 rounded-xl bg-amber-500/10 backdrop-blur-sm">
+                    <EyeOff className="h-6 w-6 text-amber-500" />
                   </div>
                 </div>
               </CardContent>
@@ -355,12 +363,14 @@ export default function AdminEditSocials() {
         </div>
 
         {/* Main Content */}
-        <Card>
-          <CardHeader>
+        <Card className="bg-white/30 dark:bg-gray-900/30 backdrop-blur-sm border-white/20 dark:border-gray-800/50 shadow-xl">
+          <CardHeader className="border-b border-white/10 dark:border-gray-800/30">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
               <div className="space-y-1">
-                <CardTitle>Your Social Links</CardTitle>
-                <CardDescription>
+                <CardTitle className="text-xl sm:text-2xl bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text text-transparent">
+                  Your Social Links
+                </CardTitle>
+                <CardDescription className="text-muted-foreground">
                   Click any link to preview and manage settings
                 </CardDescription>
               </div>
@@ -371,16 +381,16 @@ export default function AdminEditSocials() {
                     placeholder="Search social links..."
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
-                    className="pl-9"
+                    className="pl-9 bg-white/50 dark:bg-gray-800/50 border-white/30 dark:border-gray-700/50 backdrop-blur-sm"
                   />
                 </div>
               </div>
             </div>
           </CardHeader>
-          <CardContent>
+          <CardContent className="p-6">
             {filteredSocials.length === 0 ? (
               <div className="text-center py-12 space-y-4">
-                <div className="mx-auto w-16 h-16 rounded-full bg-muted flex items-center justify-center">
+                <div className="mx-auto w-16 h-16 rounded-full bg-white/20 dark:bg-gray-800/20 backdrop-blur-sm flex items-center justify-center">
                   <LinkIcon className="h-8 w-8 text-muted-foreground" />
                 </div>
                 <div className="space-y-2">
@@ -394,7 +404,10 @@ export default function AdminEditSocials() {
                   </p>
                 </div>
                 {!searchQuery && (
-                  <Button onClick={() => setAdding(true)} className="gap-2">
+                  <Button 
+                    onClick={() => setAdding(true)} 
+                    className="gap-2 bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70 shadow-lg backdrop-blur-sm"
+                  >
                     <PlusCircle className="h-4 w-4" />
                     Add Social Link
                   </Button>
@@ -405,14 +418,14 @@ export default function AdminEditSocials() {
                 {filteredSocials.map((social) => (
                   <Card
                     key={social._id}
-                    className={`group relative overflow-hidden transition-all hover:shadow-lg ${
+                    className={`group relative overflow-hidden transition-all hover:shadow-xl bg-white/40 dark:bg-gray-900/40 backdrop-blur-sm border-white/20 dark:border-gray-800/50 ${
                       social.isActive === false ? "opacity-60" : ""
                     }`}
                   >
                     <CardContent className="p-6">
                       <div className="flex items-start gap-4">
                         <div
-                          className={`p-3 dark:bg-white rounded-xl transition-transform group-hover:scale-110 ${
+                          className={`p-3 rounded-xl transition-transform group-hover:scale-110 backdrop-blur-sm ${
                             social.label ||
                             "bg-gradient-to-br from-gray-600 to-gray-700"
                           }`}
@@ -437,12 +450,18 @@ export default function AdminEditSocials() {
                         </div>
                         <div className="flex-1 min-w-0">
                           <div className="flex items-center gap-2 mb-1">
-                            <h3 className="font-semibold truncate">
+                            <h3 className="font-semibold truncate bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text text-transparent">
                               {social.name}
                             </h3>
-                            {social.isActive === false && (
-                              <Badge variant="outline" className="text-xs">
+                            {social.isActive === false ? (
+                              <Badge variant="outline" className="text-xs bg-amber-500/10 text-amber-600 border-amber-500/20">
+                                <EyeOff className="h-3 w-3 mr-1" />
                                 Inactive
+                              </Badge>
+                            ) : (
+                              <Badge variant="outline" className="text-xs bg-green-500/10 text-green-600 border-green-500/20">
+                                <Eye className="h-3 w-3 mr-1" />
+                                Active
                               </Badge>
                             )}
                           </div>
@@ -453,7 +472,7 @@ export default function AdminEditSocials() {
                         </div>
                       </div>
                     </CardContent>
-                    <CardFooter className="bg-muted/50 px-6 py-3 flex justify-between">
+                    <CardFooter className="bg-white/30 dark:bg-gray-900/30 backdrop-blur-sm px-6 py-3 flex justify-between border-t border-white/10 dark:border-gray-800/30">
                       <TooltipProvider>
                         <Tooltip>
                           <TooltipTrigger asChild>
@@ -461,7 +480,7 @@ export default function AdminEditSocials() {
                               variant="ghost"
                               size="icon"
                               onClick={() => copyToClipboard(social.href)}
-                              className="h-8 w-8"
+                              className="h-8 w-8 bg-white/50 dark:bg-gray-800/50 backdrop-blur-sm"
                             >
                               {copySuccess === social.href ? (
                                 <Check className="h-4 w-4" />
@@ -480,7 +499,7 @@ export default function AdminEditSocials() {
                           variant="ghost"
                           size="sm"
                           onClick={() => openEdit(social)}
-                          className="h-8"
+                          className="h-8 bg-white/50 dark:bg-gray-800/50 backdrop-blur-sm"
                         >
                           <Pencil className="h-3.5 w-3.5 mr-1.5" />
                           Edit
@@ -492,7 +511,7 @@ export default function AdminEditSocials() {
                                 variant="ghost"
                                 size="icon"
                                 onClick={() => setShowDeleteDialog(social._id)}
-                                className="h-8 w-8 text-destructive hover:text-destructive hover:bg-destructive/10"
+                                className="h-8 w-8 text-destructive hover:text-destructive hover:bg-destructive/10 bg-white/50 dark:bg-gray-800/50 backdrop-blur-sm"
                               >
                                 <Trash2 className="h-3.5 w-3.5" />
                               </Button>
@@ -513,19 +532,21 @@ export default function AdminEditSocials() {
 
         {/* Add Dialog */}
         <Dialog open={adding} onOpenChange={setAdding}>
-          <DialogContent className="max-w-2xl">
+          <DialogContent className="max-w-2xl bg-white/95 dark:bg-gray-950/95 backdrop-blur-sm border-white/20 dark:border-gray-800/50">
             <DialogHeader>
               <div className="flex items-center gap-2">
-                <PlusCircle className="h-5 w-5 text-primary" />
-                <DialogTitle>Add New Social Link</DialogTitle>
+                <div className="p-2 rounded-lg bg-gradient-to-br from-primary/20 to-primary/10">
+                  <PlusCircle className="h-5 w-5 text-primary" />
+                </div>
+                <DialogTitle className="text-xl">Add New Social Link</DialogTitle>
               </div>
-              <DialogDescription>
+              <DialogDescription className="text-muted-foreground">
                 Add a new social media profile to your website
               </DialogDescription>
             </DialogHeader>
 
             <Tabs defaultValue="custom" className="w-full">
-              <TabsList className="grid w-full grid-cols-2">
+              <TabsList className="grid w-full grid-cols-2 bg-white/30 dark:bg-gray-800/30 backdrop-blur-sm">
                 <TabsTrigger value="quick">Quick Add</TabsTrigger>
                 <TabsTrigger value="custom">Custom</TabsTrigger>
               </TabsList>
@@ -537,9 +558,9 @@ export default function AdminEditSocials() {
                       key={preset.name}
                       type="button"
                       onClick={() => handleUsePreset(preset)}
-                      className="flex flex-col items-center gap-3 p-4 rounded-lg border hover:border-primary hover:bg-primary/5 transition-colors group"
+                      className="flex flex-col items-center gap-3 p-4 rounded-lg border border-white/20 dark:border-gray-800/50 bg-white/30 dark:bg-gray-800/30 backdrop-blur-sm hover:border-primary/50 hover:bg-primary/5 transition-all group"
                     >
-                      <div className={`p-3 rounded-lg ${preset.label}`}>
+                      <div className={`p-3 rounded-lg backdrop-blur-sm ${preset.label}`}>
                         <img
                           src={preset.icon}
                           alt={preset.name}
@@ -557,7 +578,9 @@ export default function AdminEditSocials() {
                   <div className="space-y-4">
                     <div className="space-y-2">
                       <Label htmlFor="name" className="flex items-center gap-2">
-                        <Type className="h-4 w-4" />
+                        <div className="p-1.5 rounded-md bg-blue-500/10">
+                          <Type className="h-4 w-4 text-blue-500" />
+                        </div>
                         Platform Name
                       </Label>
                       <Input
@@ -567,12 +590,15 @@ export default function AdminEditSocials() {
                           setNewSocial({ ...newSocial, name: e.target.value })
                         }
                         placeholder="e.g., LinkedIn, Twitter, etc."
+                        className="bg-white/50 dark:bg-gray-800/50 border-white/30 dark:border-gray-700/50 backdrop-blur-sm"
                       />
                     </div>
 
                     <div className="space-y-2">
                       <Label htmlFor="href" className="flex items-center gap-2">
-                        <LinkIcon className="h-4 w-4" />
+                        <div className="p-1.5 rounded-md bg-green-500/10">
+                          <LinkIcon className="h-4 w-4 text-green-500" />
+                        </div>
                         Profile URL
                       </Label>
                       <Input
@@ -583,12 +609,15 @@ export default function AdminEditSocials() {
                           setNewSocial({ ...newSocial, href: e.target.value })
                         }
                         placeholder="https://example.com/your-profile"
+                        className="bg-white/50 dark:bg-gray-800/50 border-white/30 dark:border-gray-700/50 backdrop-blur-sm"
                       />
                     </div>
 
                     <div className="space-y-2">
                       <Label htmlFor="icon" className="flex items-center gap-2">
-                        <Sparkles className="h-4 w-4" />
+                        <div className="p-1.5 rounded-md bg-purple-500/10">
+                          <Sparkles className="h-4 w-4 text-purple-500" />
+                        </div>
                         Icon URL
                       </Label>
                       <Input
@@ -598,6 +627,7 @@ export default function AdminEditSocials() {
                           setNewSocial({ ...newSocial, icon: e.target.value })
                         }
                         placeholder="https://cdn.example.com/icon.svg"
+                        className="bg-white/50 dark:bg-gray-800/50 border-white/30 dark:border-gray-700/50 backdrop-blur-sm"
                       />
                       <p className="text-xs text-muted-foreground">
                         Use icons from{" "}
@@ -620,7 +650,9 @@ export default function AdminEditSocials() {
                         htmlFor="label"
                         className="flex items-center gap-2"
                       >
-                        <Palette className="h-4 w-4" />
+                        <div className="p-1.5 rounded-md bg-amber-500/10">
+                          <Palette className="h-4 w-4 text-amber-500" />
+                        </div>
                         Background Color
                       </Label>
                       <Select
@@ -629,10 +661,10 @@ export default function AdminEditSocials() {
                           setNewSocial({ ...newSocial, label: value })
                         }
                       >
-                        <SelectTrigger>
+                        <SelectTrigger className="bg-white/50 dark:bg-gray-800/50 border-white/30 dark:border-gray-700/50 backdrop-blur-sm">
                           <SelectValue placeholder="Select a color" />
                         </SelectTrigger>
-                        <SelectContent>
+                        <SelectContent className="bg-white/95 dark:bg-gray-950/95 backdrop-blur-sm border-white/20 dark:border-gray-800/50">
                           <SelectItem value="bg-blue-600">Blue</SelectItem>
                           <SelectItem value="bg-sky-500">Sky Blue</SelectItem>
                           <SelectItem value="bg-gradient-to-r from-purple-500 to-pink-500">
@@ -645,27 +677,9 @@ export default function AdminEditSocials() {
                       </Select>
                     </div>
 
-                    <div className="space-y-2">
-                      <Label
-                        htmlFor="color"
-                        className="flex items-center gap-2"
-                      >
-                        <Palette className="h-4 w-4" />
-                        Hover Effect
-                      </Label>
-                      <Input
-                        id="color"
-                        value={newSocial.color}
-                        onChange={(e) =>
-                          setNewSocial({ ...newSocial, color: e.target.value })
-                        }
-                        placeholder="hover:bg-blue-600 hover:text-white"
-                      />
-                    </div>
-
-                    <div className="flex items-center justify-between p-4 rounded-lg border bg-muted/50">
+                    <div className="flex items-center justify-between p-4 rounded-lg border border-white/20 dark:border-gray-800/50 bg-white/30 dark:bg-gray-800/30 backdrop-blur-sm">
                       <div className="space-y-0.5">
-                        <Label htmlFor="active">Active Status</Label>
+                        <Label htmlFor="active" className="font-medium">Active Status</Label>
                         <p className="text-sm text-muted-foreground">
                           Show this link on your website
                         </p>
@@ -680,12 +694,12 @@ export default function AdminEditSocials() {
                     </div>
 
                     {/* Preview */}
-                    <div className="p-4 rounded-lg border bg-muted/30">
-                      <Label className="mb-3 block">Preview</Label>
-                      <div className="flex items-center gap-3 p-3 rounded-lg bg-card border">
+                    <div className="p-4 rounded-lg border border-white/20 dark:border-gray-800/50 bg-white/30 dark:bg-gray-800/30 backdrop-blur-sm">
+                      <Label className="mb-3 block font-medium">Preview</Label>
+                      <div className="flex items-center gap-3 p-3 rounded-lg bg-white/50 dark:bg-gray-800/50 backdrop-blur-sm border border-white/30 dark:border-gray-700/50">
                         {newSocial.icon ? (
                           <div
-                            className={`p-2 rounded-lg ${
+                            className={`p-2 rounded-lg backdrop-blur-sm ${
                               newSocial.label || "bg-gray-600"
                             }`}
                           >
@@ -696,7 +710,7 @@ export default function AdminEditSocials() {
                             />
                           </div>
                         ) : (
-                          <div className="p-2 rounded-lg bg-gray-600">
+                          <div className="p-2 rounded-lg bg-gray-600 backdrop-blur-sm">
                             <div className="h-5 w-5 flex items-center justify-center text-white">
                               {newSocial.name?.charAt(0) || "?"}
                             </div>
@@ -719,21 +733,23 @@ export default function AdminEditSocials() {
 
             <DialogFooter className="gap-2">
               <DialogClose asChild>
-                <Button variant="outline">Cancel</Button>
+                <Button variant="outline" className="border-white/30 dark:border-gray-700/50 bg-white/30 dark:bg-gray-800/30 backdrop-blur-sm">
+                  Cancel
+                </Button>
               </DialogClose>
               <Button
                 onClick={handleAddSocial}
                 disabled={
                   addSocial.isPending || !newSocial.name || !newSocial.href
                 }
-                className="gap-2"
+                className="gap-2 bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70 shadow-lg backdrop-blur-sm"
               >
                 {addSocial.isPending ? (
                   <>
                     <Loader2 className="h-4 w-4 animate-spin" />
                     Adding...
                   </>
-                ) : (
+                  ) : (
                   <>
                     <PlusCircle className="h-4 w-4" />
                     Add Social Link
@@ -746,12 +762,12 @@ export default function AdminEditSocials() {
 
         {/* Edit Dialog */}
         <Dialog open={!!editing} onOpenChange={closeEdit}>
-          <DialogContent className="max-w-md">
+          <DialogContent className="max-w-md bg-white/95 dark:bg-gray-950/95 backdrop-blur-sm border-white/20 dark:border-gray-800/50">
             <DialogHeader>
               <div className="flex items-center gap-3">
                 {editing?.icon && (
                   <div
-                    className={`p-2 rounded-lg dark:bg-white ${
+                    className={`p-2 rounded-lg backdrop-blur-sm ${
                       editing.label || "bg-gray-600"
                     }`}
                   >
@@ -763,8 +779,8 @@ export default function AdminEditSocials() {
                   </div>
                 )}
                 <div>
-                  <DialogTitle>Edit {editing?.name}</DialogTitle>
-                  <DialogDescription>
+                  <DialogTitle className="text-xl">Edit {editing?.name}</DialogTitle>
+                  <DialogDescription className="text-muted-foreground">
                     Update your social media settings
                   </DialogDescription>
                 </div>
@@ -782,6 +798,7 @@ export default function AdminEditSocials() {
                       onChange={(e) =>
                         setEditing({ ...editing, name: e.target.value })
                       }
+                      className="bg-white/50 dark:bg-gray-800/50 border-white/30 dark:border-gray-700/50 backdrop-blur-sm"
                     />
                   </div>
                   <div className="space-y-2">
@@ -792,6 +809,7 @@ export default function AdminEditSocials() {
                       onChange={(e) =>
                         setEditing({ ...editing, icon: e.target.value })
                       }
+                      className="bg-white/50 dark:bg-gray-800/50 border-white/30 dark:border-gray-700/50 backdrop-blur-sm"
                     />
                   </div>
                 </div>
@@ -804,35 +822,13 @@ export default function AdminEditSocials() {
                     onChange={(e) =>
                       setEditing({ ...editing, href: e.target.value })
                     }
+                    className="bg-white/50 dark:bg-gray-800/50 border-white/30 dark:border-gray-700/50 backdrop-blur-sm"
                   />
                 </div>
 
-                <div className="grid grid-cols-2 gap-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="edit-label">Background</Label>
-                    <Input
-                      id="edit-label"
-                      value={editing.label || ""}
-                      onChange={(e) =>
-                        setEditing({ ...editing, label: e.target.value })
-                      }
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="edit-color">Hover Effect</Label>
-                    <Input
-                      id="edit-color"
-                      value={editing.color || ""}
-                      onChange={(e) =>
-                        setEditing({ ...editing, color: e.target.value })
-                      }
-                    />
-                  </div>
-                </div>
-
-                <div className="flex items-center justify-between p-4 rounded-lg border bg-muted/50">
+                <div className="flex items-center justify-between p-4 rounded-lg border border-white/20 dark:border-gray-800/50 bg-white/30 dark:bg-gray-800/30 backdrop-blur-sm">
                   <div className="space-y-0.5">
-                    <Label>Active Status</Label>
+                    <Label className="font-medium">Active Status</Label>
                     <p className="text-sm text-muted-foreground">
                       Show this link on website
                     </p>
@@ -849,12 +845,14 @@ export default function AdminEditSocials() {
 
             <DialogFooter className="gap-2">
               <DialogClose asChild>
-                <Button variant="outline">Cancel</Button>
+                <Button variant="outline" className="border-white/30 dark:border-gray-700/50 bg-white/30 dark:bg-gray-800/30 backdrop-blur-sm">
+                  Cancel
+                </Button>
               </DialogClose>
               <Button
                 onClick={handleUpdate}
                 disabled={updateSocial.isPending}
-                className="gap-2"
+                className="gap-2 bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70 shadow-lg backdrop-blur-sm"
               >
                 {updateSocial.isPending ? (
                   <>
@@ -877,19 +875,21 @@ export default function AdminEditSocials() {
           open={!!showDeleteDialog}
           onOpenChange={() => setShowDeleteDialog(null)}
         >
-          <AlertDialogContent>
+          <AlertDialogContent className="bg-white/95 dark:bg-gray-950/95 backdrop-blur-sm border-white/20 dark:border-gray-800/50">
             <AlertDialogHeader>
               <AlertDialogTitle>Delete Social Link</AlertDialogTitle>
-              <AlertDialogDescription>
+              <AlertDialogDescription className="text-muted-foreground">
                 This action cannot be undone. This will permanently delete the
                 social media link from your website.
               </AlertDialogDescription>
             </AlertDialogHeader>
             <AlertDialogFooter>
-              <AlertDialogCancel>Cancel</AlertDialogCancel>
+              <AlertDialogCancel className="border-white/30 dark:border-gray-700/50 bg-white/30 dark:bg-gray-800/30 backdrop-blur-sm">
+                Cancel
+              </AlertDialogCancel>
               <AlertDialogAction
                 onClick={() => handleDelete(showDeleteDialog)}
-                className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                className="bg-destructive text-destructive-foreground hover:bg-destructive/90 backdrop-blur-sm"
               >
                 Delete
               </AlertDialogAction>

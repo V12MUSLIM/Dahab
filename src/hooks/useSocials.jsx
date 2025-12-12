@@ -43,7 +43,6 @@ export function useSocials() {
         color,
       }),
     onSuccess: () => {
-      toast.success("Social updated");
       queryClient.invalidateQueries(["social-media"]);
     },
     onError: (err) => {

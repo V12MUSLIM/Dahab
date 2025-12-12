@@ -16,6 +16,8 @@ import {
   Mail,
   AlertCircle,
   Save,
+  ChevronLeft,
+  Sparkles,
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
@@ -24,6 +26,7 @@ import { LoadingState } from "@/components/admin/adminUI/LoadingState";
 import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
 import { Badge } from "@/components/ui/badge";
+import { ErrorState } from "@/components/admin/adminUI/ErrorState";
 
 export default function AdminEditContact() {
   const navigate = useNavigate();
@@ -124,57 +127,42 @@ export default function AdminEditContact() {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen justify-center items-center">
-       <LoadingState message="Contacts" submessage="Contacts"/>
+      <div className="min-h-screen flex justify-center items-center">
+        <LoadingState message="Contacts" submessage="Contacts" />
       </div>
     );
   }
 
   if (isError) {
     return (
-      <div className="min-h-screen p-6 flex items-center justify-center">
-        <Card className="max-w-md w-full border-destructive/20">
-          <CardHeader className="text-center">
-            <div className="mx-auto w-12 h-12 rounded-full bg-destructive/10 flex items-center justify-center mb-4">
-              <AlertCircle className="h-6 w-6 text-destructive" />
-            </div>
-            <CardTitle className="text-xl">
-              Unable to Load Contact Information
-            </CardTitle>
-            <CardDescription className="mt-2">
-              {error?.message ||
-                "There was an error loading your contact information."}
-            </CardDescription>
-          </CardHeader>
-          <CardFooter className="flex flex-col gap-2">
-            <Button onClick={() => contactQuery.refetch()} className="w-full">
-              Try Again
-            </Button>
-            <Button
-              variant="outline"
-              className="w-full"
-              onClick={() => navigate("/dashboard")}
-            >
-              Return to Dashboard
-            </Button>
-          </CardFooter>
-        </Card>
-      </div>
+      <ErrorState
+        message={error.message}
+        onRetry={() => contactQuery.refetch()}
+        error={error}
+      />
     );
   }
 
   return (
-    <div className="min-h-screen p-4 sm:p-6 bg-gradient-to-br from-background via-background to-secondary/20">
+    <div className="min-h-screen p-4 sm:p-6 lg:p-8">
       <div className="mx-auto max-w-7xl space-y-6">
         {/* Header Section */}
         <div className="flex flex-col gap-6">
           <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
             <div className="flex items-center gap-3">
-              <div className="p-3 rounded-xl bg-gradient-to-br from-primary to-primary/60 shadow-lg">
-                <Mail className="h-6 w-6 text-primary-foreground" />
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={() => navigate("/dashboard")}
+                className="h-10 w-10 rounded-xl bg-white/50 dark:bg-gray-900/50 backdrop-blur-sm border border-white/20 dark:border-gray-800/50"
+              >
+                <ChevronLeft className="h-5 w-5" />
+              </Button>
+              <div className="p-3 rounded-xl bg-gradient-to-br from-primary/20 to-primary/10 backdrop-blur-sm border border-primary/20 shadow-lg">
+                <Mail className="h-6 w-6 text-primary" />
               </div>
               <div>
-                <h1 className="text-2xl sm:text-3xl font-bold tracking-tight">
+                <h1 className="text-2xl sm:text-3xl font-bold tracking-tight bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text text-transparent">
                   Contact Information
                 </h1>
                 <p className="text-sm text-muted-foreground">
@@ -186,48 +174,73 @@ export default function AdminEditContact() {
             {isDirty && (
               <Badge
                 variant="outline"
-                className="animate-pulse border-amber-500 text-amber-600"
+                className="animate-pulse border-amber-500 text-amber-600 bg-amber-500/10 backdrop-blur-sm"
               >
+                <Sparkles className="h-3 w-3 mr-1" />
                 Unsaved Changes
               </Badge>
             )}
           </div>
 
-          <Separator />
+          <Separator className="opacity-50" />
 
           {/* Stats Cards */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <Card className="bg-gradient-to-br from-background to-secondary/50 border-primary/10">
-              <CardContent className="p-4">
+            <Card className="bg-white/30 dark:bg-gray-900/30 backdrop-blur-sm border-white/20 dark:border-gray-800/50 shadow-lg">
+              <CardContent className="p-6">
                 <div className="flex items-center justify-between">
                   <div className="min-w-0 flex-1">
-                    <p className="text-xs text-muted-foreground font-medium uppercase tracking-wide">
+                    <p className="text-xs text-muted-foreground font-medium uppercase tracking-wider">
                       Email Address
                     </p>
-                    <p className="text-lg font-bold truncate mt-1">
+                    <p className="text-lg font-bold truncate mt-2 bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text text-transparent">
                       {formData.email || "Not set"}
                     </p>
                   </div>
-                  <div className="p-3 rounded-xl bg-blue-500/10 shrink-0 ml-2">
+                  <div className="p-3 rounded-xl bg-blue-500/10 backdrop-blur-sm ml-2">
                     <Mail className="h-6 w-6 text-blue-500" />
                   </div>
                 </div>
               </CardContent>
             </Card>
 
-            <Card className="bg-gradient-to-br from-background to-secondary/50 border-primary/10">
-              <CardContent className="p-4">
+            <Card className="bg-white/30 dark:bg-gray-900/30 backdrop-blur-sm border-white/20 dark:border-gray-800/50 shadow-lg">
+              <CardContent className="p-6">
                 <div className="flex items-center justify-between">
                   <div className="min-w-0 flex-1">
-                    <p className="text-xs text-muted-foreground font-medium uppercase tracking-wide">
+                    <p className="text-xs text-muted-foreground font-medium uppercase tracking-wider">
                       Phone Number
                     </p>
-                    <p className="text-lg font-bold mt-1">
+                    <p className="text-lg font-bold mt-2 bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text text-transparent">
                       {formData.phone || "Not set"}
                     </p>
                   </div>
-                  <div className="p-3 rounded-xl bg-green-500/10 shrink-0 mb-8">
+                  <div className="p-3 rounded-xl bg-green-500/10 backdrop-blur-sm">
                     <Phone className="h-6 w-6 text-green-500" />
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card className="bg-white/30 dark:bg-gray-900/30 backdrop-blur-sm border-white/20 dark:border-gray-800/50 shadow-lg">
+              <CardContent className="p-6">
+                <div className="flex items-center justify-between">
+                  <div className="min-w-0 flex-1">
+                    <p className="text-xs text-muted-foreground font-medium uppercase tracking-wider">
+                      Status
+                    </p>
+                    <div className="mt-2">
+                      <Badge 
+                        variant="outline" 
+                        className="bg-green-500/10 text-green-600 dark:text-green-400 border-green-500/20"
+                      >
+                        <CheckCircle2 className="h-3 w-3 mr-1" />
+                        Active
+                      </Badge>
+                    </div>
+                  </div>
+                  <div className="p-3 rounded-xl bg-gradient-to-br from-primary/10 to-primary/5 backdrop-blur-sm">
+                    <Sparkles className="h-6 w-6 text-primary" />
                   </div>
                 </div>
               </CardContent>
@@ -238,26 +251,30 @@ export default function AdminEditContact() {
         {/* Main Content */}
         <div className="grid gap-6 lg:grid-cols-3">
           <div className="lg:col-span-2">
-            <Card className="shadow-lg border-primary/10">
-              <CardHeader>
-                <CardTitle className="text-xl sm:text-2xl">
+            <Card className="bg-white/30 dark:bg-gray-900/30 backdrop-blur-sm border-white/20 dark:border-gray-800/50 shadow-xl">
+              <CardHeader className="border-b border-white/10 dark:border-gray-800/30">
+                <CardTitle className="text-xl sm:text-2xl bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text text-transparent">
                   Edit Contact Details
                 </CardTitle>
-                <CardDescription>
+                <CardDescription className="text-muted-foreground">
                   Update your email and phone number for customer inquiries
                 </CardDescription>
               </CardHeader>
 
-              <CardContent className="space-y-6">
-                <div className="space-y-4">
-                  <div className="space-y-2">
-                    <Label
-                      htmlFor="email-input"
-                      className="flex items-center gap-2 text-sm font-medium"
-                    >
-                      <Mail className="h-4 w-4" />
-                      Email Address
-                    </Label>
+              <CardContent className="space-y-6 p-6">
+                <div className="space-y-6">
+                  <div className="space-y-3">
+                    <div className="flex items-center gap-2">
+                      <div className="p-2 rounded-lg bg-blue-500/10 backdrop-blur-sm">
+                        <Mail className="h-4 w-4 text-blue-500" />
+                      </div>
+                      <Label
+                        htmlFor="email-input"
+                        className="text-sm font-medium"
+                      >
+                        Email Address
+                      </Label>
+                    </div>
                     <Input
                       id="email-input"
                       type="email"
@@ -266,21 +283,25 @@ export default function AdminEditContact() {
                         handleInputChange("email", e.target.value)
                       }
                       placeholder="contact@example.com"
-                      className="font-medium"
+                      className="bg-white/50 dark:bg-gray-800/50 border-white/30 dark:border-gray-700/50 backdrop-blur-sm h-12"
                     />
-                    <p className="text-xs text-muted-foreground">
+                    <p className="text-xs text-muted-foreground px-1">
                       This email will be used for contact form submissions
                     </p>
                   </div>
 
-                  <div className="space-y-2">
-                    <Label
-                      htmlFor="phone-input"
-                      className="flex items-center gap-2 text-sm font-medium"
-                    >
-                      <Phone className="h-4 w-4" />
-                      Phone Number
-                    </Label>
+                  <div className="space-y-3">
+                    <div className="flex items-center gap-2">
+                      <div className="p-2 rounded-lg bg-green-500/10 backdrop-blur-sm">
+                        <Phone className="h-4 w-4 text-green-500" />
+                      </div>
+                      <Label
+                        htmlFor="phone-input"
+                        className="text-sm font-medium"
+                      >
+                        Phone Number
+                      </Label>
+                    </div>
                     <Input
                       id="phone-input"
                       type="tel"
@@ -289,34 +310,36 @@ export default function AdminEditContact() {
                         handleInputChange("phone", e.target.value)
                       }
                       placeholder="+20 123 456 7890"
-                      className="font-medium"
+                      className="bg-white/50 dark:bg-gray-800/50 border-white/30 dark:border-gray-700/50 backdrop-blur-sm h-12"
                     />
-                    <p className="text-xs text-muted-foreground">
+                    <p className="text-xs text-muted-foreground px-1">
                       Include country code for international calls
                     </p>
                   </div>
 
                   {updateContact.isError && (
-                    <div className="rounded-lg border border-destructive/20 bg-destructive/10 p-4">
-                      <div className="flex items-center gap-2 text-destructive">
-                        <AlertCircle className="h-4 w-4" />
-                        <p className="text-sm font-medium">
-                          Failed to update contact information
-                        </p>
+                    <div className="rounded-xl border border-destructive/30 bg-destructive/10 backdrop-blur-sm p-4">
+                      <div className="flex items-center gap-3">
+                        <AlertCircle className="h-5 w-5 text-destructive" />
+                        <div>
+                          <p className="text-sm font-medium text-destructive">
+                            Failed to update contact information
+                          </p>
+                          <p className="text-sm text-destructive/80 mt-1">
+                            {updateContact.error?.message || "Please try again"}
+                          </p>
+                        </div>
                       </div>
-                      <p className="text-sm text-destructive/80 mt-1">
-                        {updateContact.error?.message || "Please try again"}
-                      </p>
                     </div>
                   )}
                 </div>
               </CardContent>
 
-              <CardFooter className="flex flex-col sm:flex-row gap-3 bg-muted/30 border-t">
+              <CardFooter className="flex flex-col sm:flex-row gap-3 bg-white/20 dark:bg-gray-900/20 backdrop-blur-sm border-t border-white/10 dark:border-gray-800/30 p-6">
                 <Button
                   onClick={handleSave}
                   disabled={updateContact.isPending || !isDirty}
-                  className="gap-2 flex-1 sm:flex-none bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70 shadow-md"
+                  className="gap-2 flex-1 sm:flex-none bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70 shadow-lg backdrop-blur-sm h-12"
                 >
                   {updateContact.isPending ? (
                     <>
@@ -338,19 +361,19 @@ export default function AdminEditContact() {
                 <Button
                   variant="outline"
                   onClick={handleCancel}
-                  className="flex-1 sm:flex-none"
+                  className="flex-1 sm:flex-none h-12 border-white/30 dark:border-gray-700/50 bg-white/30 dark:bg-gray-800/30 backdrop-blur-sm hover:bg-white/50 dark:hover:bg-gray-800/50"
                 >
                   Cancel
                 </Button>
-                <div className="text-xs text-muted-foreground text-center sm:text-left flex-1">
-                  <kbd className="px-2 py-1 bg-muted rounded text-xs border">
+                <div className="text-xs text-muted-foreground text-center sm:text-left flex-1 flex items-center gap-1">
+                  <kbd className="px-2 py-1 bg-white/50 dark:bg-gray-800/50 rounded text-xs border border-white/30 dark:border-gray-700/50 backdrop-blur-sm">
                     Ctrl
-                  </kbd>{" "}
-                  +{" "}
-                  <kbd className="px-2 py-1 bg-muted rounded text-xs border">
+                  </kbd>
+                  <span>+</span>
+                  <kbd className="px-2 py-1 bg-white/50 dark:bg-gray-800/50 rounded text-xs border border-white/30 dark:border-gray-700/50 backdrop-blur-sm">
                     S
-                  </kbd>{" "}
-                  to save
+                  </kbd>
+                  <span className="ml-1">to save</span>
                 </div>
               </CardFooter>
             </Card>
@@ -358,53 +381,82 @@ export default function AdminEditContact() {
 
           {/* Info Sidebar */}
           <div className="space-y-6">
-            <Card className="shadow-lg border-primary/10">
+            <Card className="bg-white/30 dark:bg-gray-900/30 backdrop-blur-sm border-white/20 dark:border-gray-800/50 shadow-lg">
               <CardHeader>
-                <CardTitle className="text-lg">Current Contact Info</CardTitle>
+                <CardTitle className="text-lg flex items-center gap-2">
+                  <div className="p-2 rounded-lg bg-gradient-to-br from-primary/10 to-primary/5">
+                    <CheckCircle2 className="h-4 w-4 text-primary" />
+                  </div>
+                  Current Contact Info
+                </CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
-                <div className="space-y-2">
+                <div className="space-y-3">
                   <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                    <Mail className="h-4 w-4" />
-                    <span>Email</span>
+                    <div className="p-1.5 rounded-md bg-blue-500/10">
+                      <Mail className="h-3 w-3 text-blue-500" />
+                    </div>
+                    <span>Email Address</span>
                   </div>
-                  <p className="text-sm font-medium break-all">
+                  <p className="text-sm font-medium bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text text-transparent break-all">
                     {contact?.email || "Not set"}
                   </p>
                 </div>
-                <Separator />
-                <div className="space-y-2">
+                <Separator className="opacity-30" />
+                <div className="space-y-3">
                   <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                    <Phone className="h-4 w-4" />
-                    <span>Phone</span>
+                    <div className="p-1.5 rounded-md bg-green-500/10">
+                      <Phone className="h-3 w-3 text-green-500" />
+                    </div>
+                    <span>Phone Number</span>
                   </div>
-                  <p className="text-sm font-medium">
+                  <p className="text-sm font-medium bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text text-transparent">
                     {contact?.phone || "Not set"}
                   </p>
                 </div>
-                <Separator />
-                <div className="space-y-2"></div>
+                <Separator className="opacity-30" />
+                <div className="space-y-3">
+                  <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                    <div className="p-1.5 rounded-md bg-amber-500/10">
+                      <AlertCircle className="h-3 w-3 text-amber-500" />
+                    </div>
+                    <span>Last Updated</span>
+                  </div>
+                  <p className="text-sm font-medium">
+                    {contact?.updatedAt
+                      ? new Date(contact.updatedAt).toLocaleDateString()
+                      : "Never"}
+                  </p>
+                </div>
               </CardContent>
             </Card>
 
-            <Card className="shadow-lg border-primary/10 bg-gradient-to-br from-blue-50 to-cyan-50 dark:from-blue-950/50 dark:to-cyan-950/50 border-blue-200 dark:border-blue-900/50">
+            <Card className="bg-gradient-to-br from-blue-500/10 to-cyan-500/10 backdrop-blur-sm border-blue-500/20 dark:border-blue-900/30 shadow-lg">
               <CardHeader>
                 <CardTitle className="text-sm flex items-center gap-2">
-                  💡 Tips & Best Practices
+                  <div className="p-1.5 rounded-md bg-blue-500/20">
+                    💡
+                  </div>
+                  Tips & Best Practices
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-3">
                 <div className="space-y-1">
-                  <p className="text-sm font-medium">Email Address</p>
+                  <p className="text-sm font-medium">Professional Email</p>
                   <p className="text-xs text-muted-foreground">
-                    Use a professional email that you check regularly for
-                    business inquiries.
+                    Use a professional email that you check regularly for business inquiries.
                   </p>
                 </div>
                 <div className="space-y-1">
-                  <p className="text-sm font-medium">Phone Number</p>
+                  <p className="text-sm font-medium">Phone Formatting</p>
                   <p className="text-xs text-muted-foreground">
-                    Include country code for international accessibility.
+                    Include country code for international accessibility and better user experience.
+                  </p>
+                </div>
+                <div className="space-y-1">
+                  <p className="text-sm font-medium">Regular Updates</p>
+                  <p className="text-xs text-muted-foreground">
+                    Keep contact information up-to-date to ensure customers can reach you easily.
                   </p>
                 </div>
               </CardContent>

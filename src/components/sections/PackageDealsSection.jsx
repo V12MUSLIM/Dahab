@@ -84,7 +84,7 @@ export default function PackageDealsSection({ badge, header, description }) {
                       <li key={feature} className="flex items-start gap-3">
                         <CheckCircle2 className="w-5 h-5 text-yellow-600 dark:text-yellow-500 flex-shrink-0 mt-0.5" />
                         <span className="text-sm">{feature}</span>
-                        {console.log("packages length:", packages.length)}
+                       
                       </li>
                     ))}
                   </ul>

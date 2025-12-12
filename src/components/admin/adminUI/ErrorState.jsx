@@ -1,5 +1,6 @@
 import { AlertCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Link } from "react-router-dom";
 
 export function ErrorState({ error, onRetry, message = "Error loading data" }) {
   return (
@@ -17,6 +18,9 @@ export function ErrorState({ error, onRetry, message = "Error loading data" }) {
             Retry
           </Button>
         )}
+        <Link to="/dashboard">
+        <Button className="w-full mt-2">Back to Dashboard</Button>
+        </Link>
       </div>
     </div>
   );

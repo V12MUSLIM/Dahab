@@ -26,7 +26,7 @@ export default function AuthInitializer({ children }) {
       } catch (e) {
         // Session invalid or no token → user stays logged out
         // No need to do anything, store already has null values
-        console.log("No active session found");
+        console.log("No active session found",e);
       } finally {
         if (active) setReady(true);
       }
@@ -41,7 +41,7 @@ export default function AuthInitializer({ children }) {
   if (!ready) {
     return (
       <div className="min-h-screen flex items-center justify-center">
-        <Loading loadingMessage="Restoring session..." />
+        <Loading loadingMessage="Loading..." />
       </div>
     );
   }

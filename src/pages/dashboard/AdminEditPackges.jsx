@@ -33,6 +33,9 @@ import {
   DollarSign,
   Calendar,
   Tag,
+  ChevronLeft,
+  TrendingUp,
+  Clock,
 } from "lucide-react";
 import { toast } from "sonner";
 import { Label } from "@/components/ui/label";
@@ -63,6 +66,8 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
+import { ErrorState } from "@/components/admin/adminUI/ErrorState";
+import { LoadingState } from "@/components/admin/adminUI/LoadingState";
 
 // Predefined durations for better UX
 const DURATION_OPTIONS = [
@@ -78,7 +83,12 @@ const DURATION_OPTIONS = [
 ];
 
 // Shared Package Form Component
-function PackageForm({ packageData, setPackageData, featureInput, setFeatureInput }) {
+function PackageForm({
+  packageData,
+  setPackageData,
+  featureInput,
+  setFeatureInput,
+}) {
   const handleAddFeature = () => {
     if (featureInput.trim()) {
       setPackageData((prev) => ({
@@ -109,7 +119,9 @@ function PackageForm({ packageData, setPackageData, featureInput, setFeatureInpu
         <div className="space-y-4">
           <div className="space-y-2">
             <Label htmlFor="package-title" className="flex items-center gap-2">
-              <Tag className="h-4 w-4" />
+              <div className="p-1.5 rounded-md bg-blue-500/10">
+                <Tag className="h-4 w-4 text-blue-500" />
+              </div>
               Package Title
             </Label>
             <Input
@@ -119,13 +131,15 @@ function PackageForm({ packageData, setPackageData, featureInput, setFeatureInpu
                 setPackageData({ ...packageData, title: e.target.value })
               }
               placeholder="e.g., Adventure Seeker"
-              className="font-medium"
+              className="font-medium bg-white/50 dark:bg-gray-800/50 border-white/30 dark:border-gray-700/50 backdrop-blur-sm"
             />
           </div>
 
           <div className="space-y-2">
             <Label htmlFor="package-price" className="flex items-center gap-2">
-              <DollarSign className="h-4 w-4" />
+              <div className="p-1.5 rounded-md bg-green-500/10">
+                <DollarSign className="h-4 w-4 text-green-500" />
+              </div>
               Price
             </Label>
             <div className="relative">
@@ -140,7 +154,7 @@ function PackageForm({ packageData, setPackageData, featureInput, setFeatureInpu
                   setPackageData({ ...packageData, price: e.target.value })
                 }
                 placeholder="299"
-                className="pl-8 font-medium"
+                className="pl-8 font-medium bg-white/50 dark:bg-gray-800/50 border-white/30 dark:border-gray-700/50 backdrop-blur-sm"
                 min="0"
                 step="0.01"
               />
@@ -148,8 +162,13 @@ function PackageForm({ packageData, setPackageData, featureInput, setFeatureInpu
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="package-duration" className="flex items-center gap-2">
-              <Calendar className="h-4 w-4" />
+            <Label
+              htmlFor="package-duration"
+              className="flex items-center gap-2"
+            >
+              <div className="p-1.5 rounded-md bg-purple-500/10">
+                <Calendar className="h-4 w-4 text-purple-500" />
+              </div>
               Duration
             </Label>
             <Select
@@ -158,10 +177,10 @@ function PackageForm({ packageData, setPackageData, featureInput, setFeatureInpu
                 setPackageData({ ...packageData, duration: value })
               }
             >
-              <SelectTrigger>
+              <SelectTrigger className="bg-white/50 dark:bg-gray-800/50 border-white/30 dark:border-gray-700/50 backdrop-blur-sm">
                 <SelectValue placeholder="Select duration" />
               </SelectTrigger>
-              <SelectContent>
+              <SelectContent className="bg-white/95 dark:bg-gray-950/95 backdrop-blur-sm border-white/20 dark:border-gray-800/50">
                 {DURATION_OPTIONS.map((duration) => (
                   <SelectItem key={duration} value={duration}>
                     {duration}
@@ -177,15 +196,20 @@ function PackageForm({ packageData, setPackageData, featureInput, setFeatureInpu
                   setPackageData({ ...packageData, duration: e.target.value })
                 }
                 placeholder="e.g., 3 Days 2 Nights"
-                className="mt-2"
+                className="mt-2 bg-white/50 dark:bg-gray-800/50 border-white/30 dark:border-gray-700/50 backdrop-blur-sm"
               />
             )}
           </div>
 
-          <div className="flex items-center justify-between p-4 rounded-lg border bg-muted/50">
+          <div className="flex items-center justify-between p-4 rounded-lg border border-white/20 dark:border-gray-800/50 bg-white/30 dark:bg-gray-800/30 backdrop-blur-sm">
             <div className="space-y-0.5">
-              <Label htmlFor="package-popular" className="flex items-center gap-2 cursor-pointer">
-                <Star className="h-4 w-4" />
+              <Label
+                htmlFor="package-popular"
+                className="flex items-center gap-2 cursor-pointer font-medium"
+              >
+                <div className="p-1 rounded-md bg-amber-500/10">
+                  <Star className="h-4 w-4 text-amber-500" />
+                </div>
                 Popular Package
               </Label>
               <p className="text-sm text-muted-foreground">
@@ -205,7 +229,9 @@ function PackageForm({ packageData, setPackageData, featureInput, setFeatureInpu
         <div className="space-y-4">
           <div>
             <Label className="flex items-center gap-2 mb-3">
-              <Sparkles className="h-4 w-4" />
+              <div className="p-1.5 rounded-md bg-cyan-500/10">
+                <Sparkles className="h-4 w-4 text-cyan-500" />
+              </div>
               Features
             </Label>
             <div className="space-y-3">
@@ -215,23 +241,25 @@ function PackageForm({ packageData, setPackageData, featureInput, setFeatureInpu
                   onChange={(e) => setFeatureInput(e.target.value)}
                   onKeyPress={handleKeyPress}
                   placeholder="Add a feature..."
+                  className="bg-white/50 dark:bg-gray-800/50 border-white/30 dark:border-gray-700/50 backdrop-blur-sm"
                 />
                 <Button
                   type="button"
                   onClick={handleAddFeature}
                   variant="outline"
                   disabled={!featureInput.trim()}
+                  className="border-white/30 dark:border-gray-700/50 bg-white/30 dark:bg-gray-800/30 backdrop-blur-sm"
                 >
                   Add
                 </Button>
               </div>
 
               {packageData.features?.length > 0 && (
-                <div className="space-y-2 max-h-60 overflow-y-auto p-3 rounded-lg border bg-muted/30">
+                <div className="space-y-2 max-h-60 overflow-y-auto p-3 rounded-lg border border-white/20 dark:border-gray-800/50 bg-white/30 dark:bg-gray-800/30 backdrop-blur-sm">
                   {packageData.features.map((feature, i) => (
                     <div
                       key={i}
-                      className="flex items-center justify-between gap-2 p-3 rounded-md bg-background border"
+                      className="flex items-center justify-between gap-2 p-3 rounded-md bg-white/50 dark:bg-gray-800/50 border border-white/30 dark:border-gray-700/50"
                     >
                       <span className="text-sm">{feature}</span>
                       <Button
@@ -239,7 +267,7 @@ function PackageForm({ packageData, setPackageData, featureInput, setFeatureInpu
                         variant="ghost"
                         size="sm"
                         onClick={() => handleRemoveFeature(i)}
-                        className="h-7 w-7 p-0 text-destructive hover:text-destructive hover:bg-destructive/10"
+                        className="h-7 w-7 p-0 text-destructive hover:text-destructive hover:bg-destructive/10 bg-white/30 dark:bg-gray-800/30 backdrop-blur-sm"
                       >
                         <X className="h-3.5 w-3.5" />
                       </Button>
@@ -254,20 +282,24 @@ function PackageForm({ packageData, setPackageData, featureInput, setFeatureInpu
           </div>
 
           {/* Preview Card */}
-          <div className="mt-4 p-4 rounded-lg border bg-muted/30">
-            <Label className="mb-3 block">Preview</Label>
-            <div className="p-3 rounded-md bg-card border">
+          <div className="mt-4 p-4 rounded-lg border border-white/20 dark:border-gray-800/50 bg-white/30 dark:bg-gray-800/30 backdrop-blur-sm">
+            <Label className="mb-3 block font-medium">Preview</Label>
+            <div className="p-3 rounded-md bg-white/50 dark:bg-gray-800/50 backdrop-blur-sm border border-white/30 dark:border-gray-700/50">
               <div className="flex items-start justify-between mb-2">
-                <h4 className="font-semibold">{packageData.title || "Package Title"}</h4>
+                <h4 className="font-semibold bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text text-transparent">
+                  {packageData.title || "Package Title"}
+                </h4>
                 {packageData.popular && (
-                  <Badge className="gap-1">
+                  <Badge className="gap-1 bg-gradient-to-r from-amber-500 to-amber-600 backdrop-blur-sm">
                     <Star className="h-3 w-3" />
                     Popular
                   </Badge>
                 )}
               </div>
               <div className="flex items-baseline gap-1 mb-3">
-                <span className="text-xl font-bold">${packageData.price || "0"}</span>
+                <span className="text-xl font-bold bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text text-transparent">
+                  ${packageData.price || "0"}
+                </span>
                 <span className="text-sm text-muted-foreground">
                   / {packageData.duration || "Duration"}
                 </span>
@@ -329,7 +361,6 @@ export default function AdminEditPackages() {
     isLoading,
     isError,
     error,
-    refetch,
     addPackage,
     updatePackage,
     deletePackage,
@@ -377,10 +408,10 @@ export default function AdminEditPackages() {
   };
 
   const openEdit = (pkg) => {
-    setEditing({ 
+    setEditing({
       ...pkg,
       duration: pkg.duration || "",
-      features: Array.isArray(pkg.features) ? [...pkg.features] : []
+      features: Array.isArray(pkg.features) ? [...pkg.features] : [],
     });
     setFeatureInput("");
   };
@@ -412,7 +443,7 @@ export default function AdminEditPackages() {
 
   const handleDeletePackage = async (id) => {
     if (!id) return;
-    
+
     try {
       await deletePackage.mutateAsync(id);
       toast.success("Package deleted successfully!");
@@ -424,142 +455,140 @@ export default function AdminEditPackages() {
   };
 
   const filteredPackages = Array.isArray(packages)
-    ? packages.filter(pkg => 
-        pkg.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        pkg.duration.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        pkg.features?.some(feature => 
-          feature.toLowerCase().includes(searchQuery.toLowerCase())
-        )
+    ? packages.filter(
+        (pkg) =>
+          pkg.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+          pkg.duration.toLowerCase().includes(searchQuery.toLowerCase()) ||
+          pkg.features?.some((feature) =>
+            feature.toLowerCase().includes(searchQuery.toLowerCase())
+          )
       )
     : [];
 
   // Loading state
   if (isLoading) {
-    return (
-      <div className="min-h-screen flex flex-col items-center justify-center">
-        <div className="flex flex-col items-center gap-4">
-          <div className="relative">
-            <Loader2 className="animate-spin h-10 w-10 text-primary" />
-            <div className="absolute inset-0 animate-ping bg-primary/10 rounded-full" />
-          </div>
-          <div className="text-center space-y-1">
-            <p className="text-lg font-medium">Loading Tour Packages</p>
-            <p className="text-sm text-muted-foreground">Fetching your packages...</p>
-          </div>
-        </div>
-      </div>
-    );
+    return <LoadingState message="Packages" />;
   }
 
   // Error state
   if (isError) {
-    return (
-      <div className="min-h-screen p-6 flex items-center justify-center">
-        <Card className="max-w-md w-full border-destructive/20">
-          <CardHeader className="text-center">
-            <div className="mx-auto w-12 h-12 rounded-full bg-destructive/10 flex items-center justify-center mb-4">
-              <AlertCircle className="h-6 w-6 text-destructive" />
-            </div>
-            <CardTitle className="text-xl">Unable to Load Packages</CardTitle>
-            <CardDescription className="mt-2">
-              {error?.message || "There was an error loading your tour packages."}
-            </CardDescription>
-          </CardHeader>
-          <CardFooter className="flex flex-col gap-2">
-            <Button onClick={() => refetch()} className="w-full">
-              Try Again
-            </Button>
-          </CardFooter>
-        </Card>
-      </div>
-    );
+    return <ErrorState message={error.message} error={error} />;
   }
 
+  const popularCount = packages.filter((p) => p.popular).length;
+  const avgPrice = packages.length > 0 
+    ? Math.round(packages.reduce((sum, p) => sum + (p.price || 0), 0) / packages.length)
+    : 0;
+
   return (
-    <div className="min-h-screen p-6">
-      <div className="mx-auto max-w-7xl space-y-8">
+    <div className="min-h-screen p-4 sm:p-6 lg:p-8">
+      <div className="mx-auto max-w-7xl space-y-6">
         {/* Header Section */}
         <div className="flex flex-col gap-6">
-          <div className="flex flex-col gap-2">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
             <div className="flex items-center gap-3">
-              <div className="p-2 rounded-lg bg-primary/10">
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={() => window.history.back()}
+                className="h-10 w-10 rounded-xl bg-white/50 dark:bg-gray-900/50 backdrop-blur-sm border border-white/20 dark:border-gray-800/50"
+              >
+                <ChevronLeft className="h-5 w-5" />
+              </Button>
+              <div className="p-3 rounded-xl bg-gradient-to-br from-primary/20 to-primary/10 backdrop-blur-sm border border-primary/20 shadow-lg">
                 <Package className="h-6 w-6 text-primary" />
               </div>
               <div>
-                <h1 className="text-3xl font-bold tracking-tight">Tour Packages</h1>
-                <p className="text-muted-foreground">
+                <h1 className="text-2xl sm:text-3xl font-bold tracking-tight bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text text-transparent">
+                  Tour Packages
+                </h1>
+                <p className="text-sm text-muted-foreground">
                   Manage and customize your tour packages and pricing
                 </p>
               </div>
             </div>
-            <Separator />
+
+            <Button 
+              onClick={() => setAdding(true)} 
+              className="gap-2 h-11 bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70 shadow-lg backdrop-blur-sm"
+            >
+              <PlusCircle className="h-4 w-4" />
+              Add New
+            </Button>
           </div>
 
-          {/* Stats and Actions */}
+          <Separator className="opacity-50" />
+          
+          {/* Stats Cards */}
           <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-            <Card className="bg-gradient-to-br from-background to-secondary/50">
-              <CardContent className="pt-6">
+            <Card className="bg-white/30 dark:bg-gray-900/30 backdrop-blur-sm border-white/20 dark:border-gray-800/50 shadow-lg">
+              <CardContent className="p-6">
                 <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-sm text-muted-foreground">Total Packages</p>
-                    <p className="text-3xl font-bold">{packages?.length || 0}</p>
-                  </div>
-                  <div className="p-3 rounded-full bg-primary/10">
-                    <Package className="h-5 w-5 text-primary" />
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-
-            <Card className="bg-gradient-to-br from-background to-secondary/50">
-              <CardContent className="pt-6">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-sm text-muted-foreground">Popular Packages</p>
-                    <p className="text-3xl font-bold">
-                      {packages?.filter(p => p.popular).length || 0}
+                  <div className="min-w-0 flex-1">
+                    <p className="text-xs text-muted-foreground font-medium uppercase tracking-wider">
+                      Total Packages
+                    </p>
+                    <p className="text-2xl font-bold mt-2 bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text text-transparent">
+                      {packages.length}
                     </p>
                   </div>
-                  <div className="p-3 rounded-full bg-amber-500/10">
-                    <Star className="h-5 w-5 text-amber-500" />
+                  <div className="p-3 rounded-xl bg-primary/10 backdrop-blur-sm">
+                    <Package className="h-6 w-6 text-primary" />
                   </div>
                 </div>
               </CardContent>
             </Card>
 
-            <Card className="bg-gradient-to-br from-background to-secondary/50">
-              <CardContent className="pt-6">
+            <Card className="bg-white/30 dark:bg-gray-900/30 backdrop-blur-sm border-white/20 dark:border-gray-800/50 shadow-lg">
+              <CardContent className="p-6">
                 <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-sm text-muted-foreground">Average Price</p>
-                    <p className="text-2xl font-bold">
-                      ${packages?.length > 0 
-                        ? Math.round(packages.reduce((sum, p) => sum + (p.price || 0), 0) / packages.length)
-                        : 0}
+                  <div className="min-w-0 flex-1">
+                    <p className="text-xs text-muted-foreground font-medium uppercase tracking-wider">
+                      Popular Packages
+                    </p>
+                    <p className="text-2xl font-bold mt-2 bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text text-transparent">
+                      {popularCount}
                     </p>
                   </div>
-                  <div className="p-3 rounded-full bg-green-500/10">
-                    <DollarSign className="h-5 w-5 text-green-500" />
+                  <div className="p-3 rounded-xl bg-amber-500/10 backdrop-blur-sm">
+                    <Star className="h-6 w-6 text-amber-500" />
                   </div>
                 </div>
               </CardContent>
             </Card>
 
-            <Card className="bg-gradient-to-br from-background to-secondary/50">
-              <CardContent className="pt-6">
+            <Card className="bg-white/30 dark:bg-gray-900/30 backdrop-blur-sm border-white/20 dark:border-gray-800/50 shadow-lg">
+              <CardContent className="p-6">
                 <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-sm text-muted-foreground">Last Updated</p>
-                    <p className="text-lg font-semibold">Just now</p>
+                  <div className="min-w-0 flex-1">
+                    <p className="text-xs text-muted-foreground font-medium uppercase tracking-wider">
+                      Average Price
+                    </p>
+                    <p className="text-2xl font-bold mt-2 bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text text-transparent">
+                      ${avgPrice}
+                    </p>
                   </div>
-                  <Button
-                    onClick={() => setAdding(true)}
-                    className="gap-2"
-                    size="sm"
-                  >
-                    <PlusCircle className="h-4 w-4" />
-                    Add New
-                  </Button>
+                  <div className="p-3 rounded-xl bg-green-500/10 backdrop-blur-sm">
+                    <DollarSign className="h-6 w-6 text-green-500" />
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card className="bg-white/30 dark:bg-gray-900/30 backdrop-blur-sm border-white/20 dark:border-gray-800/50 shadow-lg">
+              <CardContent className="p-6">
+                <div className="flex items-center justify-between">
+                  <div className="min-w-0 flex-1">
+                    <p className="text-xs text-muted-foreground font-medium uppercase tracking-wider">
+                      Avg. Duration
+                    </p>
+                    <p className="text-lg font-bold mt-2 bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text text-transparent">
+                      3 Days
+                    </p>
+                  </div>
+                  <div className="p-3 rounded-xl bg-purple-500/10 backdrop-blur-sm">
+                    <Clock className="h-6 w-6 text-purple-500" />
+                  </div>
                 </div>
               </CardContent>
             </Card>
@@ -567,12 +596,14 @@ export default function AdminEditPackages() {
         </div>
 
         {/* Main Content */}
-        <Card>
-          <CardHeader>
+        <Card className="bg-white/30 dark:bg-gray-900/30 backdrop-blur-sm border-white/20 dark:border-gray-800/50 shadow-xl">
+          <CardHeader className="border-b border-white/10 dark:border-gray-800/30">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
               <div className="space-y-1">
-                <CardTitle>Your Tour Packages</CardTitle>
-                <CardDescription>
+                <CardTitle className="text-xl sm:text-2xl bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text text-transparent">
+                  Your Tour Packages
+                </CardTitle>
+                <CardDescription className="text-muted-foreground">
                   Click any package to preview and manage settings
                 </CardDescription>
               </div>
@@ -583,26 +614,31 @@ export default function AdminEditPackages() {
                     placeholder="Search packages..."
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
-                    className="pl-9"
+                    className="pl-9 bg-white/50 dark:bg-gray-800/50 border-white/30 dark:border-gray-700/50 backdrop-blur-sm"
                   />
                 </div>
               </div>
             </div>
           </CardHeader>
-          <CardContent>
+          <CardContent className="p-6">
             {filteredPackages.length === 0 ? (
               <div className="text-center py-12 space-y-4">
-                <div className="mx-auto w-16 h-16 rounded-full bg-muted flex items-center justify-center">
+                <div className="mx-auto w-16 h-16 rounded-full bg-white/20 dark:bg-gray-800/20 backdrop-blur-sm flex items-center justify-center">
                   <Package className="h-8 w-8 text-muted-foreground" />
                 </div>
                 <div className="space-y-2">
                   <h3 className="text-lg font-semibold">No packages found</h3>
                   <p className="text-muted-foreground">
-                    {searchQuery ? "Try a different search term" : "Get started by adding your first package"}
+                    {searchQuery
+                      ? "Try a different search term"
+                      : "Get started by adding your first package"}
                   </p>
                 </div>
                 {!searchQuery && (
-                  <Button onClick={() => setAdding(true)} className="gap-2">
+                  <Button 
+                    onClick={() => setAdding(true)} 
+                    className="gap-2 bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70 shadow-lg backdrop-blur-sm"
+                  >
                     <PlusCircle className="h-4 w-4" />
                     Add Package
                   </Button>
@@ -613,31 +649,38 @@ export default function AdminEditPackages() {
                 {filteredPackages.map((pkg) => (
                   <Card
                     key={pkg._id}
-                    className="group relative overflow-hidden transition-all hover:shadow-lg hover:border-primary/50"
+                    className="group relative overflow-hidden transition-all hover:shadow-xl bg-white/40 dark:bg-gray-900/40 backdrop-blur-sm border-white/20 dark:border-gray-800/50 hover:border-primary/50"
                   >
                     <CardContent className="p-6">
                       <div className="flex items-start justify-between mb-4">
                         <div>
-                          <h3 className="font-semibold text-lg group-hover:text-primary transition-colors">
+                          <h3 className="font-semibold text-lg bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text text-transparent group-hover:from-primary group-hover:to-primary/70 transition-all">
                             {pkg.title}
                           </h3>
                           {pkg.popular && (
-                            <Badge className="mt-1 gap-1">
+                            <Badge className="mt-1 gap-1 bg-gradient-to-r from-amber-500 to-amber-600 backdrop-blur-sm">
                               <Star className="h-3 w-3" />
                               Popular
                             </Badge>
                           )}
                         </div>
                         <div className="text-right">
-                          <div className="text-2xl font-bold">${pkg.price}</div>
-                          <div className="text-sm text-muted-foreground">{pkg.duration}</div>
+                          <div className="text-2xl font-bold bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text text-transparent">
+                            ${pkg.price}
+                          </div>
+                          <div className="text-sm text-muted-foreground">
+                            {pkg.duration}
+                          </div>
                         </div>
                       </div>
 
                       <div className="space-y-3">
                         <div className="space-y-2">
                           {pkg.features.slice(0, 3).map((feature, i) => (
-                            <div key={i} className="flex items-center gap-2 text-sm">
+                            <div
+                              key={i}
+                              className="flex items-center gap-2 text-sm"
+                            >
                               <span className="text-primary">•</span>
                               <span className="line-clamp-1">{feature}</span>
                             </div>
@@ -650,7 +693,7 @@ export default function AdminEditPackages() {
                         </div>
                       </div>
                     </CardContent>
-                    <CardFooter className="bg-muted/50 px-6 py-3 flex justify-between">
+                    <CardFooter className="bg-white/30 dark:bg-gray-900/30 backdrop-blur-sm px-6 py-3 flex justify-between border-t border-white/10 dark:border-gray-800/30">
                       <TooltipProvider>
                         <Tooltip>
                           <TooltipTrigger asChild>
@@ -658,13 +701,13 @@ export default function AdminEditPackages() {
                               variant="ghost"
                               size="sm"
                               onClick={() => openEdit(pkg)}
-                              className="h-8"
+                              className="h-8 bg-white/50 dark:bg-gray-800/50 backdrop-blur-sm"
                             >
                               <Pencil className="h-3.5 w-3.5 mr-1.5" />
                               Edit
                             </Button>
                           </TooltipTrigger>
-                          <TooltipContent>
+                          <TooltipContent className="bg-white/95 dark:bg-gray-950/95 backdrop-blur-sm border-white/20 dark:border-gray-800/50">
                             <p>Edit {pkg.title}</p>
                           </TooltipContent>
                         </Tooltip>
@@ -676,12 +719,12 @@ export default function AdminEditPackages() {
                               variant="ghost"
                               size="sm"
                               onClick={() => setShowDeleteDialog(pkg._id)}
-                              className="h-8 text-destructive hover:text-destructive hover:bg-destructive/10"
+                              className="h-8 text-destructive hover:text-destructive hover:bg-destructive/10 bg-white/50 dark:bg-gray-800/50 backdrop-blur-sm"
                             >
                               <Trash2 className="h-3.5 w-3.5" />
                             </Button>
                           </TooltipTrigger>
-                          <TooltipContent>
+                          <TooltipContent className="bg-white/95 dark:bg-gray-950/95 backdrop-blur-sm border-white/20 dark:border-gray-800/50">
                             <p>Delete {pkg.title}</p>
                           </TooltipContent>
                         </Tooltip>
@@ -696,13 +739,15 @@ export default function AdminEditPackages() {
 
         {/* Add Dialog */}
         <Dialog open={adding} onOpenChange={setAdding}>
-          <DialogContent className="max-w-4xl">
+          <DialogContent className="max-w-4xl bg-white/95 dark:bg-gray-950/95 backdrop-blur-sm border-white/20 dark:border-gray-800/50">
             <DialogHeader>
               <div className="flex items-center gap-2">
-                <PlusCircle className="h-5 w-5 text-primary" />
-                <DialogTitle>Add New Tour Package</DialogTitle>
+                <div className="p-2 rounded-lg bg-gradient-to-br from-primary/20 to-primary/10">
+                  <PlusCircle className="h-5 w-5 text-primary" />
+                </div>
+                <DialogTitle className="text-xl">Add New Tour Package</DialogTitle>
               </div>
-              <DialogDescription>
+              <DialogDescription className="text-muted-foreground">
                 Create a new tour package for your website
               </DialogDescription>
             </DialogHeader>
@@ -716,14 +761,18 @@ export default function AdminEditPackages() {
 
             <DialogFooter className="gap-2">
               <DialogClose asChild>
-                <Button variant="outline" onClick={resetNewPackage}>
+                <Button 
+                  variant="outline" 
+                  onClick={resetNewPackage}
+                  className="border-white/30 dark:border-gray-700/50 bg-white/30 dark:bg-gray-800/30 backdrop-blur-sm"
+                >
                   Cancel
                 </Button>
               </DialogClose>
               <Button
                 onClick={handleAddPackage}
                 disabled={addPackage.isPending || !newPackage.title}
-                className="gap-2"
+                className="gap-2 bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70 shadow-lg backdrop-blur-sm"
               >
                 {addPackage.isPending ? (
                   <>
@@ -743,17 +792,19 @@ export default function AdminEditPackages() {
 
         {/* Edit Dialog */}
         <Dialog open={!!editing} onOpenChange={closeEdit}>
-          <DialogContent className="max-w-4xl">
+          <DialogContent className="max-w-4xl bg-white/95 dark:bg-gray-950/95 backdrop-blur-sm border-white/20 dark:border-gray-800/50">
             <DialogHeader>
               <div className="flex items-center gap-3">
                 {editing && (
-                  <div className="p-2 rounded-lg bg-primary/10">
+                  <div className="p-2 rounded-lg bg-gradient-to-br from-primary/20 to-primary/10">
                     <Package className="h-5 w-5 text-primary" />
                   </div>
                 )}
                 <div>
-                  <DialogTitle>Edit {editing?.title}</DialogTitle>
-                  <DialogDescription>Update your tour package details</DialogDescription>
+                  <DialogTitle className="text-xl">Edit {editing?.title}</DialogTitle>
+                  <DialogDescription className="text-muted-foreground">
+                    Update your tour package details
+                  </DialogDescription>
                 </div>
               </div>
             </DialogHeader>
@@ -769,12 +820,17 @@ export default function AdminEditPackages() {
 
             <DialogFooter className="gap-2">
               <DialogClose asChild>
-                <Button variant="outline">Cancel</Button>
+                <Button 
+                  variant="outline"
+                  className="border-white/30 dark:border-gray-700/50 bg-white/30 dark:bg-gray-800/30 backdrop-blur-sm"
+                >
+                  Cancel
+                </Button>
               </DialogClose>
               <Button
                 onClick={handleUpdate}
                 disabled={updatePackage.isPending}
-                className="gap-2"
+                className="gap-2 bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70 shadow-lg backdrop-blur-sm"
               >
                 {updatePackage.isPending ? (
                   <>
@@ -793,19 +849,25 @@ export default function AdminEditPackages() {
         </Dialog>
 
         {/* Delete Confirmation Dialog */}
-        <AlertDialog open={!!showDeleteDialog} onOpenChange={() => setShowDeleteDialog(null)}>
-          <AlertDialogContent>
+        <AlertDialog
+          open={!!showDeleteDialog}
+          onOpenChange={() => setShowDeleteDialog(null)}
+        >
+          <AlertDialogContent className="bg-white/95 dark:bg-gray-950/95 backdrop-blur-sm border-white/20 dark:border-gray-800/50">
             <AlertDialogHeader>
               <AlertDialogTitle>Delete Package</AlertDialogTitle>
-              <AlertDialogDescription>
-                This action cannot be undone. This will permanently delete the tour package from your website.
+              <AlertDialogDescription className="text-muted-foreground">
+                This action cannot be undone. This will permanently delete the
+                tour package from your website.
               </AlertDialogDescription>
             </AlertDialogHeader>
             <AlertDialogFooter>
-              <AlertDialogCancel>Cancel</AlertDialogCancel>
+              <AlertDialogCancel className="border-white/30 dark:border-gray-700/50 bg-white/30 dark:bg-gray-800/30 backdrop-blur-sm">
+                Cancel
+              </AlertDialogCancel>
               <AlertDialogAction
                 onClick={() => handleDeletePackage(showDeleteDialog)}
-                className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                className="bg-destructive hover:bg-destructive/90 backdrop-blur-sm"
               >
                 Delete
               </AlertDialogAction>

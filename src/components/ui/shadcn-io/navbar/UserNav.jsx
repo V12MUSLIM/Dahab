@@ -55,7 +55,8 @@ const UserNav = React.memo(({ email, name, userImage }) => {
                 src={
                   userImage
                     ? encodeURI(userImage.replace("=s96-c", "=s256-c"))
-                    : `https://avatar.vercel.sh/${encodeURIComponent(name)}`
+                    : `https://api.dicebear.com/7.x/initials/svg?seed=${encodeURIComponent(name)}`
+
                 }
                 alt={name}
                 crossOrigin="anonymous"

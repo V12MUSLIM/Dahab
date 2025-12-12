@@ -25,7 +25,9 @@ import {
   CheckCircle2,
   Sparkles,
   Zap,
-  
+  Shield,
+  Cpu,
+  Server,
 } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
 import { useNavigate } from "react-router-dom";
@@ -46,11 +48,11 @@ const Dashboard = () => {
     {
       title: "Hero Sections",
       description: "Edit hero sections title, image etc...",
-      path: "/dashboard/herosections",
+      path: "/dashboard/heroes",
       icon: Award,
       count: 5,
       status: "under-construction",
-      implemented: false,
+      implemented: true,
       gradient: "from-amber-500 to-orange-500",
     },
     {
@@ -155,21 +157,22 @@ const Dashboard = () => {
   const handelNavigation = (path) => {
     navigate(path);
   };
+  
   return (
-    <div className="min-h-screen p-3 sm:p-4 md:p-6 lg:p-8 bg-gradient-to-br from-background via-background to-secondary/20">
-      <div className="mx-auto max-w-7xl space-y-4 sm:space-y-6 md:space-y-8">
+    <div className="min-h-screen p-4 sm:p-6 lg:p-8">
+      <div className="mx-auto max-w-7xl space-y-6">
         {/* Header Section */}
-        <div className="flex flex-col gap-4 sm:gap-6">
+        <div className="flex flex-col gap-6">
           <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4">
-            <div className="flex items-center gap-2 sm:gap-3">
-              <div className="p-2 sm:p-3 rounded-lg sm:rounded-xl bg-gradient-to-br from-primary to-primary/60 flex items-center justify-center shadow-lg flex-shrink-0">
-                <Sparkles className="h-5 w-5 sm:h-6 sm:w-6 text-primary-foreground" />
+            <div className="flex items-center gap-3">
+              <div className="p-3 rounded-xl bg-gradient-to-br from-primary/20 to-primary/10 backdrop-blur-sm border border-primary/20 shadow-lg">
+                <Sparkles className="h-6 w-6 text-primary" />
               </div>
               <div className="min-w-0">
-                <h1 className="text-xl sm:text-2xl md:text-3xl font-bold tracking-tight truncate">
+                <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold tracking-tight bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text text-transparent">
                   Admin Dashboard
                 </h1>
-                <p className="text-xs sm:text-sm text-muted-foreground line-clamp-1">
+                <p className="text-sm text-muted-foreground line-clamp-1">
                   Manage your tourism platform content and settings
                 </p>
               </div>
@@ -178,40 +181,34 @@ const Dashboard = () => {
             <div className="flex items-center gap-2 flex-wrap">
               <Badge
                 variant="outline"
-                className="bg-green-50 dark:bg-green-950 text-green-700 dark:text-green-400 border-green-200 dark:border-green-900 px-2 sm:px-3 py-1 text-xs"
+                className="bg-green-500/10 backdrop-blur-sm text-green-600 dark:text-green-400 border-green-500/20 px-3 py-1.5 text-sm"
               >
-                <CheckCircle2 className="w-3 h-3 mr-1 sm:mr-1.5" />
-                <span className="hidden xs:inline">
-                  {implementedCount} Active
-                </span>
-                <span className="xs:hidden">{implementedCount}</span>
+                <CheckCircle2 className="w-3 h-3 mr-1.5" />
+                <span>{implementedCount} Active</span>
               </Badge>
               <Badge
                 variant="outline"
-                className="bg-amber-50 dark:bg-amber-950 text-amber-700 dark:text-amber-400 border-amber-200 dark:border-amber-900 px-2 sm:px-3 py-1 text-xs"
+                className="bg-amber-500/10 backdrop-blur-sm text-amber-600 dark:text-amber-400 border-amber-500/20 px-3 py-1.5 text-sm"
               >
-                <Construction className="w-3 h-3 mr-1 sm:mr-1.5" />
-                <span className="hidden xs:inline">
-                  {underConstructionCount} In Progress
-                </span>
-                <span className="xs:hidden">{underConstructionCount}</span>
+                <Construction className="w-3 h-3 mr-1.5" />
+                <span>{underConstructionCount} In Progress</span>
               </Badge>
             </div>
           </div>
 
-          <Separator className="my-2" />
+          <Separator className="opacity-50" />
 
           {/* Info Banner */}
-          <Card className="border-blue-200 dark:border-blue-900/50 bg-gradient-to-r from-blue-50 to-cyan-50 dark:from-blue-950/50 dark:to-cyan-950/50">
-            <CardContent className="flex items-start gap-3 sm:gap-4 p-4 sm:p-6">
-              <div className="p-2 rounded-lg bg-blue-100 dark:bg-blue-900/50 flex-shrink-0">
-                <AlertCircle className="h-4 w-4 sm:h-5 sm:w-5 text-blue-600 dark:text-blue-400" />
+          <Card className="border-blue-500/20 dark:border-blue-900/30 bg-gradient-to-r from-blue-500/10 to-cyan-500/10 backdrop-blur-sm shadow-lg">
+            <CardContent className="flex items-start gap-4 p-6">
+              <div className="p-3 rounded-xl bg-blue-500/10 backdrop-blur-sm flex-shrink-0">
+                <AlertCircle className="h-5 w-5 text-blue-500" />
               </div>
-              <div className="flex-1 space-y-1 min-w-0">
-                <h4 className="font-semibold text-sm sm:text-base text-blue-900 dark:text-blue-300">
+              <div className="flex-1 space-y-2 min-w-0">
+                <h4 className="font-semibold text-base text-blue-900 dark:text-blue-300">
                   Platform Development Status
                 </h4>
-                <p className="text-xs sm:text-sm text-blue-700 dark:text-blue-400">
+                <p className="text-sm text-blue-700 dark:text-blue-400">
                   Some features are still under development. Fully functional
                   modules are marked with a green badge. Items marked "Under
                   Construction" are coming soon.
@@ -221,60 +218,63 @@ const Dashboard = () => {
           </Card>
 
           {/* Stats Grid */}
-          <div className="grid grid-cols-1 xs:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
-            <Card className="bg-gradient-to-br from-background to-secondary/50 hover:shadow-lg transition-shadow">
-              <CardContent className="pt-4 sm:pt-6 p-4 sm:p-6">
+          <div className="grid grid-cols-1 xs:grid-cols-2 lg:grid-cols-3 gap-4">
+            <Card className="bg-white/30 dark:bg-gray-900/30 backdrop-blur-sm border-white/20 dark:border-gray-800/50 shadow-lg hover:shadow-xl transition-all">
+              <CardContent className="p-6">
                 <div className="flex items-center justify-between">
                   <div className="min-w-0 flex-1">
-                    <p className="text-xs sm:text-sm text-muted-foreground font-medium">
+                    <p className="text-xs text-muted-foreground font-medium uppercase tracking-wider">
                       Total Modules
                     </p>
-                    <p className="text-2xl sm:text-3xl font-bold mt-1">
+                    <p className="text-2xl sm:text-3xl font-bold mt-2 bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text text-transparent">
                       {dashboardItems.length}
                     </p>
                   </div>
-                  <div className="p-2 sm:p-3 rounded-lg sm:rounded-xl bg-gradient-to-br from-primary/10 to-primary/5 flex-shrink-0">
-                    <Package className="h-5 w-5 sm:h-6 sm:w-6 text-primary" />
+                  <div className="p-3 rounded-xl bg-primary/10 backdrop-blur-sm">
+                    <Package className="h-6 w-6 text-primary" />
                   </div>
                 </div>
               </CardContent>
             </Card>
 
-            <Card className="bg-gradient-to-br from-background to-secondary/50 hover:shadow-lg transition-shadow">
-              <CardContent className="pt-4 sm:pt-6 p-4 sm:p-6">
+            <Card className="bg-white/30 dark:bg-gray-900/30 backdrop-blur-sm border-white/20 dark:border-gray-800/50 shadow-lg hover:shadow-xl transition-all">
+              <CardContent className="p-6">
                 <div className="flex items-center justify-between">
                   <div className="min-w-0 flex-1">
-                    <p className="text-xs sm:text-sm text-muted-foreground font-medium">
+                    <p className="text-xs text-muted-foreground font-medium uppercase tracking-wider">
                       Active Features
                     </p>
-                    <p className="text-2xl sm:text-3xl font-bold mt-1">
+                    <p className="text-2xl sm:text-3xl font-bold mt-2 bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text text-transparent">
                       {implementedCount}
                     </p>
                   </div>
-                  <div className="p-2 sm:p-3 rounded-lg sm:rounded-xl bg-gradient-to-br from-green-500/10 to-emerald-500/5 flex-shrink-0">
-                    <CheckCircle2 className="h-5 w-5 sm:h-6 sm:w-6 text-green-500" />
+                  <div className="p-3 rounded-xl bg-green-500/10 backdrop-blur-sm">
+                    <CheckCircle2 className="h-6 w-6 text-green-500" />
                   </div>
                 </div>
               </CardContent>
             </Card>
 
-            <Card className="bg-gradient-to-br from-background to-secondary/50 hover:shadow-lg transition-shadow xs:col-span-2 lg:col-span-1">
-              <CardContent className="pt-4 sm:pt-6 p-4 sm:p-6">
+            <Card className="bg-white/30 dark:bg-gray-900/30 backdrop-blur-sm border-white/20 dark:border-gray-800/50 shadow-lg hover:shadow-xl transition-all xs:col-span-2 lg:col-span-1">
+              <CardContent className="p-6">
                 <div className="flex items-center justify-between">
                   <div className="min-w-0 flex-1">
-                    <p className="text-xs sm:text-sm text-muted-foreground font-medium">
+                    <p className="text-xs text-muted-foreground font-medium uppercase tracking-wider">
                       Completion
                     </p>
-                    <p className="text-2xl sm:text-3xl font-bold mt-1">
+                    <p className="text-2xl sm:text-3xl font-bold mt-2 bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text text-transparent">
                       {Math.round(completionPercentage)}%
                     </p>
                   </div>
-                  <div className="p-2 sm:p-3 rounded-lg sm:rounded-xl bg-gradient-to-br from-blue-500/10 to-cyan-500/5 flex-shrink-0">
-                    <Zap className="h-5 w-5 sm:h-6 sm:w-6 text-blue-500" />
+                  <div className="p-3 rounded-xl bg-blue-500/10 backdrop-blur-sm">
+                    <Zap className="h-6 w-6 text-blue-500" />
                   </div>
                 </div>
-                <div className="mt-3">
-                  <Progress value={completionPercentage} className="h-2" />
+                <div className="mt-4">
+                  <Progress 
+                    value={completionPercentage} 
+                    className="h-2 bg-white/30 dark:bg-gray-800/30 backdrop-blur-sm" 
+                  />
                 </div>
               </CardContent>
             </Card>
@@ -282,21 +282,21 @@ const Dashboard = () => {
         </div>
 
         {/* Main Content */}
-        <Card className="shadow-lg">
-          <CardHeader className="p-4 sm:p-6">
+        <Card className="bg-white/30 dark:bg-gray-900/30 backdrop-blur-sm border-white/20 dark:border-gray-800/50 shadow-xl">
+          <CardHeader className="p-6 border-b border-white/10 dark:border-gray-800/30">
             <div className="flex items-center justify-between">
               <div className="min-w-0 flex-1">
-                <CardTitle className="text-lg sm:text-xl md:text-2xl truncate">
+                <CardTitle className="text-xl sm:text-2xl md:text-3xl bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text text-transparent">
                   Content Management
                 </CardTitle>
-                <CardDescription className="mt-1 text-xs sm:text-sm line-clamp-2">
+                <CardDescription className="mt-2 text-sm text-muted-foreground">
                   Access and manage different sections of your platform
                 </CardDescription>
               </div>
             </div>
           </CardHeader>
-          <CardContent className="p-4 sm:p-6">
-            <div className="grid gap-3 sm:gap-4 grid-cols-1 xs:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+          <CardContent className="p-6">
+            <div className="grid gap-4 grid-cols-1 xs:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
               {dashboardItems.map((item) => {
                 const Icon = item.icon;
                 const isActive = item.implemented;
@@ -306,38 +306,38 @@ const Dashboard = () => {
                     key={item.title}
                     onClick={() => isActive && handelNavigation(item.path)}
                     disabled={!isActive}
-                    className={`group text-left focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 rounded-xl ${
+                    className={`group text-left focus:outline-none focus:ring-2 focus:ring-primary/50 focus:ring-offset-2 rounded-xl ${
                       !isActive ? "cursor-not-allowed" : ""
                     }`}
                   >
                     <Card
-                      className={`h-full transition-all duration-300 ${
+                      className={`h-full transition-all duration-300 bg-white/40 dark:bg-gray-900/40 backdrop-blur-sm border-white/20 dark:border-gray-800/50 ${
                         isActive
-                          ? "hover:shadow-xl hover:scale-[1.02] sm:hover:scale-105 hover:border-primary/50"
+                          ? "hover:shadow-2xl hover:scale-[1.02] sm:hover:scale-105 hover:border-primary/50"
                           : "opacity-60"
                       }`}
                     >
-                      <CardContent className="p-4 sm:p-6">
-                        <div className="flex flex-col gap-3 sm:gap-4">
+                      <CardContent className="p-6">
+                        <div className="flex flex-col gap-4">
                           {/* Icon and Badge */}
                           <div className="flex items-start justify-between">
                             <div
-                              className={`p-2 sm:p-3 rounded-lg sm:rounded-xl bg-gradient-to-br ${
+                              className={`p-3 rounded-xl bg-gradient-to-br ${
                                 item.gradient || "from-gray-500 to-gray-600"
-                              } shadow-lg flex-shrink-0 ${
+                              } shadow-lg backdrop-blur-sm ${
                                 isActive
-                                  ? "group-hover:scale-110 transition-transform"
+                                  ? "group-hover:scale-110 transition-transform duration-300"
                                   : ""
                               }`}
                             >
-                              <Icon className="h-5 w-5 sm:h-6 sm:w-6 text-white" />
+                              <Icon className="h-6 w-6 text-white" />
                             </div>
                             {isActive ? (
-                              <ArrowRight className="h-4 w-4 sm:h-5 sm:w-5 text-muted-foreground opacity-0 transition-all group-hover:opacity-100 group-hover:translate-x-1 flex-shrink-0" />
+                              <ArrowRight className="h-5 w-5 text-muted-foreground opacity-0 transition-all group-hover:opacity-100 group-hover:translate-x-1 flex-shrink-0" />
                             ) : (
                               <Badge
                                 variant="outline"
-                                className="bg-amber-50 dark:bg-amber-950 text-amber-700 dark:text-amber-400 border-amber-200 dark:border-amber-900 text-xs px-2 py-0.5"
+                                className="bg-amber-500/10 backdrop-blur-sm text-amber-600 dark:text-amber-400 border-amber-500/20 text-xs px-2 py-0.5"
                               >
                                 <Construction className="w-3 h-3 mr-1" />
                                 Soon
@@ -346,12 +346,12 @@ const Dashboard = () => {
                           </div>
 
                           {/* Content */}
-                          <div className="space-y-2 min-w-0">
+                          <div className="space-y-3 min-w-0">
                             <div className="flex items-center justify-between gap-2">
                               <h3
-                                className={`font-semibold text-base sm:text-lg truncate ${
+                                className={`font-semibold text-lg truncate ${
                                   isActive
-                                    ? "text-foreground"
+                                    ? "bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text text-transparent group-hover:from-primary group-hover:to-primary/70 transition-all"
                                     : "text-muted-foreground"
                                 }`}
                               >
@@ -360,14 +360,14 @@ const Dashboard = () => {
                               {item.count !== null && isActive && (
                                 <Badge
                                   variant="secondary"
-                                  className="font-semibold text-xs flex-shrink-0"
+                                  className="font-semibold text-xs flex-shrink-0 bg-white/50 dark:bg-gray-800/50 backdrop-blur-sm"
                                 >
                                   {item.count}
                                 </Badge>
                               )}
                             </div>
                             <p
-                              className={`text-xs sm:text-sm line-clamp-2 ${
+                              className={`text-sm line-clamp-2 ${
                                 isActive
                                   ? "text-muted-foreground"
                                   : "text-muted-foreground/60"
@@ -379,7 +379,7 @@ const Dashboard = () => {
                             {isActive && (
                               <Badge
                                 variant="outline"
-                                className="bg-green-50 dark:bg-green-950 text-green-700 dark:text-green-400 border-green-200 dark:border-green-900 text-xs w-fit px-2 py-0.5"
+                                className="bg-green-500/10 backdrop-blur-sm text-green-600 dark:text-green-400 border-green-500/20 text-xs w-fit px-2 py-0.5"
                               >
                                 <CheckCircle2 className="w-3 h-3 mr-1" />
                                 Ready
@@ -397,67 +397,97 @@ const Dashboard = () => {
         </Card>
 
         {/* System Status Card */}
-        <Card className="shadow-lg">
-          <CardHeader className="p-4 sm:p-6">
-            <CardTitle className="flex items-center gap-2 text-lg sm:text-xl">
-              <div className="p-1.5 sm:p-2 rounded-lg bg-primary/10 flex-shrink-0">
-                <BarChart3 className="h-4 w-4 sm:h-5 sm:w-5 text-primary" />
+        <Card className="bg-white/30 dark:bg-gray-900/30 backdrop-blur-sm border-white/20 dark:border-gray-800/50 shadow-xl">
+          <CardHeader className="p-6 border-b border-white/10 dark:border-gray-800/30">
+            <CardTitle className="flex items-center gap-3 text-xl sm:text-2xl">
+              <div className="p-2 rounded-lg bg-gradient-to-br from-primary/20 to-primary/10 backdrop-blur-sm">
+                <BarChart3 className="h-5 w-5 text-primary" />
               </div>
-              <span className="truncate">System Health</span>
+              <span className="bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text text-transparent">
+                System Health
+              </span>
             </CardTitle>
-            <CardDescription className="text-xs sm:text-sm">
+            <CardDescription className="text-sm text-muted-foreground">
               Current platform health and performance metrics
             </CardDescription>
           </CardHeader>
-          <CardContent className="space-y-4 sm:space-y-6 p-4 sm:p-6">
-            <div className="space-y-2 sm:space-y-3">
+          <CardContent className="space-y-6 p-6">
+            <div className="space-y-3">
               <div className="flex items-center justify-between gap-2">
-                <span className="text-xs sm:text-sm font-medium flex items-center gap-2 truncate">
+                <span className="text-sm font-medium flex items-center gap-2 truncate">
                   <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse flex-shrink-0" />
                   <span className="truncate">Database Connection</span>
                 </span>
                 <Badge
                   variant="outline"
-                  className="bg-green-50 dark:bg-green-950 text-green-700 dark:text-green-400 border-green-200 dark:border-green-900 text-xs flex-shrink-0"
+                  className="bg-green-500/10 backdrop-blur-sm text-green-600 dark:text-green-400 border-green-500/20 text-xs"
                 >
                   <CheckCircle2 className="w-3 h-3 mr-1" />
                   Healthy
                 </Badge>
               </div>
-              <Progress value={95} className="h-2" />
+              <Progress 
+                value={95} 
+                className="h-2 bg-white/30 dark:bg-gray-800/30 backdrop-blur-sm" 
+              />
             </div>
 
-            <div className="space-y-2 sm:space-y-3">
+            <div className="space-y-3">
               <div className="flex items-center justify-between gap-2">
-                <span className="text-xs sm:text-sm font-medium flex items-center gap-2 truncate">
+                <span className="text-sm font-medium flex items-center gap-2 truncate">
                   <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse flex-shrink-0" />
                   <span className="truncate">API Response Time</span>
                 </span>
                 <Badge
                   variant="outline"
-                  className="bg-green-50 dark:bg-green-950 text-green-700 dark:text-green-400 border-green-200 dark:border-green-900 text-xs flex-shrink-0"
+                  className="bg-green-500/10 backdrop-blur-sm text-green-600 dark:text-green-400 border-green-500/20 text-xs"
                 >
                   <Zap className="w-3 h-3 mr-1" />
-                  <span className="hidden xs:inline">Fast (120ms)</span>
-                  <span className="xs:hidden">120ms</span>
+                  Fast (120ms)
                 </Badge>
               </div>
-              <Progress value={88} className="h-2" />
+              <Progress 
+                value={88} 
+                className="h-2 bg-white/30 dark:bg-gray-800/30 backdrop-blur-sm" 
+              />
             </div>
 
-            <div className="space-y-2 sm:space-y-3">
+            <div className="space-y-3">
               <div className="flex items-center justify-between gap-2">
-                <span className="text-xs sm:text-sm font-medium truncate">
+                <span className="text-sm font-medium flex items-center gap-2 truncate">
+                  <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse flex-shrink-0" />
+                  <span className="truncate">Server Uptime</span>
+                </span>
+                <Badge
+                  variant="outline"
+                  className="bg-blue-500/10 backdrop-blur-sm text-blue-600 dark:text-blue-400 border-blue-500/20 text-xs"
+                >
+                  <Server className="w-3 h-3 mr-1" />
+                  99.9%
+                </Badge>
+              </div>
+              <Progress 
+                value={99.9} 
+                className="h-2 bg-white/30 dark:bg-gray-800/30 backdrop-blur-sm" 
+              />
+            </div>
+
+            <div className="space-y-3">
+              <div className="flex items-center justify-between gap-2">
+                <span className="text-sm font-medium truncate">
                   Feature Completion
                 </span>
                 <Badge
                   variant="outline"
-                  className="bg-blue-50 dark:bg-blue-950 text-blue-700 dark:text-blue-400 border-blue-200 dark:border-blue-900 text-xs flex-shrink-0"
+                  className="bg-blue-500/10 backdrop-blur-sm text-blue-600 dark:text-blue-400 border-blue-500/20 text-xs"
                 >
                   {implementedCount} / {dashboardItems.length}
                 </Badge>
               </div>
-              <Progress value={completionPercentage} className="h-2" />
+              <Progress 
+                value={completionPercentage} 
+                className="h-2 bg-white/30 dark:bg-gray-800/30 backdrop-blur-sm" 
+              />
             </div>
           </CardContent>
         </Card>
