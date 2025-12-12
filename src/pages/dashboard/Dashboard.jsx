@@ -30,8 +30,11 @@ import {
 
 import { Separator } from "@/components/ui/separator";
 import { useNavigate } from "react-router-dom";
-import { tr } from "zod/v4/locales";
 
+import { useStay } from "@/hooks/useStay";
+import { useContact } from "@/hooks/useContact";
+import { usePackages } from "@/hooks/usePackages";
+import { useSocials } from "@/hooks/useSocials";
 const Dashboard = () => {
   const { contactQuery } = useContact();
   const { data: contacts, isLoading: iscontactLoading } = contactQuery;
@@ -39,7 +42,7 @@ const Dashboard = () => {
   const { socialsQuery } = useSocials();
   const { data: socials, isSocialsLaoding } = socialsQuery;
   const { data: stays, isLoading: isStaysLoading } = useStay();
-  const navigate = useNavigate()
+  const navigate = useNavigate();
   const dashboardItems = [
     {
       title: "Hero Sections",
