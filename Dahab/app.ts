@@ -21,6 +21,7 @@ import stayRouter from "./src/stay/stay-router";
 import socialMediaRouter from "./src/social-media/social-media-router";
 import restaurantRouter from "./src/Dini/restaurant/restaurant-router";
 import paymentRouter from "./src/Booking/payments/payment-router";
+import bannerRouter from "./src/home/bannar/bannar-router"
 // import { uploadSingle, uploadArray } from "./src/middlewares/multer-middleware";
 import bookingRouter from "./src/Booking/booking-router";
 //       end imports routers
@@ -115,6 +116,7 @@ app.use("/api/contact", contactRouter)
 app.use("/api/social-media", socialMediaRouter)
 app.use("/api/booking", bookingRouter)
 app.use("/api/payment", paymentRouter)
+app.use("/api/banner", bannerRouter)
 app.post(
     "/api/payments/webhook",
     express.raw({ type: "application/json" }),
